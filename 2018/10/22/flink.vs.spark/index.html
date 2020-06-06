@@ -25,7 +25,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="技术选型时，选择Spark还是选择Flink，这是一个问题。本文翻译自一篇博文，博文最后的结论：最终的选择还是根据客观的需求。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/10/22/flink.vs.spark/code_flink_spark.png">
+<meta property="og:image" content="https://xinshiyou.github.io/2018/10/22/flink.vs/code_flink_spark.png">
 <meta property="article:published_time" content="2018-10-22T02:10:10.000Z">
 <meta property="article:modified_time" content="2020-06-01T04:10:24.163Z">
 <meta property="article:author" content="John Doe">
@@ -33,7 +33,7 @@
 <meta property="article:tag" content="Spark">
 <meta property="article:tag" content="Flink">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://xinshiyou.github.io/2018/10/22/flink.vs.spark/code_flink_spark.png">
+<meta name="twitter:image" content="https://xinshiyou.github.io/2018/10/22/flink.vs/code_flink_spark.png">
 
 <link rel="canonical" href="https://xinshiyou.github.io/2018/10/22/flink.vs.spark/">
 
@@ -288,7 +288,7 @@
 </tr>
 </tbody></table>
 <p>  下面的代码说明了他们的相似性，但不尽相同。每段代码包含了固定的元素，以及计算最高分布频次的产品。一撇就可以看出每个技术方法的高度相似性，优劣与劣势也具有平衡性。只有深入挖掘不同框架的特征，才能够识别出不同姓。在这个特殊的案例中，可以看出在Flink中的maxBy函数在Spark中没有受到支持，并且Spark需要使用窗口函数，但这类API通常具有相同的数据处理构建方式。</p>
-<p><img src="./code_flink_spark.png" alt="Flink vs. Spark编码对比: Java中的代码比较"></p>
+<p><img src="/2018/10/22/flink.vs/code_flink_spark.png" alt="Flink vs. Spark编码对比: Java中的代码比较"></p>
 <h2 id="批处理-vs-水龙头"><a href="#批处理-vs-水龙头" class="headerlink" title="批处理 vs 水龙头"></a>批处理 vs 水龙头</h2><p>  Flink与Spark的最大不同之处在于不同框架的计算理念不同。Spark针对批处理和流处理使用“批”的概念，而Flink是基于单纯的流方式。想想一下收集与运输水的过程： Spark处理的方式为混合大小的桶，Flink是直接按照水龙头的方式直接处理。Flink与Spark的不同之处列列举如下<br>| Spark vs. Flink | Apache Spark | Apache Flink |<br>| - | - | - |<br>| Steaming | 微“批”流 | 基于事件的流 |<br>| Batch Processing | 内存处理，DAG组织算子 | 流悠闲方式：”批”是有限的流 |<br>| 语言 | Scala | Java |<br>| 优化|全阶段代码生成与优化，DataSet查询优化执行计划。手动内存调优非常重要 | 自动化优化：根据输入、输出、算子，主动选择合适方法。C++风格的内存管理 |<br>| 数据重用与迭代 | DAG执行计划：每一个迭代需要调度与运行相同的数据。内存缓存与重用 | 执行引擎中迭代处理，基于圆形数据流(一个迭代，一个计划)。另外，提供了Delta迭代来处理改变部分数据 |<br>| 延迟性 | 批处理导致高延迟，秒级别的延迟 | 微妙级别的低延迟 |<br>| 有序流 | 新版本中，提供了基于事件处理的基本方式 | 基于时间线，有序流可以被很好的处理 |<br>| 支持 | 支持所有的hadoop分布：Cloudera, Hortonworks, etc. Databricks提供了晕平台和支持包 | 使用邮件列表或论坛 |</p>
 <h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>  批处理的表现性能，依赖于不同的负载。有些Benchmark的测试，显示Flink0.9.1快于Spark1.5.1。关于机器学习库这一方面，Spark的测试显示其性能更优(Flink 1.0.3 vs. Spark1.6.0)。在2016年9月份，Flink和Spark分析了一些批处理和迭代处理的测试，这些测试表明Spark在图处理方面1.7倍快于Flink,而Flink在批处理和小规模图负载方面1.5倍快于SPark，且使用更少的资源。这表明，工具直接的性能与功能大同小异。</p>
 <p>  从这些性能比较中可以得出的结论是，要选择更快的框架，必须对特定的工作负载进行基准测试。针对这些主题，几乎没有最近版本的比较(Spark 2.2 vs. Flink1.3)。这很麻烦，因为这两个平台甚至在过去一年里都取得了令人印象深刻的性能提升。在我们博客的第2部分中，我们将提供我们自己的详细性能比较，请继续关注!</p>
@@ -485,7 +485,7 @@
   </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共90.9k字</span>
+  <span class="post-count">博客全站共91.3k字</span>
 </div>
 
         

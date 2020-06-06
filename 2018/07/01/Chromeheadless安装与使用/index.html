@@ -25,14 +25,14 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;如果是小规模爬虫或模拟效果要求不高的话，使用Selenium HtmlUniDriver基本可以满足需求。但HtmlUnitDriver是基于JS模拟浏览器原理，存在许多浏览器可以做，但它其实无法操作的功能，比如截图等高级功能。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/07/01/Chromeheadless%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/001.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//001.png">
 <meta property="article:published_time" content="2018-07-01T08:52:21.000Z">
 <meta property="article:modified_time" content="2020-06-01T04:14:25.960Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="部署">
 <meta property="article:tag" content="Chrome">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://xinshiyou.github.io/2018/07/01/Chromeheadless%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/001.png">
+<meta name="twitter:image" content="https://xinshiyou.github.io/.io//001.png">
 
 <link rel="canonical" href="https://xinshiyou.github.io/2018/07/01/Chromeheadless%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
 
@@ -256,7 +256,7 @@
 
 
 <h3 id="高级使用"><a href="#高级使用" class="headerlink" title="高级使用"></a>高级使用</h3><h4 id="设置代理服务器"><a href="#设置代理服务器" class="headerlink" title="设置代理服务器"></a>设置代理服务器</h4><p>  代理服务器的设置，可以参考Google-chrome的帮助信息，在代码层面很容易实现。</p>
-<p><img src="001.png" alt="Google-chrome帮助信息"></p>
+<p><img src="/.io//001.png" alt="Google-chrome帮助信息"></p>
 <h4 id="Driver生命周期"><a href="#Driver生命周期" class="headerlink" title="Driver生命周期"></a>Driver生命周期</h4><p>  在我们的代码中“new ChromeDriver()”的时候，产生了多个外部进程，如下所示</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root      8508  8499  1 04:26 ?        00:00:01 /usr/bin/google-chrome-stable --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-gpu --disable-hang-monitor --disable-images --disable-infobars --disable-plugins --disable-popup-blocking --disable-prompt-on-repost --disable-sync --disable-web-resources --enable-automation --enable-logging --enable-strict-powerful-feature-restrictions --force-fieldtrials=SiteIsolationExtensions/Control --headless --ignore-certificate-errors --load-extension=/tmp/.org.chromium.Chromium.7tAd3h/internal --log-level=0 --metrics-recording-only --no-first-run --no-sandbox --password-store=basic --remote-debugging-port=0 --start-maximized --test-type --use-mock-keychain --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --user-data-dir=/tmp/.org.chromium.Chromium.4Sd7ob data:,</span><br><span class="line">root      8515  8508  0 04:26 ?        00:00:00 /opt/google/chrome/chrome --type=zygote --no-sandbox --enable-logging --headless --log-level=0 --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter</span><br><span class="line">root      8539  8508  0 04:26 ?        00:00:00 /opt/google/chrome/chrome --type=gpu-process --enable-logging --headless --log-level=0 --no-sandbox --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --gpu-preferences=KAAAAAAAAACAAACAAQAAAAAAAAAAAGAAEAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA --use-gl=swiftshader-webgl --override-use-software-gl-for-tests --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --enable-logging --log-level=0 --service-request-channel-token=84633B7AB3844DE44C0ADE5922EAFCB4</span><br><span class="line">root      8551  8515  9 04:26 ?        00:00:12 /opt/google/chrome/chrome --type=renderer --enable-automation --enable-logging --log-level=0 --no-sandbox --test-type --use-gl=swiftshader-webgl --disable-gpu-compositing --service-pipe-token=0D2C2CC1CF67A5903FDFECE210FEB597 --lang=en-US --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --num-raster-threads=1 --service-request-channel-token=0D2C2CC1CF67A5903FDFECE210FEB597 --renderer-client-id=4 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101</span><br></pre></td></tr></tbody></table></figure>
 <p>可以看出其中只有一个Google-chrome浏览器的进程，其余三个是对应ChromeDriver的进程。这些进程实际上是通过系统层面来管理，我们的程序无法直接去操作进程的状态，比如Kill/Shutdown等，因此需要格外主要这些进程的生命周期。</p>
@@ -456,7 +456,7 @@
   </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共90.9k字</span>
+  <span class="post-count">博客全站共91.3k字</span>
 </div>
 
         

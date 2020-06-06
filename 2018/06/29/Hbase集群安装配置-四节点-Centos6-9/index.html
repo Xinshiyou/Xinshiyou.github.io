@@ -25,17 +25,17 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;最近在研究Hadoop相关组件的安装，本篇主要研究Hbase的安装。Hbase作为Hadoop家族中重要的数据库解决方案，对以后的Hive等数据库都有非常大的帮助。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/Hbase%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-%E5%9B%9B%E8%8A%82%E7%82%B9-Centos6-9/001.png">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/Hbase%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-%E5%9B%9B%E8%8A%82%E7%82%B9-Centos6-9/002.png">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/Hbase%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-%E5%9B%9B%E8%8A%82%E7%82%B9-Centos6-9/003.png">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/Hbase%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-%E5%9B%9B%E8%8A%82%E7%82%B9-Centos6-9/004.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//001.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//002.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//003.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//004.png">
 <meta property="article:published_time" content="2018-06-29T08:53:04.000Z">
 <meta property="article:modified_time" content="2020-06-01T04:08:35.298Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="部署">
 <meta property="article:tag" content="Hbase">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://xinshiyou.github.io/2018/06/29/Hbase%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-%E5%9B%9B%E8%8A%82%E7%82%B9-Centos6-9/001.png">
+<meta name="twitter:image" content="https://xinshiyou.github.io/.io//001.png">
 
 <link rel="canonical" href="https://xinshiyou.github.io/2018/06/29/Hbase%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-%E5%9B%9B%E8%8A%82%E7%82%B9-Centos6-9/">
 
@@ -250,10 +250,10 @@
 <p>如果启动成功，会出现下面的类似信息：</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">starting master, logging to /home/appuser/hbase/logs/hbase-appuser-master-master.out</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM warning: ignoring option PermSize=128m; support was removed in 8.0</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=128m; support was removed in 8.0</span><br><span class="line">slave3: starting regionserver, logging to /home/appuser/hbase/logs/hbase-appuser-regionserver-slave3.out</span><br><span class="line">slave2: starting regionserver, logging to /home/appuser/hbase/logs/hbase-appuser-regionserver-hs-slave2.out</span><br><span class="line">slave1: starting regionserver, logging to /home/appuser/hbase/logs/hbase-appuser-regionserver-hs-slave1.out</span><br><span class="line">slave3: Java HotSpot(TM) 64-Bit Server VM warning: ignoring option PermSize=128m; support was removed in 8.0</span><br><span class="line">slave3: Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=128m; support was removed in 8.0</span><br><span class="line">slave2: Java HotSpot(TM) 64-Bit Server VM warning: ignoring option PermSize=128m; support was removed in 8.0</span><br><span class="line">slave2: Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=128m; support was removed in 8.0</span><br><span class="line">slave1: Java HotSpot(TM) 64-Bit Server VM warning: ignoring option PermSize=128m; support was removed in 8.0</span><br><span class="line">slave1: Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=128m; support was removed in 8.0</span><br></pre></td></tr></tbody></table></figure>
 
-<h2 id="测试Hbase"><a href="#测试Hbase" class="headerlink" title="测试Hbase"></a>测试Hbase</h2><p><em>首先</em>可以启动Hbase测试是否正确安装Hbase，如果启动过程没有报错信息，那么安装成功：<br><img src="001.png" alt="1"></p>
-<p><em>其次</em>可以创建表，写入内容，查看是否正常，如果正常说明安装成功：<br><img src="002.png" alt="2"></p>
-<p>通过以上操作以后，可以查看Hadoop相应路径上是否存在数据：<br><img src="003.png" alt="3"></p>
-<p><em>另外</em>，可以通过WebUI确定RegionServer是否启动，端口是否正常，地址：[You URL:16010/]：<br><img src="004.png" alt="4"></p>
+<h2 id="测试Hbase"><a href="#测试Hbase" class="headerlink" title="测试Hbase"></a>测试Hbase</h2><p><em>首先</em>可以启动Hbase测试是否正确安装Hbase，如果启动过程没有报错信息，那么安装成功：<br><img src="/.io//001.png" alt="1"></p>
+<p><em>其次</em>可以创建表，写入内容，查看是否正常，如果正常说明安装成功：<br><img src="/.io//002.png" alt="2"></p>
+<p>通过以上操作以后，可以查看Hadoop相应路径上是否存在数据：<br><img src="/.io//003.png" alt="3"></p>
+<p><em>另外</em>，可以通过WebUI确定RegionServer是否启动，端口是否正常，地址：[You URL:16010/]：<br><img src="/.io//004.png" alt="4"></p>
 <p>通过页面可以看出确实存在3个RegionServer，且每个Server只有一个Region 。</p>
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
 <li>Hbase-site中配置的NAME中的值，最好选择小写。版主第一次使用大写，结果配置没有生效；</li>
@@ -448,7 +448,7 @@
   </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共90.9k字</span>
+  <span class="post-count">博客全站共91.3k字</span>
 </div>
 
         

@@ -25,15 +25,15 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;最近在研究dl4j的学习，其中有使用FNLP作为分词的例子。版主尝试编译源码，经过不断的查找验证，得到可行的方式。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/FNLP%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/001.png">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/FNLP%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/002.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//001.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//002.png">
 <meta property="article:published_time" content="2018-06-29T08:53:03.000Z">
 <meta property="article:modified_time" content="2020-06-01T04:09:47.006Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="部署">
 <meta property="article:tag" content="NLP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://xinshiyou.github.io/2018/06/29/FNLP%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/001.png">
+<meta name="twitter:image" content="https://xinshiyou.github.io/.io//001.png">
 
 <link rel="canonical" href="https://xinshiyou.github.io/2018/06/29/FNLP%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/">
 
@@ -231,9 +231,9 @@
 
 <p>然后利用Maven3来编译源码：</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean install</span><br></pre></td></tr></tbody></table></figure>
-<p>但是在编译过程中遇到Plugin的错误：<br><img src="001.png" alt="特殊他"><br>只有使用跳过测试的选项，才可以通过编译：</p>
+<p>但是在编译过程中遇到Plugin的错误：<br><img src="/.io//001.png" alt="特殊他"><br>只有使用跳过测试的选项，才可以通过编译：</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean install -Dmaven.test.skip=true</span><br></pre></td></tr></tbody></table></figure>
-<p><img src="002.png" alt="test-success"></p>
+<p><img src="/.io//002.png" alt="test-success"></p>
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
 <li>Maven下载Jar包中，比较困难的是trove4j-3.0.3.jar，最好到百度云盘中直接下载，本地Maven安装，具体可以参考：<a href="http://blog.sina.com.cn/s/blog_4a1bfe2c0100x149.html" target="_blank" rel="noopener">Maven install:install-file </a>；</li>
 <li>相关模型需要自己动手下载到相关路径下，也就是~/git/fnlp/models/这个路径下面；</li>
@@ -427,7 +427,7 @@
   </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共90.9k字</span>
+  <span class="post-count">博客全站共91.3k字</span>
 </div>
 
         

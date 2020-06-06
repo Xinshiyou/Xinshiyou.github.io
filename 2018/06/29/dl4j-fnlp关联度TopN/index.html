@@ -25,10 +25,10 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;最近在学习deeplearning4j，简称为dl4j。其中有许多示例，可以编译源码以后，运行runexample.sh来查看相关的结果。其中有分词的例子，所以想要学习一下分词，特别是中文分词的实例。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/dl4j-fnlp%E5%85%B3%E8%81%94%E5%BA%A6TopN/001.png">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/dl4j-fnlp%E5%85%B3%E8%81%94%E5%BA%A6TopN/002.png">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/dl4j-fnlp%E5%85%B3%E8%81%94%E5%BA%A6TopN/003.png">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/06/29/dl4j-fnlp%E5%85%B3%E8%81%94%E5%BA%A6TopN/004.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//001.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//002.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//003.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//004.png">
 <meta property="og:image" content="http://img.blog.csdn.net/20161128223852350">
 <meta property="article:published_time" content="2018-06-29T08:53:02.000Z">
 <meta property="article:modified_time" content="2020-06-01T04:11:12.468Z">
@@ -36,7 +36,7 @@
 <meta property="article:tag" content="调研">
 <meta property="article:tag" content="NLP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://xinshiyou.github.io/2018/06/29/dl4j-fnlp%E5%85%B3%E8%81%94%E5%BA%A6TopN/001.png">
+<meta name="twitter:image" content="https://xinshiyou.github.io/.io//001.png">
 
 <link rel="canonical" href="https://xinshiyou.github.io/2018/06/29/dl4j-fnlp%E5%85%B3%E8%81%94%E5%BA%A6TopN/">
 
@@ -235,13 +235,13 @@
 <li>Windows7系统：单台CPU机器；</li>
 <li>Maven3：主要用于FNLP的编译，获取fnlp-core的JAR包，当然也可以直接下载百度云盘上的JAR包。</li>
 </ol>
-<h2 id="dl4j自带自带实例"><a href="#dl4j自带自带实例" class="headerlink" title="dl4j自带自带实例"></a>dl4j自带自带实例</h2><p>  感兴趣的朋友，可以下载dl4j-examples的源码，自己动手编译源码运行一下。dl4j分词的实例，主要是【17】这一个例子：<br><img src="001.png" alt="dl4j-examples-17"></p>
-<p>  刚开始，可能需要下载数据，大约为80M左右，同时需要研究原代码，因为直接运行的话会报错：<br><img src="002.png" alt="dl4j-error"><br>版主写此文时，可以在网上找到该缺失文件，地址为：<a href="http://pan.baidu.com/s/1kTCQqft" target="_blank" rel="noopener"> GoogleNews-vectors-negative300</a>。</p>
+<h2 id="dl4j自带自带实例"><a href="#dl4j自带自带实例" class="headerlink" title="dl4j自带自带实例"></a>dl4j自带自带实例</h2><p>  感兴趣的朋友，可以下载dl4j-examples的源码，自己动手编译源码运行一下。dl4j分词的实例，主要是【17】这一个例子：<br><img src="/.io//001.png" alt="dl4j-examples-17"></p>
+<p>  刚开始，可能需要下载数据，大约为80M左右，同时需要研究原代码，因为直接运行的话会报错：<br><img src="/.io//002.png" alt="dl4j-error"><br>版主写此文时，可以在网上找到该缺失文件，地址为：<a href="http://pan.baidu.com/s/1kTCQqft" target="_blank" rel="noopener"> GoogleNews-vectors-negative300</a>。</p>
 <h2 id="中文分词学习"><a href="#中文分词学习" class="headerlink" title="中文分词学习"></a>中文分词学习</h2><p>  参考引文的代码，可以完成编译。值得注意的是，版主在编译的时候遇到几个问题：</p>
 <ol>
 <li>直接下载【天龙八部】，用Eclipse直接打开，发现时乱码。将文本的格式设置为UTF-8无BOM以后，可以正常显示；</li>
 <li>使用MAVEN下载FNLP-CORE时，发现速度非常慢。可以直接到FNLP的百度云盘下载相关JAR包，或自行编译FNLP源码得到JAR包，然后再本地使用<strong>mvn install:install-fiile</strong>安装到本地库中；</li>
-<li>关于代码运行的顺序问题：首先运行<em>processFile</em>的代码，这样可以通过tlbb.txt生成分词文件tlbb_t.txt；然后通过<em>ZhWord2Vector</em>来获得结果。<br>为了后来学习者减少雷区，版主将Eclipse工程结构送上：<br><img src="003.png" alt="pp"><br><img src="004.png" alt="qq"><br>版主的结构与原文类似，但有一些差异，各种差异读者可自行体会_^_。</li>
+<li>关于代码运行的顺序问题：首先运行<em>processFile</em>的代码，这样可以通过tlbb.txt生成分词文件tlbb_t.txt；然后通过<em>ZhWord2Vector</em>来获得结果。<br>为了后来学习者减少雷区，版主将Eclipse工程结构送上：<br><img src="/.io//003.png" alt="pp"><br><img src="/.io//004.png" alt="qq"><br>版主的结构与原文类似，但有一些差异，各种差异读者可自行体会_^_。</li>
 </ol>
 <p>分词的结果，与参考文中的结果也略有差异，如果有知晓原因的，请告诉版主：<br><img src="http://img.blog.csdn.net/20161128223852350" alt="ll"></p>
 <p>版主使用的训练参数：</p>
@@ -439,7 +439,7 @@
   </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共90.9k字</span>
+  <span class="post-count">博客全站共91.3k字</span>
 </div>
 
         

@@ -25,15 +25,15 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="《Netty权威指南》读书笔记">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/07/09/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/001.png">
-<meta property="og:image" content="https://xinshiyou.github.io/2018/07/09/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/002.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//001.png">
+<meta property="og:image" content="https://xinshiyou.github.io/.io//002.png">
 <meta property="article:published_time" content="2018-07-09T11:38:49.000Z">
 <meta property="article:modified_time" content="2020-06-01T05:22:54.802Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="Netty">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://xinshiyou.github.io/2018/07/09/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/001.png">
+<meta name="twitter:image" content="https://xinshiyou.github.io/.io//001.png">
 
 <link rel="canonical" href="https://xinshiyou.github.io/2018/07/09/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
 
@@ -479,7 +479,7 @@
 <h3 id="Netty-Http-XML协议栈开发"><a href="#Netty-Http-XML协议栈开发" class="headerlink" title="Netty Http+XML协议栈开发"></a>Netty Http+XML协议栈开发</h3><p>  由于Http协议的通用性，异构系统间的通讯交互采用Http协议，通过Http协议承载业务数据进行消息交互。例如流行的Http+XML，或RestFUL+JSON。</p>
 <p>  在java领域，最常用的Http协议栈就是基于Serverlet规范的Tomcat等Web容器。由于Google等大佬的强力推荐，Jetty等轻量级Web容器也得到了广泛的应用。但许多场景下，基于Http的应用都是后台应用，Http仅仅是承载数据交换的一个通道，是一个载体而不是Web容器。这种场景下，一般不需要Tomcat这种重量型的Web容器。</p>
 <p>  另外网络安全日益严峻的今天，重量级的Web容器由于功能繁琐，会存在很多安全漏洞，典型的如Tomcat。这意味着需要为Wb容器做很多安全加固工作去修补这些漏洞，然而开发中并没有用到这些功能，这就带来了并发和维护成本。在这种场景下，选择一个更加轻量级的http协议栈是个更好的选择。</p>
-<p><img src="./Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/001.png" alt="Http+XML协议栈开发"></p>
+<p><img src="/.io//001.png" alt="Http+XML协议栈开发"></p>
 <p>Netty Http+XML重点代码</p>
 <figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line"></span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-decoder"</span>,<span class="keyword">new</span> HttpResponseDecoder());</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-aggregator"</span>,<span class="keyword">new</span> HttpObjectAgregator(<span class="number">65536</span>));</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"xml-decoder"</span>,<span class="keyword">new</span> HttpXMLResponseDecoder(Order<span class="class">.<span class="keyword">class</span>,<span class="title">true</span>))</span>;</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-encoder"</span>,<span class="keyword">new</span> HttpRequestEncoder());</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"xml-encoder"</span>,<span class="keyword">new</span> HttpXMLRequestEncoder());</span><br><span class="line"></span><br><span class="line">    ch.pipleline().addLast(<span class="string">"fileServerHandler"</span>,<span class="keyword">new</span> HttpXMLHandler());</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 
@@ -529,7 +529,7 @@
 <li>UDP对接受到的数据报不发送确认信号，发送端不知道数据是否被正确接受，也不会重发数据</li>
 <li>UDP发送数据比TCP快，系统开销少：UDP简单、灵活。</li>
 </ul>
-<h3 id="UDP服务端开发"><a href="#UDP服务端开发" class="headerlink" title="UDP服务端开发"></a>UDP服务端开发</h3><p><img src="./Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/002.png" alt="UDP开发流程"></p>
+<h3 id="UDP服务端开发"><a href="#UDP服务端开发" class="headerlink" title="UDP服务端开发"></a>UDP服务端开发</h3><p><img src="/.io//002.png" alt="UDP开发流程"></p>
 <h3 id="UDP客户端开发"><a href="#UDP客户端开发" class="headerlink" title="UDP客户端开发"></a>UDP客户端开发</h3><p>  总体而言UDP开发相对简单，客户端开发可参考服务器端开发代码。</p>
 <h3 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h3><p>  由于UDP相比于TCP的应用领域窄一些，所以本章不做详细论述。</p>
 <h2 id="文件传输"><a href="#文件传输" class="headerlink" title="文件传输"></a>文件传输</h2><p>  文件是最常见的数据源之一，在程序中经常需要将数据存储到文件中。在NIO的类库之前，Java所有的文件操作分为两类</p>
@@ -827,7 +827,7 @@
   </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共90.9k字</span>
+  <span class="post-count">博客全站共91.3k字</span>
 </div>
 
         
