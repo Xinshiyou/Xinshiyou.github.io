@@ -155,6 +155,53 @@
     
     
     <div class="col-12 col-md-12 mx-auto index-info">
+      <a class="index-header" href="/2018/08/04/Hive-JDBC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">Hive JDBC任务执行流程</a>
+
+      <a href="/2018/08/04/Hive-JDBC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" class="index-excerpt">
+        
+        
+          
+        
+        <div>  Hive提供了多种访问方式，其中JDBC是一种。通常通过JDBC访问，可以规避用户对HDFS、Metastore的直接访问。本文研究研究一下HiveJDBC执行任务的流程。
+JDBC执行流程
+  主要流程分为三条线：
+
+执行任务，无返回 执行完成，获取执行结果[boolean/int]，直接结束
+执行任务，返回数据 执行完成，通过接口获取数据，用户执行其</div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>&nbsp;2018-08-04
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
+            
+              <a href="/tags/Hive/">Hive</a>
+            
+          </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <div class="col-12 col-md-12 mx-auto index-info">
       <a class="index-header" href="/2018/08/04/Hive%E6%8F%90%E4%BA%A4%E4%BB%BB%E5%8A%A1%E6%B5%81%E7%A8%8B/">Hive提交任务流程</a>
 
       <a href="/2018/08/04/Hive%E6%8F%90%E4%BA%A4%E4%BB%BB%E5%8A%A1%E6%B5%81%E7%A8%8B/" class="index-excerpt">
@@ -163,6 +210,7 @@
           
         
         <div>
+
 
 1. 环境描述
 2. 初识Thrift
@@ -184,7 +232,7 @@
 
 
 4. HiveServer2的优缺点
-4</div>
+</div>
       </a>
 
       <div class="index-btm post-metas">
@@ -319,7 +367,8 @@
         
           
         
-        <div>Filter  POM中可以配置一些properties，这些属性一般而言实在各种pom中使用，但也可以在一些配置文件中使用，例如### pom文件配置
+        <div>Filter  POM中可以配置一些properties，这些属性一般而言实在各种pom中使用，但也可以在一些配置文件中使用，例如
+### pom文件配置
 
 	com.mysql.jdbc.Driver
 	jdbc:mysql://localhost:3306/database?autoReconnect=true
@@ -330,7 +379,7 @@
 
 
 	
-	</div>
+</div>
       </a>
 
       <div class="index-btm post-metas">
@@ -566,50 +615,6 @@ Hive CLI/Hive Beeline/Hive JDBC断开连接之后，运行在Yarn上的任务是
               <a href="/tags/%E9%83%A8%E7%BD%B2/">部署</a>
             
               <a href="/tags/Chrome/">Chrome</a>
-            
-          </div>
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <div class="col-12 col-md-12 mx-auto index-info">
-      <a class="index-header" href="/2018/06/29/Java-API%E8%AF%BB%E5%8F%96CDH-Hadoop-Parquet%E6%96%87%E4%BB%B6/">Java-API读取CDH-Hadoop-Parquet文件</a>
-
-      <a href="/2018/06/29/Java-API%E8%AF%BB%E5%8F%96CDH-Hadoop-Parquet%E6%96%87%E4%BB%B6/" class="index-excerpt">
-        
-        
-          
-        
-        <div>  由于工作需要，基于目前公司集群存在较多的服务器且存在大量的内存，因此考虑直接将数据Load进内存进行数据处理，测试是否能够加快处理速度；鉴于以上目的，版主尝试使用Parquet的Java API读入Parquet文件。</div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>&nbsp;2018-06-29
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
-            
-              <a href="/tags/Java/">Java</a>
-            
-              <a href="/tags/Parquet/">Parquet</a>
             
           </div>
         

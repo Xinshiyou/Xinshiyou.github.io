@@ -155,6 +155,53 @@
     
     
     <div class="col-12 col-md-12 mx-auto index-info">
+      <a class="index-header" href="/2020/06/08/Python2%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C/">Python2日期时间操作</a>
+
+      <a href="/2020/06/08/Python2%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C/" class="index-excerpt">
+        
+        
+          
+        
+        <div>  在日常工作中，经常遇到一下日期时间格式转化。例如时间比较、时间格式化、从字符串转化为日期等操作，本文将日常要的这些操作进行汇总备忘。
+一、时间日期想要时间格式比较，需要转化为统一的数据类型，例如转化为统一的Date类型，或Time类型，或DateTime类型。
+1.1 Date操作#!/bin/python
+# -*- coding: UTF-8 -*-
+
+import t</div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>&nbsp;2020-06-08
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6/">软件</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/python/">python</a>
+            
+              <a href="/tags/%E5%AE%9E%E8%B7%B5/">实践</a>
+            
+          </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <div class="col-12 col-md-12 mx-auto index-info">
       <a class="index-header" href="/2020/06/07/Ozone%E8%B0%83%E7%A0%94/">Ozone调研</a>
 
       <a href="/2020/06/07/Ozone%E8%B0%83%E7%A0%94/" class="index-excerpt">
@@ -336,10 +383,11 @@ wget https://dl</div>
         
           
         
-        <div>1. 准备工作1.1. MySQL账号根据Canal官方说明，需要申请一个MySQL数据库的账号，该账号具有如下权限CREATE USER canal IDENTIFIED BY 'canal';  
+        <div>1. 准备工作1.1. MySQL账号根据Canal官方说明，需要申请一个MySQL数据库的账号，该账号具有如下权限
+CREATE USER canal IDENTIFIED BY 'canal';  
 -- 至少具有如下权限
 GRANT SELECT, SHOW VIEW, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'canal'@'%';
--</div>
+</div>
       </a>
 
       <div class="index-btm post-metas">
@@ -431,7 +479,8 @@ GRANT SELECT, SHOW VIEW, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'canal'
           
         
         <div>  在实际项目中，我们通常使用这样的方式：首先，下载ODBC的Jar到本地；然后，通过Maven安装在本地库中。这样在项目中就可以使用ODBC的Jar包了，而大部分的jar是可以通过Maven中直接引用的。这是为什么呢？
-项目报错  项目直接编译，报错如下Failed toFailed to execute goal on project sql2o-ora</div>
+项目报错  项目直接编译，报错如下
+Failed toFailed to execute goal on project sql2o-or</div>
       </a>
 
       <div class="index-btm post-metas">
@@ -476,7 +525,7 @@ GRANT SELECT, SHOW VIEW, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'canal'
           
         
         <div>  Hive是大数据体系下ETL、数据预处理、数仓等领域比较重要的组件，应用广泛。博主空闲时间研究一下Hive的数据类型。
-1. Hive数据类型组成  关于Hive的数据类型，官方文档展示的比较全面，关于数据类型的详细说明Hive数据类型，这里总结如下| 大类 | 类型 | 具体类型 || — | — | - || 基本类型| 数值型 |tinyint,s</div>
+1. Hive数据类型组成  关于Hive的数据类型，官方文档展示的比较全面，关于数据类型的详细说明Hive数据类型，这里总结如下| 大类 | 类型 | 具体类型 || – | – | - || 基本类型| 数值型 |tinyint,s</div>
       </a>
 
       <div class="index-btm post-metas">
@@ -545,53 +594,6 @@ GRANT SELECT, SHOW VIEW, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'canal'
               <a href="/tags/%E9%97%AE%E9%A2%98/">问题</a>
             
               <a href="/tags/Springboot/">Springboot</a>
-            
-          </div>
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <div class="col-12 col-md-12 mx-auto index-info">
-      <a class="index-header" href="/2018/08/04/Hive-JDBC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">Hive JDBC任务执行流程</a>
-
-      <a href="/2018/08/04/Hive-JDBC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" class="index-excerpt">
-        
-        
-          
-        
-        <div>  Hive提供了多种访问方式，其中JDBC是一种。通常通过JDBC访问，可以规避用户对HDFS、Metastore的直接访问。本文研究研究一下HiveJDBC执行任务的流程。
-JDBC执行流程
-  主要流程分为三条线：
-
-执行任务，无返回 执行完成，获取执行结果[boolean/int]，直接结束
-执行任务，返回数据 执行完成，通过接口获取数据，用户执行其</div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>&nbsp;2018-08-04
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
-            
-              <a href="/tags/Hive/">Hive</a>
             
           </div>
         

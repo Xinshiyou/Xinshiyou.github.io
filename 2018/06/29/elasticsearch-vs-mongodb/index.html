@@ -194,6 +194,7 @@
             <article class="markdown-body">
               <h2 id="原文翻译"><a href="#原文翻译" class="headerlink" title="原文翻译"></a>原文翻译</h2><p>  选择Elasticsearch还是选择MongoDB，该问题我已经被许多初学者、朋友或需要作出技术架构决策的开发者问及好多次了。那么应该选择MongoDB，还是选择ElasticSearch呢？因此，这里我简短的介绍一下MongoDB与Elasticsearch的不同之处，且言明在什么场景下那个作为首要选项。我假设读者已经了解了关于MongoDB/Elasticsearch的基本概念。</p>
 <a id="more"></a>
+
 <p>  假设两者都存储Key-Value数据对且允许查询数据对象中的内容。但两者来自不同的场景，且具有不同的目的。</p>
 <p>  MongoDB是一个通用性数据库，Elasticsearch是一个Lucene支持的分布式文本检索引擎。针对大型数据集的索引与检索功能，Elasticsearch性能非常优越。当你有关于数据的附加属性且你能够知道具体需要查询的记录时，通常可以使用Elasticsearch。因为Elasticsearch针对这一功能进行特殊优化过的，所以它在其他方面的性能相对弱一些。例如相对其他No-SQL数据库而言，ELasticsearch在增加新数据时，速度相对较慢。在Elasticsearch索引中语法过程是在客户端中定义的，所以实际索引过程不能像实际存储一样得到优化。</p>
 <p>  实践中，Elasticsearch通常与No-SQL或SQL数据库配合使用，其中数据库作为持久化存储组件，而Elasticsearch基于数据内容做更加复杂的搜索查询。例如我们在Mebelkart时，曾经使用Elasticsearch基于MySQL做全产品、零售商、产品浏览、类别目录等的索引，我们从Elasticsearch索引中做读取(复杂查询)、全文检索等操作。如果你需要建立一个带有复杂过滤或搜索操作的应用，Elasticsearch/Solr是目前唯一最佳的选择。</p>

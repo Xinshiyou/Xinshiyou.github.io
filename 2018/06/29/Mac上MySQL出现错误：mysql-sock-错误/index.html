@@ -194,15 +194,19 @@
             <article class="markdown-body">
               <p>  刚开始安装MySQL时，是直接使用brew安装的。安装之后直接能够使用，无需配置相关参数。使用一段时间之后，由于导出数据的需要，所以进行了相关配置，但出现了/tmp/mysql.sock error的问题。这里分享我解决此问题的方案。</p>
 <a id="more"></a>
+
 <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ol>
 <li>MAC OS；</li>
 <li>MySQL V5.7;</li>
 </ol>
-<h2 id="修改配置信息"><a href="#修改配置信息" class="headerlink" title="修改配置信息"></a>修改配置信息</h2><p>  主要是修改/private/etc/my.cnf文件，如果不存在，将安装文件下面support-files/my-default.conf，重命名并复制到该路径下。<br></p><pre class=" language-hljs abnf"><code class="language-hljs abnf">［client］
+<h2 id="修改配置信息"><a href="#修改配置信息" class="headerlink" title="修改配置信息"></a>修改配置信息</h2><p>  主要是修改/private/etc/my.cnf文件，如果不存在，将安装文件下面support-files/my-default.conf，重命名并复制到该路径下。</p>
+<pre class=" language-hljs abnf"><code class="language-hljs abnf">［client］
 <span class="hljs-attribute">sock</span>=You path
 
 [mysql]
-<span class="hljs-attribute">sock</span>= You path</code></pre><br>其中两个路径必须相同。然后需要重新启动mysql即可：<br><pre class=" language-hljs lsl"><code class="language-hljs lsl"># [mysql.sh]
+<span class="hljs-attribute">sock</span>= You path</code></pre>
+<p>其中两个路径必须相同。然后需要重新启动mysql即可：</p>
+<pre class=" language-hljs lsl"><code class="language-hljs lsl"># [mysql.sh]
   <span class="hljs-number">1</span> #!/bin/bash
   <span class="hljs-number">2</span> 
   <span class="hljs-number">3</span> 
@@ -222,8 +226,11 @@
  <span class="hljs-number">17</span>     echo <span class="hljs-string">"mysql restart..."</span>
  <span class="hljs-number">18</span> else
  <span class="hljs-number">19</span>     echo <span class="hljs-string">"please input start|stop|restart "</span>
- <span class="hljs-number">20</span> fi</code></pre><br>启动命令：<br><pre class=" language-hljs vim">sudo ./mysql.<span class="hljs-keyword">sh</span> <span class="hljs-keyword"><code class="language-hljs vim">sudo ./mysql.<span class="hljs-keyword">sh</span> <span class="hljs-keyword">stop</span>
-sudo ./mysql.<span class="hljs-keyword">sh</span> start</code></span></pre><p></p>
+ <span class="hljs-number">20</span> fi</code></pre>
+<p>启动命令：</p>
+<pre class=" language-hljs vim">sudo ./mysql.<span class="hljs-keyword">sh</span> <span class="hljs-keyword"><code class="language-hljs vim">sudo ./mysql.<span class="hljs-keyword">sh</span> <span class="hljs-keyword">stop</span>
+sudo ./mysql.<span class="hljs-keyword">sh</span> start</code></span></pre>
+
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><p>  如果出现其他的错误，请删除/usr/local/var/mysql下面的.err、.pid文件，然后就可以重新启动。</p>
 
             </article>

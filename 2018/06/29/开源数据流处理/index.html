@@ -194,9 +194,10 @@
             <article class="markdown-body">
               <p>  随着公司规模增长，他们的工作流更加复杂，包含更多子处理过程以及带有复杂的依赖关系，这将导致更多监控、问题以及运维工作。如果没有一个清晰的数据血缘关系，可能会引起引用链问题和操作元数据丢失。这就是为什么DAGs、数据流和工作流管理器等产生的原因。</p>
 <a id="more"></a>
+
 <p>  复杂的工作流可以通过DAGs来展现。DAGs就是信息沿着指定的方向在不通节点之间传递的一张图，但信息在图中流传不会回到原点。构建DAGs过程的就是数据流，或从一个进程作为输入并输出作为下一个进程输入的序列化进程。</p>
 <p>  构建这些管道流式复杂的。幸运的是，目前存在几款开源的流管理器来辅助处理这些问题，并允许开发者将注意力聚焦在单独的任务和任务依赖上来。为了帮助需求者从许多工作流管理器中选择合适的，下面我们进行了一些相关的讨论。</p>
-<h2 id="Luigi"><a href="#Luigi" class="headerlink" title="Luigi"></a>Luigi</h2><p>  Luigi是Spotify与2011开发的一个Python包，主要是用来构建—像产生推荐和排行榜任务—这样的需要多任务复杂管道。目前组件的主要使用者，包括 Foursquare, Stripe, the Wall Street Journal, Groupon，以及其他主要商业公司。它内嵌Hadoop支持，但不像其他类似产品OOZIE和Azkaban，它们都是为了支持Hadoop而开发的，Luigi的理念就是能够使任务事情尽可能普适性。Luigi可以扩展到其他类型的任务，如Hive查询，使用Scala或Python开发的SparkJob等等。它是面向编码控制的，而不是基于GUI或声明式的，能够完美兼容Python中的所有包（包括依赖路径）。Luigi的界面支持搜索、过滤或监控每个任务的状态信息。用户也可以查看工作流的依赖是否完成，或还没有运行等状态。</p>
+<h2 id="Luigi"><a href="#Luigi" class="headerlink" title="Luigi"></a>Luigi</h2><p>  Luigi是Spotify与2011开发的一个Python包，主要是用来构建–像产生推荐和排行榜任务–这样的需要多任务复杂管道。目前组件的主要使用者，包括 Foursquare, Stripe, the Wall Street Journal, Groupon，以及其他主要商业公司。它内嵌Hadoop支持，但不像其他类似产品OOZIE和Azkaban，它们都是为了支持Hadoop而开发的，Luigi的理念就是能够使任务事情尽可能普适性。Luigi可以扩展到其他类型的任务，如Hive查询，使用Scala或Python开发的SparkJob等等。它是面向编码控制的，而不是基于GUI或声明式的，能够完美兼容Python中的所有包（包括依赖路径）。Luigi的界面支持搜索、过滤或监控每个任务的状态信息。用户也可以查看工作流的依赖是否完成，或还没有运行等状态。</p>
 <p><strong>特性：</strong></p>
 <ul>
 <li>允许有需要的任务并行运行</li>
@@ -204,7 +205,7 @@
 <li>支持在Hadoop\Hive\Pig等的基于Python的MR任务</li>
 <li>嵌入针对Hadoop分布式文件系统和本地文件系统的抽象文件系统，这样能够保证所有系统的原子性，防止任务崩困时数据缺失</li>
 </ul>
-<h2 id="Azkaban"><a href="#Azkaban" class="headerlink" title="Azkaban"></a>Azkaban</h2><p>  Azkaban是另外一款开源工作流管理器，它是由LinkedIn给Hadoop的实时批处理而开发的。不像Luigi，它是基于Java、调度是通过WEB浏览器来完成的。它主要包括AzkabanWebServer—主要作为UI界面和处理工程管理、授权、调度和监控，MySQL数据库作为元数据存储，以及AzkabanExecutorServer（以前WEB服务和executor服务器是合并在一起，但随着Azkaban的发展，它分裂为两部分来帮助用户滚动更新信息）。当前最新为Azkaban3.0版本，包括三个模式：单服务器的使用模式，两服务器的生产环境，以及分布式多执行节点模式。Azkaban设计之初就将易用性作为首要目标。例如，它包括非常易用、极其优秀展示操作功能的UI界面。</p>
+<h2 id="Azkaban"><a href="#Azkaban" class="headerlink" title="Azkaban"></a>Azkaban</h2><p>  Azkaban是另外一款开源工作流管理器，它是由LinkedIn给Hadoop的实时批处理而开发的。不像Luigi，它是基于Java、调度是通过WEB浏览器来完成的。它主要包括AzkabanWebServer–主要作为UI界面和处理工程管理、授权、调度和监控，MySQL数据库作为元数据存储，以及AzkabanExecutorServer（以前WEB服务和executor服务器是合并在一起，但随着Azkaban的发展，它分裂为两部分来帮助用户滚动更新信息）。当前最新为Azkaban3.0版本，包括三个模式：单服务器的使用模式，两服务器的生产环境，以及分布式多执行节点模式。Azkaban设计之初就将易用性作为首要目标。例如，它包括非常易用、极其优秀展示操作功能的UI界面。</p>
 <p><strong>特点：</strong></p>
 <ul>
 <li>兼容任何Hadoop版本</li>
@@ -226,7 +227,7 @@
 <li>高可用</li>
 <li>多任务和协调者[coordinator]能够通过OOZIE Bundle打包和管理</li>
 </ul>
-<h2 id="Airflow"><a href="#Airflow" class="headerlink" title="Airflow"></a>Airflow</h2><p>  Airflow是Airbnb与2015年开发的工具，主要用来编辑、调度DAGs及监控工作流。它主要面向编程环境的基于编辑的工具，这方面与Luigi类似。它是基于Python的DAGs工作流编码的工具，能够保证尽量协调性与易于维护、版本控制与测试。它的主要架构包括源码控制的任务定义、命令行接口—用户可以测试、运行和描述DAGs的部分环节、查看依赖/进度/元数据和日志的WEB应用、元数据仓储、运行分布式任务实例的工作节点、调度进程—触发任务运行。</p>
+<h2 id="Airflow"><a href="#Airflow" class="headerlink" title="Airflow"></a>Airflow</h2><p>  Airflow是Airbnb与2015年开发的工具，主要用来编辑、调度DAGs及监控工作流。它主要面向编程环境的基于编辑的工具，这方面与Luigi类似。它是基于Python的DAGs工作流编码的工具，能够保证尽量协调性与易于维护、版本控制与测试。它的主要架构包括源码控制的任务定义、命令行接口–用户可以测试、运行和描述DAGs的部分环节、查看依赖/进度/元数据和日志的WEB应用、元数据仓储、运行分布式任务实例的工作节点、调度进程–触发任务运行。</p>
 <p><strong>特点：</strong></p>
 <ul>
 <li>丰富的CLI和UI接口：允许用户查看依赖、进度、日志、相关代码</li>
