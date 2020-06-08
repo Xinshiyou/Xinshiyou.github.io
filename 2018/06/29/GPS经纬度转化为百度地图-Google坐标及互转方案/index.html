@@ -1,471 +1,644 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="xinshiyou">
+  <meta name="keywords" content="">
+  <title>GPS经纬度转化为百度地图/Google坐标及互转方案 - 星空捞月：找寻心中的安宁</title>
 
-
-
-
-
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xinshiyou.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="&amp;emsp;&amp;emsp;转载自：WGS84，GCJ02， BD09坐标转换">
-<meta property="og:type" content="article">
-<meta property="og:title" content="GPS经纬度转化为百度地图/Google坐标及互转方案">
-<meta property="og:url" content="https://xinshiyou.github.io/2018/06/29/GPS%E7%BB%8F%E7%BA%AC%E5%BA%A6%E8%BD%AC%E5%8C%96%E4%B8%BA%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BE-Google%E5%9D%90%E6%A0%87%E5%8F%8A%E4%BA%92%E8%BD%AC%E6%96%B9%E6%A1%88/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;转载自：WGS84，GCJ02， BD09坐标转换">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2018-06-29T08:52:50.000Z">
-<meta property="article:modified_time" content="2020-06-01T05:26:53.705Z">
-<meta property="article:author" content="John Doe">
-<meta property="article:tag" content="调研">
-<meta property="article:tag" content="GPS">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="https://xinshiyou.github.io/2018/06/29/GPS%E7%BB%8F%E7%BA%AC%E5%BA%A6%E8%BD%AC%E5%8C%96%E4%B8%BA%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BE-Google%E5%9D%90%E6%A0%87%E5%8F%8A%E4%BA%92%E8%BD%AC%E6%96%B9%E6%A1%88/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
-
-  <title>GPS经纬度转化为百度地图/Google坐标及互转方案 | Hexo</title>
   
 
 
+  
+  
+
+  
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
 
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
 
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');</script></head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星空捞月：找寻心中的安宁" type="application/atom+xml">
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css');loadCss('https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css');loadCss('https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css');loadCss('//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css');loadCss('//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css');loadCss('https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css"><link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"></noscript></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">&nbsp;<strong>星空捞月：找寻心中的安宁</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
 </nav>
 
+    <div class="view intro-2" id="background" parallax="true" style="background: url('/img/top.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
 
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2018-06-29 16:52">
+      2018年6月29日 下午
+    </time>
   </div>
 
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
+<div class="mt-1">
   
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.1k 字
+    </span>
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://xinshiyou.github.io/2018/06/29/GPS%E7%BB%8F%E7%BA%AC%E5%BA%A6%E8%BD%AC%E5%8C%96%E4%B8%BA%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BE-Google%E5%9D%90%E6%A0%87%E5%8F%8A%E4%BA%92%E8%BD%AC%E6%96%B9%E6%A1%88/">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          GPS经纬度转化为百度地图/Google坐标及互转方案
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-06-29 16:52:50" itemprop="dateCreated datePublished" datetime="2018-06-29T16:52:50+08:00">2018-06-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-06-01 13:26:53" itemprop="dateModified" datetime="2020-06-01T13:26:53+08:00">2020-06-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
+  
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
       
-        <p>  转载自：<a href="https://blog.csdn.net/ma969070578/article/details/41013547" target="_blank" rel="noopener">WGS84，GCJ02， BD09坐标转换</a></p>
+      
+      19
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <p>  转载自：<a href="https://blog.csdn.net/ma969070578/article/details/41013547" target="_blank" rel="noopener">WGS84，GCJ02， BD09坐标转换</a></p>
 <a id="more"></a>
 
-<h2 id="GPS类"><a href="#GPS类" class="headerlink" title="GPS类"></a>GPS类</h2><figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public class Gps {</span><br><span class="line"> </span><br><span class="line">	private double wgLat;</span><br><span class="line">	private double wgLon;</span><br><span class="line"> </span><br><span class="line">	public Gps(double wgLat, double wgLon) {</span><br><span class="line">		setWgLat(wgLat);</span><br><span class="line">		setWgLon(wgLon);</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	public double getWgLat() {</span><br><span class="line">		return wgLat;</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	public void setWgLat(double wgLat) {</span><br><span class="line">		this.wgLat = wgLat;</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	public double getWgLon() {</span><br><span class="line">		return wgLon;</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	public void setWgLon(double wgLon) {</span><br><span class="line">		this.wgLon = wgLon;</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	@Override</span><br><span class="line">	public String toString() {</span><br><span class="line">		return wgLat + "," + wgLon;</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="GPS类"><a href="#GPS类" class="headerlink" title="GPS类"></a>GPS类</h2><pre class=" language-hljs arduino"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs arduino"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Gps</span> {</span>
+ 
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> wgLat;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> wgLon;
+ 
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Gps</span><span class="hljs-params">(<span class="hljs-keyword">double</span> wgLat, <span class="hljs-keyword">double</span> wgLon)</span> </span>{
+		setWgLat(wgLat);
+		setWgLon(wgLon);
+	}
+ 
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getWgLat</span><span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">return</span> wgLat;
+	}
+ 
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setWgLat</span><span class="hljs-params">(<span class="hljs-keyword">double</span> wgLat)</span> </span>{
+		<span class="hljs-keyword">this</span>.wgLat = wgLat;
+	}
+ 
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getWgLon</span><span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">return</span> wgLon;
+	}
+ 
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setWgLon</span><span class="hljs-params">(<span class="hljs-keyword">double</span> wgLon)</span> </span>{
+		<span class="hljs-keyword">this</span>.wgLon = wgLon;
+	}
+ 
+	@Override
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">String</span> <span class="hljs-title">toString</span><span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">return</span> wgLat + <span class="hljs-string">","</span> + wgLon;
+	}
+}</code></span></span></pre>
 
-<h2 id="转化Util"><a href="#转化Util" class="headerlink" title="转化Util"></a>转化Util</h2><figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 各地图API坐标系统比较与转换;</span><br><span class="line"> * WGS84坐标系：即地球坐标系，国际上通用的坐标系。设备一般包含GPS芯片或者北斗芯片获取的经纬度为WGS84地理坐标系,</span><br><span class="line"> * 谷歌地图采用的是WGS84地理坐标系（中国范围除外）;</span><br><span class="line"> * GCJ02坐标系：即火星坐标系，是由中国国家测绘局制订的地理信息系统的坐标系统。由WGS84坐标系经加密后的坐标系。</span><br><span class="line"> * 谷歌中国地图和搜搜中国地图采用的是GCJ02地理坐标系; BD09坐标系：即百度坐标系，GCJ02坐标系经加密后的坐标系;</span><br><span class="line"> * 搜狗坐标系、图吧坐标系等，估计也是在GCJ02基础上加密而成的。 chenhua</span><br><span class="line"> */</span><br><span class="line">public class PositionUtil {</span><br><span class="line">	</span><br><span class="line">	public static final String BAIDU_LBS_TYPE = "bd09ll";</span><br><span class="line">	</span><br><span class="line">	public static double pi = 3.1415926535897932384626;</span><br><span class="line">	public static double a = 6378245.0;</span><br><span class="line">	public static double ee = 0.00669342162296594323;</span><br><span class="line"> </span><br><span class="line">	/**</span><br><span class="line">	 * 84 to 火星坐标系 (GCJ-02) World Geodetic System ==&gt; Mars Geodetic System</span><br><span class="line">	 * </span><br><span class="line">	 * @param lat</span><br><span class="line">	 * @param lon</span><br><span class="line">	 * @return</span><br><span class="line">	 */</span><br><span class="line">	public static Gps gps84_To_Gcj02(double lat, double lon) {</span><br><span class="line">		if (outOfChina(lat, lon)) {</span><br><span class="line">			return null;</span><br><span class="line">		}</span><br><span class="line">		double dLat = transformLat(lon - 105.0, lat - 35.0);</span><br><span class="line">		double dLon = transformLon(lon - 105.0, lat - 35.0);</span><br><span class="line">		double radLat = lat / 180.0 * pi;</span><br><span class="line">		double magic = Math.sin(radLat);</span><br><span class="line">		magic = 1 - ee * magic * magic;</span><br><span class="line">		double sqrtMagic = Math.sqrt(magic);</span><br><span class="line">		dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * pi);</span><br><span class="line">		dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * pi);</span><br><span class="line">		double mgLat = lat + dLat;</span><br><span class="line">		double mgLon = lon + dLon;</span><br><span class="line">		return new Gps(mgLat, mgLon);</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	/**</span><br><span class="line">	 * * 火星坐标系 (GCJ-02) to 84 * * @param lon * @param lat * @return</span><br><span class="line">	 * */</span><br><span class="line">	public static Gps gcj_To_Gps84(double lat, double lon) {</span><br><span class="line">		Gps gps = transform(lat, lon);</span><br><span class="line">		double lontitude = lon * 2 - gps.getWgLon();</span><br><span class="line">		double latitude = lat * 2 - gps.getWgLat();</span><br><span class="line">		return new Gps(latitude, lontitude);</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	/**</span><br><span class="line">	 * 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换算法 将 GCJ-02 坐标转换成 BD-09 坐标</span><br><span class="line">	 * </span><br><span class="line">	 * @param gg_lat</span><br><span class="line">	 * @param gg_lon</span><br><span class="line">	 */</span><br><span class="line">	public static Gps gcj02_To_Bd09(double gg_lat, double gg_lon) {</span><br><span class="line">		double x = gg_lon, y = gg_lat;</span><br><span class="line">		double z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * pi);</span><br><span class="line">		double theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * pi);</span><br><span class="line">		double bd_lon = z * Math.cos(theta) + 0.0065;</span><br><span class="line">		double bd_lat = z * Math.sin(theta) + 0.006;</span><br><span class="line">		return new Gps(bd_lat, bd_lon);</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	/**</span><br><span class="line">	 * * 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换算法 * * 将 BD-09 坐标转换成GCJ-02 坐标 * * @param</span><br><span class="line">	 * bd_lat * @param bd_lon * @return</span><br><span class="line">	 */</span><br><span class="line">	public static Gps bd09_To_Gcj02(double bd_lat, double bd_lon) {</span><br><span class="line">		double x = bd_lon - 0.0065, y = bd_lat - 0.006;</span><br><span class="line">		double z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * pi);</span><br><span class="line">		double theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * pi);</span><br><span class="line">		double gg_lon = z * Math.cos(theta);</span><br><span class="line">		double gg_lat = z * Math.sin(theta);</span><br><span class="line">		return new Gps(gg_lat, gg_lon);</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	/**</span><br><span class="line">	 * (BD-09)--&gt;84</span><br><span class="line">	 * @param bd_lat</span><br><span class="line">	 * @param bd_lon</span><br><span class="line">	 * @return</span><br><span class="line">	 */</span><br><span class="line">	public static Gps bd09_To_Gps84(double bd_lat, double bd_lon) {</span><br><span class="line"> </span><br><span class="line">		Gps gcj02 = PositionUtil.bd09_To_Gcj02(bd_lat, bd_lon);</span><br><span class="line">		Gps map84 = PositionUtil.gcj_To_Gps84(gcj02.getWgLat(),</span><br><span class="line">				gcj02.getWgLon());</span><br><span class="line">		return map84;</span><br><span class="line"> </span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	public static boolean outOfChina(double lat, double lon) {</span><br><span class="line">		if (lon &lt; 72.004 || lon &gt; 137.8347)</span><br><span class="line">			return true;</span><br><span class="line">		if (lat &lt; 0.8293 || lat &gt; 55.8271)</span><br><span class="line">			return true;</span><br><span class="line">		return false;</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	public static Gps transform(double lat, double lon) {</span><br><span class="line">		if (outOfChina(lat, lon)) {</span><br><span class="line">			return new Gps(lat, lon);</span><br><span class="line">		}</span><br><span class="line">		double dLat = transformLat(lon - 105.0, lat - 35.0);</span><br><span class="line">		double dLon = transformLon(lon - 105.0, lat - 35.0);</span><br><span class="line">		double radLat = lat / 180.0 * pi;</span><br><span class="line">		double magic = Math.sin(radLat);</span><br><span class="line">		magic = 1 - ee * magic * magic;</span><br><span class="line">		double sqrtMagic = Math.sqrt(magic);</span><br><span class="line">		dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * pi);</span><br><span class="line">		dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * pi);</span><br><span class="line">		double mgLat = lat + dLat;</span><br><span class="line">		double mgLon = lon + dLon;</span><br><span class="line">		return new Gps(mgLat, mgLon);</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	public static double transformLat(double x, double y) {</span><br><span class="line">		double ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y</span><br><span class="line">				+ 0.2 * Math.sqrt(Math.abs(x));</span><br><span class="line">		ret += (20.0 * Math.sin(6.0 * x * pi) + 20.0 * Math.sin(2.0 * x * pi)) * 2.0 / 3.0;</span><br><span class="line">		ret += (20.0 * Math.sin(y * pi) + 40.0 * Math.sin(y / 3.0 * pi)) * 2.0 / 3.0;</span><br><span class="line">		ret += (160.0 * Math.sin(y / 12.0 * pi) + 320 * Math.sin(y * pi / 30.0)) * 2.0 / 3.0;</span><br><span class="line">		return ret;</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	public static double transformLon(double x, double y) {</span><br><span class="line">		double ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1</span><br><span class="line">				* Math.sqrt(Math.abs(x));</span><br><span class="line">		ret += (20.0 * Math.sin(6.0 * x * pi) + 20.0 * Math.sin(2.0 * x * pi)) * 2.0 / 3.0;</span><br><span class="line">		ret += (20.0 * Math.sin(x * pi) + 40.0 * Math.sin(x / 3.0 * pi)) * 2.0 / 3.0;</span><br><span class="line">		ret += (150.0 * Math.sin(x / 12.0 * pi) + 300.0 * Math.sin(x / 30.0</span><br><span class="line">				* pi)) * 2.0 / 3.0;</span><br><span class="line">		return ret;</span><br><span class="line">	}</span><br><span class="line"> </span><br><span class="line">	public static void main(String[] args) {</span><br><span class="line"> </span><br><span class="line">		// 北斗芯片获取的经纬度为WGS84地理坐标 31.426896,119.496145</span><br><span class="line">		Gps gps = new Gps(31.426896, 119.496145);</span><br><span class="line">		System.out.println("gps :" + gps);</span><br><span class="line">		Gps gcj = gps84_To_Gcj02(gps.getWgLat(), gps.getWgLon());</span><br><span class="line">		System.out.println("gcj :" + gcj);</span><br><span class="line">		Gps star = gcj_To_Gps84(gcj.getWgLat(), gcj.getWgLon());</span><br><span class="line">		System.out.println("star:" + star);</span><br><span class="line">		Gps bd = gcj02_To_Bd09(gcj.getWgLat(), gcj.getWgLon());</span><br><span class="line">		System.out.println("bd  :" + bd);</span><br><span class="line">		Gps gcj2 = bd09_To_Gcj02(bd.getWgLat(), bd.getWgLon());</span><br><span class="line">		System.out.println("gcj :" + gcj2);</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="转化Util"><a href="#转化Util" class="headerlink" title="转化Util"></a>转化Util</h2><pre class=" language-hljs angelscript"><span class="hljs-comment"><code class="language-hljs angelscript"><span class="hljs-comment">/**</span>
+<span class="hljs-comment"> * 各地图API坐标系统比较与转换;</span>
+<span class="hljs-comment"> * WGS84坐标系：即地球坐标系，国际上通用的坐标系。设备一般包含GPS芯片或者北斗芯片获取的经纬度为WGS84地理坐标系,</span>
+<span class="hljs-comment"> * 谷歌地图采用的是WGS84地理坐标系（中国范围除外）;</span>
+<span class="hljs-comment"> * GCJ02坐标系：即火星坐标系，是由中国国家测绘局制订的地理信息系统的坐标系统。由WGS84坐标系经加密后的坐标系。</span>
+<span class="hljs-comment"> * 谷歌中国地图和搜搜中国地图采用的是GCJ02地理坐标系; BD09坐标系：即百度坐标系，GCJ02坐标系经加密后的坐标系;</span>
+<span class="hljs-comment"> * 搜狗坐标系、图吧坐标系等，估计也是在GCJ02基础上加密而成的。 chenhua</span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-symbol">PositionUtil</span> {
+	
+	<span class="hljs-keyword">public</span> static <span class="hljs-keyword">final</span> String BAIDU_LBS_TYPE = <span class="hljs-string">"bd09ll"</span>;
+	
+	<span class="hljs-keyword">public</span> static <span class="hljs-built_in">double</span> pi = <span class="hljs-number">3.1415926535897932384626</span>;
+	<span class="hljs-keyword">public</span> static <span class="hljs-built_in">double</span> a = <span class="hljs-number">6378245.0</span>;
+	<span class="hljs-keyword">public</span> static <span class="hljs-built_in">double</span> ee = <span class="hljs-number">0.00669342162296594323</span>;
+ 
+	<span class="hljs-comment">/**</span>
+<span class="hljs-comment">	 * 84 to 火星坐标系 (GCJ-02) World Geodetic System ==&gt; Mars Geodetic System</span>
+<span class="hljs-comment">	 * </span>
+<span class="hljs-comment">	 * @param lat</span>
+<span class="hljs-comment">	 * @param lon</span>
+<span class="hljs-comment">	 * @return</span>
+<span class="hljs-comment">	 */</span>
+	<span class="hljs-keyword">public</span> static Gps gps84_To_Gcj02(<span class="hljs-built_in">double</span> lat, <span class="hljs-built_in">double</span> lon) {
+		<span class="hljs-keyword">if</span> (outOfChina(lat, lon)) {
+			<span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+		}
+		<span class="hljs-built_in">double</span> dLat = transformLat(lon - <span class="hljs-number">105.0</span>, lat - <span class="hljs-number">35.0</span>);
+		<span class="hljs-built_in">double</span> dLon = transformLon(lon - <span class="hljs-number">105.0</span>, lat - <span class="hljs-number">35.0</span>);
+		<span class="hljs-built_in">double</span> radLat = lat / <span class="hljs-number">180.0</span> * pi;
+		<span class="hljs-built_in">double</span> magic = Math.sin(radLat);
+		magic = <span class="hljs-number">1</span> - ee * magic * magic;
+		<span class="hljs-built_in">double</span> sqrtMagic = Math.sqrt(magic);
+		dLat = (dLat * <span class="hljs-number">180.0</span>) / ((a * (<span class="hljs-number">1</span> - ee)) / (magic * sqrtMagic) * pi);
+		dLon = (dLon * <span class="hljs-number">180.0</span>) / (a / sqrtMagic * Math.cos(radLat) * pi);
+		<span class="hljs-built_in">double</span> mgLat = lat + dLat;
+		<span class="hljs-built_in">double</span> mgLon = lon + dLon;
+		<span class="hljs-keyword">return</span> new Gps(mgLat, mgLon);
+	}
+ 
+	<span class="hljs-comment">/**</span>
+<span class="hljs-comment">	 * * 火星坐标系 (GCJ-02) to 84 * * @param lon * @param lat * @return</span>
+<span class="hljs-comment">	 * */</span>
+	<span class="hljs-keyword">public</span> static Gps gcj_To_Gps84(<span class="hljs-built_in">double</span> lat, <span class="hljs-built_in">double</span> lon) {
+		Gps gps = transform(lat, lon);
+		<span class="hljs-built_in">double</span> lontitude = lon * <span class="hljs-number">2</span> - gps.getWgLon();
+		<span class="hljs-built_in">double</span> latitude = lat * <span class="hljs-number">2</span> - gps.getWgLat();
+		<span class="hljs-keyword">return</span> new Gps(latitude, lontitude);
+	}
+ 
+	<span class="hljs-comment">/**</span>
+<span class="hljs-comment">	 * 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换算法 将 GCJ-02 坐标转换成 BD-09 坐标</span>
+<span class="hljs-comment">	 * </span>
+<span class="hljs-comment">	 * @param gg_lat</span>
+<span class="hljs-comment">	 * @param gg_lon</span>
+<span class="hljs-comment">	 */</span>
+	<span class="hljs-keyword">public</span> static Gps gcj02_To_Bd09(<span class="hljs-built_in">double</span> gg_lat, <span class="hljs-built_in">double</span> gg_lon) {
+		<span class="hljs-built_in">double</span> x = gg_lon, y = gg_lat;
+		<span class="hljs-built_in">double</span> z = Math.sqrt(x * x + y * y) + <span class="hljs-number">0.00002</span> * Math.sin(y * pi);
+		<span class="hljs-built_in">double</span> theta = Math.atan2(y, x) + <span class="hljs-number">0.000003</span> * Math.cos(x * pi);
+		<span class="hljs-built_in">double</span> bd_lon = z * Math.cos(theta) + <span class="hljs-number">0.0065</span>;
+		<span class="hljs-built_in">double</span> bd_lat = z * Math.sin(theta) + <span class="hljs-number">0.006</span>;
+		<span class="hljs-keyword">return</span> new Gps(bd_lat, bd_lon);
+	}
+ 
+	<span class="hljs-comment">/**</span>
+<span class="hljs-comment">	 * * 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换算法 * * 将 BD-09 坐标转换成GCJ-02 坐标 * * @param</span>
+<span class="hljs-comment">	 * bd_lat * @param bd_lon * @return</span>
+<span class="hljs-comment">	 */</span>
+	<span class="hljs-keyword">public</span> static Gps bd09_To_Gcj02(<span class="hljs-built_in">double</span> bd_lat, <span class="hljs-built_in">double</span> bd_lon) {
+		<span class="hljs-built_in">double</span> x = bd_lon - <span class="hljs-number">0.0065</span>, y = bd_lat - <span class="hljs-number">0.006</span>;
+		<span class="hljs-built_in">double</span> z = Math.sqrt(x * x + y * y) - <span class="hljs-number">0.00002</span> * Math.sin(y * pi);
+		<span class="hljs-built_in">double</span> theta = Math.atan2(y, x) - <span class="hljs-number">0.000003</span> * Math.cos(x * pi);
+		<span class="hljs-built_in">double</span> gg_lon = z * Math.cos(theta);
+		<span class="hljs-built_in">double</span> gg_lat = z * Math.sin(theta);
+		<span class="hljs-keyword">return</span> new Gps(gg_lat, gg_lon);
+	}
+ 
+	<span class="hljs-comment">/**</span>
+<span class="hljs-comment">	 * (BD-09)--&gt;84</span>
+<span class="hljs-comment">	 * @param bd_lat</span>
+<span class="hljs-comment">	 * @param bd_lon</span>
+<span class="hljs-comment">	 * @return</span>
+<span class="hljs-comment">	 */</span>
+	<span class="hljs-keyword">public</span> static Gps bd09_To_Gps84(<span class="hljs-built_in">double</span> bd_lat, <span class="hljs-built_in">double</span> bd_lon) {
+ 
+		Gps gcj02 = PositionUtil.bd09_To_Gcj02(bd_lat, bd_lon);
+		Gps map84 = PositionUtil.gcj_To_Gps84(gcj02.getWgLat(),
+				gcj02.getWgLon());
+		<span class="hljs-keyword">return</span> map84;
+ 
+	}
+ 
+	<span class="hljs-keyword">public</span> static <span class="hljs-built_in">bool</span>ean outOfChina(<span class="hljs-built_in">double</span> lat, <span class="hljs-built_in">double</span> lon) {
+		<span class="hljs-keyword">if</span> (lon &lt; <span class="hljs-number">72.004</span> || lon &gt; <span class="hljs-number">137.8347</span>)
+			<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+		<span class="hljs-keyword">if</span> (lat &lt; <span class="hljs-number">0.8293</span> || lat &gt; <span class="hljs-number">55.8271</span>)
+			<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+	}
+ 
+	<span class="hljs-keyword">public</span> static Gps transform(<span class="hljs-built_in">double</span> lat, <span class="hljs-built_in">double</span> lon) {
+		<span class="hljs-keyword">if</span> (outOfChina(lat, lon)) {
+			<span class="hljs-keyword">return</span> new Gps(lat, lon);
+		}
+		<span class="hljs-built_in">double</span> dLat = transformLat(lon - <span class="hljs-number">105.0</span>, lat - <span class="hljs-number">35.0</span>);
+		<span class="hljs-built_in">double</span> dLon = transformLon(lon - <span class="hljs-number">105.0</span>, lat - <span class="hljs-number">35.0</span>);
+		<span class="hljs-built_in">double</span> radLat = lat / <span class="hljs-number">180.0</span> * pi;
+		<span class="hljs-built_in">double</span> magic = Math.sin(radLat);
+		magic = <span class="hljs-number">1</span> - ee * magic * magic;
+		<span class="hljs-built_in">double</span> sqrtMagic = Math.sqrt(magic);
+		dLat = (dLat * <span class="hljs-number">180.0</span>) / ((a * (<span class="hljs-number">1</span> - ee)) / (magic * sqrtMagic) * pi);
+		dLon = (dLon * <span class="hljs-number">180.0</span>) / (a / sqrtMagic * Math.cos(radLat) * pi);
+		<span class="hljs-built_in">double</span> mgLat = lat + dLat;
+		<span class="hljs-built_in">double</span> mgLon = lon + dLon;
+		<span class="hljs-keyword">return</span> new Gps(mgLat, mgLon);
+	}
+ 
+	<span class="hljs-keyword">public</span> static <span class="hljs-built_in">double</span> transformLat(<span class="hljs-built_in">double</span> x, <span class="hljs-built_in">double</span> y) {
+		<span class="hljs-built_in">double</span> ret = <span class="hljs-number">-100.0</span> + <span class="hljs-number">2.0</span> * x + <span class="hljs-number">3.0</span> * y + <span class="hljs-number">0.2</span> * y * y + <span class="hljs-number">0.1</span> * x * y
+				+ <span class="hljs-number">0.2</span> * Math.sqrt(Math.abs(x));
+		ret += (<span class="hljs-number">20.0</span> * Math.sin(<span class="hljs-number">6.0</span> * x * pi) + <span class="hljs-number">20.0</span> * Math.sin(<span class="hljs-number">2.0</span> * x * pi)) * <span class="hljs-number">2.0</span> / <span class="hljs-number">3.0</span>;
+		ret += (<span class="hljs-number">20.0</span> * Math.sin(y * pi) + <span class="hljs-number">40.0</span> * Math.sin(y / <span class="hljs-number">3.0</span> * pi)) * <span class="hljs-number">2.0</span> / <span class="hljs-number">3.0</span>;
+		ret += (<span class="hljs-number">160.0</span> * Math.sin(y / <span class="hljs-number">12.0</span> * pi) + <span class="hljs-number">320</span> * Math.sin(y * pi / <span class="hljs-number">30.0</span>)) * <span class="hljs-number">2.0</span> / <span class="hljs-number">3.0</span>;
+		<span class="hljs-keyword">return</span> ret;
+	}
+ 
+	<span class="hljs-keyword">public</span> static <span class="hljs-built_in">double</span> transformLon(<span class="hljs-built_in">double</span> x, <span class="hljs-built_in">double</span> y) {
+		<span class="hljs-built_in">double</span> ret = <span class="hljs-number">300.0</span> + x + <span class="hljs-number">2.0</span> * y + <span class="hljs-number">0.1</span> * x * x + <span class="hljs-number">0.1</span> * x * y + <span class="hljs-number">0.1</span>
+				* Math.sqrt(Math.abs(x));
+		ret += (<span class="hljs-number">20.0</span> * Math.sin(<span class="hljs-number">6.0</span> * x * pi) + <span class="hljs-number">20.0</span> * Math.sin(<span class="hljs-number">2.0</span> * x * pi)) * <span class="hljs-number">2.0</span> / <span class="hljs-number">3.0</span>;
+		ret += (<span class="hljs-number">20.0</span> * Math.sin(x * pi) + <span class="hljs-number">40.0</span> * Math.sin(x / <span class="hljs-number">3.0</span> * pi)) * <span class="hljs-number">2.0</span> / <span class="hljs-number">3.0</span>;
+		ret += (<span class="hljs-number">150.0</span> * Math.sin(x / <span class="hljs-number">12.0</span> * pi) + <span class="hljs-number">300.0</span> * Math.sin(x / <span class="hljs-number">30.0</span>
+				* pi)) * <span class="hljs-number">2.0</span> / <span class="hljs-number">3.0</span>;
+		<span class="hljs-keyword">return</span> ret;
+	}
+ 
+	<span class="hljs-keyword">public</span> static <span class="hljs-built_in">void</span> main(String[] args) {
+ 
+		<span class="hljs-comment">// 北斗芯片获取的经纬度为WGS84地理坐标 31.426896,119.496145</span>
+		Gps gps = new Gps(<span class="hljs-number">31.426896</span>, <span class="hljs-number">119.496145</span>);
+		System.<span class="hljs-keyword">out</span>.println(<span class="hljs-string">"gps :"</span> + gps);
+		Gps gcj = gps84_To_Gcj02(gps.getWgLat(), gps.getWgLon());
+		System.<span class="hljs-keyword">out</span>.println(<span class="hljs-string">"gcj :"</span> + gcj);
+		Gps star = gcj_To_Gps84(gcj.getWgLat(), gcj.getWgLon());
+		System.<span class="hljs-keyword">out</span>.println(<span class="hljs-string">"star:"</span> + star);
+		Gps bd = gcj02_To_Bd09(gcj.getWgLat(), gcj.getWgLon());
+		System.<span class="hljs-keyword">out</span>.println(<span class="hljs-string">"bd  :"</span> + bd);
+		Gps gcj2 = bd09_To_Gcj02(bd.getWgLat(), bd.getWgLon());
+		System.<span class="hljs-keyword">out</span>.println(<span class="hljs-string">"gcj :"</span> + gcj2);
+	}
+}</code></span></pre>
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Java/">Java</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
+                    
+                      <a class="hover-with-bg" href="/tags/GPS/">GPS</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/06/29/%E6%97%A0%E9%99%90%E5%88%B6%E8%8E%B7%E5%8F%96GPS%E5%AF%B9%E5%BA%94%E5%9C%B0%E5%9D%80%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">无限制获取GPS对应地址的一种方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2018/06/29/%E8%A7%A3%E6%9E%90%E7%A6%BB%E7%BA%BF%E5%9C%B0%E5%9B%BE%E5%8C%85%E5%8F%AF%E8%A1%8C%E6%80%A7%E5%88%86%E6%9E%90/">
+                        <span class="hidden-mobile">解析离线地图包可行性分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
 
     
-    
-    
-<div>
+  </main>
+
   
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
     <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
-    
-</div>
-
-  
-</div>
-        
-
-  <div class="followme">
-    <p>Welcome to my other publishing channels</p>
-
-    <div class="social-list">
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
     </div>
+    
+
+    
+
+    
   </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E8%B0%83%E7%A0%94/" rel="tag"><i class="fa fa-tag"></i>调研</a>
-              <a href="/tags/GPS/" rel="tag"><i class="fa fa-tag"></i>GPS</a>
-          </div>
 
-        
+<!-- Plugins -->
 
 
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/06/29/%E8%A7%A3%E6%9E%90%E7%A6%BB%E7%BA%BF%E5%9C%B0%E5%9B%BE%E5%8C%85%E5%8F%AF%E8%A1%8C%E6%80%A7%E5%88%86%E6%9E%90/" rel="prev" title="解析离线地图包可行性分析">
-      <i class="fa fa-chevron-left"></i> 解析离线地图包可行性分析
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/06/29/%E6%97%A0%E9%99%90%E5%88%B6%E8%8E%B7%E5%8F%96GPS%E5%AF%B9%E5%BA%94%E5%9C%B0%E5%9D%80%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95/" rel="next" title="无限制获取GPS对应地址的一种方法">
-      无限制获取GPS对应地址的一种方法 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
+  
     
-  </article>
-  
-  
   
 
 
 
-          </div>
-          
+  <script defer="" src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
+  
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
+
+
+
+
+
+
+  <script src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script>
+  
+
+
+
+  
+  
+
+
+
+  <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/bundle.js"></script><script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
     });
-  }
-</script>
+  ;
 
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "GPS经纬度转化为百度地图/Google坐标及互转方案&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  ;
 
-  <aside class="sidebar">
-    <div class="sidebar-inner">
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  ;
 
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  ;
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#GPS类"><span class="nav-number">1.</span> <span class="nav-text">GPS类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#转化Util"><span class="nav-number">2.</span> <span class="nav-text">转化Util</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">77</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">53</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/xinshiyou" title="GitHub → https://github.com/xinshiyou" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:shiyou_xin@163.com" title="E-Mail → mailto:shiyou_xin@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://weibo.com/yourname" title="Weibo → https://weibo.com/yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  © 2018 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共91.3k字</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-
-
-<script src="/bundle.js"></script></body></html>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script></body></html>

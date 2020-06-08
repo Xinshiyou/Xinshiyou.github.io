@@ -1,245 +1,336 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="xinshiyou">
+  <meta name="keywords" content="">
+  <title>Phantomjs服务模式：从性能并发方面谈起 - 星空捞月：找寻心中的安宁</title>
 
-
-
-
-
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xinshiyou.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="&amp;emsp;&amp;emsp;作为比较好的动态网页爬虫手段，phantomjs在许多方面令人比较满意。调用Phantomjs的方式，一般有如下几种情况。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Phantomjs服务模式：从性能并发方面谈起">
-<meta property="og:url" content="https://xinshiyou.github.io/2018/06/29/Phantomjs%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E4%BB%8E%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E6%96%B9%E9%9D%A2%E8%B0%88%E8%B5%B7/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;作为比较好的动态网页爬虫手段，phantomjs在许多方面令人比较满意。调用Phantomjs的方式，一般有如下几种情况。">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2018-06-29T08:52:40.000Z">
-<meta property="article:modified_time" content="2020-06-01T05:22:42.937Z">
-<meta property="article:author" content="John Doe">
-<meta property="article:tag" content="调研">
-<meta property="article:tag" content="Phantomjs">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="https://xinshiyou.github.io/2018/06/29/Phantomjs%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E4%BB%8E%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E6%96%B9%E9%9D%A2%E8%B0%88%E8%B5%B7/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
-
-  <title>Phantomjs服务模式：从性能并发方面谈起 | Hexo</title>
   
 
 
+  
+  
+
+  
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
 
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
 
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');</script></head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星空捞月：找寻心中的安宁" type="application/atom+xml">
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css');loadCss('https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css');loadCss('https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css');loadCss('//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css');loadCss('//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css');loadCss('https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css"><link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"></noscript></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">&nbsp;<strong>星空捞月：找寻心中的安宁</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
 </nav>
 
+    <div class="view intro-2" id="background" parallax="true" style="background: url('/img/top.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
 
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2018-06-29 16:52">
+      2018年6月29日 下午
+    </time>
   </div>
 
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
+<div class="mt-1">
   
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.1k 字
+    </span>
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://xinshiyou.github.io/2018/06/29/Phantomjs%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E4%BB%8E%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E6%96%B9%E9%9D%A2%E8%B0%88%E8%B5%B7/">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Phantomjs服务模式：从性能并发方面谈起
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-06-29 16:52:40" itemprop="dateCreated datePublished" datetime="2018-06-29T16:52:40+08:00">2018-06-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-06-01 13:22:42" itemprop="dateModified" datetime="2020-06-01T13:22:42+08:00">2020-06-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%88%AC%E8%99%AB/" itemprop="url" rel="index"><span itemprop="name">爬虫</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
+  
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
       
-        <p>  作为比较好的动态网页爬虫手段，phantomjs在许多方面令人比较满意。调用Phantomjs的方式，一般有如下几种情况。</p>
+      
+      16
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <p>  作为比较好的动态网页爬虫手段，phantomjs在许多方面令人比较满意。调用Phantomjs的方式，一般有如下几种情况。</p>
 <a id="more"></a>
 
 <h2 id="1-命令行模式"><a href="#1-命令行模式" class="headerlink" title="1. 命令行模式"></a>1. 命令行模式</h2><p>  在CMD或Shell中，直接输入phantomjs回车，进入命令行模式，能够完成各种操作。但一般情况是通过命令用调用phantomjs来完成爬虫或模拟工作，具体的代码放在JS中。如</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">../bin/phantomjs --debug=yes ./server.js 8910</span><br><span class="line">../bin/phantomjs --debug=yes ./hello.js</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string"><code class="language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./server.js</span> 8910
+<span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./hello.js</span></code></span></pre>
 <p>其中phantomjs参数直接放在phantomjs后面，脚本作为参数放在其次，最后添加脚本的参数列表。</p>
 <h2 id="2-selenium调用"><a href="#2-selenium调用" class="headerlink" title="2. selenium调用"></a>2. selenium调用</h2><p>  selenium是一套完整的测试爬虫工具，能够调用IE、Chrome、Firefox等浏览器内核API完成相应的功能，也可以调用如Phantomjs、HtmlUnitDriver等模拟浏览器作为调用接口。</p>
 <p>  调用浏览器内核与不调用浏览器内核的浏览器[这里指的是HtmlUnitDriver]，浏览器内核的API，可以完成截图功能及其他浏览器功能，但HtmlunitDriver采用的是JS模拟浏览器的策略，因此不具备截图等浏览器功能。</p>
-<h3 id="2-1-Java-selenium-Phantomjs调用"><a href="#2-1-Java-selenium-Phantomjs调用" class="headerlink" title="2.1. Java+selenium+Phantomjs调用"></a>2.1. Java+selenium+Phantomjs调用</h3><figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> PhantomJSDriver <span class="title">getPhantomJs</span><span class="params">(String phantomJS,</span></span></span><br><span class="line"><span class="function"><span class="params">		String userAgent, <span class="keyword">boolean</span> loadImages, <span class="keyword">boolean</span> jsEnabled,</span></span></span><br><span class="line"><span class="function"><span class="params">		String encoding,<span class="keyword">boolean</span> proxyEnabled,String... proxys)</span> </span>{</span><br><span class="line"></span><br><span class="line">	System.setProperty(<span class="string">"phantomjs.binary.path"</span>, phantomJS);</span><br><span class="line">	DesiredCapabilities desiredCapabilities = DesiredCapabilities</span><br><span class="line">			.phantomjs();</span><br><span class="line">	<span class="keyword">if</span> (userAgent != <span class="keyword">null</span>) {</span><br><span class="line">		desiredCapabilities.setCapability(</span><br><span class="line">				<span class="string">"phantomjs.page.settings.userAgent"</span>, userAgent);</span><br><span class="line">		desiredCapabilities.setCapability(</span><br><span class="line">				<span class="string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);</span><br><span class="line">	}</span><br><span class="line">	desiredCapabilities.setJavascriptEnabled(jsEnabled);</span><br><span class="line">	PhantomJSDriver driver = <span class="keyword">null</span>;</span><br><span class="line">	List&lt;String&gt; cli = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">	cli.add(<span class="string">"--load-images="</span> + loadImages);</span><br><span class="line">	cli.add(<span class="string">"--output-encoding="</span> + encoding);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> (proxyEnabled) {</span><br><span class="line">		String proxy_ip = proxys[<span class="number">0</span>];</span><br><span class="line">		String proxy_port = proxys[<span class="number">1</span>];</span><br><span class="line">		String proxy_user = proxys[<span class="number">2</span>];</span><br><span class="line">		String proxy_pass = proxys[<span class="number">3</span>];</span><br><span class="line">		cli.add(<span class="string">"--proxy="</span>+proxy_ip+<span class="string">":"</span>+ proxy_port));</span><br><span class="line">		cli.add(<span class="string">"--proxy-auth="</span> +proxy_user+<span class="string">":"</span> +proxy_pass);</span><br><span class="line">	}</span><br><span class="line">	desiredCapabilities.setCapability(</span><br><span class="line">			PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cli);</span><br><span class="line">	driver = <span class="keyword">new</span> PhantomJSDriver(desiredCapabilities);</span><br><span class="line">	driver.manage().timeouts()</span><br><span class="line">			.implicitlyWait(WAIT_TIME, TimeUnit.MILLISECONDS);</span><br><span class="line">	driver.manage().deleteAllCookies();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> driver;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="2-1-Java-selenium-Phantomjs调用"><a href="#2-1-Java-selenium-Phantomjs调用" class="headerlink" title="2.1. Java+selenium+Phantomjs调用"></a>2.1. Java+selenium+Phantomjs调用</h3><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS,</span></span>
+<span class="hljs-function"><span class="hljs-params">		String userAgent, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> jsEnabled,</span></span>
+<span class="hljs-function"><span class="hljs-params">		String encoding,<span class="hljs-keyword">boolean</span> proxyEnabled,String... proxys)</span> </span>{
 
-<h3 id="2-2-Java-selenium-HtmlunitDriver调用"><a href="#2-2-Java-selenium-HtmlunitDriver调用" class="headerlink" title="2.2. Java+selenium+HtmlunitDriver调用"></a>2.2. Java+selenium+HtmlunitDriver调用</h3><figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> HtmlUnitDriver <span class="title">getHtmlUnitDriver</span><span class="params">(String userAgent,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">boolean</span> jsEnabled, <span class="keyword">boolean</span> loadImages, <span class="keyword">boolean</span> proxyEnabled,</span></span></span><br><span class="line"><span class="function"><span class="params">		String... proxys)</span> </span>{</span><br><span class="line"></span><br><span class="line">	DesiredCapabilities desiredCapabilities = DesiredCapabilities</span><br><span class="line">			.htmlUnit();</span><br><span class="line">	desiredCapabilities.setCapability(<span class="string">"phantomjs.page.settings.loadImages"</span>,</span><br><span class="line">			<span class="keyword">false</span>);</span><br><span class="line">	desiredCapabilities.setJavascriptEnabled(jsEnabled);</span><br><span class="line">	<span class="keyword">if</span> (userAgent != <span class="keyword">null</span>) {</span><br><span class="line">		desiredCapabilities.setCapability(</span><br><span class="line">				<span class="string">"phantomjs.page.settings.userAgent"</span>, userAgent);</span><br><span class="line">		desiredCapabilities.setCapability(</span><br><span class="line">				<span class="string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);</span><br><span class="line">	}</span><br><span class="line">	desiredCapabilities.setCapability(</span><br><span class="line">			PhantomJSDriverService.PHANTOMJS_CLI_ARGS,</span><br><span class="line">			<span class="keyword">new</span> String[] { <span class="string">"--load-images="</span> + loadImages });</span><br><span class="line">	HtmlUnitDriver driver = <span class="keyword">null</span>;</span><br><span class="line">	<span class="keyword">if</span> (proxyEnabled) {</span><br><span class="line"></span><br><span class="line">		String proxy_ip = proxys[<span class="number">0</span>];</span><br><span class="line">		String proxy_port = proxys[<span class="number">1</span>];</span><br><span class="line">		String proxy_user = proxys[<span class="number">2</span>];</span><br><span class="line">		String proxy_pass = proxys[<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">		Proxy proxy = <span class="keyword">new</span> Proxy();</span><br><span class="line">		proxy.setHttpProxy(proxy_ip + <span class="string">":"</span> + proxy_port);</span><br><span class="line">		desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);</span><br><span class="line">		driver = <span class="keyword">new</span> HtmlUnitDriver(desiredCapabilities) {</span><br><span class="line">			<span class="meta">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">protected</span> WebClient <span class="title">modifyWebClient</span><span class="params">(WebClient client)</span> </span>{</span><br><span class="line">				DefaultCredentialsProvider creds = <span class="keyword">new</span> DefaultCredentialsProvider();</span><br><span class="line">				creds.addCredentials(proxy_user, proxy_pass);</span><br><span class="line">				client.setCredentialsProvider(creds);</span><br><span class="line">				<span class="keyword">return</span> client;</span><br><span class="line">			}</span><br><span class="line">		};</span><br><span class="line">	} <span class="keyword">else</span></span><br><span class="line">		driver = <span class="keyword">new</span> HtmlUnitDriver(desiredCapabilities);</span><br><span class="line">	driver.manage().timeouts()</span><br><span class="line">			.implicitlyWait(<span class="number">10</span> * <span class="number">1000</span>, TimeUnit.MILLISECONDS);</span><br><span class="line">	driver.manage().deleteAllCookies();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> driver;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+	System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);
+	DesiredCapabilities desiredCapabilities = DesiredCapabilities
+			.phantomjs();
+	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) {
+		desiredCapabilities.setCapability(
+				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);
+		desiredCapabilities.setCapability(
+				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);
+	}
+	desiredCapabilities.setJavascriptEnabled(jsEnabled);
+	PhantomJSDriver driver = <span class="hljs-keyword">null</span>;
+	List<string> cli = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+	cli.add(<span class="hljs-string">"--load-images="</span> + loadImages);
+	cli.add(<span class="hljs-string">"--output-encoding="</span> + encoding);
+	
+	<span class="hljs-keyword">if</span> (proxyEnabled) {
+		String proxy_ip = proxys[<span class="hljs-number">0</span>];
+		String proxy_port = proxys[<span class="hljs-number">1</span>];
+		String proxy_user = proxys[<span class="hljs-number">2</span>];
+		String proxy_pass = proxys[<span class="hljs-number">3</span>];
+		cli.add(<span class="hljs-string">"--proxy="</span>+proxy_ip+<span class="hljs-string">":"</span>+ proxy_port));
+		cli.add(<span class="hljs-string">"--proxy-auth="</span> +proxy_user+<span class="hljs-string">":"</span> +proxy_pass);
+	}
+	desiredCapabilities.setCapability(
+			PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cli);
+	driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);
+	driver.manage().timeouts()
+			.implicitlyWait(WAIT_TIME, TimeUnit.MILLISECONDS);
+	driver.manage().deleteAllCookies();
+
+	<span class="hljs-keyword">return</span> driver;
+}</string></code></span></span></pre>
+
+<h3 id="2-2-Java-selenium-HtmlunitDriver调用"><a href="#2-2-Java-selenium-HtmlunitDriver调用" class="headerlink" title="2.2. Java+selenium+HtmlunitDriver调用"></a>2.2. Java+selenium+HtmlunitDriver调用</h3><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params">(String userAgent,</span></span>
+<span class="hljs-function"><span class="hljs-params">		<span class="hljs-keyword">boolean</span> jsEnabled, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> proxyEnabled,</span></span>
+<span class="hljs-function"><span class="hljs-params">		String... proxys)</span> </span>{
+
+	DesiredCapabilities desiredCapabilities = DesiredCapabilities
+			.htmlUnit();
+	desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.loadImages"</span>,
+			<span class="hljs-keyword">false</span>);
+	desiredCapabilities.setJavascriptEnabled(jsEnabled);
+	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) {
+		desiredCapabilities.setCapability(
+				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);
+		desiredCapabilities.setCapability(
+				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);
+	}
+	desiredCapabilities.setCapability(
+			PhantomJSDriverService.PHANTOMJS_CLI_ARGS,
+			<span class="hljs-keyword">new</span> String[] { <span class="hljs-string">"--load-images="</span> + loadImages });
+	HtmlUnitDriver driver = <span class="hljs-keyword">null</span>;
+	<span class="hljs-keyword">if</span> (proxyEnabled) {
+
+		String proxy_ip = proxys[<span class="hljs-number">0</span>];
+		String proxy_port = proxys[<span class="hljs-number">1</span>];
+		String proxy_user = proxys[<span class="hljs-number">2</span>];
+		String proxy_pass = proxys[<span class="hljs-number">3</span>];
+
+		Proxy proxy = <span class="hljs-keyword">new</span> Proxy();
+		proxy.setHttpProxy(proxy_ip + <span class="hljs-string">":"</span> + proxy_port);
+		desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);
+		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities) {
+			<span class="hljs-meta">@Override</span>
+			<span class="hljs-function"><span class="hljs-keyword">protected</span> WebClient <span class="hljs-title">modifyWebClient</span><span class="hljs-params">(WebClient client)</span> </span>{
+				DefaultCredentialsProvider creds = <span class="hljs-keyword">new</span> DefaultCredentialsProvider();
+				creds.addCredentials(proxy_user, proxy_pass);
+				client.setCredentialsProvider(creds);
+				<span class="hljs-keyword">return</span> client;
+			}
+		};
+	} <span class="hljs-keyword">else</span>
+		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities);
+	driver.manage().timeouts()
+			.implicitlyWait(<span class="hljs-number">10</span> * <span class="hljs-number">1000</span>, TimeUnit.MILLISECONDS);
+	driver.manage().deleteAllCookies();
+
+	<span class="hljs-keyword">return</span> driver;
+}</code></span></span></pre>
 
 <h2 id="3-服务器模式"><a href="#3-服务器模式" class="headerlink" title="3. 服务器模式"></a>3. 服务器模式</h2><p>  phantomjs服务器模式，需要在服务端开启服务，然后在客户端发起Http请求然后返回想要的内容，就是一个C/S模式的服务。</p>
 <h3 id="3-1-服务端"><a href="#3-1-服务端" class="headerlink" title="3.1. 服务端"></a>3.1. 服务端</h3><p>server.js内容如下所示</p>
-<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">var webserver = require('webserver').create();</span><br><span class="line">var page = require('webpage').create();</span><br><span class="line">var system = require('system');</span><br><span class="line">var port = system.args[1];</span><br><span class="line">webserver.listen(system.args[1], function(request, response) {</span><br><span class="line">    var url = request.headers.url;// conf target url in headers</span><br><span class="line">    page.open(url, function(status) {</span><br><span class="line">        var title = page.evaluate(function() {</span><br><span class="line">            return $(":root").html();// return pageSource</span><br><span class="line">        });</span><br><span class="line">        response.write(title);</span><br><span class="line">        response.close();</span><br><span class="line">    });</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs shell"><code class="language-hljs shell">var webserver = require('webserver').create();
+var page = require('webpage').create();
+var system = require('system');
+var port = system.args[1];
+webserver.listen(system.args[1], function(request, response) {
+    var url = request.headers.url;// conf target url in headers
+    page.open(url, function(status) {
+        var title = page.evaluate(function() {
+            return $(":root").html();// return pageSource
+        });
+        response.write(title);
+        response.close();
+    });
+});</code></pre>
 
 <p>命令行启动</p>
-<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/phantomjs example/server.js 8910</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs shell"><code class="language-hljs shell">bin/phantomjs example/server.js 8910</code></pre>
 
 <h3 id="3-2-客户端"><a href="#3-2-客户端" class="headerlink" title="3.2. 客户端"></a>3.2. 客户端</h3><p>  在客户端发起http请求，无论是get，还是post只要能够获取到Headers里面的目标URL，就可以返回pageSource。当然，这里最好使用异步加载网页内容。</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; params = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">params.put(<span class="string">"url"</span>, targetURL);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">HttpPost</span><span class="params">(String url, String postDataStr)</span></span></span><br><span class="line"><span class="function">		<span class="keyword">throws</span> MalformedURLException, IOException </span>{</span><br><span class="line">		</span><br><span class="line">	URLConnection conn = <span class="keyword">new</span> URL(url).openConnection();</span><br><span class="line">	conn.addRequestProperty(<span class="string">"method"</span>, <span class="string">"post"</span>);</span><br><span class="line">	conn.addRequestProperty(<span class="string">"ContentType"</span>,</span><br><span class="line">			<span class="string">"application/x-www-form-urlencoded"</span>);</span><br><span class="line">	conn.addRequestProperty(<span class="string">"method"</span>, <span class="string">"post"</span>);</span><br><span class="line">	conn.addRequestProperty(<span class="string">"http.socket.timeout"</span>, <span class="string">"60000"</span>);</span><br><span class="line">	conn.setDoOutput(<span class="keyword">true</span>);</span><br><span class="line">	conn.getOutputStream().write(</span><br><span class="line">			URLEncoder.encode(postDataStr, <span class="string">"utf-8"</span>).getBytes());</span><br><span class="line">			</span><br><span class="line">	StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">	BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(</span><br><span class="line">			conn.getInputStream()));</span><br><span class="line">	String line = <span class="keyword">null</span>;</span><br><span class="line">	<span class="keyword">while</span> ((line = br.readLine()) != <span class="keyword">null</span>)</span><br><span class="line">		sb.append(line);</span><br><span class="line">		</span><br><span class="line">	<span class="keyword">return</span> sb.toString();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword"><code class="language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword">new</span> HashMap<string, string="">();
+params.put(<span class="hljs-string">"url"</span>, targetURL);
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title">HttpPost</span><span class="hljs-params">(String url, String postDataStr)</span></span>
+<span class="hljs-function">		<span class="hljs-keyword">throws</span> MalformedURLException, IOException </span>{
+		
+	URLConnection conn = <span class="hljs-keyword">new</span> URL(url).openConnection();
+	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);
+	conn.addRequestProperty(<span class="hljs-string">"ContentType"</span>,
+			<span class="hljs-string">"application/x-www-form-urlencoded"</span>);
+	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);
+	conn.addRequestProperty(<span class="hljs-string">"http.socket.timeout"</span>, <span class="hljs-string">"60000"</span>);
+	conn.setDoOutput(<span class="hljs-keyword">true</span>);
+	conn.getOutputStream().write(
+			URLEncoder.encode(postDataStr, <span class="hljs-string">"utf-8"</span>).getBytes());
+			
+	StringBuilder sb = <span class="hljs-keyword">new</span> StringBuilder();
+	BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(
+			conn.getInputStream()));
+	String line = <span class="hljs-keyword">null</span>;
+	<span class="hljs-keyword">while</span> ((line = br.readLine()) != <span class="hljs-keyword">null</span>)
+		sb.append(line);
+		
+	<span class="hljs-keyword">return</span> sb.toString();
+}</string,></code></span></pre>
 
 <h2 id="4-比较"><a href="#4-比较" class="headerlink" title="4. 比较"></a>4. 比较</h2><table>
 <thead>
@@ -274,247 +365,266 @@
 <li><a href="http://www.cnblogs.com/kavmors/p/4731883.html" target="_blank" rel="noopener">Phantomjs 进程通信方式</a></li>
 </ol>
 
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E7%88%AC%E8%99%AB/">爬虫</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Phantomjs/">Phantomjs</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/06/29/Weibo%E5%8D%95%E8%8A%82%E7%82%B9%E7%88%AC%E8%99%AB%E8%AE%BE%E8%AE%A1/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Weibo单节点爬虫设计</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2018/06/29/JavaNLP-%E5%88%86%E8%AF%8D%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%A0%94%E7%A9%B6%EF%BC%9Aword%E5%88%86%E8%AF%8D/">
+                        <span class="hidden-mobile">JavaNLP-分词学习与研究：word分词</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
 
     
-    
-    
-<div>
+  </main>
+
   
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
     <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
-    
-</div>
-
-  
-</div>
-        
-
-  <div class="followme">
-    <p>Welcome to my other publishing channels</p>
-
-    <div class="social-list">
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
     </div>
+    
+
+    
+
+    
   </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E8%B0%83%E7%A0%94/" rel="tag"><i class="fa fa-tag"></i>调研</a>
-              <a href="/tags/Phantomjs/" rel="tag"><i class="fa fa-tag"></i>Phantomjs</a>
-          </div>
 
-        
+<!-- Plugins -->
 
 
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/06/29/JavaNLP-%E5%88%86%E8%AF%8D%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%A0%94%E7%A9%B6%EF%BC%9Aword%E5%88%86%E8%AF%8D/" rel="prev" title="JavaNLP-分词学习与研究：word分词">
-      <i class="fa fa-chevron-left"></i> JavaNLP-分词学习与研究：word分词
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/06/29/Weibo%E5%8D%95%E8%8A%82%E7%82%B9%E7%88%AC%E8%99%AB%E8%AE%BE%E8%AE%A1/" rel="next" title="Weibo单节点爬虫设计">
-      Weibo单节点爬虫设计 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
+  
     
-  </article>
-  
-  
   
 
 
 
-          </div>
-          
+  <script defer="" src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
+  
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
+
+
+
+
+
+
+  <script src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script>
+  
+
+
+
+  
+  
+
+
+
+  <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/bundle.js"></script><script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
     });
-  }
-</script>
+  ;
 
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Phantomjs服务模式：从性能并发方面谈起&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  ;
 
-  <aside class="sidebar">
-    <div class="sidebar-inner">
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  ;
 
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  ;
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-命令行模式"><span class="nav-number">1.</span> <span class="nav-text">1. 命令行模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-selenium调用"><span class="nav-number">2.</span> <span class="nav-text">2. selenium调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Java-selenium-Phantomjs调用"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. Java+selenium+Phantomjs调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Java-selenium-HtmlunitDriver调用"><span class="nav-number">2.2.</span> <span class="nav-text">2.2. Java+selenium+HtmlunitDriver调用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-服务器模式"><span class="nav-number">3.</span> <span class="nav-text">3. 服务器模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-服务端"><span class="nav-number">3.1.</span> <span class="nav-text">3.1. 服务端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-客户端"><span class="nav-number">3.2.</span> <span class="nav-text">3.2. 客户端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-比较"><span class="nav-number">4.</span> <span class="nav-text">4. 比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-注"><span class="nav-number">5.</span> <span class="nav-text">5. 注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-参考"><span class="nav-number">6.</span> <span class="nav-text">6. 参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">77</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">53</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/xinshiyou" title="GitHub → https://github.com/xinshiyou" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:shiyou_xin@163.com" title="E-Mail → mailto:shiyou_xin@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://weibo.com/yourname" title="Weibo → https://weibo.com/yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  © 2018 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共91.3k字</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-
-
-<script src="/bundle.js"></script></body></html>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script></body></html>

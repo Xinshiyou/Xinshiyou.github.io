@@ -1,477 +1,837 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="xinshiyou">
+  <meta name="keywords" content="">
+  <title>Kafka-&gt;SparkStreaming-&gt;Hbase【二】 - 星空捞月：找寻心中的安宁</title>
 
-
-
-
-
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xinshiyou.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="&amp;emsp;&amp;emsp;根据业务需求，将Kafka中数据抽取插入到Hbase中。目前网上可以找到许多相关的文章，这里介绍Github上的一个开源工具。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Kafka->SparkStreaming->Hbase【二】">
-<meta property="og:url" content="https://xinshiyou.github.io/2018/06/29/Kafka-SparkStreaming-Hbase%E3%80%90%E4%BA%8C%E3%80%91/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;根据业务需求，将Kafka中数据抽取插入到Hbase中。目前网上可以找到许多相关的文章，这里介绍Github上的一个开源工具。">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2018-06-29T08:52:24.000Z">
-<meta property="article:modified_time" content="2020-06-01T05:24:50.809Z">
-<meta property="article:author" content="John Doe">
-<meta property="article:tag" content="调研">
-<meta property="article:tag" content="Spark">
-<meta property="article:tag" content="Kafka">
-<meta property="article:tag" content="Hbase">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="https://xinshiyou.github.io/2018/06/29/Kafka-SparkStreaming-Hbase%E3%80%90%E4%BA%8C%E3%80%91/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
-
-  <title>Kafka-&gt;SparkStreaming-&gt;Hbase【二】 | Hexo</title>
   
 
 
+  
+  
+
+  
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
 
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
 
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');</script></head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星空捞月：找寻心中的安宁" type="application/atom+xml">
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css');loadCss('https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css');loadCss('https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css');loadCss('//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css');loadCss('//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css');loadCss('https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css"><link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"></noscript></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">&nbsp;<strong>星空捞月：找寻心中的安宁</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
 </nav>
 
+    <div class="view intro-2" id="background" parallax="true" style="background: url('/img/top.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
 
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2018-06-29 16:52">
+      2018年6月29日 下午
+    </time>
   </div>
 
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
+<div class="mt-1">
   
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.4k 字
+    </span>
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://xinshiyou.github.io/2018/06/29/Kafka-SparkStreaming-Hbase%E3%80%90%E4%BA%8C%E3%80%91/">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Kafka-&gt;SparkStreaming-&gt;Hbase【二】
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-06-29 16:52:24" itemprop="dateCreated datePublished" datetime="2018-06-29T16:52:24+08:00">2018-06-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-06-01 13:24:50" itemprop="dateModified" datetime="2020-06-01T13:24:50+08:00">2020-06-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
+  
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
       
-        <p>  根据业务需求，将Kafka中数据抽取插入到Hbase中。目前网上可以找到许多相关的文章，这里介绍Github上的一个开源工具。</p>
+      
+      26
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <p>  根据业务需求，将Kafka中数据抽取插入到Hbase中。目前网上可以找到许多相关的文章，这里介绍Github上的一个开源工具。</p>
 <a id="more"></a>
 
 <p>  上一章节讲到选择SparkOnHbase为主要原型，将之修改为我们需要的源代码。这里给出修改之后的源代码，修改之后符合我们的业务需求，并尽量避免引起其他不必要的问题。同时，后期优化程序执行效率问题。</p>
-<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><figure class="highlight scala"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HBaseContext</span>(<span class="params"></span></span></span><br><span class="line"><span class="class"><span class="params">  @transient sc:        <span class="type">SparkContext</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">  @transient config:    <span class="type">Configuration</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">  metas:                java.util.<span class="type">HashMap</span>[<span class="type">String</span>, java.util.<span class="type">HashMap</span>[<span class="type">String</span>, java.util.<span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">ColumnInfo</span>]]],</span></span></span><br><span class="line"><span class="class"><span class="params">  val tmpHdfsConfgFile: <span class="type">String</span>                                                                                      = null</span>) <span class="keyword">extends</span> <span class="title">Serializable</span> <span class="keyword">with</span> <span class="title">Logging</span> </span>{</span><br><span class="line"></span><br><span class="line">  <span class="meta">@transient</span> <span class="keyword">var</span> credentials = <span class="type">SparkHadoopUtil</span>.get.getCurrentUserCredentials()</span><br><span class="line">  <span class="meta">@transient</span> <span class="keyword">var</span> tmpHdfsConfiguration: <span class="type">Configuration</span> = config</span><br><span class="line">  <span class="meta">@transient</span> <span class="keyword">var</span> appliedCredentials = <span class="literal">false</span>;</span><br><span class="line">  <span class="meta">@transient</span> <span class="keyword">var</span> metasLocal = metas</span><br><span class="line">  <span class="meta">@transient</span> <span class="keyword">val</span> job = <span class="keyword">new</span> <span class="type">Job</span>(config)</span><br><span class="line">  <span class="type">TableMapReduceUtil</span>.initCredentials(job)</span><br><span class="line">  <span class="keyword">val</span> broadcastedConf = sc.broadcast(<span class="keyword">new</span> <span class="type">SerializableWritable</span>(config))</span><br><span class="line">  <span class="keyword">val</span> credentialsConf = sc.broadcast(<span class="keyword">new</span> <span class="type">SerializableWritable</span>(job.getCredentials()))</span><br><span class="line">  <span class="keyword">val</span> broadcastMetas = sc.broadcast(metas)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (tmpHdfsConfgFile != <span class="literal">null</span> &amp;&amp; config != <span class="literal">null</span>) {</span><br><span class="line">    <span class="keyword">val</span> fs = <span class="type">FileSystem</span>.newInstance(config)</span><br><span class="line">    <span class="keyword">val</span> tmpPath = <span class="keyword">new</span> <span class="type">Path</span>(tmpHdfsConfgFile)</span><br><span class="line">    <span class="keyword">if</span> (!fs.exists(tmpPath)) {</span><br><span class="line">      <span class="keyword">val</span> outputStream = fs.create(tmpPath)</span><br><span class="line">      config.write(outputStream)</span><br><span class="line">      outputStream.close();</span><br><span class="line">    } <span class="keyword">else</span> {</span><br><span class="line">      logWarning(<span class="string">"tmpHdfsConfigDir "</span> + tmpHdfsConfgFile + <span class="string">" exist!!"</span>)</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">mapPartition</span></span>[<span class="type">T</span>, <span class="type">R</span>: <span class="type">ClassTag</span>](</span><br><span class="line">    rdd: <span class="type">RDD</span>[<span class="type">T</span>],</span><br><span class="line">    mp:  (<span class="type">Iterator</span>[<span class="type">T</span>], <span class="type">HConnection</span>) =&gt; <span class="type">Iterator</span>[<span class="type">R</span>]): <span class="type">RDD</span>[<span class="type">R</span>] = {</span><br><span class="line"></span><br><span class="line">    rdd.mapPartitions[<span class="type">R</span>](it =&gt; hbaseMapPartition[<span class="type">T</span>, <span class="type">R</span>](</span><br><span class="line">      broadcastedConf,</span><br><span class="line">      it,</span><br><span class="line">      mp), <span class="literal">true</span>)</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">applyCreds</span></span>[<span class="type">T</span>](configBroadcast: <span class="type">Broadcast</span>[<span class="type">SerializableWritable</span>[<span class="type">Configuration</span>]]) {</span><br><span class="line"></span><br><span class="line">    credentials = <span class="type">SparkHadoopUtil</span>.get.getCurrentUserCredentials()</span><br><span class="line"></span><br><span class="line">    logInfo(<span class="string">"appliedCredentials:"</span> + appliedCredentials + <span class="string">",credentials:"</span> + credentials);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (appliedCredentials == <span class="literal">false</span> &amp;&amp; credentials != <span class="literal">null</span>) {</span><br><span class="line">      appliedCredentials = <span class="literal">true</span></span><br><span class="line">      logCredInformation(credentials)</span><br><span class="line"></span><br><span class="line">      <span class="meta">@transient</span> <span class="keyword">val</span> ugi = <span class="type">UserGroupInformation</span>.getCurrentUser();</span><br><span class="line">      ugi.addCredentials(credentials)</span><br><span class="line">      ugi.setAuthenticationMethod(<span class="type">AuthenticationMethod</span>.<span class="type">PROXY</span>)</span><br><span class="line">      ugi.addCredentials(credentialsConf.value.value)</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">logCredInformation</span></span>[<span class="type">T</span>](credentials2: <span class="type">Credentials</span>) {</span><br><span class="line">    logInfo(<span class="string">"credentials:"</span> + credentials2);</span><br><span class="line">    <span class="keyword">for</span> (a &lt;- <span class="number">0</span> until credentials2.getAllSecretKeys.size()) {</span><br><span class="line">      logInfo(<span class="string">"getAllSecretKeys:"</span> + a + <span class="string">":"</span> + credentials2.getAllSecretKeys.get(a));</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">val</span> it = credentials2.getAllTokens.iterator();</span><br><span class="line">    <span class="keyword">while</span> (it.hasNext) {</span><br><span class="line">      logInfo(<span class="string">"getAllTokens:"</span> + it.next());</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">bulkMutation</span></span>[<span class="type">T</span>](rdd: <span class="type">RDD</span>[<span class="type">T</span>], fun: (<span class="type">T</span>) =&gt; (<span class="type">DataEntity</span>), autoFlush: <span class="type">Boolean</span>) {</span><br><span class="line">    </span><br><span class="line">    rdd.foreachPartition(</span><br><span class="line">      it =&gt; {</span><br><span class="line">        hbaseForeachPartition[<span class="type">T</span>](</span><br><span class="line">          broadcastedConf, broadcastMetas,</span><br><span class="line">          it,</span><br><span class="line">          (iter, hConnection, metas) =&gt; {</span><br><span class="line"></span><br><span class="line">            iter.foreach(item =&gt; {</span><br><span class="line"></span><br><span class="line">              <span class="keyword">val</span> entity = fun(item)</span><br><span class="line">              <span class="keyword">val</span> dbName = entity.dbName</span><br><span class="line">              <span class="keyword">val</span> tabName = entity.tabName</span><br><span class="line">              <span class="keyword">if</span> (metas.containsKey(dbName) &amp;&amp; metas.get(dbName).containsKey(tabName)) {</span><br><span class="line"></span><br><span class="line">                <span class="keyword">val</span> htable = hConnection.getTable(entity.dbName + <span class="string">":"</span> + entity.tabName)</span><br><span class="line">                htable.setAutoFlush(autoFlush, <span class="literal">true</span>)</span><br><span class="line"></span><br><span class="line">                entity.`<span class="class"><span class="keyword">type</span>` <span class="title">match</span> </span>{</span><br><span class="line">                  <span class="keyword">case</span> <span class="string">"INSERT"</span> | <span class="string">"insert"</span> =&gt; {</span><br><span class="line">                    <span class="keyword">val</span> insertPuts = <span class="type">Instance</span>.insert(entity, metas)</span><br><span class="line">                    <span class="keyword">if</span> (<span class="literal">null</span> != insertPuts &amp;&amp; insertPuts.size() &gt; <span class="number">0</span>)</span><br><span class="line">                      htable.batch(insertPuts)</span><br><span class="line">                  }</span><br><span class="line"></span><br><span class="line">                  <span class="keyword">case</span> <span class="string">"UPDATE"</span> | <span class="string">"update"</span> =&gt; {</span><br><span class="line">                    <span class="keyword">val</span> updatePuts = <span class="type">Instance</span>.update(entity, metas)</span><br><span class="line">                    <span class="keyword">if</span> (<span class="literal">null</span> != updatePuts &amp;&amp; updatePuts.size() &gt; <span class="number">0</span>)</span><br><span class="line">                      htable.batch(updatePuts)</span><br><span class="line">                  }</span><br><span class="line"></span><br><span class="line">                  <span class="keyword">case</span> <span class="string">"DELETE"</span> | <span class="string">"delete"</span> =&gt; {</span><br><span class="line">                    <span class="keyword">val</span> deleteDels = <span class="type">Instance</span>.delete(entity)</span><br><span class="line">                    <span class="keyword">if</span> (<span class="literal">null</span> != deleteDels &amp;&amp; deleteDels.size() &gt; <span class="number">0</span>)</span><br><span class="line">                      htable.batch(deleteDels)</span><br><span class="line">                  }</span><br><span class="line">                  </span><br><span class="line">                  <span class="keyword">case</span> all: <span class="type">Any</span> =&gt; {</span><br><span class="line">                    logInfo(<span class="string">"其他操作："</span> + all)</span><br><span class="line">                  }</span><br><span class="line">                }</span><br><span class="line">                </span><br><span class="line">                htable.flushCommits()</span><br><span class="line">                htable.close()</span><br><span class="line">              }</span><br><span class="line">            })</span><br><span class="line">          })</span><br><span class="line">      })</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">hbaseRDD</span></span>[<span class="type">U</span>: <span class="type">ClassTag</span>](tableName: <span class="type">String</span>, scan: <span class="type">Scan</span>, f: ((<span class="type">ImmutableBytesWritable</span>, <span class="type">Result</span>)) =&gt; <span class="type">U</span>): <span class="type">RDD</span>[<span class="type">U</span>] = {</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> job: <span class="type">Job</span> = <span class="keyword">new</span> <span class="type">Job</span>(getConf(broadcastedConf))</span><br><span class="line"></span><br><span class="line">    <span class="type">TableMapReduceUtil</span>.initCredentials(job)</span><br><span class="line">    <span class="type">TableMapReduceUtil</span>.initTableMapperJob(tableName, scan, classOf[<span class="type">IdentityTableMapper</span>], <span class="literal">null</span>, <span class="literal">null</span>, job)</span><br><span class="line"></span><br><span class="line">    sc.newAPIHadoopRDD(</span><br><span class="line">      job.getConfiguration(),</span><br><span class="line">      classOf[<span class="type">TableInputFormat</span>],</span><br><span class="line">      classOf[<span class="type">ImmutableBytesWritable</span>],</span><br><span class="line">      classOf[<span class="type">Result</span>]).map(f)</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">hbaseRDD</span></span>(tableName: <span class="type">String</span>, scans: <span class="type">Scan</span>): <span class="type">RDD</span>[(<span class="type">Array</span>[<span class="type">Byte</span>], java.util.<span class="type">List</span>[(<span class="type">Array</span>[<span class="type">Byte</span>], <span class="type">Array</span>[<span class="type">Byte</span>], <span class="type">Array</span>[<span class="type">Byte</span>])])] = {</span><br><span class="line"></span><br><span class="line">    hbaseRDD[(<span class="type">Array</span>[<span class="type">Byte</span>], java.util.<span class="type">List</span>[(<span class="type">Array</span>[<span class="type">Byte</span>], <span class="type">Array</span>[<span class="type">Byte</span>], <span class="type">Array</span>[<span class="type">Byte</span>])])](</span><br><span class="line">      tableName,</span><br><span class="line">      scans,</span><br><span class="line">      (r: (<span class="type">ImmutableBytesWritable</span>, <span class="type">Result</span>)) =&gt; {</span><br><span class="line">        <span class="keyword">val</span> it = r._2.list().iterator()</span><br><span class="line">        <span class="keyword">val</span> list = <span class="keyword">new</span> <span class="type">ArrayList</span>[(<span class="type">Array</span>[<span class="type">Byte</span>], <span class="type">Array</span>[<span class="type">Byte</span>], <span class="type">Array</span>[<span class="type">Byte</span>])]()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (it.hasNext()) {</span><br><span class="line">          <span class="keyword">val</span> kv = it.next()</span><br><span class="line">          list.add((kv.getFamily(), kv.getQualifier(), kv.getValue()))</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        (r._1.copyBytes(), list)</span><br><span class="line">      })</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">hbaseForeachPartition</span></span>[<span class="type">T</span>](</span><br><span class="line">    configBroadcast: <span class="type">Broadcast</span>[<span class="type">SerializableWritable</span>[<span class="type">Configuration</span>]],</span><br><span class="line">    metasBroadcast:  <span class="type">Broadcast</span>[<span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">ColumnInfo</span>]]]],</span><br><span class="line">    it:              <span class="type">Iterator</span>[<span class="type">T</span>],</span><br><span class="line">    fun:               (<span class="type">Iterator</span>[<span class="type">T</span>], <span class="type">HConnection</span>, <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">ColumnInfo</span>]]]) =&gt; <span class="type">Unit</span>) = {</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">val</span> config = getConf(configBroadcast)</span><br><span class="line">    <span class="keyword">val</span> metas = getMetas(metasBroadcast)</span><br><span class="line">    applyCreds(configBroadcast)</span><br><span class="line">    <span class="keyword">val</span> hConnection = <span class="type">HConnectionManager</span>.createConnection(config)</span><br><span class="line">    fun(it, hConnection, metas)</span><br><span class="line">    hConnection.close()</span><br><span class="line"></span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @desc get METAS from broadcast or driver's configure</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">getMetas</span></span>(metasBroadcast: <span class="type">Broadcast</span>[<span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">ColumnInfo</span>]]]]): <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">ColumnInfo</span>]]] = {</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">null</span> != metasLocal) {</span><br><span class="line">      <span class="keyword">return</span> metasLocal</span><br><span class="line">    } <span class="keyword">else</span> {</span><br><span class="line">      <span class="keyword">try</span> {</span><br><span class="line">        metasLocal = metasBroadcast.value</span><br><span class="line">        metasLocal</span><br><span class="line">      } <span class="keyword">catch</span> {</span><br><span class="line">        <span class="keyword">case</span> ex: <span class="type">Exception</span> =&gt; {</span><br><span class="line">          logInfo(<span class="string">"Unable to getConfig from broadcast"</span>)</span><br><span class="line">        }</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">    metasLocal</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">getConf</span></span>(configBroadcast: <span class="type">Broadcast</span>[<span class="type">SerializableWritable</span>[<span class="type">Configuration</span>]]): <span class="type">Configuration</span> = {</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (tmpHdfsConfiguration != <span class="literal">null</span>) {</span><br><span class="line">      tmpHdfsConfiguration</span><br><span class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> (tmpHdfsConfgFile != <span class="literal">null</span>) {</span><br><span class="line"></span><br><span class="line">      <span class="keyword">val</span> fs = <span class="type">FileSystem</span>.newInstance(<span class="type">SparkHadoopUtil</span>.get.conf)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">val</span> inputStream = fs.open(<span class="keyword">new</span> <span class="type">Path</span>(tmpHdfsConfgFile))</span><br><span class="line">      tmpHdfsConfiguration = <span class="keyword">new</span> <span class="type">Configuration</span>(<span class="literal">false</span>)</span><br><span class="line">      tmpHdfsConfiguration.readFields(inputStream)</span><br><span class="line">      inputStream.close()</span><br><span class="line"></span><br><span class="line">      tmpHdfsConfiguration</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (tmpHdfsConfiguration == <span class="literal">null</span>) {</span><br><span class="line">      <span class="keyword">try</span> {</span><br><span class="line">        tmpHdfsConfiguration = configBroadcast.value.value</span><br><span class="line">        tmpHdfsConfiguration</span><br><span class="line">      } <span class="keyword">catch</span> {</span><br><span class="line">        <span class="keyword">case</span> ex: <span class="type">Exception</span> =&gt; {</span><br><span class="line">          println(<span class="string">"Unable to getConfig from broadcast"</span>)</span><br><span class="line">        }</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    tmpHdfsConfiguration</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">hbaseMapPartition</span></span>[<span class="type">K</span>, <span class="type">U</span>](</span><br><span class="line">    configBroadcast: <span class="type">Broadcast</span>[<span class="type">SerializableWritable</span>[<span class="type">Configuration</span>]],</span><br><span class="line">    it:              <span class="type">Iterator</span>[<span class="type">K</span>],</span><br><span class="line">    mp:              (<span class="type">Iterator</span>[<span class="type">K</span>], <span class="type">HConnection</span>) =&gt; <span class="type">Iterator</span>[<span class="type">U</span>]): <span class="type">Iterator</span>[<span class="type">U</span>] = {</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> config = getConf(configBroadcast)</span><br><span class="line">    applyCreds(configBroadcast)</span><br><span class="line">    <span class="keyword">val</span> hConnection = <span class="type">HConnectionManager</span>.createConnection(config)</span><br><span class="line">    <span class="keyword">val</span> res = mp(it, hConnection)</span><br><span class="line">    hConnection.close()</span><br><span class="line">    res</span><br><span class="line"></span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">GetMapPartition</span>[<span class="type">T</span>, <span class="type">U</span>](<span class="params"></span></span></span><br><span class="line"><span class="class"><span class="params">    tableName:     <span class="type">String</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">    batchSize:     <span class="type">Integer</span>,</span></span></span><br><span class="line"><span class="class"><span class="params">    makeGet:       (<span class="type">T</span></span>) <span class="title">=&gt;</span> <span class="title">Get</span>,</span></span><br><span class="line"><span class="class">    <span class="title">convertResult</span></span>: (<span class="type">Result</span>) =&gt; <span class="type">U</span>) <span class="keyword">extends</span> <span class="type">Serializable</span> {</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span></span>(iterator: <span class="type">Iterator</span>[<span class="type">T</span>], hConnection: <span class="type">HConnection</span>): <span class="type">Iterator</span>[<span class="type">U</span>] = {</span><br><span class="line">      <span class="keyword">val</span> htable = hConnection.getTable(tableName)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">val</span> gets = <span class="keyword">new</span> <span class="type">ArrayList</span>[<span class="type">Get</span>]()</span><br><span class="line">      <span class="keyword">var</span> res = <span class="type">List</span>[<span class="type">U</span>]()</span><br><span class="line"></span><br><span class="line">      <span class="keyword">while</span> (iterator.hasNext) {</span><br><span class="line">        gets.add(makeGet(iterator.next))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (gets.size() == batchSize) {</span><br><span class="line">          <span class="keyword">var</span> results = htable.get(gets)</span><br><span class="line">          res = res ++ results.map(convertResult)</span><br><span class="line">          gets.clear()</span><br><span class="line">        }</span><br><span class="line">      }</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (gets.size() &gt; <span class="number">0</span>) {</span><br><span class="line">        <span class="keyword">val</span> results = htable.get(gets)</span><br><span class="line">        res = res ++ results.map(convertResult)</span><br><span class="line">        gets.clear()</span><br><span class="line">      }</span><br><span class="line"></span><br><span class="line">      htable.close()</span><br><span class="line">      res.iterator</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">fakeClassTag</span></span>[<span class="type">T</span>]: <span class="type">ClassTag</span>[<span class="type">T</span>] = <span class="type">ClassTag</span>.<span class="type">AnyRef</span>.asInstanceOf[<span class="type">ClassTag</span>[<span class="type">T</span>]]</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>  根据我们的需求，重构了HbaseContext的源代码，删除了不必要的程序代码，从源头上保证了程序适用于我们的应用场景。</p>
-<h2 id="SparkSteaming代码"><a href="#SparkSteaming代码" class="headerlink" title="SparkSteaming代码"></a>SparkSteaming代码</h2><figure class="highlight scala"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">/** initialize ZK UTIL */</span></span><br><span class="line">   <span class="meta">@transient</span> <span class="keyword">val</span> zkUtil = <span class="keyword">new</span> <span class="type">CuratorUtil</span>()</span><br><span class="line"></span><br><span class="line">   <span class="comment">/** get initialize parameters */</span></span><br><span class="line">   <span class="keyword">val</span> offsetPath = <span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">ZOOKEEPER_SPARK_PATH</span>)</span><br><span class="line">   zkUtil.createZKNodePer(offsetPath, <span class="literal">null</span>)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">val</span> topic = <span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">KAFKA_TOPIC_NAME</span>)</span><br><span class="line">   <span class="keyword">val</span> recTime = <span class="type">Integer</span>.parseInt(<span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">STREAMING_RECTCKE_TIME</span>))</span><br><span class="line">   <span class="keyword">val</span> <span class="type">ZK_MYSQL_PATH</span> = <span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">ZOOKEEPER_NAMESPACE_MYSQL_TABLES</span>);</span><br><span class="line">   <span class="keyword">val</span> brokerList = <span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">KAFKA_BROKER_LIST</span>);</span><br><span class="line"></span><br><span class="line">   <span class="keyword">val</span> kafkaParams = <span class="type">Map</span>[<span class="type">String</span>, <span class="type">String</span>](</span><br><span class="line">     <span class="string">"metadata.broker.list"</span> -&gt; brokerList,</span><br><span class="line">     <span class="string">"zookeeper.connect"</span> -&gt; <span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">ZOOKEEPER_SERVER_LIST</span>),</span><br><span class="line">     <span class="string">"group.id"</span> -&gt; <span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">KAFKA_CONSUMER_GROUPID</span>))</span><br><span class="line"></span><br><span class="line">   <span class="comment">/** initialize HBASE METAS for filter */</span></span><br><span class="line">   <span class="meta">@transient</span> <span class="meta">@volatile</span> <span class="keyword">var</span> metas: java.util.<span class="type">HashMap</span>[<span class="type">String</span>, java.util.<span class="type">HashMap</span>[<span class="type">String</span>, java.util.<span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">ColumnInfo</span>]]] = <span class="type">Instance</span>.paserMetas(zkUtil, <span class="type">ZK_MYSQL_PATH</span>)</span><br><span class="line">   <span class="keyword">if</span> (metas.size() &lt; <span class="number">1</span>) {</span><br><span class="line">     println(<span class="string">"load hbase tablem metas failed!"</span>)</span><br><span class="line">     <span class="keyword">return</span> ;</span><br><span class="line">   }</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**  initialize Context */</span></span><br><span class="line">   <span class="comment">// configure</span></span><br><span class="line">   <span class="meta">@transient</span> <span class="keyword">val</span> sparkConf = <span class="keyword">new</span> <span class="type">SparkConf</span>()</span><br><span class="line">     .set(<span class="string">"spark.streaming.backpressure.enabled"</span>, <span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">STREAMING_BACK_ENABLED</span>)) <span class="comment">// 设置可以限制</span></span><br><span class="line">     .set(<span class="string">"spark.streaming.kafka.maxRatePerPartition"</span>, <span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">STREAMING_KAFKA_MAXRATE</span>)) <span class="comment">// 设置具体限制数量：records/SEC</span></span><br><span class="line">     .set(<span class="string">"spark.streaming.stopGracefullyOnShutdown"</span>, <span class="type">PropertiesUtil</span>.getProperty(<span class="type">ConstantUtil</span>.<span class="type">STREAMING_SHUTDOWN_GRACEFULLLY</span>)) <span class="comment">// 设置Gracefully stop</span></span><br><span class="line">     .set(<span class="string">"serializer.class"</span>, <span class="string">"kafka.serializer.StringEncoder"</span>)</span><br><span class="line">   <span class="meta">@transient</span> <span class="keyword">val</span> hbaseConf = <span class="type">HBaseConfiguration</span>.create();</span><br><span class="line">   hbaseConf.addResource(<span class="string">"/etc/hbase/conf.cloudera.hbase/hbase-site.xml"</span>)</span><br><span class="line">   hbaseConf.addResource(<span class="string">"/etc/hbase/conf.cloudera.hbase/core-site.xml"</span>)</span><br><span class="line">   <span class="meta">@transient</span> <span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(sparkConf)</span><br><span class="line">   <span class="keyword">val</span> ssc = <span class="keyword">new</span> <span class="type">StreamingContext</span>(sc, <span class="type">Seconds</span>(recTime));</span><br><span class="line"></span><br><span class="line">   <span class="keyword">val</span> fromOffsets = readOffsetData(zkUtil, offsetPath, topic, brokerList, <span class="number">9092</span>)</span><br><span class="line">   <span class="keyword">val</span> stream = <span class="type">KafkaUtils</span>.createDirectStream[<span class="type">String</span>, <span class="type">String</span>, <span class="type">StringDecoder</span>, <span class="type">StringDecoder</span>, (<span class="type">String</span>, <span class="type">String</span>)](ssc, kafkaParams, fromOffsets, (mmd: <span class="type">MessageAndMetadata</span>[<span class="type">String</span>, <span class="type">String</span>]) =&gt; (mmd.key(), mmd.message()))</span><br><span class="line"></span><br><span class="line">   stream.foreachRDD(rdd =&gt; {</span><br><span class="line"></span><br><span class="line">     <span class="keyword">val</span> offsets = rdd.asInstanceOf[<span class="type">HasOffsetRanges</span>].offsetRanges.map { offset =&gt; (offset.partition, offset.fromOffset) }</span><br><span class="line">     writeOffsetData(zkUtil, offsetPath, offsets)</span><br><span class="line"></span><br><span class="line">     <span class="keyword">val</span> hbaseContext = <span class="keyword">new</span> <span class="type">HBaseContext</span>(sc, hbaseConf, metas)</span><br><span class="line">     hbaseContext.bulkMutation(rdd.map(item =&gt; item._2), (<span class="type">KV</span>: <span class="type">String</span>) =&gt; {</span><br><span class="line">       <span class="type">Instance</span>.parse(<span class="type">KV</span>)</span><br><span class="line">     }, <span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line">   })</span><br><span class="line"></span><br><span class="line">   <span class="comment">/** add gracefully stop control */</span></span><br><span class="line">   <span class="type">Runtime</span>.getRuntime.addShutdownHook(<span class="keyword">new</span> <span class="type">Thread</span> {</span><br><span class="line">     <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">run</span></span>(): <span class="type">Unit</span> = {</span><br><span class="line">       <span class="keyword">try</span> {</span><br><span class="line">         zkUtil.close()</span><br><span class="line">       } <span class="keyword">catch</span> {</span><br><span class="line">         <span class="keyword">case</span> e: <span class="type">Exception</span> =&gt; {</span><br><span class="line">         }</span><br><span class="line">       }</span><br><span class="line">       ssc.stop(<span class="literal">true</span>, <span class="literal">true</span>)</span><br><span class="line">     }</span><br><span class="line">   })</span><br><span class="line"></span><br><span class="line">   <span class="comment">/** spark streaming start and wait termination */</span></span><br><span class="line">   ssc.start()</span><br><span class="line">   ssc.awaitTermination()</span><br><span class="line"></span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * @desc read data from Zookeeper</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">def</span> <span class="title">readOffsetData</span></span>(zkUtil: <span class="type">CuratorUtil</span>, offsetPath: <span class="type">String</span>, topic: <span class="type">String</span>, brokerList: <span class="type">String</span>, kafkaPort: <span class="type">Integer</span>): <span class="type">Map</span>[<span class="type">TopicAndPartition</span>, <span class="type">Long</span>] = {</span><br><span class="line"></span><br><span class="line">   <span class="keyword">val</span> orgData = zkUtil.readDataForPath(offsetPath)</span><br><span class="line">   <span class="keyword">if</span> (<span class="literal">null</span> == orgData) {</span><br><span class="line">     <span class="keyword">val</span> util = <span class="type">KafkaUtil</span>.getInstance();</span><br><span class="line">     util.init(brokerList, kafkaPort, topic);</span><br><span class="line">     <span class="keyword">val</span> offsets = util.getLeastOffsets</span><br><span class="line">     <span class="keyword">val</span> fromOffsets = <span class="keyword">for</span> (i &lt;- <span class="number">0</span> to offsets.size() - <span class="number">1</span>)</span><br><span class="line">       <span class="keyword">yield</span> <span class="type">TopicAndPartition</span>.apply(topic, i) -&gt; offsets.get(i).toLong</span><br><span class="line">     <span class="keyword">return</span> fromOffsets.toMap</span><br><span class="line">   }</span><br><span class="line"></span><br><span class="line">   <span class="keyword">val</span> data = <span class="type">JSON</span>.parseFull(orgData).get.asInstanceOf[<span class="type">Map</span>[<span class="type">String</span>, <span class="type">String</span>]]</span><br><span class="line">   <span class="keyword">val</span> fromOffsets = data.map(item =&gt; {</span><br><span class="line">     <span class="type">TopicAndPartition</span>.apply(topic, item._1.toInt) -&gt; item._2.toLong</span><br><span class="line">   })</span><br><span class="line">   <span class="keyword">return</span> fromOffsets</span><br><span class="line"></span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * @desc write offset data to Zookeeper</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">def</span> <span class="title">writeOffsetData</span></span>(zkUtil: <span class="type">CuratorUtil</span>, offsetPath: <span class="type">String</span>, data: <span class="type">Array</span>[(<span class="type">Int</span>, <span class="type">Long</span>)]): <span class="type">Unit</span> = {</span><br><span class="line"></span><br><span class="line">   <span class="keyword">val</span> map = data.toMap[<span class="type">Int</span>, <span class="type">Long</span>].map(item =&gt; {</span><br><span class="line">     item._1.toString() -&gt; item._2.toString()</span><br><span class="line">   })</span><br><span class="line">   zkUtil.setDataForPath(offsetPath, <span class="type">JSONObject</span>(map).toString)</span><br><span class="line"></span><br><span class="line"> }</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><pre class=" language-hljs scala"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HBaseContext</span>(<span class="hljs-params"><code class="language-hljs scala"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HBaseContext</span>(<span class="hljs-params"></span></span>
+<span class="hljs-class"><span class="hljs-params">  @transient sc:        <span class="hljs-type">SparkContext</span>,</span></span>
+<span class="hljs-class"><span class="hljs-params">  @transient config:    <span class="hljs-type">Configuration</span>,</span></span>
+<span class="hljs-class"><span class="hljs-params">  metas:                java.util.<span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, java.util.<span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, java.util.<span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">ColumnInfo</span>]]],</span></span>
+<span class="hljs-class"><span class="hljs-params">  val tmpHdfsConfgFile: <span class="hljs-type">String</span>                                                                                      = null</span>) <span class="hljs-keyword">extends</span> <span class="hljs-title">Serializable</span> <span class="hljs-keyword">with</span> <span class="hljs-title">Logging</span> </span>{
 
-    </div>
+  <span class="hljs-meta">@transient</span> <span class="hljs-keyword">var</span> credentials = <span class="hljs-type">SparkHadoopUtil</span>.get.getCurrentUserCredentials()
+  <span class="hljs-meta">@transient</span> <span class="hljs-keyword">var</span> tmpHdfsConfiguration: <span class="hljs-type">Configuration</span> = config
+  <span class="hljs-meta">@transient</span> <span class="hljs-keyword">var</span> appliedCredentials = <span class="hljs-literal">false</span>;
+  <span class="hljs-meta">@transient</span> <span class="hljs-keyword">var</span> metasLocal = metas
+  <span class="hljs-meta">@transient</span> <span class="hljs-keyword">val</span> job = <span class="hljs-keyword">new</span> <span class="hljs-type">Job</span>(config)
+  <span class="hljs-type">TableMapReduceUtil</span>.initCredentials(job)
+  <span class="hljs-keyword">val</span> broadcastedConf = sc.broadcast(<span class="hljs-keyword">new</span> <span class="hljs-type">SerializableWritable</span>(config))
+  <span class="hljs-keyword">val</span> credentialsConf = sc.broadcast(<span class="hljs-keyword">new</span> <span class="hljs-type">SerializableWritable</span>(job.getCredentials()))
+  <span class="hljs-keyword">val</span> broadcastMetas = sc.broadcast(metas)
 
-    
-    
-    
-<div>
-  
-    <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
-    
-</div>
-
-  
-</div>
-        
-
-  <div class="followme">
-    <p>Welcome to my other publishing channels</p>
-
-    <div class="social-list">
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
-    </div>
-  </div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E8%B0%83%E7%A0%94/" rel="tag"><i class="fa fa-tag"></i>调研</a>
-              <a href="/tags/Spark/" rel="tag"><i class="fa fa-tag"></i>Spark</a>
-              <a href="/tags/Kafka/" rel="tag"><i class="fa fa-tag"></i>Kafka</a>
-              <a href="/tags/Hbase/" rel="tag"><i class="fa fa-tag"></i>Hbase</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/06/29/Maven%E4%BD%BF%E7%94%A8%E5%90%84%E7%A7%8D%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/" rel="prev" title="Maven使用各种问题汇总">
-      <i class="fa fa-chevron-left"></i> Maven使用各种问题汇总
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/06/29/Kafka-SparkStreaming-Hbase%E3%80%90%E4%B8%80%E3%80%91/" rel="next" title="Kafka->SparkStreaming->Hbase【一】">
-      Kafka-&gt;SparkStreaming-&gt;Hbase【一】 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
+  <span class="hljs-keyword">if</span> (tmpHdfsConfgFile != <span class="hljs-literal">null</span> &amp;&amp; config != <span class="hljs-literal">null</span>) {
+    <span class="hljs-keyword">val</span> fs = <span class="hljs-type">FileSystem</span>.newInstance(config)
+    <span class="hljs-keyword">val</span> tmpPath = <span class="hljs-keyword">new</span> <span class="hljs-type">Path</span>(tmpHdfsConfgFile)
+    <span class="hljs-keyword">if</span> (!fs.exists(tmpPath)) {
+      <span class="hljs-keyword">val</span> outputStream = fs.create(tmpPath)
+      config.write(outputStream)
+      outputStream.close();
+    } <span class="hljs-keyword">else</span> {
+      logWarning(<span class="hljs-string">"tmpHdfsConfigDir "</span> + tmpHdfsConfgFile + <span class="hljs-string">" exist!!"</span>)
     }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">mapPartition</span></span>[<span class="hljs-type">T</span>, <span class="hljs-type">R</span>: <span class="hljs-type">ClassTag</span>](
+    rdd: <span class="hljs-type">RDD</span>[<span class="hljs-type">T</span>],
+    mp:  (<span class="hljs-type">Iterator</span>[<span class="hljs-type">T</span>], <span class="hljs-type">HConnection</span>) =&gt; <span class="hljs-type">Iterator</span>[<span class="hljs-type">R</span>]): <span class="hljs-type">RDD</span>[<span class="hljs-type">R</span>] = {
+
+    rdd.mapPartitions[<span class="hljs-type">R</span>](it =&gt; hbaseMapPartition[<span class="hljs-type">T</span>, <span class="hljs-type">R</span>](
+      broadcastedConf,
+      it,
+      mp), <span class="hljs-literal">true</span>)
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">applyCreds</span></span>[<span class="hljs-type">T</span>](configBroadcast: <span class="hljs-type">Broadcast</span>[<span class="hljs-type">SerializableWritable</span>[<span class="hljs-type">Configuration</span>]]) {
+
+    credentials = <span class="hljs-type">SparkHadoopUtil</span>.get.getCurrentUserCredentials()
+
+    logInfo(<span class="hljs-string">"appliedCredentials:"</span> + appliedCredentials + <span class="hljs-string">",credentials:"</span> + credentials);
+
+    <span class="hljs-keyword">if</span> (appliedCredentials == <span class="hljs-literal">false</span> &amp;&amp; credentials != <span class="hljs-literal">null</span>) {
+      appliedCredentials = <span class="hljs-literal">true</span>
+      logCredInformation(credentials)
+
+      <span class="hljs-meta">@transient</span> <span class="hljs-keyword">val</span> ugi = <span class="hljs-type">UserGroupInformation</span>.getCurrentUser();
+      ugi.addCredentials(credentials)
+      ugi.setAuthenticationMethod(<span class="hljs-type">AuthenticationMethod</span>.<span class="hljs-type">PROXY</span>)
+      ugi.addCredentials(credentialsConf.value.value)
+
+    }
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">logCredInformation</span></span>[<span class="hljs-type">T</span>](credentials2: <span class="hljs-type">Credentials</span>) {
+    logInfo(<span class="hljs-string">"credentials:"</span> + credentials2);
+    <span class="hljs-keyword">for</span> (a &lt;- <span class="hljs-number">0</span> until credentials2.getAllSecretKeys.size()) {
+      logInfo(<span class="hljs-string">"getAllSecretKeys:"</span> + a + <span class="hljs-string">":"</span> + credentials2.getAllSecretKeys.get(a));
+    }
+    <span class="hljs-keyword">val</span> it = credentials2.getAllTokens.iterator();
+    <span class="hljs-keyword">while</span> (it.hasNext) {
+      logInfo(<span class="hljs-string">"getAllTokens:"</span> + it.next());
+    }
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">bulkMutation</span></span>[<span class="hljs-type">T</span>](rdd: <span class="hljs-type">RDD</span>[<span class="hljs-type">T</span>], fun: (<span class="hljs-type">T</span>) =&gt; (<span class="hljs-type">DataEntity</span>), autoFlush: <span class="hljs-type">Boolean</span>) {
+    
+    rdd.foreachPartition(
+      it =&gt; {
+        hbaseForeachPartition[<span class="hljs-type">T</span>](
+          broadcastedConf, broadcastMetas,
+          it,
+          (iter, hConnection, metas) =&gt; {
+
+            iter.foreach(item =&gt; {
+
+              <span class="hljs-keyword">val</span> entity = fun(item)
+              <span class="hljs-keyword">val</span> dbName = entity.dbName
+              <span class="hljs-keyword">val</span> tabName = entity.tabName
+              <span class="hljs-keyword">if</span> (metas.containsKey(dbName) &amp;&amp; metas.get(dbName).containsKey(tabName)) {
+
+                <span class="hljs-keyword">val</span> htable = hConnection.getTable(entity.dbName + <span class="hljs-string">":"</span> + entity.tabName)
+                htable.setAutoFlush(autoFlush, <span class="hljs-literal">true</span>)
+
+                entity.`<span class="hljs-class"><span class="hljs-keyword">type</span>` <span class="hljs-title">match</span> </span>{
+                  <span class="hljs-keyword">case</span> <span class="hljs-string">"INSERT"</span> | <span class="hljs-string">"insert"</span> =&gt; {
+                    <span class="hljs-keyword">val</span> insertPuts = <span class="hljs-type">Instance</span>.insert(entity, metas)
+                    <span class="hljs-keyword">if</span> (<span class="hljs-literal">null</span> != insertPuts &amp;&amp; insertPuts.size() &gt; <span class="hljs-number">0</span>)
+                      htable.batch(insertPuts)
+                  }
+
+                  <span class="hljs-keyword">case</span> <span class="hljs-string">"UPDATE"</span> | <span class="hljs-string">"update"</span> =&gt; {
+                    <span class="hljs-keyword">val</span> updatePuts = <span class="hljs-type">Instance</span>.update(entity, metas)
+                    <span class="hljs-keyword">if</span> (<span class="hljs-literal">null</span> != updatePuts &amp;&amp; updatePuts.size() &gt; <span class="hljs-number">0</span>)
+                      htable.batch(updatePuts)
+                  }
+
+                  <span class="hljs-keyword">case</span> <span class="hljs-string">"DELETE"</span> | <span class="hljs-string">"delete"</span> =&gt; {
+                    <span class="hljs-keyword">val</span> deleteDels = <span class="hljs-type">Instance</span>.delete(entity)
+                    <span class="hljs-keyword">if</span> (<span class="hljs-literal">null</span> != deleteDels &amp;&amp; deleteDels.size() &gt; <span class="hljs-number">0</span>)
+                      htable.batch(deleteDels)
+                  }
+                  
+                  <span class="hljs-keyword">case</span> all: <span class="hljs-type">Any</span> =&gt; {
+                    logInfo(<span class="hljs-string">"其他操作："</span> + all)
+                  }
+                }
+                
+                htable.flushCommits()
+                htable.close()
+              }
+            })
+          })
+      })
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hbaseRDD</span></span>[<span class="hljs-type">U</span>: <span class="hljs-type">ClassTag</span>](tableName: <span class="hljs-type">String</span>, scan: <span class="hljs-type">Scan</span>, f: ((<span class="hljs-type">ImmutableBytesWritable</span>, <span class="hljs-type">Result</span>)) =&gt; <span class="hljs-type">U</span>): <span class="hljs-type">RDD</span>[<span class="hljs-type">U</span>] = {
+
+    <span class="hljs-keyword">var</span> job: <span class="hljs-type">Job</span> = <span class="hljs-keyword">new</span> <span class="hljs-type">Job</span>(getConf(broadcastedConf))
+
+    <span class="hljs-type">TableMapReduceUtil</span>.initCredentials(job)
+    <span class="hljs-type">TableMapReduceUtil</span>.initTableMapperJob(tableName, scan, classOf[<span class="hljs-type">IdentityTableMapper</span>], <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, job)
+
+    sc.newAPIHadoopRDD(
+      job.getConfiguration(),
+      classOf[<span class="hljs-type">TableInputFormat</span>],
+      classOf[<span class="hljs-type">ImmutableBytesWritable</span>],
+      classOf[<span class="hljs-type">Result</span>]).map(f)
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hbaseRDD</span></span>(tableName: <span class="hljs-type">String</span>, scans: <span class="hljs-type">Scan</span>): <span class="hljs-type">RDD</span>[(<span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>], java.util.<span class="hljs-type">List</span>[(<span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>], <span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>], <span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>])])] = {
+
+    hbaseRDD[(<span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>], java.util.<span class="hljs-type">List</span>[(<span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>], <span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>], <span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>])])](
+      tableName,
+      scans,
+      (r: (<span class="hljs-type">ImmutableBytesWritable</span>, <span class="hljs-type">Result</span>)) =&gt; {
+        <span class="hljs-keyword">val</span> it = r._2.list().iterator()
+        <span class="hljs-keyword">val</span> list = <span class="hljs-keyword">new</span> <span class="hljs-type">ArrayList</span>[(<span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>], <span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>], <span class="hljs-type">Array</span>[<span class="hljs-type">Byte</span>])]()
+
+        <span class="hljs-keyword">while</span> (it.hasNext()) {
+          <span class="hljs-keyword">val</span> kv = it.next()
+          list.add((kv.getFamily(), kv.getQualifier(), kv.getValue()))
+        }
+
+        (r._1.copyBytes(), list)
+      })
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hbaseForeachPartition</span></span>[<span class="hljs-type">T</span>](
+    configBroadcast: <span class="hljs-type">Broadcast</span>[<span class="hljs-type">SerializableWritable</span>[<span class="hljs-type">Configuration</span>]],
+    metasBroadcast:  <span class="hljs-type">Broadcast</span>[<span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">ColumnInfo</span>]]]],
+    it:              <span class="hljs-type">Iterator</span>[<span class="hljs-type">T</span>],
+    fun:               (<span class="hljs-type">Iterator</span>[<span class="hljs-type">T</span>], <span class="hljs-type">HConnection</span>, <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">ColumnInfo</span>]]]) =&gt; <span class="hljs-type">Unit</span>) = {
+    
+    <span class="hljs-keyword">val</span> config = getConf(configBroadcast)
+    <span class="hljs-keyword">val</span> metas = getMetas(metasBroadcast)
+    applyCreds(configBroadcast)
+    <span class="hljs-keyword">val</span> hConnection = <span class="hljs-type">HConnectionManager</span>.createConnection(config)
+    fun(it, hConnection, metas)
+    hConnection.close()
+
+  }
+
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * @desc get METAS from broadcast or driver's configure</span>
+<span class="hljs-comment">   */</span>
+  <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">getMetas</span></span>(metasBroadcast: <span class="hljs-type">Broadcast</span>[<span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">ColumnInfo</span>]]]]): <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">ColumnInfo</span>]]] = {
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-literal">null</span> != metasLocal) {
+      <span class="hljs-keyword">return</span> metasLocal
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">try</span> {
+        metasLocal = metasBroadcast.value
+        metasLocal
+      } <span class="hljs-keyword">catch</span> {
+        <span class="hljs-keyword">case</span> ex: <span class="hljs-type">Exception</span> =&gt; {
+          logInfo(<span class="hljs-string">"Unable to getConfig from broadcast"</span>)
+        }
       }
     }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
+    metasLocal
   }
-</script>
 
+  <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">getConf</span></span>(configBroadcast: <span class="hljs-type">Broadcast</span>[<span class="hljs-type">SerializableWritable</span>[<span class="hljs-type">Configuration</span>]]): <span class="hljs-type">Configuration</span> = {
+
+    <span class="hljs-keyword">if</span> (tmpHdfsConfiguration != <span class="hljs-literal">null</span>) {
+      tmpHdfsConfiguration
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (tmpHdfsConfgFile != <span class="hljs-literal">null</span>) {
+
+      <span class="hljs-keyword">val</span> fs = <span class="hljs-type">FileSystem</span>.newInstance(<span class="hljs-type">SparkHadoopUtil</span>.get.conf)
+
+      <span class="hljs-keyword">val</span> inputStream = fs.open(<span class="hljs-keyword">new</span> <span class="hljs-type">Path</span>(tmpHdfsConfgFile))
+      tmpHdfsConfiguration = <span class="hljs-keyword">new</span> <span class="hljs-type">Configuration</span>(<span class="hljs-literal">false</span>)
+      tmpHdfsConfiguration.readFields(inputStream)
+      inputStream.close()
+
+      tmpHdfsConfiguration
+    }
+
+    <span class="hljs-keyword">if</span> (tmpHdfsConfiguration == <span class="hljs-literal">null</span>) {
+      <span class="hljs-keyword">try</span> {
+        tmpHdfsConfiguration = configBroadcast.value.value
+        tmpHdfsConfiguration
+      } <span class="hljs-keyword">catch</span> {
+        <span class="hljs-keyword">case</span> ex: <span class="hljs-type">Exception</span> =&gt; {
+          println(<span class="hljs-string">"Unable to getConfig from broadcast"</span>)
+        }
+      }
+    }
+
+    tmpHdfsConfiguration
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hbaseMapPartition</span></span>[<span class="hljs-type">K</span>, <span class="hljs-type">U</span>](
+    configBroadcast: <span class="hljs-type">Broadcast</span>[<span class="hljs-type">SerializableWritable</span>[<span class="hljs-type">Configuration</span>]],
+    it:              <span class="hljs-type">Iterator</span>[<span class="hljs-type">K</span>],
+    mp:              (<span class="hljs-type">Iterator</span>[<span class="hljs-type">K</span>], <span class="hljs-type">HConnection</span>) =&gt; <span class="hljs-type">Iterator</span>[<span class="hljs-type">U</span>]): <span class="hljs-type">Iterator</span>[<span class="hljs-type">U</span>] = {
+
+    <span class="hljs-keyword">val</span> config = getConf(configBroadcast)
+    applyCreds(configBroadcast)
+    <span class="hljs-keyword">val</span> hConnection = <span class="hljs-type">HConnectionManager</span>.createConnection(config)
+    <span class="hljs-keyword">val</span> res = mp(it, hConnection)
+    hConnection.close()
+    res
+
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GetMapPartition</span>[<span class="hljs-type">T</span>, <span class="hljs-type">U</span>](<span class="hljs-params"></span></span>
+<span class="hljs-class"><span class="hljs-params">    tableName:     <span class="hljs-type">String</span>,</span></span>
+<span class="hljs-class"><span class="hljs-params">    batchSize:     <span class="hljs-type">Integer</span>,</span></span>
+<span class="hljs-class"><span class="hljs-params">    makeGet:       (<span class="hljs-type">T</span></span>) <span class="hljs-title">=&gt;</span> <span class="hljs-title">Get</span>,</span>
+<span class="hljs-class">    <span class="hljs-title">convertResult</span></span>: (<span class="hljs-type">Result</span>) =&gt; <span class="hljs-type">U</span>) <span class="hljs-keyword">extends</span> <span class="hljs-type">Serializable</span> {
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span></span>(iterator: <span class="hljs-type">Iterator</span>[<span class="hljs-type">T</span>], hConnection: <span class="hljs-type">HConnection</span>): <span class="hljs-type">Iterator</span>[<span class="hljs-type">U</span>] = {
+      <span class="hljs-keyword">val</span> htable = hConnection.getTable(tableName)
+
+      <span class="hljs-keyword">val</span> gets = <span class="hljs-keyword">new</span> <span class="hljs-type">ArrayList</span>[<span class="hljs-type">Get</span>]()
+      <span class="hljs-keyword">var</span> res = <span class="hljs-type">List</span>[<span class="hljs-type">U</span>]()
+
+      <span class="hljs-keyword">while</span> (iterator.hasNext) {
+        gets.add(makeGet(iterator.next))
+
+        <span class="hljs-keyword">if</span> (gets.size() == batchSize) {
+          <span class="hljs-keyword">var</span> results = htable.get(gets)
+          res = res ++ results.map(convertResult)
+          gets.clear()
+        }
+      }
+
+      <span class="hljs-keyword">if</span> (gets.size() &gt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">val</span> results = htable.get(gets)
+        res = res ++ results.map(convertResult)
+        gets.clear()
+      }
+
+      htable.close()
+      res.iterator
+    }
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">fakeClassTag</span></span>[<span class="hljs-type">T</span>]: <span class="hljs-type">ClassTag</span>[<span class="hljs-type">T</span>] = <span class="hljs-type">ClassTag</span>.<span class="hljs-type">AnyRef</span>.asInstanceOf[<span class="hljs-type">ClassTag</span>[<span class="hljs-type">T</span>]]
+
+}</code></span></span></pre>
+<p>  根据我们的需求，重构了HbaseContext的源代码，删除了不必要的程序代码，从源头上保证了程序适用于我们的应用场景。</p>
+<h2 id="SparkSteaming代码"><a href="#SparkSteaming代码" class="headerlink" title="SparkSteaming代码"></a>SparkSteaming代码</h2><pre class=" language-hljs scala">   <span class="hljs-comment"><code class="language-hljs scala">   <span class="hljs-comment">/** initialize ZK UTIL */</span>
+   <span class="hljs-meta">@transient</span> <span class="hljs-keyword">val</span> zkUtil = <span class="hljs-keyword">new</span> <span class="hljs-type">CuratorUtil</span>()
+
+   <span class="hljs-comment">/** get initialize parameters */</span>
+   <span class="hljs-keyword">val</span> offsetPath = <span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">ZOOKEEPER_SPARK_PATH</span>)
+   zkUtil.createZKNodePer(offsetPath, <span class="hljs-literal">null</span>)
+
+   <span class="hljs-keyword">val</span> topic = <span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">KAFKA_TOPIC_NAME</span>)
+   <span class="hljs-keyword">val</span> recTime = <span class="hljs-type">Integer</span>.parseInt(<span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">STREAMING_RECTCKE_TIME</span>))
+   <span class="hljs-keyword">val</span> <span class="hljs-type">ZK_MYSQL_PATH</span> = <span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">ZOOKEEPER_NAMESPACE_MYSQL_TABLES</span>);
+   <span class="hljs-keyword">val</span> brokerList = <span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">KAFKA_BROKER_LIST</span>);
+
+   <span class="hljs-keyword">val</span> kafkaParams = <span class="hljs-type">Map</span>[<span class="hljs-type">String</span>, <span class="hljs-type">String</span>](
+     <span class="hljs-string">"metadata.broker.list"</span> -&gt; brokerList,
+     <span class="hljs-string">"zookeeper.connect"</span> -&gt; <span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">ZOOKEEPER_SERVER_LIST</span>),
+     <span class="hljs-string">"group.id"</span> -&gt; <span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">KAFKA_CONSUMER_GROUPID</span>))
+
+   <span class="hljs-comment">/** initialize HBASE METAS for filter */</span>
+   <span class="hljs-meta">@transient</span> <span class="hljs-meta">@volatile</span> <span class="hljs-keyword">var</span> metas: java.util.<span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, java.util.<span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, java.util.<span class="hljs-type">HashMap</span>[<span class="hljs-type">String</span>, <span class="hljs-type">ColumnInfo</span>]]] = <span class="hljs-type">Instance</span>.paserMetas(zkUtil, <span class="hljs-type">ZK_MYSQL_PATH</span>)
+   <span class="hljs-keyword">if</span> (metas.size() &lt; <span class="hljs-number">1</span>) {
+     println(<span class="hljs-string">"load hbase tablem metas failed!"</span>)
+     <span class="hljs-keyword">return</span> ;
+   }
+
+   <span class="hljs-comment">/**  initialize Context */</span>
+   <span class="hljs-comment">// configure</span>
+   <span class="hljs-meta">@transient</span> <span class="hljs-keyword">val</span> sparkConf = <span class="hljs-keyword">new</span> <span class="hljs-type">SparkConf</span>()
+     .set(<span class="hljs-string">"spark.streaming.backpressure.enabled"</span>, <span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">STREAMING_BACK_ENABLED</span>)) <span class="hljs-comment">// 设置可以限制</span>
+     .set(<span class="hljs-string">"spark.streaming.kafka.maxRatePerPartition"</span>, <span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">STREAMING_KAFKA_MAXRATE</span>)) <span class="hljs-comment">// 设置具体限制数量：records/SEC</span>
+     .set(<span class="hljs-string">"spark.streaming.stopGracefullyOnShutdown"</span>, <span class="hljs-type">PropertiesUtil</span>.getProperty(<span class="hljs-type">ConstantUtil</span>.<span class="hljs-type">STREAMING_SHUTDOWN_GRACEFULLLY</span>)) <span class="hljs-comment">// 设置Gracefully stop</span>
+     .set(<span class="hljs-string">"serializer.class"</span>, <span class="hljs-string">"kafka.serializer.StringEncoder"</span>)
+   <span class="hljs-meta">@transient</span> <span class="hljs-keyword">val</span> hbaseConf = <span class="hljs-type">HBaseConfiguration</span>.create();
+   hbaseConf.addResource(<span class="hljs-string">"/etc/hbase/conf.cloudera.hbase/hbase-site.xml"</span>)
+   hbaseConf.addResource(<span class="hljs-string">"/etc/hbase/conf.cloudera.hbase/core-site.xml"</span>)
+   <span class="hljs-meta">@transient</span> <span class="hljs-keyword">val</span> sc = <span class="hljs-keyword">new</span> <span class="hljs-type">SparkContext</span>(sparkConf)
+   <span class="hljs-keyword">val</span> ssc = <span class="hljs-keyword">new</span> <span class="hljs-type">StreamingContext</span>(sc, <span class="hljs-type">Seconds</span>(recTime));
+
+   <span class="hljs-keyword">val</span> fromOffsets = readOffsetData(zkUtil, offsetPath, topic, brokerList, <span class="hljs-number">9092</span>)
+   <span class="hljs-keyword">val</span> stream = <span class="hljs-type">KafkaUtils</span>.createDirectStream[<span class="hljs-type">String</span>, <span class="hljs-type">String</span>, <span class="hljs-type">StringDecoder</span>, <span class="hljs-type">StringDecoder</span>, (<span class="hljs-type">String</span>, <span class="hljs-type">String</span>)](ssc, kafkaParams, fromOffsets, (mmd: <span class="hljs-type">MessageAndMetadata</span>[<span class="hljs-type">String</span>, <span class="hljs-type">String</span>]) =&gt; (mmd.key(), mmd.message()))
+
+   stream.foreachRDD(rdd =&gt; {
+
+     <span class="hljs-keyword">val</span> offsets = rdd.asInstanceOf[<span class="hljs-type">HasOffsetRanges</span>].offsetRanges.map { offset =&gt; (offset.partition, offset.fromOffset) }
+     writeOffsetData(zkUtil, offsetPath, offsets)
+
+     <span class="hljs-keyword">val</span> hbaseContext = <span class="hljs-keyword">new</span> <span class="hljs-type">HBaseContext</span>(sc, hbaseConf, metas)
+     hbaseContext.bulkMutation(rdd.map(item =&gt; item._2), (<span class="hljs-type">KV</span>: <span class="hljs-type">String</span>) =&gt; {
+       <span class="hljs-type">Instance</span>.parse(<span class="hljs-type">KV</span>)
+     }, <span class="hljs-literal">false</span>)
+
+   })
+
+   <span class="hljs-comment">/** add gracefully stop control */</span>
+   <span class="hljs-type">Runtime</span>.getRuntime.addShutdownHook(<span class="hljs-keyword">new</span> <span class="hljs-type">Thread</span> {
+     <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span></span>(): <span class="hljs-type">Unit</span> = {
+       <span class="hljs-keyword">try</span> {
+         zkUtil.close()
+       } <span class="hljs-keyword">catch</span> {
+         <span class="hljs-keyword">case</span> e: <span class="hljs-type">Exception</span> =&gt; {
+         }
+       }
+       ssc.stop(<span class="hljs-literal">true</span>, <span class="hljs-literal">true</span>)
+     }
+   })
+
+   <span class="hljs-comment">/** spark streaming start and wait termination */</span>
+   ssc.start()
+   ssc.awaitTermination()
+
+ }
+
+<span class="hljs-comment">/**</span>
+<span class="hljs-comment">  * @desc read data from Zookeeper</span>
+<span class="hljs-comment">  */</span>
+ <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">readOffsetData</span></span>(zkUtil: <span class="hljs-type">CuratorUtil</span>, offsetPath: <span class="hljs-type">String</span>, topic: <span class="hljs-type">String</span>, brokerList: <span class="hljs-type">String</span>, kafkaPort: <span class="hljs-type">Integer</span>): <span class="hljs-type">Map</span>[<span class="hljs-type">TopicAndPartition</span>, <span class="hljs-type">Long</span>] = {
+
+   <span class="hljs-keyword">val</span> orgData = zkUtil.readDataForPath(offsetPath)
+   <span class="hljs-keyword">if</span> (<span class="hljs-literal">null</span> == orgData) {
+     <span class="hljs-keyword">val</span> util = <span class="hljs-type">KafkaUtil</span>.getInstance();
+     util.init(brokerList, kafkaPort, topic);
+     <span class="hljs-keyword">val</span> offsets = util.getLeastOffsets
+     <span class="hljs-keyword">val</span> fromOffsets = <span class="hljs-keyword">for</span> (i &lt;- <span class="hljs-number">0</span> to offsets.size() - <span class="hljs-number">1</span>)
+       <span class="hljs-keyword">yield</span> <span class="hljs-type">TopicAndPartition</span>.apply(topic, i) -&gt; offsets.get(i).toLong
+     <span class="hljs-keyword">return</span> fromOffsets.toMap
+   }
+
+   <span class="hljs-keyword">val</span> data = <span class="hljs-type">JSON</span>.parseFull(orgData).get.asInstanceOf[<span class="hljs-type">Map</span>[<span class="hljs-type">String</span>, <span class="hljs-type">String</span>]]
+   <span class="hljs-keyword">val</span> fromOffsets = data.map(item =&gt; {
+     <span class="hljs-type">TopicAndPartition</span>.apply(topic, item._1.toInt) -&gt; item._2.toLong
+   })
+   <span class="hljs-keyword">return</span> fromOffsets
+
+ }
+
+ <span class="hljs-comment">/**</span>
+<span class="hljs-comment">  * @desc write offset data to Zookeeper</span>
+<span class="hljs-comment">  */</span>
+ <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">writeOffsetData</span></span>(zkUtil: <span class="hljs-type">CuratorUtil</span>, offsetPath: <span class="hljs-type">String</span>, data: <span class="hljs-type">Array</span>[(<span class="hljs-type">Int</span>, <span class="hljs-type">Long</span>)]): <span class="hljs-type">Unit</span> = {
+
+   <span class="hljs-keyword">val</span> map = data.toMap[<span class="hljs-type">Int</span>, <span class="hljs-type">Long</span>].map(item =&gt; {
+     item._1.toString() -&gt; item._2.toString()
+   })
+   zkUtil.setDataForPath(offsetPath, <span class="hljs-type">JSONObject</span>(map).toString)
+
+ }</code></span></pre>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Spark/">Spark</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Kafka/">Kafka</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Hbase/">Hbase</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/06/29/Kafka-SparkStreaming-Hbase%E3%80%90%E4%B8%80%E3%80%91/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Kafka-&gt;SparkStreaming-&gt;Hbase【一】</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2018/06/29/Maven%E4%BD%BF%E7%94%A8%E5%90%84%E7%A7%8D%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/">
+                        <span class="hidden-mobile">Maven使用各种问题汇总</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#源代码"><span class="nav-number">1.</span> <span class="nav-text">源代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SparkSteaming代码"><span class="nav-number">2.</span> <span class="nav-text">SparkSteaming代码</span></a></li></ol></div>
       </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">77</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">53</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/xinshiyou" title="GitHub → https://github.com/xinshiyou" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:shiyou_xin@163.com" title="E-Mail → mailto:shiyou_xin@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://weibo.com/yourname" title="Weibo → https://weibo.com/yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
     </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  © 2018 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共91.3k字</span>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
 </div>
 
-        
-
-
-
-
-
-
-
-
       </div>
-    </footer>
+    
   </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
 
   
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
   
 
   
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 
 
-<script src="/bundle.js"></script></body></html>
+<!-- Plugins -->
+
+
+  
+    
+  
+
+
+
+  <script defer="" src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
+  
+
+
+
+
+
+
+
+  <script src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script>
+  
+
+
+
+  
+  
+
+
+
+  <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/bundle.js"></script><script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  ;
+
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Kafka->SparkStreaming->Hbase【二】&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  ;
+
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  ;
+
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  ;
+
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script></body></html>

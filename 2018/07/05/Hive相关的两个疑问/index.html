@@ -1,228 +1,198 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="xinshiyou">
+  <meta name="keywords" content="">
+  <title>Hive相关的两个疑问 - 星空捞月：找寻心中的安宁</title>
 
-
-
-
-
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xinshiyou.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="0. 问题引出&amp;emsp;&amp;emsp;从疑问出发，寻根问底探究原理：  Hive CLI/Hive Beeline/Hive JDBC断开连接之后，运行在Yarn上的任务是否继续运行？ 我们知道JDBC是无法做缓存的，那么HUE是如何改善查询速度的？">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Hive相关的两个疑问">
-<meta property="og:url" content="https://xinshiyou.github.io/2018/07/05/Hive%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%96%91%E9%97%AE/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="0. 问题引出&amp;emsp;&amp;emsp;从疑问出发，寻根问底探究原理：  Hive CLI/Hive Beeline/Hive JDBC断开连接之后，运行在Yarn上的任务是否继续运行？ 我们知道JDBC是无法做缓存的，那么HUE是如何改善查询速度的？">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://xinshiyou.github.io/.io//001.png">
-<meta property="og:image" content="https://xinshiyou.github.io/.io//002.jpg">
-<meta property="article:published_time" content="2018-07-05T11:38:49.000Z">
-<meta property="article:modified_time" content="2020-06-01T05:17:17.643Z">
-<meta property="article:author" content="John Doe">
-<meta property="article:tag" content="Hive">
-<meta property="article:tag" content="问题">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://xinshiyou.github.io/.io//001.png">
-
-<link rel="canonical" href="https://xinshiyou.github.io/2018/07/05/Hive%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%96%91%E9%97%AE/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
-
-  <title>Hive相关的两个疑问 | Hexo</title>
   
 
 
+  
+  
+
+  
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
 
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
 
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');</script></head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星空捞月：找寻心中的安宁" type="application/atom+xml">
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css');loadCss('https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css');loadCss('https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css');loadCss('//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css');loadCss('//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css');loadCss('https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css"><link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"></noscript></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">&nbsp;<strong>星空捞月：找寻心中的安宁</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
 </nav>
 
+    <div class="view intro-2" id="background" parallax="true" style="background: url('/img/top.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
 
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2018-07-05 19:38">
+      2018年7月5日 晚上
+    </time>
   </div>
 
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
+<div class="mt-1">
   
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.8k 字
+    </span>
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://xinshiyou.github.io/2018/07/05/Hive%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%96%91%E9%97%AE/">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Hive相关的两个疑问
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-07-05 19:38:49" itemprop="dateCreated datePublished" datetime="2018-07-05T19:38:49+08:00">2018-07-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-06-01 13:17:17" itemprop="dateModified" datetime="2020-06-01T13:17:17+08:00">2020-06-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
+  
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
       
-        <h2 id="0-问题引出"><a href="#0-问题引出" class="headerlink" title="0. 问题引出"></a>0. 问题引出</h2><p>  从疑问出发，寻根问底探究原理：</p>
+      
+      24
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <h2 id="0-问题引出"><a href="#0-问题引出" class="headerlink" title="0. 问题引出"></a>0. 问题引出</h2><p>  从疑问出发，寻根问底探究原理：</p>
 <ol>
 <li>Hive CLI/Hive Beeline/Hive JDBC断开连接之后，运行在Yarn上的任务是否继续运行？</li>
 <li>我们知道JDBC是无法做缓存的，那么HUE是如何改善查询速度的？</li>
@@ -233,16 +203,59 @@
 <p>  首先我们从现象谈起然后逐渐找到问题的答案，既是一个解疑的过程也是一个探究研究问题思路的过程，更是一个增长知识的过程。</p>
 <h2 id="1-现象描述"><a href="#1-现象描述" class="headerlink" title="1. 现象描述"></a>1. 现象描述</h2><p>  在Hadoop生态中执行Hive任务时，经常会出现各种各样的问题。今天发现了一个特别有意思的事情，执行调度的同学说他们执行的任务，在beeline调用端任务失败，但业务同学去数据库查看相应的数据记录，初步发现没有异常同步成功。这就引起了一个问题：当beeline异常断开时，当前运行的yarn的任务是否同步退出？还是继续执行完成？</p>
 <p>  根据这个问题，我首先做了现象的重现，结果发现：断开连接之后，执行在yarn上的任务会同步结束。分别通过HIVE CLI、Beeline、JDBC三种方式做得测试，结果都表明断开连接之后，任务无法接续运行。除了一种情况那就是HIVE CLI模式下，直接通过KILL命令杀死Hive进程，Hive客户端的JVM直接退出，但正在Yarn上运行的任务未退出继续运行，直到结束。</p>
-<h2 id="2-三种访问Hive的路径"><a href="#2-三种访问Hive的路径" class="headerlink" title="2. 三种访问Hive的路径"></a>2. 三种访问Hive的路径</h2><p><img src="/.io//001.png" alt="Hive的三种访问方式"><br>其中Hive Beeline使用的也是Thrift API访问Hive，其基本原理与JDBC访问类似。</p>
+<h2 id="2-三种访问Hive的路径"><a href="#2-三种访问Hive的路径" class="headerlink" title="2. 三种访问Hive的路径"></a>2. 三种访问Hive的路径</h2><p><img src="./Hive%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%96%91%E9%97%AE/001.png" srcset="/img/loading.gif" alt="Hive的三种访问方式"><br>其中Hive Beeline使用的也是Thrift API访问Hive，其基本原理与JDBC访问类似。</p>
 <h2 id="3-寻根问底"><a href="#3-寻根问底" class="headerlink" title="3. 寻根问底"></a>3. 寻根问底</h2><h3 id="3-1-Hive-CLI"><a href="#3-1-Hive-CLI" class="headerlink" title="3.1. Hive CLI"></a>3.1. Hive CLI</h3><ol>
 <li><p>主要类：<strong>org.apache.hadoop.hive.cli.CliDriver</strong></p>
 </li>
 <li><p>ctrl+c方式断开：<br>CliDriver注册了信号处理：</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">boolean</span> interruptRequested;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(Signal signal)</span> </span>{</span><br><span class="line">  <span class="keyword">boolean</span> initialRequest = !interruptRequested;</span><br><span class="line">  interruptRequested = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Kill the VM on second ctrl+c</span></span><br><span class="line">  <span class="keyword">if</span> (!initialRequest) {</span><br><span class="line">    console.printInfo(<span class="string">"Exiting the JVM"</span>);</span><br><span class="line">    System.exit(<span class="number">127</span>);</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Interrupt the CLI thread to stop the current statement and return to prompt</span></span><br><span class="line">  console.printInfo(<span class="string">"Interrupting... Be patient, this might take some time."</span>);</span><br><span class="line">  console.printInfo(<span class="string">"Press Ctrl+C again to kill JVM"</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// First, kill any running MR jobs</span></span><br><span class="line">  HadoopJobExecHelper.killRunningJobs();</span><br><span class="line">  TezJobExecHelper.killRunningJobs();</span><br><span class="line">  HiveInterruptUtils.interrupt();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> interruptRequested;
+
+<span class="hljs-meta">@Override</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handle</span><span class="hljs-params">(Signal signal)</span> </span>{
+  <span class="hljs-keyword">boolean</span> initialRequest = !interruptRequested;
+  interruptRequested = <span class="hljs-keyword">true</span>;
+
+  <span class="hljs-comment">// Kill the VM on second ctrl+c</span>
+  <span class="hljs-keyword">if</span> (!initialRequest) {
+    console.printInfo(<span class="hljs-string">"Exiting the JVM"</span>);
+    System.exit(<span class="hljs-number">127</span>);
+  }
+
+  <span class="hljs-comment">// Interrupt the CLI thread to stop the current statement and return to prompt</span>
+  console.printInfo(<span class="hljs-string">"Interrupting... Be patient, this might take some time."</span>);
+  console.printInfo(<span class="hljs-string">"Press Ctrl+C again to kill JVM"</span>);
+
+  <span class="hljs-comment">// First, kill any running MR jobs</span>
+  HadoopJobExecHelper.killRunningJobs();
+  TezJobExecHelper.killRunningJobs();
+  HiveInterruptUtils.interrupt();
+}</code></span></pre>
 <p>  通过以上的源码可以看出，如果我们使用 <strong>ctrl+c</strong> 命令会触发Kill操作，依次处理了 <strong>HadoopJob</strong> 、<strong>TezJob</strong> 以及Hive的退出操作；如果前后两次使用 <strong>ctrl+c</strong> 命令，那么直接Kill JVM。</p>
 </li>
 <li><p>直接Kill -9方式退出Hive：针对Yarn MR任务模式，对于LocalMRJob不做讨论。<br>通过阅读源码：</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">} <span class="keyword">else</span> <span class="keyword">if</span> (cmd_trimmed.startsWith(<span class="string">"!"</span>)) {</span><br><span class="line"></span><br><span class="line">String shell_cmd = cmd_trimmed.substring(<span class="number">1</span>);</span><br><span class="line">shell_cmd = <span class="keyword">new</span> VariableSubstitution(<span class="keyword">new</span> HiveVariableSource() {</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Map&lt;String, String&gt; <span class="title">getHiveVariable</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">return</span> SessionState.get().getHiveVariables();</span><br><span class="line">  }</span><br><span class="line">}).substitute(ss.getConf(), shell_cmd);</span><br><span class="line"></span><br><span class="line"><span class="comment">// shell_cmd = "/bin/bash -c \'" + shell_cmd + "\'";</span></span><br><span class="line"><span class="keyword">try</span> {</span><br><span class="line">  ShellCmdExecutor executor = <span class="keyword">new</span> ShellCmdExecutor(shell_cmd, ss.out, ss.err);</span><br><span class="line">  ret = executor.execute();</span><br><span class="line">  <span class="keyword">if</span> (ret != <span class="number">0</span>) {</span><br><span class="line">    console.printError(<span class="string">"Command failed with exit code = "</span> + ret);</span><br><span class="line">  }</span><br><span class="line">} <span class="keyword">catch</span> (Exception e) {</span><br><span class="line">  console.printError(<span class="string">"Exception raised from Shell command "</span> + e.getLocalizedMessage(),</span><br><span class="line">    stringifyException(e));</span><br><span class="line">  ret = <span class="number">1</span>;</span><br><span class="line">}</span><br><span class="line"> }  <span class="keyword">else</span> { <span class="comment">// local mode</span></span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java">} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd_trimmed.startsWith(<span class="hljs-string"><code class="language-hljs java">} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd_trimmed.startsWith(<span class="hljs-string">"!"</span>)) {
+
+String shell_cmd = cmd_trimmed.substring(<span class="hljs-number">1</span>);
+shell_cmd = <span class="hljs-keyword">new</span> VariableSubstitution(<span class="hljs-keyword">new</span> HiveVariableSource() {
+  <span class="hljs-meta">@Override</span>
+  <span class="hljs-function"><span class="hljs-keyword">public</span> Map<string, string=""> <span class="hljs-title">getHiveVariable</span><span class="hljs-params">()</span> </string,></span>{
+    <span class="hljs-keyword">return</span> SessionState.get().getHiveVariables();
+  }
+}).substitute(ss.getConf(), shell_cmd);
+
+<span class="hljs-comment">// shell_cmd = "/bin/bash -c \'" + shell_cmd + "\'";</span>
+<span class="hljs-keyword">try</span> {
+  ShellCmdExecutor executor = <span class="hljs-keyword">new</span> ShellCmdExecutor(shell_cmd, ss.out, ss.err);
+  ret = executor.execute();
+  <span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) {
+    console.printError(<span class="hljs-string">"Command failed with exit code = "</span> + ret);
+  }
+} <span class="hljs-keyword">catch</span> (Exception e) {
+  console.printError(<span class="hljs-string">"Exception raised from Shell command "</span> + e.getLocalizedMessage(),
+    stringifyException(e));
+  ret = <span class="hljs-number">1</span>;
+}
+ }  <span class="hljs-keyword">else</span> { <span class="hljs-comment">// local mode</span></code></span></pre>
 <p>  可以看出CliDriver对于命令的处理是通过 <strong>调用外部线程</strong> 进行的。如果直接结束JVM，那么外部线程没有影响继续运行，所以我们看到的表象就是任务继续运行知道运行结束。</p>
 </li>
 </ol>
@@ -250,15 +263,97 @@
 <li><p>访问主类： <strong>org.apache.hive.beeline.BeeLine</strong></p>
 </li>
 <li><p>通过ctrl+c方式断开：通过ctrl+c方式断开连接，Hive会捕捉到相应的信号，从而进行相关处理。信号处理的handler定义如下</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">## Apache Hive： Beeline</span><br><span class="line">  <span class="keyword">private</span> Statement stmt = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">  SunSignalHandler () {</span><br><span class="line">    <span class="comment">// Interpret Ctrl+C as a request to cancel the currently</span></span><br><span class="line">    <span class="comment">// executing query.</span></span><br><span class="line">    Signal.handle (<span class="keyword">new</span> Signal (<span class="string">"INT"</span>), <span class="keyword">this</span>);</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStatement</span><span class="params">(Statement stmt)</span> </span>{</span><br><span class="line">    <span class="keyword">this</span>.stmt = stmt;</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span> <span class="params">(Signal signal)</span> </span>{</span><br><span class="line">    <span class="keyword">try</span> {</span><br><span class="line">      <span class="keyword">if</span> (stmt != <span class="keyword">null</span>) {</span><br><span class="line">        stmt.cancel();</span><br><span class="line">      }</span><br><span class="line">    } <span class="keyword">catch</span> (SQLException ex) {</span><br><span class="line">      <span class="comment">// ignore</span></span><br><span class="line">    }</span><br><span class="line">  }</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><code class="language-hljs java">## Apache Hive： Beeline
+  <span class="hljs-keyword">private</span> Statement stmt = <span class="hljs-keyword">null</span>;
+
+  SunSignalHandler () {
+    <span class="hljs-comment">// Interpret Ctrl+C as a request to cancel the currently</span>
+    <span class="hljs-comment">// executing query.</span>
+    Signal.handle (<span class="hljs-keyword">new</span> Signal (<span class="hljs-string">"INT"</span>), <span class="hljs-keyword">this</span>);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setStatement</span><span class="hljs-params">(Statement stmt)</span> </span>{
+    <span class="hljs-keyword">this</span>.stmt = stmt;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handle</span> <span class="hljs-params">(Signal signal)</span> </span>{
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">if</span> (stmt != <span class="hljs-keyword">null</span>) {
+        stmt.cancel();
+      }
+    } <span class="hljs-keyword">catch</span> (SQLException ex) {
+      <span class="hljs-comment">// ignore</span>
+    }
+  }</code></pre>
 <p>从处理的代码中可以看出，如果出现 <strong>ctrl+c</strong> 信号，Hive会取消目前相关操作。</p>
 </li>
 <li><p>异常断开：包括超时、宕机等异常情况<br>如果是Thrift RPC的连接断开，那么从源码中可以看出</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT(<span class="string">"hive.server2.close.session.on.disconnect"</span>, <span class="keyword">true</span>,</span><br><span class="line">      <span class="string">"Session will be closed when connection is closed. Set this to false to have session outlive its parent connection."</span>)</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java">HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT(<span class="hljs-string">"hive.server2.close.session.on.disconnect"</span>, <span class="hljs-keyword"><code class="language-hljs java">HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT(<span class="hljs-string">"hive.server2.close.session.on.disconnect"</span>, <span class="hljs-keyword">true</span>,
+      <span class="hljs-string">"Session will be closed when connection is closed. Set this to false to have session outlive its parent connection."</span>)</code></span></pre>
 <p>如果connection断开，那么session会立马被关闭，进而HiveServer2关闭session的操作，如下所示</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">## ThriftBinaryCLIService</span><br><span class="line">ThriftCLIServerContext context = (ThriftCLIServerContext) serverContext;</span><br><span class="line">SessionHandle sessionHandle = context.getSessionHandle();</span><br><span class="line"><span class="keyword">if</span> (sessionHandle != <span class="keyword">null</span>) {</span><br><span class="line">  LOG.info(<span class="string">"Session disconnected without closing properly. "</span>);</span><br><span class="line">  <span class="keyword">try</span> {</span><br><span class="line">    <span class="keyword">boolean</span> close = cliService.getSessionManager().getSession(sessionHandle).getHiveConf()</span><br><span class="line">      .getBoolVar(ConfVars.HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT);</span><br><span class="line">    LOG.info((close ? <span class="string">""</span> : <span class="string">"Not "</span>) + <span class="string">"Closing the session: "</span> + sessionHandle);</span><br><span class="line">    <span class="keyword">if</span> (close) {</span><br><span class="line">      cliService.closeSession(sessionHandle);</span><br><span class="line">    }</span><br><span class="line">  } <span class="keyword">catch</span> (HiveSQLException e) {</span><br><span class="line">    LOG.warn(<span class="string">"Failed to close session: "</span> + e, e);</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><code class="language-hljs java">## ThriftBinaryCLIService
+ThriftCLIServerContext context = (ThriftCLIServerContext) serverContext;
+SessionHandle sessionHandle = context.getSessionHandle();
+<span class="hljs-keyword">if</span> (sessionHandle != <span class="hljs-keyword">null</span>) {
+  LOG.info(<span class="hljs-string">"Session disconnected without closing properly. "</span>);
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">boolean</span> close = cliService.getSessionManager().getSession(sessionHandle).getHiveConf()
+      .getBoolVar(ConfVars.HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT);
+    LOG.info((close ? <span class="hljs-string">""</span> : <span class="hljs-string">"Not "</span>) + <span class="hljs-string">"Closing the session: "</span> + sessionHandle);
+    <span class="hljs-keyword">if</span> (close) {
+      cliService.closeSession(sessionHandle);
+    }
+  } <span class="hljs-keyword">catch</span> (HiveSQLException e) {
+    LOG.warn(<span class="hljs-string">"Failed to close session: "</span> + e, e);
+  }
+}</code></pre>
 <p>此处cliService的关闭最终会导致 <strong>HiveSessionImpl</strong> 的关闭操作，其中关闭路径为：<strong>CLIService.closeSession–&gt;SessionManager.closeSession–&gt; HiveSession.close</strong></p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">## HiveSessionImpl</span><br><span class="line">  <span class="keyword">try</span> {</span><br><span class="line">      acquire(<span class="keyword">true</span>, <span class="keyword">false</span>);</span><br><span class="line">      <span class="comment">// Iterate through the opHandles and close their operations</span></span><br><span class="line">      List&lt;OperationHandle&gt; ops = <span class="keyword">null</span>;</span><br><span class="line">      <span class="keyword">synchronized</span> (opHandleSet) {</span><br><span class="line">        ops = <span class="keyword">new</span> ArrayList&lt;&gt;(opHandleSet);</span><br><span class="line">        opHandleSet.clear();</span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">for</span> (OperationHandle opHandle : ops) {</span><br><span class="line">        operationManager.closeOperation(opHandle);</span><br><span class="line">      }</span><br><span class="line">      <span class="comment">// Cleanup session log directory.</span></span><br><span class="line">      cleanupSessionLogDir();</span><br><span class="line">      HiveHistory hiveHist = sessionState.getHiveHistory();</span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">null</span> != hiveHist) {</span><br><span class="line">        hiveHist.closeStream();</span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">try</span> {</span><br><span class="line">        sessionState.resetThreadName();</span><br><span class="line">        sessionState.close();</span><br><span class="line">      } <span class="keyword">finally</span> {</span><br><span class="line">        sessionState = <span class="keyword">null</span>;</span><br><span class="line">      }</span><br><span class="line">    } <span class="keyword">catch</span> (IOException ioe) {</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> HiveSQLException(<span class="string">"Failure to close"</span>, ioe);</span><br><span class="line">    } <span class="keyword">finally</span> {</span><br><span class="line">      <span class="keyword">if</span> (sessionState != <span class="keyword">null</span>) {</span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">          sessionState.resetThreadName();</span><br><span class="line">          sessionState.close();</span><br><span class="line">        } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">          LOG.warn(<span class="string">"Error closing session"</span>, t);</span><br><span class="line">        }</span><br><span class="line">        sessionState = <span class="keyword">null</span>;</span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">if</span> (sessionHive != <span class="keyword">null</span>) {</span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">          Hive.closeCurrent();</span><br><span class="line">        } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">          LOG.warn(<span class="string">"Error closing sessionHive"</span>, t);</span><br><span class="line">        }</span><br><span class="line">        sessionHive = <span class="keyword">null</span>;</span><br><span class="line">      }</span><br><span class="line">      release(<span class="keyword">true</span>, <span class="keyword">false</span>);</span><br><span class="line">  }</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><code class="language-hljs java">## HiveSessionImpl
+  <span class="hljs-keyword">try</span> {
+      acquire(<span class="hljs-keyword">true</span>, <span class="hljs-keyword">false</span>);
+      <span class="hljs-comment">// Iterate through the opHandles and close their operations</span>
+      List<operationhandle> ops = <span class="hljs-keyword">null</span>;
+      <span class="hljs-keyword">synchronized</span> (opHandleSet) {
+        ops = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;(opHandleSet);
+        opHandleSet.clear();
+      }
+      <span class="hljs-keyword">for</span> (OperationHandle opHandle : ops) {
+        operationManager.closeOperation(opHandle);
+      }
+      <span class="hljs-comment">// Cleanup session log directory.</span>
+      cleanupSessionLogDir();
+      HiveHistory hiveHist = sessionState.getHiveHistory();
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">null</span> != hiveHist) {
+        hiveHist.closeStream();
+      }
+      <span class="hljs-keyword">try</span> {
+        sessionState.resetThreadName();
+        sessionState.close();
+      } <span class="hljs-keyword">finally</span> {
+        sessionState = <span class="hljs-keyword">null</span>;
+      }
+    } <span class="hljs-keyword">catch</span> (IOException ioe) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> HiveSQLException(<span class="hljs-string">"Failure to close"</span>, ioe);
+    } <span class="hljs-keyword">finally</span> {
+      <span class="hljs-keyword">if</span> (sessionState != <span class="hljs-keyword">null</span>) {
+        <span class="hljs-keyword">try</span> {
+          sessionState.resetThreadName();
+          sessionState.close();
+        } <span class="hljs-keyword">catch</span> (Throwable t) {
+          LOG.warn(<span class="hljs-string">"Error closing session"</span>, t);
+        }
+        sessionState = <span class="hljs-keyword">null</span>;
+      }
+      <span class="hljs-keyword">if</span> (sessionHive != <span class="hljs-keyword">null</span>) {
+        <span class="hljs-keyword">try</span> {
+          Hive.closeCurrent();
+        } <span class="hljs-keyword">catch</span> (Throwable t) {
+          LOG.warn(<span class="hljs-string">"Error closing sessionHive"</span>, t);
+        }
+        sessionHive = <span class="hljs-keyword">null</span>;
+      }
+      release(<span class="hljs-keyword">true</span>, <span class="hljs-keyword">false</span>);
+  }</operationhandle></code></pre>
 <p>从这里可以看到Session通过迭代将所有的操作逐渐关闭，并清除Session相关日志、关闭任务历史日志流。</p>
 </li>
 </ol>
@@ -273,7 +368,7 @@
 <li>TServer : 服务类，主要有TSimpleServer、TThreadPoolServer[标准阻塞式IO的多线程服务器]、TNonblockingServer[费阻塞多线程模式]</li>
 <li>TProcessor : 负责调度用户定义的接口</li>
 </ul>
-<h4 id="3-4-2-Thrift架构"><a href="#3-4-2-Thrift架构" class="headerlink" title="3.4.2 Thrift架构"></a>3.4.2 Thrift架构</h4><p><img src="/.io//002.jpg" alt="Thrift架构"></p>
+<h4 id="3-4-2-Thrift架构"><a href="#3-4-2-Thrift架构" class="headerlink" title="3.4.2 Thrift架构"></a>3.4.2 Thrift架构</h4><p><img src="./Hive%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%96%91%E9%97%AE/002.jpg" srcset="/img/loading.gif" alt="Thrift架构"></p>
 <h2 id="4-问题是否解决"><a href="#4-问题是否解决" class="headerlink" title="4. 问题是否解决"></a>4. 问题是否解决</h2><p>  通过以上分析可以得出结论：</p>
 <ol>
 <li>Hive Cli模式下，直接<em>Kill -9</em>结束当前的Hive进程，是无法让运行在Yarn上的任务退出，原因在于实际执行任务的<strong>另有其人</strong>；</li>
@@ -281,247 +376,266 @@
 </ol>
 <p>  我们基本获知了Hive通过几种方式访问集群资源时，访问的方式、驱动主类、程序退出资源释放的流程等内容。因此，以上的分析基本上解答了我们的问题。即除了<em>Hive CLI</em>方式通过[<em>Kill -9</em>]直接退出JVM之外，其他情况基本上都会停止Yarn任务的运行。</p>
 
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E9%97%AE%E9%A2%98/">问题</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Hive/">Hive</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/07/07/%E4%BA%94%E7%A7%8D%E5%8A%A0%E5%BF%ABHive%E8%BF%90%E8%A1%8C%E7%9A%84%E6%96%B9%E5%BC%8F/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">五种加快Hive查询的方式</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2018/07/01/Chromeheadless%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+                        <span class="hidden-mobile">Chromeheadless安装与使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
 
     
-    
-    
-<div>
+  </main>
+
   
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
     <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
-    
-</div>
-
-  
-</div>
-        
-
-  <div class="followme">
-    <p>Welcome to my other publishing channels</p>
-
-    <div class="social-list">
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
     </div>
+    
+
+    
+
+    
   </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Hive/" rel="tag"><i class="fa fa-tag"></i>Hive</a>
-              <a href="/tags/%E9%97%AE%E9%A2%98/" rel="tag"><i class="fa fa-tag"></i>问题</a>
-          </div>
 
-        
+<!-- Plugins -->
 
 
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/07/01/Chromeheadless%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" rel="prev" title="Chromeheadless安装与使用">
-      <i class="fa fa-chevron-left"></i> Chromeheadless安装与使用
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/07/07/%E4%BA%94%E7%A7%8D%E5%8A%A0%E5%BF%ABHive%E8%BF%90%E8%A1%8C%E7%9A%84%E6%96%B9%E5%BC%8F/" rel="next" title="五种加快Hive查询的方式">
-      五种加快Hive查询的方式 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
+  
     
-  </article>
-  
-  
   
 
 
 
-          </div>
-          
+  <script defer="" src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
+  
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
+
+
+
+
+
+
+  <script src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script>
+  
+
+
+
+  
+  
+
+
+
+  <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/bundle.js"></script><script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
     });
-  }
-</script>
+  ;
 
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Hive相关的两个疑问&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  ;
 
-  <aside class="sidebar">
-    <div class="sidebar-inner">
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  ;
 
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  ;
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-问题引出"><span class="nav-number">1.</span> <span class="nav-text">0. 问题引出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-现象描述"><span class="nav-number">2.</span> <span class="nav-text">1. 现象描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-三种访问Hive的路径"><span class="nav-number">3.</span> <span class="nav-text">2. 三种访问Hive的路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-寻根问底"><span class="nav-number">4.</span> <span class="nav-text">3. 寻根问底</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Hive-CLI"><span class="nav-number">4.1.</span> <span class="nav-text">3.1. Hive CLI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Beeline"><span class="nav-number">4.2.</span> <span class="nav-text">3.2. Beeline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Hive-JDBC"><span class="nav-number">4.3.</span> <span class="nav-text">3.3. Hive JDBC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Thrift概述"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 Thrift概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-主要组成"><span class="nav-number">4.4.1.</span> <span class="nav-text">3.4.1 主要组成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-Thrift架构"><span class="nav-number">4.4.2.</span> <span class="nav-text">3.4.2 Thrift架构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-问题是否解决"><span class="nav-number">5.</span> <span class="nav-text">4. 问题是否解决</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">77</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">53</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/xinshiyou" title="GitHub → https://github.com/xinshiyou" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:shiyou_xin@163.com" title="E-Mail → mailto:shiyou_xin@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://weibo.com/yourname" title="Weibo → https://weibo.com/yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  © 2018 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共91.3k字</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-
-
-<script src="/bundle.js"></script></body></html>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script></body></html>

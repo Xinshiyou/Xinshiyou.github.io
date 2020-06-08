@@ -1,237 +1,249 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="xinshiyou">
+  <meta name="keywords" content="">
+  <title>Oracle JDBC为什么不能在Maven中直接配置？ - 星空捞月：找寻心中的安宁</title>
 
-
-
-
-
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xinshiyou.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="最近在研究一个开源项目Sql2o，项目介绍性能优越。其中在ODBC子模块中，直接编译无法通过，本地没有ODBC的Jar包。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Oracle JDBC为什么不能在Maven中直接配置？">
-<meta property="og:url" content="https://xinshiyou.github.io/2018/09/12/ODBC%E5%AD%A6%E4%B9%A0/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="最近在研究一个开源项目Sql2o，项目介绍性能优越。其中在ODBC子模块中，直接编译无法通过，本地没有ODBC的Jar包。">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2018-09-12T02:10:10.000Z">
-<meta property="article:modified_time" content="2020-06-01T05:22:48.919Z">
-<meta property="article:author" content="John Doe">
-<meta property="article:tag" content="调研">
-<meta property="article:tag" content="问题">
-<meta property="article:tag" content="JDBC">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="https://xinshiyou.github.io/2018/09/12/ODBC%E5%AD%A6%E4%B9%A0/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
-
-  <title>Oracle JDBC为什么不能在Maven中直接配置？ | Hexo</title>
   
 
 
+  
+  
+
+  
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
 
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
 
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');</script></head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星空捞月：找寻心中的安宁" type="application/atom+xml">
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css');loadCss('https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css');loadCss('https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css');loadCss('//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css');loadCss('//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css');loadCss('https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css"><link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"></noscript></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">&nbsp;<strong>星空捞月：找寻心中的安宁</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
 </nav>
 
+    <div class="view intro-2" id="background" parallax="true" style="background: url('/img/top.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
 
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2018-09-12 10:10">
+      2018年9月12日 上午
+    </time>
   </div>
 
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
+<div class="mt-1">
   
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      535 字
+    </span>
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://xinshiyou.github.io/2018/09/12/ODBC%E5%AD%A6%E4%B9%A0/">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Oracle JDBC为什么不能在Maven中直接配置？
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-09-12 10:10:10" itemprop="dateCreated datePublished" datetime="2018-09-12T10:10:10+08:00">2018-09-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-06-01 13:22:48" itemprop="dateModified" datetime="2020-06-01T13:22:48+08:00">2020-06-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-            </span>
-
-          
-            <div class="post-description">最近在研究一个开源项目Sql2o，项目介绍性能优越。其中在ODBC子模块中，直接编译无法通过，本地没有ODBC的Jar包。</div>
-
-        </div>
-      </header>
-
+  
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
       
-        <p>  在实际项目中，我们通常使用这样的方式：首先，下载ODBC的Jar到本地；然后，通过Maven安装在本地库中。这样在项目中就可以使用ODBC的Jar包了，而大部分的jar是可以通过Maven中直接引用的。这是为什么呢？</p>
+      
+      7
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <p>  在实际项目中，我们通常使用这样的方式：首先，下载ODBC的Jar到本地；然后，通过Maven安装在本地库中。这样在项目中就可以使用ODBC的Jar包了，而大部分的jar是可以通过Maven中直接引用的。这是为什么呢？</p>
 <h2 id="项目报错"><a href="#项目报错" class="headerlink" title="项目报错"></a>项目报错</h2><p>  项目直接编译，报错如下</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Failed to execute goal on project sql2o-oracle: </span><br><span class="line">Could not resolve dependencies for project org.sql2o.extensions: sql2o-oracle:jar:1.6.0-RC4-SNAPSHOT: </span><br><span class="line">Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https://repo.maven.apache.org/maven2)</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs smali">Failed to<span class="hljs-built_in"><code class="language-hljs smali">Failed to<span class="hljs-built_in"> execute </span>goal on project sql2o-oracle: 
+Could<span class="hljs-built_in"> not </span>resolve dependencies for project org.sql2o.extensions: sql2o-oracle:jar:1.6.0-RC4-SNAPSHOT: 
+Could<span class="hljs-built_in"> not </span>find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https://repo.maven.apache.org/maven2)</code></span></pre>
 <p>很明显项目中的引用：com.oracle.jdbc:ojdbc8:jar:12.2.0.1，无法在公共仓库中找到。</p>
 <h2 id="常用做法"><a href="#常用做法" class="headerlink" title="常用做法"></a>常用做法</h2><p>  一般的做法就是下载Jar包，然后存放在本地仓库中，这样就可以直接在项目中引用。但通常这样略显麻烦，也不具有通用性。之前这样做的原因主要是涉及到许可的原因，Oracle不开放ODBC的Jar不会开放到公共仓库中。<br>  关于ODBC方面的讨论可以参考：<a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a> .</p>
 <h2 id="目前实现"><a href="#目前实现" class="headerlink" title="目前实现"></a>目前实现</h2><p>  目前可以通过POM中的配置来直接使用Oracle仓库中的Jar，环境可以参考：<a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a> .</p>
 <p>  博主主要分为三步实现本地Oracle库的配置：</p>
 <ol>
 <li>注册账号：<a href="https://www.oracle.com/webapps/maven/register/license.html" target="_blank" rel="noopener">https://www.oracle.com/webapps/maven/register/license.html</a> 。如果已经注册过OTN(Oracle Technology Network)的账号，所以直接跳过；</li>
-<li>配置本地Settings.xml<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;server&gt;</span><br><span class="line">	&lt;id&gt;maven.oracle.com&lt;/id&gt;</span><br><span class="line">	&lt;username&gt;[OTN username]&lt;/username&gt;</span><br><span class="line">	&lt;password&gt;[OTN password]&lt;/password&gt;</span><br><span class="line">	&lt;configuration&gt;</span><br><span class="line">		&lt;basicAuthScope&gt;</span><br><span class="line">			&lt;host&gt;ANY&lt;/host&gt;</span><br><span class="line">			&lt;port&gt;ANY&lt;/port&gt;</span><br><span class="line">			&lt;realm&gt;OAM 11g&lt;/realm&gt;</span><br><span class="line">		&lt;/basicAuthScope&gt;</span><br><span class="line">		&lt;httpConfiguration&gt;</span><br><span class="line">			&lt;all&gt;</span><br><span class="line">				&lt;params&gt;</span><br><span class="line">					&lt;property&gt;</span><br><span class="line">						&lt;name&gt;http.protocol.allow-circular-redirects&lt;/name&gt;</span><br><span class="line">						&lt;value&gt;%b,true&lt;/value&gt;</span><br><span class="line">					&lt;/property&gt;</span><br><span class="line">				&lt;/params&gt;</span><br><span class="line">			&lt;/all&gt;</span><br><span class="line">		&lt;/httpConfiguration&gt;</span><br><span class="line">	&lt;/configuration&gt;</span><br><span class="line">&lt;/server&gt;</span><br></pre></td></tr></tbody></table></figure></li>
-<li>Maven中配置<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;repositories&gt;</span><br><span class="line">	&lt;repository&gt;</span><br><span class="line">		&lt;id&gt;maven.oracle.com&lt;/id&gt;</span><br><span class="line">		&lt;releases&gt;</span><br><span class="line">			&lt;enabled&gt;true&lt;/enabled&gt;</span><br><span class="line">		&lt;/releases&gt;</span><br><span class="line">		&lt;snapshots&gt;</span><br><span class="line">			&lt;enabled&gt;false&lt;/enabled&gt;</span><br><span class="line">		&lt;/snapshots&gt;</span><br><span class="line">		&lt;url&gt;https://maven.oracle.com&lt;/url&gt;</span><br><span class="line">		&lt;layout&gt;default&lt;/layout&gt;</span><br><span class="line">	&lt;/repository&gt;</span><br><span class="line">&lt;/repositories&gt;</span><br><span class="line">&lt;pluginRepositories&gt;</span><br><span class="line">	&lt;pluginRepository&gt;</span><br><span class="line">		&lt;id&gt;maven.oracle.com&lt;/id&gt;</span><br><span class="line">		&lt;url&gt;https://maven.oracle.com&lt;/url&gt;</span><br><span class="line">	&lt;/pluginRepository&gt;</span><br><span class="line">&lt;/pluginRepositories&gt;</span><br></pre></td></tr></tbody></table></figure>
+<li>配置本地Settings.xml<pre class=" language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name"><code class="language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">server</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-name">id</span>&gt;</span>maven.oracle.com<span class="hljs-tag"><!--<span class="hljs-name"-->id</span>&gt;</code></span><code class="language-hljs xml">
+	<span class="hljs-tag">&lt;<span class="hljs-name">username</span>&gt;</span>[OTN username]<span class="hljs-tag"><!--<span class="hljs-name"-->username</span>&gt;</code></span><code class="language-hljs xml">
+	<span class="hljs-tag">&lt;<span class="hljs-name">password</span>&gt;</span>[OTN password]<span class="hljs-tag"><!--<span class="hljs-name"-->password</span>&gt;
+	<span class="hljs-tag">&lt;<span class="hljs-name">configuration</span>&gt;</span>
+		<span class="hljs-tag">&lt;<span class="hljs-name">basicAuthScope</span>&gt;</span>
+			<span class="hljs-tag">&lt;<span class="hljs-name">host</span>&gt;</span>ANY<span class="hljs-tag"><!--<span class="hljs-name"-->host</span>&gt;
+			<span class="hljs-tag">&lt;<span class="hljs-name">port</span>&gt;</span>ANY<span class="hljs-tag"><!--<span class="hljs-name"-->port</span>&gt;
+			<span class="hljs-tag">&lt;<span class="hljs-name">realm</span>&gt;</span>OAM 11g<span class="hljs-tag"><!--<span class="hljs-name"-->realm</span>&gt;
+		<span class="hljs-tag"><!--<span class="hljs-name"-->basicAuthScope</span>&gt;
+		<span class="hljs-tag">&lt;<span class="hljs-name">httpConfiguration</span>&gt;</span>
+			<span class="hljs-tag">&lt;<span class="hljs-name">all</span>&gt;</span>
+				<span class="hljs-tag">&lt;<span class="hljs-name">params</span>&gt;</span>
+					<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
+						<span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>http.protocol.allow-circular-redirects<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;
+						<span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>%b,true<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;
+					<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;
+				<span class="hljs-tag"><!--<span class="hljs-name"-->params</span>&gt;
+			<span class="hljs-tag"><!--<span class="hljs-name"-->all</span>&gt;
+		<span class="hljs-tag"><!--<span class="hljs-name"-->httpConfiguration</span>&gt;
+	<span class="hljs-tag"><!--<span class="hljs-name"-->configuration</span>&gt;
+<span class="hljs-tag"><!--<span class="hljs-name"-->server</span>&gt;</code></pre></li>
+<li>Maven中配置<pre class=" language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name"><code class="language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">repositories</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-name">repository</span>&gt;</span>
+		<span class="hljs-tag">&lt;<span class="hljs-name">id</span>&gt;</span>maven.oracle.com<span class="hljs-tag"><!--<span class="hljs-name"-->id</span>&gt;</code></span><code class="language-hljs xml">
+		<span class="hljs-tag">&lt;<span class="hljs-name">releases</span>&gt;</span>
+			<span class="hljs-tag">&lt;<span class="hljs-name">enabled</span>&gt;</span>true<span class="hljs-tag"><!--<span class="hljs-name"-->enabled</span>&gt;</code></span><code class="language-hljs xml">
+		<span class="hljs-tag"><!--<span class="hljs-name"-->releases</span>&gt;
+		<span class="hljs-tag">&lt;<span class="hljs-name">snapshots</span>&gt;</span>
+			<span class="hljs-tag">&lt;<span class="hljs-name">enabled</span>&gt;</span>false<span class="hljs-tag"><!--<span class="hljs-name"-->enabled</span>&gt;
+		<span class="hljs-tag"><!--<span class="hljs-name"-->snapshots</span>&gt;
+		<span class="hljs-tag">&lt;<span class="hljs-name">url</span>&gt;</span>https://maven.oracle.com<span class="hljs-tag"><!--<span class="hljs-name"-->url</span>&gt;
+		<span class="hljs-tag">&lt;<span class="hljs-name">layout</span>&gt;</span>default<span class="hljs-tag"><!--<span class="hljs-name"-->layout</span>&gt;
+	<span class="hljs-tag"><!--<span class="hljs-name"-->repository</span>&gt;
+<span class="hljs-tag"><!--<span class="hljs-name"-->repositories</span>&gt;
+<span class="hljs-tag">&lt;<span class="hljs-name">pluginRepositories</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-name">pluginRepository</span>&gt;</span>
+		<span class="hljs-tag">&lt;<span class="hljs-name">id</span>&gt;</span>maven.oracle.com<span class="hljs-tag"><!--<span class="hljs-name"-->id</span>&gt;
+		<span class="hljs-tag">&lt;<span class="hljs-name">url</span>&gt;</span>https://maven.oracle.com<span class="hljs-tag"><!--<span class="hljs-name"-->url</span>&gt;
+	<span class="hljs-tag"><!--<span class="hljs-name"-->pluginRepository</span>&gt;
+<span class="hljs-tag"><!--<span class="hljs-name"-->pluginRepositories</span>&gt;</code></pre>
 
 </li>
 </ol>
@@ -245,248 +257,268 @@
 <li><a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a></li>
 </ol>
 
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Java/">Java</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E9%97%AE%E9%A2%98/">问题</a>
+                    
+                      <a class="hover-with-bg" href="/tags/JDBC/">JDBC</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/10/22/flink.vs.spark/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Apache Spark vs. Apache Flink</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2018/08/10/Hive%E5%A4%8D%E6%9D%82%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%AF%BC%E5%85%A5/">
+                        <span class="hidden-mobile">Hive复杂类型的导入</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
 
     
-    
-    
-<div>
+  </main>
+
   
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
     <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
-    
-</div>
-
-  
-</div>
-        
-
-  <div class="followme">
-    <p>Welcome to my other publishing channels</p>
-
-    <div class="social-list">
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
     </div>
+    
+
+    
+
+    
   </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E8%B0%83%E7%A0%94/" rel="tag"><i class="fa fa-tag"></i>调研</a>
-              <a href="/tags/%E9%97%AE%E9%A2%98/" rel="tag"><i class="fa fa-tag"></i>问题</a>
-              <a href="/tags/JDBC/" rel="tag"><i class="fa fa-tag"></i>JDBC</a>
-          </div>
 
-        
+<!-- Plugins -->
 
 
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/08/10/Hive%E5%A4%8D%E6%9D%82%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%AF%BC%E5%85%A5/" rel="prev" title="Hive复杂类型的导入">
-      <i class="fa fa-chevron-left"></i> Hive复杂类型的导入
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/10/22/flink.vs.spark/" rel="next" title="Apache Spark vs. Apache Flink">
-      Apache Spark vs. Apache Flink <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
+  
     
-  </article>
-  
-  
   
 
 
 
-          </div>
-          
+  <script defer="" src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
+  
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
+
+
+
+
+
+
+  <script src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script>
+  
+
+
+
+  
+  
+
+
+
+  <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/bundle.js"></script><script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
     });
-  }
-</script>
+  ;
 
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Oracle JDBC为什么不能在Maven中直接配置？&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  ;
 
-  <aside class="sidebar">
-    <div class="sidebar-inner">
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  ;
 
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  ;
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目报错"><span class="nav-number">1.</span> <span class="nav-text">项目报错</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用做法"><span class="nav-number">2.</span> <span class="nav-text">常用做法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#目前实现"><span class="nav-number">3.</span> <span class="nav-text">目前实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#疑问"><span class="nav-number">4.</span> <span class="nav-text">疑问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">77</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">53</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/xinshiyou" title="GitHub → https://github.com/xinshiyou" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:shiyou_xin@163.com" title="E-Mail → mailto:shiyou_xin@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://weibo.com/yourname" title="Weibo → https://weibo.com/yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  © 2018 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共91.3k字</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-
-
-<script src="/bundle.js"></script></body></html>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script></body></html>

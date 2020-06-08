@@ -1,229 +1,198 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="xinshiyou">
+  <meta name="keywords" content="">
+  <title>Netty权威指南读书笔记 - 星空捞月：找寻心中的安宁</title>
 
-
-
-
-
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xinshiyou.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="《Netty权威指南》读书笔记">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Netty权威指南读书笔记">
-<meta property="og:url" content="https://xinshiyou.github.io/2018/07/09/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="《Netty权威指南》读书笔记">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://xinshiyou.github.io/.io//001.png">
-<meta property="og:image" content="https://xinshiyou.github.io/.io//002.png">
-<meta property="article:published_time" content="2018-07-09T11:38:49.000Z">
-<meta property="article:modified_time" content="2020-06-01T05:22:54.802Z">
-<meta property="article:author" content="John Doe">
-<meta property="article:tag" content="Java">
-<meta property="article:tag" content="Netty">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://xinshiyou.github.io/.io//001.png">
-
-<link rel="canonical" href="https://xinshiyou.github.io/2018/07/09/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
-
-  <title>Netty权威指南读书笔记 | Hexo</title>
   
 
 
+  
+  
+
+  
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
 
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
 
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');</script></head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星空捞月：找寻心中的安宁" type="application/atom+xml">
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css');loadCss('https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css');loadCss('https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css');loadCss('//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css');loadCss('//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css');loadCss('https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css"><link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"></noscript></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">&nbsp;<strong>星空捞月：找寻心中的安宁</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
 </nav>
 
+    <div class="view intro-2" id="background" parallax="true" style="background: url('/img/top.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
 
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2018-07-09 19:38">
+      2018年7月9日 晚上
+    </time>
   </div>
 
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
+<div class="mt-1">
   
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      7.8k 字
+    </span>
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://xinshiyou.github.io/2018/07/09/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Netty权威指南读书笔记
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-07-09 19:38:49" itemprop="dateCreated datePublished" datetime="2018-07-09T19:38:49+08:00">2018-07-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-06-01 13:22:54" itemprop="dateModified" datetime="2020-06-01T13:22:54+08:00">2020-06-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
-                </span>
-            </span>
-
-          
-            <div class="post-description">《Netty权威指南》读书笔记</div>
-
-        </div>
-      </header>
-
+  
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
       
-        <p>  Netty权威指南，是一本广受欢迎的Netty书籍。博主研读的是2014年6月第一版，第二次印刷的书本。</p>
+      
+      93
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <p>  Netty权威指南，是一本广受欢迎的Netty书籍。博主研读的是2014年6月第一版，第二次印刷的书本。</p>
 <a id="more"></a>
 
 <h1 id="基础篇-走进Java-NIO"><a href="#基础篇-走进Java-NIO" class="headerlink" title="基础篇  走进Java NIO"></a>基础篇  走进Java NIO</h1><h2 id="Java的I-O演进之路"><a href="#Java的I-O演进之路" class="headerlink" title="Java的I/O演进之路"></a>Java的I/O演进之路</h2><h3 id="I-O入门"><a href="#I-O入门" class="headerlink" title="I/O入门"></a>I/O入门</h3><p>  Java1.4之前，Java的I/O还不完善，开发人员在开发该性能I/O时，会遇到困难：</p>
@@ -316,7 +285,166 @@
 <li>社区活跃，班底迭代周期短，发现的BUG被及时修复</li>
 </ul>
 <h1 id="入门篇-Netty-NIO开发指南"><a href="#入门篇-Netty-NIO开发指南" class="headerlink" title="入门篇 Netty NIO开发指南"></a>入门篇 Netty NIO开发指南</h1><h2 id="Netty入门应用"><a href="#Netty入门应用" class="headerlink" title="Netty入门应用"></a>Netty入门应用</h2><p>  使用Netty实现TimeServer服务器端与客户端通讯服务</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br></pre></td><td class="code"><pre><span class="line">## 服务器端代码</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimerServer</span></span>{</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(<span class="keyword">int</span> port)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line">        <span class="comment">// 配置服务端的NIO线程组</span></span><br><span class="line">        EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        EventLoopGroup workGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span>{</span><br><span class="line">            ServerBootstrap b = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">            b.group(bossGroup,workGroup)</span><br><span class="line">            .channel(NioServerSocketChannel<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">            .<span class="title">option</span>(<span class="title">ChannelOption</span>.<span class="title">SO_BACKLOG</span>,1024)</span></span><br><span class="line"><span class="class">            .<span class="title">childHandler</span>(<span class="title">new</span> <span class="title">ChildChannelHandler</span>())</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 绑定端口，同步等待成功</span></span><br><span class="line">            ChannelFuture f = b.bind(port).sync();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 等待服务端口监听端口关闭</span></span><br><span class="line">            f.channel().closeFuture().sync();</span><br><span class="line">        }<span class="keyword">finally</span>{</span><br><span class="line">            <span class="comment">// 优雅退出，释放线层组资源</span></span><br><span class="line">            bossGroup.shutdownGracefully();</span><br><span class="line">            workGroup.shutdownGracefully();</span><br><span class="line">        }</span><br><span class="line">        </span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ChildChannelHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInitializer</span>&lt;<span class="title">SocketChannel</span>&gt;</span>{</span><br><span class="line"></span><br><span class="line">        <span class="meta">@override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">iniitChannel</span><span class="params">(SocketChannel args0)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">            args0.pipeline()/addLast(<span class="keyword">new</span> TimeServerHandler());</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@desc</span> 测试时间服务器</span></span><br><span class="line"><span class="comment">    */</span> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">        <span class="keyword">int</span> port = <span class="number">8080</span>;</span><br><span class="line">        <span class="keyword">if</span>(args!=<span class="keyword">null</span> &amp;&amp; args.length&gt;<span class="number">0</span>){</span><br><span class="line">            <span class="keyword">try</span>{</span><br><span class="line">                port = Integer.valueOf(args[<span class="number">0</span>]);</span><br><span class="line">            }<span class="keyword">catch</span>(NumberFormatException e){</span><br><span class="line">                <span class="comment">// 采用默认值</span></span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> TimeServer().bind(port);</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Netty时间服务器服务端TimeServerHandler */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimerServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelHandlerAdapter</span></span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx,Object msg)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line">    </span><br><span class="line">        Bytebuf buf = (ByteBuf)msg;</span><br><span class="line">        <span class="keyword">byte</span>[] req = <span class="keyword">new</span> <span class="keyword">byte</span>[buf.readableBytes()];</span><br><span class="line">        buf.readBytes(req);</span><br><span class="line"></span><br><span class="line">        String body = <span class="keyword">new</span> String(req,<span class="string">"UTF-8"</span>);</span><br><span class="line">        System.out.println(<span class="string">"The time server receive order : "</span>+body);</span><br><span class="line"></span><br><span class="line">        String currentTime = <span class="string">"QUERY TIME ORDER"</span>.equalsIngnoreCase(body)?<span class="keyword">new</span> java.util.Date(System.currentTimeMilles()).toString():<span class="string">"BAD ORDER"</span>;</span><br><span class="line">        </span><br><span class="line">        Bytebuf resp = Unpooled.copiedBuffer(currentTime.getBytes());</span><br><span class="line">        ctx.write(resp);</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelReadComplete</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line">        ctx.flush();</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx,Throwable cause)</span></span>{</span><br><span class="line">        ctx.close();</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">## 客户端代码</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeClient</span></span>{</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(<span class="keyword">int</span> port,String host)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 配置客户端NIO线程组</span></span><br><span class="line">        EventLoopGroup group = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        <span class="keyword">try</span>{</span><br><span class="line">            Bootstrap b = <span class="keyword">new</span> Bootstrap();</span><br><span class="line">            g.group(group)</span><br><span class="line">            .channel(NioSocketChannel<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">            .<span class="title">option</span>(<span class="title">ChannelOption</span>.<span class="title">TCP_NODELAY</span>,<span class="title">trye</span>)</span></span><br><span class="line"><span class="class">            .<span class="title">handler</span>(<span class="title">new</span> <span class="title">ChannelInitializer</span>&lt;<span class="title">SocketHandler</span>&gt;()</span>{</span><br><span class="line">                <span class="meta">@override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line">                    ch.pipeline().addLast(<span class="keyword">new</span> TimeClientChannel());</span><br><span class="line">                }</span><br><span class="line">            });</span><br><span class="line"></span><br><span class="line">             <span class="comment">// 发起异步连接操作</span></span><br><span class="line">            ChannelFuture f = b.connect(host,port).sync();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 等待客户端链路关闭</span></span><br><span class="line">            f.channel().closeFuture().sync();</span><br><span class="line"></span><br><span class="line">        }<span class="keyword">finally</span>{</span><br><span class="line">            group.shutdownGracefully();</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 主要测试方法 */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(Stirng[] args)</span></span>{</span><br><span class="line">        <span class="keyword">int</span> port = <span class="number">8080</span>;</span><br><span class="line">        <span class="comment">// read port from input parameters if possible</span></span><br><span class="line">        <span class="keyword">new</span> TimeClient().bind(port,hostname[ or <span class="string">"localhost"</span>]);</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeClientHandler</span> <span class="keyword">extends</span> <span class="title">ChannelHandlerAdapter</span></span>{</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ByteBuf firstMessage;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TimeClientHandler</span><span class="params">()</span></span>{</span><br><span class="line"></span><br><span class="line">        <span class="keyword">byte</span>[] req = <span class="string">"QUERY TIME ORDER"</span>.getBytes();</span><br><span class="line">        firstMessage =Unpooled.buffer(req.length);</span><br><span class="line">        firstMessage.writeBytes(req);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannleHandlerContext ctx)</span> </span>{</span><br><span class="line">        ctx.writeAndFlush(firstMessage);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx,Object msg)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line"></span><br><span class="line">        ByteBuf buf = (ByteBuf)msg;</span><br><span class="line">        <span class="keyword">byte</span>[] req = <span class="keyword">new</span> String(buf.readableBytes());</span><br><span class="line">        buf.readBytes(req);</span><br><span class="line">        String body = <span class="keyword">new</span> String(req,<span class="string">"UTF-8"</span>);</span><br><span class="line">        System.out.println(<span class="string">"Now is : "</span>+body);</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx,Throwable cause)</span></span>{</span><br><span class="line">        <span class="comment">// 释放资源</span></span><br><span class="line">        ctx.close();</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><code class="language-hljs java">## 服务器端代码
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TimerServer</span></span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">bind</span><span class="hljs-params">(<span class="hljs-keyword">int</span> port)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+        <span class="hljs-comment">// 配置服务端的NIO线程组</span>
+        EventLoopGroup bossGroup = <span class="hljs-keyword">new</span> NioEventLoopGroup();
+        EventLoopGroup workGroup = <span class="hljs-keyword">new</span> NioEventLoopGroup();
+
+        <span class="hljs-keyword">try</span>{
+            ServerBootstrap b = <span class="hljs-keyword">new</span> ServerBootstrap();
+            b.group(bossGroup,workGroup)
+            .channel(NioServerSocketChannel<span class="hljs-class">.<span class="hljs-keyword">class</span>)</span>
+<span class="hljs-class">            .<span class="hljs-title">option</span>(<span class="hljs-title">ChannelOption</span>.<span class="hljs-title">SO_BACKLOG</span>,1024)</span>
+<span class="hljs-class">            .<span class="hljs-title">childHandler</span>(<span class="hljs-title">new</span> <span class="hljs-title">ChildChannelHandler</span>())</span>;
+
+            <span class="hljs-comment">// 绑定端口，同步等待成功</span>
+            ChannelFuture f = b.bind(port).sync();
+
+            <span class="hljs-comment">// 等待服务端口监听端口关闭</span>
+            f.channel().closeFuture().sync();
+        }<span class="hljs-keyword">finally</span>{
+            <span class="hljs-comment">// 优雅退出，释放线层组资源</span>
+            bossGroup.shutdownGracefully();
+            workGroup.shutdownGracefully();
+        }
+        
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ChildChannelHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ChannelInitializer</span>&lt;<span class="hljs-title">SocketChannel</span>&gt;</span>{
+
+        <span class="hljs-meta">@override</span>
+        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">iniitChannel</span><span class="hljs-params">(SocketChannel args0)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+            args0.pipeline()/addLast(<span class="hljs-keyword">new</span> TimeServerHandler());
+        }
+
+    }
+
+    <span class="hljs-comment">/**</span>
+<span class="hljs-comment">    * <span class="hljs-doctag">@desc</span> 测试时间服务器</span>
+<span class="hljs-comment">    */</span> 
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        <span class="hljs-keyword">int</span> port = <span class="hljs-number">8080</span>;
+        <span class="hljs-keyword">if</span>(args!=<span class="hljs-keyword">null</span> &amp;&amp; args.length&gt;<span class="hljs-number">0</span>){
+            <span class="hljs-keyword">try</span>{
+                port = Integer.valueOf(args[<span class="hljs-number">0</span>]);
+            }<span class="hljs-keyword">catch</span>(NumberFormatException e){
+                <span class="hljs-comment">// 采用默认值</span>
+            }
+        }
+
+        <span class="hljs-keyword">new</span> TimeServer().bind(port);
+
+    }
+
+}
+
+<span class="hljs-comment">/** Netty时间服务器服务端TimeServerHandler */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TimerServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ChannelHandlerAdapter</span></span>{
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelRead</span><span class="hljs-params">(ChannelHandlerContext ctx,Object msg)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+    
+        Bytebuf buf = (ByteBuf)msg;
+        <span class="hljs-keyword">byte</span>[] req = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[buf.readableBytes()];
+        buf.readBytes(req);
+
+        String body = <span class="hljs-keyword">new</span> String(req,<span class="hljs-string">"UTF-8"</span>);
+        System.out.println(<span class="hljs-string">"The time server receive order : "</span>+body);
+
+        String currentTime = <span class="hljs-string">"QUERY TIME ORDER"</span>.equalsIngnoreCase(body)?<span class="hljs-keyword">new</span> java.util.Date(System.currentTimeMilles()).toString():<span class="hljs-string">"BAD ORDER"</span>;
+        
+        Bytebuf resp = Unpooled.copiedBuffer(currentTime.getBytes());
+        ctx.write(resp);
+
+    }
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelReadComplete</span><span class="hljs-params">(ChannelHandlerContext ctx)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+        ctx.flush();
+    }
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">exceptionCaught</span><span class="hljs-params">(ChannelHandlerContext ctx,Throwable cause)</span></span>{
+        ctx.close();
+    }
+
+}
+
+## 客户端代码
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TimeClient</span></span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connect</span><span class="hljs-params">(<span class="hljs-keyword">int</span> port,String host)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+
+        <span class="hljs-comment">// 配置客户端NIO线程组</span>
+        EventLoopGroup group = <span class="hljs-keyword">new</span> NioEventLoopGroup();
+        <span class="hljs-keyword">try</span>{
+            Bootstrap b = <span class="hljs-keyword">new</span> Bootstrap();
+            g.group(group)
+            .channel(NioSocketChannel<span class="hljs-class">.<span class="hljs-keyword">class</span>)</span>
+<span class="hljs-class">            .<span class="hljs-title">option</span>(<span class="hljs-title">ChannelOption</span>.<span class="hljs-title">TCP_NODELAY</span>,<span class="hljs-title">trye</span>)</span>
+<span class="hljs-class">            .<span class="hljs-title">handler</span>(<span class="hljs-title">new</span> <span class="hljs-title">ChannelInitializer</span>&lt;<span class="hljs-title">SocketHandler</span>&gt;()</span>{
+                <span class="hljs-meta">@override</span>
+                <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+                    ch.pipeline().addLast(<span class="hljs-keyword">new</span> TimeClientChannel());
+                }
+            });
+
+             <span class="hljs-comment">// 发起异步连接操作</span>
+            ChannelFuture f = b.connect(host,port).sync();
+
+            <span class="hljs-comment">// 等待客户端链路关闭</span>
+            f.channel().closeFuture().sync();
+
+        }<span class="hljs-keyword">finally</span>{
+            group.shutdownGracefully();
+        }
+
+    }
+
+    <span class="hljs-comment">/** 主要测试方法 */</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(Stirng[] args)</span></span>{
+        <span class="hljs-keyword">int</span> port = <span class="hljs-number">8080</span>;
+        <span class="hljs-comment">// read port from input parameters if possible</span>
+        <span class="hljs-keyword">new</span> TimeClient().bind(port,hostname[ or <span class="hljs-string">"localhost"</span>]);
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TimeClientHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ChannelHandlerAdapter</span></span>{
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ByteBuf firstMessage;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">TimeClientHandler</span><span class="hljs-params">()</span></span>{
+
+        <span class="hljs-keyword">byte</span>[] req = <span class="hljs-string">"QUERY TIME ORDER"</span>.getBytes();
+        firstMessage =Unpooled.buffer(req.length);
+        firstMessage.writeBytes(req);
+    }
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelActive</span><span class="hljs-params">(ChannleHandlerContext ctx)</span> </span>{
+        ctx.writeAndFlush(firstMessage);
+    }
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelRead</span><span class="hljs-params">(ChannelHandlerContext ctx,Object msg)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+
+        ByteBuf buf = (ByteBuf)msg;
+        <span class="hljs-keyword">byte</span>[] req = <span class="hljs-keyword">new</span> String(buf.readableBytes());
+        buf.readBytes(req);
+        String body = <span class="hljs-keyword">new</span> String(req,<span class="hljs-string">"UTF-8"</span>);
+        System.out.println(<span class="hljs-string">"Now is : "</span>+body);
+
+    }
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">exceptionCaught</span><span class="hljs-params">(ChannelHandlerContext ctx,Throwable cause)</span></span>{
+        <span class="hljs-comment">// 释放资源</span>
+        ctx.close();
+    }
+}</code></pre>
 
 
 <h2 id="TCP黏包-拆包的解决之道"><a href="#TCP黏包-拆包的解决之道" class="headerlink" title="TCP黏包/拆包的解决之道"></a>TCP黏包/拆包的解决之道</h2><p>  使用TCP协议，在发送或传输过程中都需要考虑黏包、拆包问题。</p>
@@ -345,10 +473,10 @@
 <li>通过在消息头中定义长度字段来标识消息的长度</li>
 </ol>
 <h3 id="DelimiterBasedFrameDecoder应用开发"><a href="#DelimiterBasedFrameDecoder应用开发" class="headerlink" title="DelimiterBasedFrameDecoder应用开发"></a>DelimiterBasedFrameDecoder应用开发</h3><p>  DelimiterBasedFrameDecoder可以根据自定义分隔符作为结束位置，在使用的时候传入两个参数</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new DelimiterBasedFrameDecoder(1024,Bytebuf:: delimiter)</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs reasonml"><span class="hljs-keyword">new</span> <span class="hljs-constructor">DelimiterBasedFrameDecoder(1024,Bytebuf:: <span class="hljs-params"><code class="language-hljs reasonml"><span class="hljs-keyword">new</span> <span class="hljs-constructor">DelimiterBasedFrameDecoder(1024,Bytebuf:: <span class="hljs-params">delimiter</span>)</span></code></span></span></pre>
 <p>其中第一个参数表示消息的最大长度，第二参数表示分隔符。</p>
 <h3 id="FixedLengthFrameDecoder应用开发"><a href="#FixedLengthFrameDecoder应用开发" class="headerlink" title="FixedLengthFrameDecoder应用开发"></a>FixedLengthFrameDecoder应用开发</h3><p>  FixedLengthFrameDecoder是固定长度解码器，它能够按照固定的长度对消息进行自动解码，开发者不需要考虑TCP的黏包和拆包问题。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new FixedLengthFrameDecoder(10)</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs haxe"><span class="hljs-keyword">new</span> <span class="hljs-type">FixedLengthFrameDecoder</span>(<span class="hljs-number"><code class="language-hljs haxe"><span class="hljs-keyword">new</span> <span class="hljs-type">FixedLengthFrameDecoder</span>(<span class="hljs-number">10</span>)</code></span></pre>
 <p>其中10表示固定长度。</p>
 <h1 id="中级篇-Netty编解码开发指南"><a href="#中级篇-Netty编解码开发指南" class="headerlink" title="中级篇 Netty编解码开发指南"></a>中级篇 Netty编解码开发指南</h1><p>  了解Netty内置的编码器之后，继续学习Netty的编码解码款框架的应用，例如java序列化、二进制编码、Google Protobuf和JBoss的Marshallling序列化框架。</p>
 <h2 id="编解码技术"><a href="#编解码技术" class="headerlink" title="编解码技术"></a>编解码技术</h2><p>  基于Java提供的对象输入/输出流ObjectInputStreaming和ObjectOutputStreaming，可以直接把Java对象作为可存储的字节流写入文件，也可以传输到网上。对程序员而言，序列化可提高开发效率。</p>
@@ -391,11 +519,31 @@
 <h2 id="Java序列化"><a href="#Java序列化" class="headerlink" title="Java序列化"></a>Java序列化</h2></li>
 </ol>
 <p>  Java序列化在Netty NIO框架中的使用方式</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">## 服务器端：ChannleInitializer&lt;SocketChannel&gt;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span></span>{</span><br><span class="line">    ch.pipeline()</span><br><span class="line">        .addLast(<span class="keyword">new</span> ObjectDecoder(<span class="number">1024</span>*<span class="number">1024</span>,Classresolvers.weakCachingConcurrentResolver(<span class="keyword">this</span>.getClass().getClassLoader())));</span><br><span class="line">    ch.pipeline().addLast(<span class="keyword">new</span> OjectEncoder());</span><br><span class="line">    <span class="comment">// add other handler</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><code class="language-hljs java">## 服务器端：ChannleInitializer<socketchannel>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span></span>{
+    ch.pipeline()
+        .addLast(<span class="hljs-keyword">new</span> ObjectDecoder(<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>,Classresolvers.weakCachingConcurrentResolver(<span class="hljs-keyword">this</span>.getClass().getClassLoader())));
+    ch.pipeline().addLast(<span class="hljs-keyword">new</span> OjectEncoder());
+    <span class="hljs-comment">// add other handler</span>
+}</socketchannel></code></pre>
 
 <h2 id="Google-Protobuf编解码"><a href="#Google-Protobuf编解码" class="headerlink" title="Google Protobuf编解码"></a>Google Protobuf编解码</h2><p>  Profotbuf是一个灵活的、小巧的、高效的、结构化的数据序列化框架，相比于XML等传统的序列化工具，它更小、更快、更简单。Profobuf支持一次可以到处使用，甚至跨语言使用，通过代码生成工具可以自动生成不同语言版本的源代码，甚至可以在不同版本的数据结构进程间进行数据传递实现数据结构的前后兼容。</p>
 <h3 id="Protobuf开发环境搭建"><a href="#Protobuf开发环境搭建" class="headerlink" title="Protobuf开发环境搭建"></a>Protobuf开发环境搭建</h3><h3 id="Netty的Protobuf服务端开发"><a href="#Netty的Protobuf服务端开发" class="headerlink" title="Netty的Protobuf服务端开发"></a>Netty的Protobuf服务端开发</h3><p>  各种不同版本的示例程序代码，不同点在于ChannelHandlerAdapter的实现方式。其中本部分基于Protobuf的Netty实现方式如下所示</p>
-<figure class="highlight"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">## 服务器端</span><br><span class="line"><span class="keyword">public</span>  <span class="class"><span class="keyword">class</span> <span class="title">ServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelHandlerAdapter</span></span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx,Object msg)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line"></span><br><span class="line">        <span class="comment">// protobuf object</span></span><br><span class="line">        Test.TestReq req = (Test.TestReq )msg;<span class="comment">// 直接强制转化为目标类</span></span><br><span class="line">        <span class="comment">// 其他处理</span></span><br><span class="line">        ctx.writeAndFlush([Target Content]);</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">## 客户端代码类似</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><code class="language-hljs java">## 服务器端
+<span class="hljs-keyword">public</span>  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ChannelHandlerAdapter</span></span>{
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelRead</span><span class="hljs-params">(ChannelHandlerContext ctx,Object msg)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+
+        <span class="hljs-comment">// protobuf object</span>
+        Test.TestReq req = (Test.TestReq )msg;<span class="hljs-comment">// 直接强制转化为目标类</span>
+        <span class="hljs-comment">// 其他处理</span>
+        ctx.writeAndFlush([Target Content]);
+
+    }
+}
+
+## 客户端代码类似</code></pre>
 
 <p>  这里使用到的ProtofReq对象，是通过Protobuf自动化生成的类。</p>
 <h2 id="JBoss-Marshelling编解码"><a href="#JBoss-Marshelling编解码" class="headerlink" title="JBoss Marshelling编解码"></a>JBoss Marshelling编解码</h2><p>  JBose Marshalling的序列化编解码框架，应用领域有限不做赘述。</p>
@@ -474,14 +622,32 @@
 </li>
 </ol>
 <h3 id="Http协议的Netty处理"><a href="#Http协议的Netty处理" class="headerlink" title="Http协议的Netty处理"></a>Http协议的Netty处理</h3><p>  服务器端重点代码</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-decoder"</span>,<span class="keyword">new</span> HttpRequestDecoder());</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-aggregator"</span>,<span class="keyword">new</span> HttpObjectAgregator(<span class="number">65536</span>));</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-encoder"</span>,<span class="keyword">new</span> HttpResponseEncoder());</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-chunked"</span>,<span class="keyword">new</span> ChunkedWriteHandler());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 自定义: extends SimpleChannelInboundsHandler&lt;FullHttpRequest&gt;</span></span><br><span class="line">    ch.pipleline().addLast(<span class="string">"fileServerHandler"</span>,<span class="keyword">new</span> HttpFileServerHandler(url);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><span class="hljs-meta">@override</span> <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-meta">@override</span> <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+    ch.pipleline().addLast(<span class="hljs-string">"http-decoder"</span>,<span class="hljs-keyword">new</span> HttpRequestDecoder());
+    ch.pipleline().addLast(<span class="hljs-string">"http-aggregator"</span>,<span class="hljs-keyword">new</span> HttpObjectAgregator(<span class="hljs-number">65536</span>));
+    ch.pipleline().addLast(<span class="hljs-string">"http-encoder"</span>,<span class="hljs-keyword">new</span> HttpResponseEncoder());
+    ch.pipleline().addLast(<span class="hljs-string">"http-chunked"</span>,<span class="hljs-keyword">new</span> ChunkedWriteHandler());
+
+    <span class="hljs-comment">// 自定义: extends SimpleChannelInboundsHandler<fullhttprequest></fullhttprequest></span>
+    ch.pipleline().addLast(<span class="hljs-string">"fileServerHandler"</span>,<span class="hljs-keyword">new</span> HttpFileServerHandler(url);
+}</code></span></span></pre>
 
 <h3 id="Netty-Http-XML协议栈开发"><a href="#Netty-Http-XML协议栈开发" class="headerlink" title="Netty Http+XML协议栈开发"></a>Netty Http+XML协议栈开发</h3><p>  由于Http协议的通用性，异构系统间的通讯交互采用Http协议，通过Http协议承载业务数据进行消息交互。例如流行的Http+XML，或RestFUL+JSON。</p>
 <p>  在java领域，最常用的Http协议栈就是基于Serverlet规范的Tomcat等Web容器。由于Google等大佬的强力推荐，Jetty等轻量级Web容器也得到了广泛的应用。但许多场景下，基于Http的应用都是后台应用，Http仅仅是承载数据交换的一个通道，是一个载体而不是Web容器。这种场景下，一般不需要Tomcat这种重量型的Web容器。</p>
 <p>  另外网络安全日益严峻的今天，重量级的Web容器由于功能繁琐，会存在很多安全漏洞，典型的如Tomcat。这意味着需要为Wb容器做很多安全加固工作去修补这些漏洞，然而开发中并没有用到这些功能，这就带来了并发和维护成本。在这种场景下，选择一个更加轻量级的http协议栈是个更好的选择。</p>
-<p><img src="/.io//001.png" alt="Http+XML协议栈开发"></p>
+<p><img src="./Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/001.png" srcset="/img/loading.gif" alt="Http+XML协议栈开发"></p>
 <p>Netty Http+XML重点代码</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line"></span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-decoder"</span>,<span class="keyword">new</span> HttpResponseDecoder());</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-aggregator"</span>,<span class="keyword">new</span> HttpObjectAgregator(<span class="number">65536</span>));</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"xml-decoder"</span>,<span class="keyword">new</span> HttpXMLResponseDecoder(Order<span class="class">.<span class="keyword">class</span>,<span class="title">true</span>))</span>;</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"http-encoder"</span>,<span class="keyword">new</span> HttpRequestEncoder());</span><br><span class="line">    ch.pipleline().addLast(<span class="string">"xml-encoder"</span>,<span class="keyword">new</span> HttpXMLRequestEncoder());</span><br><span class="line"></span><br><span class="line">    ch.pipleline().addLast(<span class="string">"fileServerHandler"</span>,<span class="keyword">new</span> HttpXMLHandler());</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><span class="hljs-meta"><code class="language-hljs java"><span class="hljs-meta">@override</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+
+    ch.pipleline().addLast(<span class="hljs-string">"http-decoder"</span>,<span class="hljs-keyword">new</span> HttpResponseDecoder());
+    ch.pipleline().addLast(<span class="hljs-string">"http-aggregator"</span>,<span class="hljs-keyword">new</span> HttpObjectAgregator(<span class="hljs-number">65536</span>));
+    ch.pipleline().addLast(<span class="hljs-string">"xml-decoder"</span>,<span class="hljs-keyword">new</span> HttpXMLResponseDecoder(Order<span class="hljs-class">.<span class="hljs-keyword">class</span>,<span class="hljs-title">true</span>))</span>;
+    ch.pipleline().addLast(<span class="hljs-string">"http-encoder"</span>,<span class="hljs-keyword">new</span> HttpRequestEncoder());
+    ch.pipleline().addLast(<span class="hljs-string">"xml-encoder"</span>,<span class="hljs-keyword">new</span> HttpXMLRequestEncoder());
+
+    ch.pipleline().addLast(<span class="hljs-string">"fileServerHandler"</span>,<span class="hljs-keyword">new</span> HttpXMLHandler());
+}</code></span></pre>
 
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>  尽管本文中开发的Http+XML协议栈是一个高性能、通用的协议栈，但这里忽略了异常处理、可扩展性的API和配置能力。所以如果想要做产品化的协议栈，还需要一些额外的完善。</p>
 <h2 id="WebSocket协议开发"><a href="#WebSocket协议开发" class="headerlink" title="WebSocket协议开发"></a>WebSocket协议开发</h2><p>  一直以来，网络在很多程度上都是围绕着Http的请求/相应模式而构建的。长期以来存在这个各种技术让服务器得知有数据可用时，立即将数据发送到客户端。最常用的一种技术手段是对服务器发起链接创建假象，被称为长轮循。利用长轮循，客户端可以打开指向服务器的Http连接，而服务器会一直保持链接打开，直到发送响应。服务器只要有数据，就会发送响应。这些问题都存在一个同样的问题，Http协议的开销，到时他们不适用于低延迟应用。</p>
@@ -511,7 +677,98 @@
 </ol>
 <h3 id="Netty-WebSocket开发"><a href="#Netty-WebSocket开发" class="headerlink" title="Netty WebSocket开发"></a>Netty WebSocket开发</h3><p>  Netty基于Http协议开发了WebSocket协议栈，利用Netty的WebSocket协议栈可非常方便的开发出WebSocket客户端和服务器端。</p>
 <p>基于Netty的WebSocket编程主要代码</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebSocketServerHandler</span> <span class="keyword">extends</span> <span class="title">SimpleChannelInBoundHandler</span>&lt;<span class="title">Object</span>&gt;</span>{</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> WebSocketServerHandshaker handshaker;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// define Logger</span></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">messageReceived</span><span class="params">(ChannelHandlerContext ctx,Object msg)</span></span>{</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 传统的Http接口</span></span><br><span class="line">        <span class="keyword">if</span>(msg <span class="keyword">instanceof</span> FullHttpRequest){</span><br><span class="line">            handleHttpRequest(ctx,(FullHttpRequest)msg);</span><br><span class="line">        }</span><br><span class="line">        <span class="comment">// WebSocket接入</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(msg <span class="keyword">instanceof</span> WebSocketFrame){</span><br><span class="line">            handleWebSocketFrame(ctx,(WebSocketFrame)msg);</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelReadComplete</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line">        ftx.flush();</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx, Throwable e)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line">        cause.printStackTrace();</span><br><span class="line">        ctx.close();</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">// define local method</span></span><br><span class="line">    <span class="comment">// handle websocket http request</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleHttpRequst</span><span class="params">(ChannelHandlerContext ctx,FullHttpRequest req)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果Http编码失败，返回Http异常</span></span><br><span class="line">        <span class="keyword">if</span>(!req.getDecoderResult().isSuccesss() || (!<span class="string">"websocket"</span>.equals(req.headers().get(<span class="string">"Upgrade"</span>)))){</span><br><span class="line">            sendHttpResponse(ctx,req,<span class="keyword">new</span> DefaultFullHttpResponse(HTTP_1_1,BAD_REQUEST));</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 构造握手相应返回，本机测试</span></span><br><span class="line">        WebSocketServerHandShakerFactory wsFactory = <span class="keyword">new</span> WebSocketServerHandShakerFactory(<span class="string">"ws://localhost:8080/websocket"</span>,<span class="keyword">null</span>,<span class="keyword">false</span>);</span><br><span class="line">        handshaker = wsFactory.newHandshaker(req);</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">null</span>==handshaker){</span><br><span class="line">            WebSocketServerHandShakerFactory.sendUnsupportedWebSocketVersionResponse(ctx.channel());</span><br><span class="line">        }<span class="keyword">else</span>{</span><br><span class="line">            handshaker.handshake(ctx.channel(),req);</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">// handler websocket request</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleWebSocketRequest</span><span class="params">(ChannelHandlerContext ctx,WebSocketFrame req)</span> <span class="keyword">throws</span> Exception</span>{</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 判断是否关闭链路指令</span></span><br><span class="line">        <span class="keyword">if</span>(frame <span class="keyword">instanceof</span> CloseWebSocketFrame){</span><br><span class="line">            handshaker.close(ctx.channel(),(CloseWebSocketFrame)farme.retain());</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 判断是否Ping消息</span></span><br><span class="line">        <span class="keyword">if</span>(frame <span class="keyword">instanceof</span> PingWebSocketFrame){</span><br><span class="line">            ctx.channel().write(<span class="keyword">new</span> PongWebSocketFrame(frame.contenet().retain()));</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 本利仅支持文本消息，比支持二进制消息</span></span><br><span class="line">    <span class="keyword">if</span>(!(frame <span class="keyword">instanceof</span> TextWebSocketFrame)){</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException(String.format(<span class="string">"$s frame types not supported"</span>,frame.getClass().getName()));</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">//返回应答消息</span></span><br><span class="line">    String request = ((TextWebSocketFrame)frame).text();</span><br><span class="line">    ctx.channel().write(<span class="keyword">new</span> TextWebSocketFrame(request+<span class="string">", 欢迎使用Netty WebSocket服务，现在时间："</span>+<span class="keyword">new</span> java.util.Date().toString());</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sendHttpResponse</span><span class="params">(ChannelHandlerContext ctx,FullHttpRequest req,FullHttpResponse res)</span></span>{</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回应答给客户端</span></span><br><span class="line">        <span class="keyword">if</span>(req.getStatus().code()!=<span class="number">200</span>){</span><br><span class="line">            ByteBuf buf = Unpooled.copiedBuffer(res.getStatus().toString(),CharsetUtil.UTF_8);</span><br><span class="line">            res.content().writeBytes(buf);</span><br><span class="line">            buf.release();</span><br><span class="line">            setContentLength(res,res.content().readableBytes());</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果是非Kill-Alive，关闭连接</span></span><br><span class="line">        ChannelFuture f = ctx.channel().writeAndFlush(res);</span><br><span class="line">        <span class="keyword">if</span>(!isKeepAlive(req) || res.getStatus.code()!=<span class="number">200</span>){</span><br><span class="line">            f.addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WebSocketServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WebSocketServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title">Object</span>&gt;</span>{
+
+    <span class="hljs-keyword">private</span> WebSocketServerHandshaker handshaker;
+
+    <span class="hljs-comment">// define Logger</span>
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">messageReceived</span><span class="hljs-params">(ChannelHandlerContext ctx,Object msg)</span></span>{
+
+        <span class="hljs-comment">// 传统的Http接口</span>
+        <span class="hljs-keyword">if</span>(msg <span class="hljs-keyword">instanceof</span> FullHttpRequest){
+            handleHttpRequest(ctx,(FullHttpRequest)msg);
+        }
+        <span class="hljs-comment">// WebSocket接入</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(msg <span class="hljs-keyword">instanceof</span> WebSocketFrame){
+            handleWebSocketFrame(ctx,(WebSocketFrame)msg);
+        }
+    }
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelReadComplete</span><span class="hljs-params">(ChannelHandlerContext ctx)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+        ftx.flush();
+    }
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">exceptionCaught</span><span class="hljs-params">(ChannelHandlerContext ctx, Throwable e)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+        cause.printStackTrace();
+        ctx.close();
+    }
+
+    <span class="hljs-comment">// define local method</span>
+    <span class="hljs-comment">// handle websocket http request</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handleHttpRequst</span><span class="hljs-params">(ChannelHandlerContext ctx,FullHttpRequest req)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+
+        <span class="hljs-comment">// 如果Http编码失败，返回Http异常</span>
+        <span class="hljs-keyword">if</span>(!req.getDecoderResult().isSuccesss() || (!<span class="hljs-string">"websocket"</span>.equals(req.headers().get(<span class="hljs-string">"Upgrade"</span>)))){
+            sendHttpResponse(ctx,req,<span class="hljs-keyword">new</span> DefaultFullHttpResponse(HTTP_1_1,BAD_REQUEST));
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-comment">// 构造握手相应返回，本机测试</span>
+        WebSocketServerHandShakerFactory wsFactory = <span class="hljs-keyword">new</span> WebSocketServerHandShakerFactory(<span class="hljs-string">"ws://localhost:8080/websocket"</span>,<span class="hljs-keyword">null</span>,<span class="hljs-keyword">false</span>);
+        handshaker = wsFactory.newHandshaker(req);
+        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==handshaker){
+            WebSocketServerHandShakerFactory.sendUnsupportedWebSocketVersionResponse(ctx.channel());
+        }<span class="hljs-keyword">else</span>{
+            handshaker.handshake(ctx.channel(),req);
+        }
+
+    }
+
+    <span class="hljs-comment">// handler websocket request</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handleWebSocketRequest</span><span class="hljs-params">(ChannelHandlerContext ctx,WebSocketFrame req)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+
+        <span class="hljs-comment">// 判断是否关闭链路指令</span>
+        <span class="hljs-keyword">if</span>(frame <span class="hljs-keyword">instanceof</span> CloseWebSocketFrame){
+            handshaker.close(ctx.channel(),(CloseWebSocketFrame)farme.retain());
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-comment">// 判断是否Ping消息</span>
+        <span class="hljs-keyword">if</span>(frame <span class="hljs-keyword">instanceof</span> PingWebSocketFrame){
+            ctx.channel().write(<span class="hljs-keyword">new</span> PongWebSocketFrame(frame.contenet().retain()));
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-comment">// 本利仅支持文本消息，比支持二进制消息</span>
+    <span class="hljs-keyword">if</span>(!(frame <span class="hljs-keyword">instanceof</span> TextWebSocketFrame)){
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> UnsupportedOperationException(String.format(<span class="hljs-string">"$s frame types not supported"</span>,frame.getClass().getName()));
+    }
+
+    <span class="hljs-comment">//返回应答消息</span>
+    String request = ((TextWebSocketFrame)frame).text();
+    ctx.channel().write(<span class="hljs-keyword">new</span> TextWebSocketFrame(request+<span class="hljs-string">", 欢迎使用Netty WebSocket服务，现在时间："</span>+<span class="hljs-keyword">new</span> java.util.Date().toString());
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">sendHttpResponse</span><span class="hljs-params">(ChannelHandlerContext ctx,FullHttpRequest req,FullHttpResponse res)</span></span>{
+
+        <span class="hljs-comment">// 返回应答给客户端</span>
+        <span class="hljs-keyword">if</span>(req.getStatus().code()!=<span class="hljs-number">200</span>){
+            ByteBuf buf = Unpooled.copiedBuffer(res.getStatus().toString(),CharsetUtil.UTF_8);
+            res.content().writeBytes(buf);
+            buf.release();
+            setContentLength(res,res.content().readableBytes());
+        }
+
+        <span class="hljs-comment">// 如果是非Kill-Alive，关闭连接</span>
+        ChannelFuture f = ctx.channel().writeAndFlush(res);
+        <span class="hljs-keyword">if</span>(!isKeepAlive(req) || res.getStatus.code()!=<span class="hljs-number">200</span>){
+            f.addListener(ChannelFutureListener.CLOSE);
+        }
+    }
+}</code></span></span></pre>
 
 <h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><p>  本章主要介绍了Http协议的弊端和WebSocket的一些技术背景，随后对WebSocket的优势和基础入门进行了介绍，包括WebSocket的握手请求和相应、连接的建立与关闭、WebSocket的生命周期等内容。</p>
 <h2 id="UDP协议开发"><a href="#UDP协议开发" class="headerlink" title="UDP协议开发"></a>UDP协议开发</h2><p>  UDP是用户数据报协议(User Datagram Protocol, UDP)的简称，其主要作用是将网络数据流量压缩成数据报形式，提供面向事物的简单消息传送服务。与TCP相比，UDP协议直接利用IP协议进行UDP数据报的传输，UDP面向的是无连接、不可靠的数据投递服务。当使用UDP时，用户应用必须负责解决数据报丢失、重复、排序、差错确认等问题。</p>
@@ -529,7 +786,7 @@
 <li>UDP对接受到的数据报不发送确认信号，发送端不知道数据是否被正确接受，也不会重发数据</li>
 <li>UDP发送数据比TCP快，系统开销少：UDP简单、灵活。</li>
 </ul>
-<h3 id="UDP服务端开发"><a href="#UDP服务端开发" class="headerlink" title="UDP服务端开发"></a>UDP服务端开发</h3><p><img src="/.io//002.png" alt="UDP开发流程"></p>
+<h3 id="UDP服务端开发"><a href="#UDP服务端开发" class="headerlink" title="UDP服务端开发"></a>UDP服务端开发</h3><p><img src="./Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/002.png" srcset="/img/loading.gif" alt="UDP开发流程"></p>
 <h3 id="UDP客户端开发"><a href="#UDP客户端开发" class="headerlink" title="UDP客户端开发"></a>UDP客户端开发</h3><p>  总体而言UDP开发相对简单，客户端开发可参考服务器端开发代码。</p>
 <h3 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h3><p>  由于UDP相比于TCP的应用领域窄一些，所以本章不做详细论述。</p>
 <h2 id="文件传输"><a href="#文件传输" class="headerlink" title="文件传输"></a>文件传输</h2><p>  文件是最常见的数据源之一，在程序中经常需要将数据存储到文件中。在NIO的类库之前，Java所有的文件操作分为两类</p>
@@ -553,7 +810,31 @@
 <li>CMD控制台打印文件名和文件内存</li>
 </ol>
 <p>  主要处理类</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FileSererHandler</span> <span class="keyword">extends</span> <span class="title">SimpleChannelInBoundHandler</span>&lt;<span class="title">String</span>&gt;</span>{</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String CR = System.getProperty(<span class="string">"line.separator"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">messageReceived</span><span class="params">(ChannelHandlerContext ctx,String msg)</span></span>{</span><br><span class="line">        File f = <span class="keyword">new</span> File(msg);</span><br><span class="line">        <span class="keyword">if</span>(!f.exists()){</span><br><span class="line">            ctx.writeAndFlush(<span class="string">"Not a file :"</span>+f+CR);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(!f.isFile()){</span><br><span class="line">            ctx.writeAndFlush(<span class="string">"File not found :"</span>+f+CR);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        ctx.write(f+<span class="string">" "</span>+f.length()+CR);</span><br><span class="line">        RandomAccessFile raf = <span class="keyword">new</span> RandomAccessFile(msg,<span class="string">'r'</span>);</span><br><span class="line">        FileRegion fr = <span class="keyword">new</span> DefaultFileRegion(raf,getChannel(),<span class="number">0</span>,raf.length());</span><br><span class="line">        ctx.write(region);</span><br><span class="line">        ctx.writeAndFlush(CR);</span><br><span class="line">        raf.close();</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FileSererHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FileSererHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title">String</span>&gt;</span>{
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String CR = System.getProperty(<span class="hljs-string">"line.separator"</span>);
+
+    <span class="hljs-meta">@override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">messageReceived</span><span class="hljs-params">(ChannelHandlerContext ctx,String msg)</span></span>{
+        File f = <span class="hljs-keyword">new</span> File(msg);
+        <span class="hljs-keyword">if</span>(!f.exists()){
+            ctx.writeAndFlush(<span class="hljs-string">"Not a file :"</span>+f+CR);
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-keyword">if</span>(!f.isFile()){
+            ctx.writeAndFlush(<span class="hljs-string">"File not found :"</span>+f+CR);
+            <span class="hljs-keyword">return</span>;
+        }
+
+        ctx.write(f+<span class="hljs-string">" "</span>+f.length()+CR);
+        RandomAccessFile raf = <span class="hljs-keyword">new</span> RandomAccessFile(msg,<span class="hljs-string">'r'</span>);
+        FileRegion fr = <span class="hljs-keyword">new</span> DefaultFileRegion(raf,getChannel(),<span class="hljs-number">0</span>,raf.length());
+        ctx.write(region);
+        ctx.writeAndFlush(CR);
+        raf.close();
+    }
+}</code></span></span></pre>
 
 
 <h2 id="私有协议栈开发"><a href="#私有协议栈开发" class="headerlink" title="私有协议栈开发"></a>私有协议栈开发</h2><p>  通信协议从广义上区分，可以分为共有协议和私有协议。由于私有协议的灵活性，它往往会在某个公司或组织内部使用，按需定制。绝大数私有协议传输层都是基于TCP/IP，所以利用Netty的NIO TCP协议栈可以非常方便的进行私有协议的定制和开发。</p>
@@ -640,247 +921,266 @@
 <li>游戏领域</li>
 </ol>
 <h2 id="Netty未来展望"><a href="#Netty未来展望" class="headerlink" title="Netty未来展望"></a>Netty未来展望</h2>
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Java/">Java</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Netty/">Netty</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/07/10/%E5%88%86%E5%B8%83%E5%BC%8FJava%E5%BA%94%E7%94%A8%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">分布式Java应用读书笔记</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2018/07/07/%E4%BA%94%E7%A7%8D%E5%8A%A0%E5%BF%ABHive%E8%BF%90%E8%A1%8C%E7%9A%84%E6%96%B9%E5%BC%8F/">
+                        <span class="hidden-mobile">五种加快Hive查询的方式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
 
     
-    
-    
-<div>
+  </main>
+
   
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
     <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
-    
-</div>
-
-  
-</div>
-        
-
-  <div class="followme">
-    <p>Welcome to my other publishing channels</p>
-
-    <div class="social-list">
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
     </div>
+    
+
+    
+
+    
   </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i>Java</a>
-              <a href="/tags/Netty/" rel="tag"><i class="fa fa-tag"></i>Netty</a>
-          </div>
 
-        
+<!-- Plugins -->
 
 
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/07/07/%E4%BA%94%E7%A7%8D%E5%8A%A0%E5%BF%ABHive%E8%BF%90%E8%A1%8C%E7%9A%84%E6%96%B9%E5%BC%8F/" rel="prev" title="五种加快Hive查询的方式">
-      <i class="fa fa-chevron-left"></i> 五种加快Hive查询的方式
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/07/10/%E5%88%86%E5%B8%83%E5%BC%8FJava%E5%BA%94%E7%94%A8%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="next" title="分布式Java应用读书笔记">
-      分布式Java应用读书笔记 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
+  
     
-  </article>
-  
-  
   
 
 
 
-          </div>
-          
+  <script defer="" src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
+  
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
+
+
+
+
+
+
+  <script src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script>
+  
+
+
+
+  
+  
+
+
+
+  <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/bundle.js"></script><script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
     });
-  }
-</script>
+  ;
 
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Netty权威指南读书笔记&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  ;
 
-  <aside class="sidebar">
-    <div class="sidebar-inner">
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  ;
 
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  ;
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基础篇-走进Java-NIO"><span class="nav-number">1.</span> <span class="nav-text">基础篇  走进Java NIO</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java的I-O演进之路"><span class="nav-number">1.1.</span> <span class="nav-text">Java的I/O演进之路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O入门"><span class="nav-number">1.1.1.</span> <span class="nav-text">I/O入门</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux网络I-O模型"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">Linux网络I/O模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O多路复用技术"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">I/O多路复用技术</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java的I-O演进"><span class="nav-number">1.1.2.</span> <span class="nav-text">Java的I/O演进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.1.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NIO入门"><span class="nav-number">1.2.</span> <span class="nav-text">NIO入门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#传统BIO编程"><span class="nav-number">1.2.1.</span> <span class="nav-text">传统BIO编程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#伪异步IO编程"><span class="nav-number">1.2.2.</span> <span class="nav-text">伪异步IO编程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NIO编程"><span class="nav-number">1.2.3.</span> <span class="nav-text">NIO编程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NIO类库"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">NIO类库</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AIO编程"><span class="nav-number">1.2.4.</span> <span class="nav-text">AIO编程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#选择Netty的理由"><span class="nav-number">1.2.5.</span> <span class="nav-text">选择Netty的理由</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#入门篇-Netty-NIO开发指南"><span class="nav-number">2.</span> <span class="nav-text">入门篇 Netty NIO开发指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty入门应用"><span class="nav-number">2.1.</span> <span class="nav-text">Netty入门应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP黏包-拆包的解决之道"><span class="nav-number">2.2.</span> <span class="nav-text">TCP黏包/拆包的解决之道</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP黏包-拆包"><span class="nav-number">2.2.1.</span> <span class="nav-text">TCP黏包/拆包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty解决读半包问题"><span class="nav-number">2.2.2.</span> <span class="nav-text">Netty解决读半包问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分隔符和定长符解码器的应用"><span class="nav-number">2.3.</span> <span class="nav-text">分隔符和定长符解码器的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DelimiterBasedFrameDecoder应用开发"><span class="nav-number">2.3.1.</span> <span class="nav-text">DelimiterBasedFrameDecoder应用开发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FixedLengthFrameDecoder应用开发"><span class="nav-number">2.3.2.</span> <span class="nav-text">FixedLengthFrameDecoder应用开发</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#中级篇-Netty编解码开发指南"><span class="nav-number">3.</span> <span class="nav-text">中级篇 Netty编解码开发指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编解码技术"><span class="nav-number">3.1.</span> <span class="nav-text">编解码技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java序列化缺点"><span class="nav-number">3.1.1.</span> <span class="nav-text">Java序列化缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#业界主流的编解码框架"><span class="nav-number">3.1.2.</span> <span class="nav-text">业界主流的编解码框架</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java序列化"><span class="nav-number">3.2.</span> <span class="nav-text">Java序列化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Google-Protobuf编解码"><span class="nav-number">3.3.</span> <span class="nav-text">Google Protobuf编解码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Protobuf开发环境搭建"><span class="nav-number">3.3.1.</span> <span class="nav-text">Protobuf开发环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty的Protobuf服务端开发"><span class="nav-number">3.3.2.</span> <span class="nav-text">Netty的Protobuf服务端开发</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JBoss-Marshelling编解码"><span class="nav-number">3.4.</span> <span class="nav-text">JBoss Marshelling编解码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高级篇-Netty多协议开发和应用"><span class="nav-number">4.</span> <span class="nav-text">高级篇 Netty多协议开发和应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Http协议开发应用"><span class="nav-number">4.1.</span> <span class="nav-text">Http协议开发应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Http协议介绍"><span class="nav-number">4.1.1.</span> <span class="nav-text">Http协议介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Http请求消息"><span class="nav-number">4.1.1.1.</span> <span class="nav-text">Http请求消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Http相应消息"><span class="nav-number">4.1.1.2.</span> <span class="nav-text">Http相应消息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Http协议的Netty处理"><span class="nav-number">4.1.2.</span> <span class="nav-text">Http协议的Netty处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty-Http-XML协议栈开发"><span class="nav-number">4.1.3.</span> <span class="nav-text">Netty Http+XML协议栈开发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">4.1.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebSocket协议开发"><span class="nav-number">4.2.</span> <span class="nav-text">WebSocket协议开发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Http协议弊端"><span class="nav-number">4.2.1.</span> <span class="nav-text">Http协议弊端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WebSocket入门"><span class="nav-number">4.2.2.</span> <span class="nav-text">WebSocket入门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty-WebSocket开发"><span class="nav-number">4.2.3.</span> <span class="nav-text">Netty WebSocket开发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-1"><span class="nav-number">4.2.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UDP协议开发"><span class="nav-number">4.3.</span> <span class="nav-text">UDP协议开发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UDP协议简介"><span class="nav-number">4.3.1.</span> <span class="nav-text">UDP协议简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UDP服务端开发"><span class="nav-number">4.3.2.</span> <span class="nav-text">UDP服务端开发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UDP客户端开发"><span class="nav-number">4.3.3.</span> <span class="nav-text">UDP客户端开发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结-2"><span class="nav-number">4.3.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件传输"><span class="nav-number">4.4.</span> <span class="nav-text">文件传输</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件的基础知识"><span class="nav-number">4.4.1.</span> <span class="nav-text">文件的基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty文件传输开发"><span class="nav-number">4.4.2.</span> <span class="nav-text">Netty文件传输开发</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#私有协议栈开发"><span class="nav-number">4.5.</span> <span class="nav-text">私有协议栈开发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#私有协议介绍"><span class="nav-number">4.5.1.</span> <span class="nav-text">私有协议介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty协议栈功能设计"><span class="nav-number">4.5.2.</span> <span class="nav-text">Netty协议栈功能设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#协议栈拓扑图"><span class="nav-number">4.5.2.1.</span> <span class="nav-text">协议栈拓扑图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#协议栈功能描述"><span class="nav-number">4.5.2.2.</span> <span class="nav-text">协议栈功能描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#通信模型"><span class="nav-number">4.5.2.3.</span> <span class="nav-text">通信模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#消息定义"><span class="nav-number">4.5.2.4.</span> <span class="nav-text">消息定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Netty协议栈支持的字段类型"><span class="nav-number">4.5.2.5.</span> <span class="nav-text">Netty协议栈支持的字段类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Netty协议栈的编码规范"><span class="nav-number">4.5.2.6.</span> <span class="nav-text">Netty协议栈的编码规范</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链路的建立"><span class="nav-number">4.5.2.7.</span> <span class="nav-text">链路的建立</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链路的关闭"><span class="nav-number">4.5.2.8.</span> <span class="nav-text">链路的关闭</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可靠性设计"><span class="nav-number">4.5.2.9.</span> <span class="nav-text">可靠性设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安全性设计"><span class="nav-number">4.5.2.10.</span> <span class="nav-text">安全性设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可靠性设计-1"><span class="nav-number">4.5.2.11.</span> <span class="nav-text">可靠性设计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty协议栈开发"><span class="nav-number">4.5.3.</span> <span class="nav-text">Netty协议栈开发</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码分析篇-Netty功能介绍和源码分析"><span class="nav-number">5.</span> <span class="nav-text">源码分析篇 Netty功能介绍和源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ByteBuf和相关辅助类"><span class="nav-number">5.1.</span> <span class="nav-text">ByteBuf和相关辅助类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Channel和Unsafe"><span class="nav-number">5.2.</span> <span class="nav-text">Channel和Unsafe</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChannelPipeline和ChannelHandler"><span class="nav-number">5.3.</span> <span class="nav-text">ChannelPipeline和ChannelHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EventLoop和EventLoopGroup"><span class="nav-number">5.4.</span> <span class="nav-text">EventLoop和EventLoopGroup</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Future和Promise"><span class="nav-number">5.5.</span> <span class="nav-text">Future和Promise</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#架构和行业应用篇-Netty高级特性"><span class="nav-number">6.</span> <span class="nav-text">架构和行业应用篇 Netty高级特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java多线程编程在Netty中的应用"><span class="nav-number">6.1.</span> <span class="nav-text">Java多线程编程在Netty中的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java内存模型与多线程编程"><span class="nav-number">6.1.1.</span> <span class="nav-text">Java内存模型与多线程编程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java内存模型"><span class="nav-number">6.1.1.1.</span> <span class="nav-text">Java内存模型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty的并发编程实践"><span class="nav-number">6.1.2.</span> <span class="nav-text">Netty的并发编程实践</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#对共享的可变数据进行正确的同步"><span class="nav-number">6.1.2.1.</span> <span class="nav-text">对共享的可变数据进行正确的同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#正确使用锁"><span class="nav-number">6.1.2.2.</span> <span class="nav-text">正确使用锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#volatile的正确使用"><span class="nav-number">6.1.2.3.</span> <span class="nav-text">volatile的正确使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CAS指令和元子类"><span class="nav-number">6.1.2.4.</span> <span class="nav-text">CAS指令和元子类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程安全类的使用"><span class="nav-number">6.1.2.5.</span> <span class="nav-text">线程安全类的使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty架构剖析"><span class="nav-number">6.2.</span> <span class="nav-text">Netty架构剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty逻辑架构"><span class="nav-number">6.2.1.</span> <span class="nav-text">Netty逻辑架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关键架构质量属性"><span class="nav-number">6.2.2.</span> <span class="nav-text">关键架构质量属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty行业应用"><span class="nav-number">6.3.</span> <span class="nav-text">Netty行业应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty未来展望"><span class="nav-number">6.4.</span> <span class="nav-text">Netty未来展望</span></a></li></ol></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">77</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">53</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/xinshiyou" title="GitHub → https://github.com/xinshiyou" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:shiyou_xin@163.com" title="E-Mail → mailto:shiyou_xin@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://weibo.com/yourname" title="Weibo → https://weibo.com/yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  © 2018 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共91.3k字</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-
-
-<script src="/bundle.js"></script></body></html>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script></body></html>

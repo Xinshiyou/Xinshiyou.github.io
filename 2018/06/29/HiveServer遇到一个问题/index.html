@@ -1,471 +1,562 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="xinshiyou">
+  <meta name="keywords" content="">
+  <title>HiveServer遇到一个问题 - 星空捞月：找寻心中的安宁</title>
 
-
-
-
-
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xinshiyou.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="&amp;emsp;&amp;emsp;基于给开发同学使用与BI用户使用的需求，打算开启HiveServer2服务，集群上面的Hive任务执行、调度，都走HiveServer2方式。之前只有调度任务与开发同学使用，所以使用的是Hive CLI方式，开发同学没有添加权限控制。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="HiveServer遇到一个问题">
-<meta property="og:url" content="https://xinshiyou.github.io/2018/06/29/HiveServer%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;基于给开发同学使用与BI用户使用的需求，打算开启HiveServer2服务，集群上面的Hive任务执行、调度，都走HiveServer2方式。之前只有调度任务与开发同学使用，所以使用的是Hive CLI方式，开发同学没有添加权限控制。">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2018-06-29T08:52:30.000Z">
-<meta property="article:modified_time" content="2020-06-01T05:26:21.663Z">
-<meta property="article:author" content="John Doe">
-<meta property="article:tag" content="Hive">
-<meta property="article:tag" content="问题">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="https://xinshiyou.github.io/2018/06/29/HiveServer%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
-
-  <title>HiveServer遇到一个问题 | Hexo</title>
   
 
 
+  
+  
+
+  
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
 
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
 
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');</script></head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星空捞月：找寻心中的安宁" type="application/atom+xml">
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css');loadCss('https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css');loadCss('https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css');loadCss('//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css');loadCss('//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css');loadCss('https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css"><link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"></noscript></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">&nbsp;<strong>星空捞月：找寻心中的安宁</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
 </nav>
 
+    <div class="view intro-2" id="background" parallax="true" style="background: url('/img/top.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
 
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2018-06-29 16:52">
+      2018年6月29日 下午
+    </time>
   </div>
 
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
+<div class="mt-1">
   
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.4k 字
+    </span>
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://xinshiyou.github.io/2018/06/29/HiveServer%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98/">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          HiveServer遇到一个问题
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-06-29 16:52:30" itemprop="dateCreated datePublished" datetime="2018-06-29T16:52:30+08:00">2018-06-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-06-01 13:26:21" itemprop="dateModified" datetime="2020-06-01T13:26:21+08:00">2020-06-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
+  
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
       
-        <p>  基于给开发同学使用与BI用户使用的需求，打算开启HiveServer2服务，集群上面的Hive任务执行、调度，都走HiveServer2方式。之前只有调度任务与开发同学使用，所以使用的是Hive CLI方式，开发同学没有添加权限控制。</p>
+      
+      25
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <p>  基于给开发同学使用与BI用户使用的需求，打算开启HiveServer2服务，集群上面的Hive任务执行、调度，都走HiveServer2方式。之前只有调度任务与开发同学使用，所以使用的是Hive CLI方式，开发同学没有添加权限控制。</p>
 <a id="more"></a>
 
 <p>  使用一段时间之后，发现HiveServer2存在各种问题。突出的问题就是不稳定、运行日志很难获取、任务ID需要解析等，最近遇到一个概率性出现的问题。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line">INFO  : Cleaning up the staging area file:/tmp/hadoop-hive/mapred/staging/hive1294900272/.staging/job_local1294900272_0933</span><br><span class="line">ERROR : Job Submission failed with exception 'java.io.IOException(java.util.concurrent.ExecutionException: java.io.IOException: Unable to rename file: [/tmp/hadoop-hive/mapred/local/1526009</span><br><span class="line">296491_tmp/tmp_hive-exec-1.1.0-cdh5.12.1-core.jar] to [/tmp/hadoop-hive/mapred/local/1526009296491_tmp/hive-exec-1.1.0-cdh5.12.1-core.jar])'</span><br><span class="line">java.io.IOException: java.util.concurrent.ExecutionException: java.io.IOException: Unable to rename file: [/tmp/hadoop-hive/mapred/local/1526009296491_tmp/tmp_hive-exec-1.1.0-cdh5.12.1-core</span><br><span class="line">.jar] to [/tmp/hadoop-hive/mapred/local/1526009296491_tmp/hive-exec-1.1.0-cdh5.12.1-core.jar]</span><br><span class="line">        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:143)</span><br><span class="line">        at org.apache.hadoop.mapred.LocalJobRunner$Job.&lt;init&gt;(LocalJobRunner.java:171)</span><br><span class="line">        at org.apache.hadoop.mapred.LocalJobRunner.submitJob(LocalJobRunner.java:758)</span><br><span class="line">        at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:244)</span><br><span class="line">        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1307)</span><br><span class="line">        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1304)</span><br><span class="line">        at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">        at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)</span><br><span class="line">        at org.apache.hadoop.mapreduce.Job.submit(Job.java:1304)</span><br><span class="line">        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:578)</span><br><span class="line">        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:573)</span><br><span class="line">        at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">        at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)</span><br><span class="line">        at org.apache.hadoop.mapred.JobClient.submitJobInternal(JobClient.java:573)</span><br><span class="line">        at org.apache.hadoop.mapred.JobClient.submitJob(JobClient.java:564)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.mr.ExecDriver.execute(ExecDriver.java:436)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.mr.MapRedTask.execute(MapRedTask.java:142)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:214)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:99)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.TaskRunner.run(TaskRunner.java:79)</span><br><span class="line">Caused by: java.util.concurrent.ExecutionException: java.io.IOException: Unable to rename file: [/tmp/hadoop-hive/mapred/local/1526009296491_tmp/tmp_hive-exec-1.1.0-cdh5.12.1-core.jar] to [</span><br><span class="line">/tmp/hadoop-hive/mapred/local/1526009296491_tmp/hive-exec-1.1.0-cdh5.12.1-core.jar]</span><br><span class="line">        at java.util.concurrent.FutureTask.report(FutureTask.java:122)</span><br><span class="line">        at java.util.concurrent.FutureTask.get(FutureTask.java:192)</span><br><span class="line">        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:139)</span><br><span class="line">        ... 21 more</span><br><span class="line">Caused by: java.io.IOException: Unable to rename file: [/tmp/hadoop-hive/mapred/local/1526009296491_tmp/tmp_hive-exec-1.1.0-cdh5.12.1-core.jar] to [/tmp/hadoop-hive/mapred/local/15260092964</span><br><span class="line">91_tmp/hive-exec-1.1.0-cdh5.12.1-core.jar]</span><br><span class="line">        at org.apache.hadoop.yarn.util.FSDownload.unpack(FSDownload.java:327)</span><br><span class="line">        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:362)</span><br><span class="line">        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:60)</span><br><span class="line">        at java.util.concurrent.FutureTask.run(FutureTask.java:266)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)</span><br><span class="line">        at java.lang.Thread.run(Thread.java:748)</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">INFO  : Cleaning up the staging area file:/tmp/hadoop-hive/mapred/staging/hive1101623315/.staging/job_local1101623315_0934</span><br><span class="line">ERROR : Job Submission failed with exception 'java.io.IOException(java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File /tmp/hadoop-hive/mapred/local/1526009296491_tm</span><br><span class="line">p does not exist)'</span><br><span class="line">java.io.IOException: java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File /tmp/hadoop-hive/mapred/local/1526009296491_tmp does not exist</span><br><span class="line">        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:143)</span><br><span class="line">        at org.apache.hadoop.mapred.LocalJobRunner$Job.&lt;init&gt;(LocalJobRunner.java:171)</span><br><span class="line">        at org.apache.hadoop.mapred.LocalJobRunner.submitJob(LocalJobRunner.java:758)</span><br><span class="line">        at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:244)</span><br><span class="line">        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1307)</span><br><span class="line">        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1304)</span><br><span class="line">        at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">        at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)</span><br><span class="line">        at org.apache.hadoop.mapreduce.Job.submit(Job.java:1304)</span><br><span class="line">        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:578)</span><br><span class="line">        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:573)</span><br><span class="line">        at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">        at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)</span><br><span class="line">        at org.apache.hadoop.mapred.JobClient.submitJobInternal(JobClient.java:573)</span><br><span class="line">        at org.apache.hadoop.mapred.JobClient.submitJob(JobClient.java:564)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.mr.ExecDriver.execute(ExecDriver.java:436)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.mr.MapRedTask.execute(MapRedTask.java:142)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:214)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:99)</span><br><span class="line">        at org.apache.hadoop.hive.ql.exec.TaskRunner.run(TaskRunner.java:79)</span><br><span class="line">Caused by: java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File /tmp/hadoop-hive/mapred/local/1526009296491_tmp does not exist</span><br><span class="line">        at java.util.concurrent.FutureTask.report(FutureTask.java:122)</span><br><span class="line">        at java.util.concurrent.FutureTask.get(FutureTask.java:192)</span><br><span class="line">        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:139)</span><br><span class="line">        ... 21 more</span><br><span class="line">Caused by: java.io.FileNotFoundException: File /tmp/hadoop-hive/mapred/local/1526009296491_tmp does not exist</span><br><span class="line">        at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileStatus(RawLocalFileSystem.java:598)</span><br><span class="line">        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:811)</span><br><span class="line">        at org.apache.hadoop.fs.RawLocalFileSystem.getFileStatus(RawLocalFileSystem.java:588)</span><br><span class="line">        at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileLinkStatusInternal(RawLocalFileSystem.java:827)</span><br><span class="line">        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:813)</span><br><span class="line">        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatus(RawLocalFileSystem.java:784)</span><br><span class="line">        at org.apache.hadoop.fs.DelegateToFileSystem.getFileLinkStatus(DelegateToFileSystem.java:132)</span><br><span class="line">        at org.apache.hadoop.fs.AbstractFileSystem.renameInternal(AbstractFileSystem.java:701)</span><br><span class="line">        at org.apache.hadoop.fs.FilterFs.renameInternal(FilterFs.java:236)</span><br><span class="line">        at org.apache.hadoop.fs.AbstractFileSystem.rename(AbstractFileSystem.java:674)</span><br><span class="line">        at org.apache.hadoop.fs.FileContext.rename(FileContext.java:932)</span><br><span class="line">        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:364)</span><br><span class="line">        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:60)</span><br><span class="line">        at java.util.concurrent.FutureTask.run(FutureTask.java:266)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)</span><br><span class="line">        at java.lang.Thread.run(Thread.java:748)</span><br><span class="line"> </span><br><span class="line">ERROR : FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask</span><br><span class="line">INFO  : Completed executing command(queryId=hive_20180511112828_b253761f-a1ae-40bc-ae7e-650cfa4c7b79); Time taken: 9.506 seconds</span><br><span class="line"> </span><br><span class="line">Error: Error while processing statement: FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask (state=08S01,code=1)</span><br><span class="line">Closing: 0:</span><br></pre></td></tr></tbody></table></figure>
+<pre class=" language-hljs applescript">INFO  : Cleaning up <span class="hljs-keyword">the</span> staging area <span class="hljs-built_in"><code class="language-hljs applescript">INFO  : Cleaning up <span class="hljs-keyword">the</span> staging area <span class="hljs-built_in">file</span>:/tmp/hadoop-hive/mapred/staging/hive1294900272/.staging/job_local1294900272_0933
+ERROR : Job Submission failed <span class="hljs-keyword">with</span> exception 'java.io.IOException(java.util.concurrent.ExecutionException: java.io.IOException: Unable <span class="hljs-keyword">to</span> rename <span class="hljs-built_in">file</span>: [/tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009</span>
+<span class="hljs-number">296491</span>_tmp/tmp_hive-exec<span class="hljs-number">-1.1</span><span class="hljs-number">.0</span>-cdh5<span class="hljs-number">.12</span><span class="hljs-number">.1</span>-core.jar] <span class="hljs-keyword">to</span> [/tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tmp/hive-exec<span class="hljs-number">-1.1</span><span class="hljs-number">.0</span>-cdh5<span class="hljs-number">.12</span><span class="hljs-number">.1</span>-core.jar])'
+java.io.IOException: java.util.concurrent.ExecutionException: java.io.IOException: Unable <span class="hljs-keyword">to</span> rename <span class="hljs-built_in">file</span>: [/tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tmp/tmp_hive-exec<span class="hljs-number">-1.1</span><span class="hljs-number">.0</span>-cdh5<span class="hljs-number">.12</span><span class="hljs-number">.1</span>-core
+.jar] <span class="hljs-keyword">to</span> [/tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tmp/hive-exec<span class="hljs-number">-1.1</span><span class="hljs-number">.0</span>-cdh5<span class="hljs-number">.12</span><span class="hljs-number">.1</span>-core.jar]
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:<span class="hljs-number">143</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.LocalJobRunner$Job.<init>(LocalJobRunner.java:<span class="hljs-number">171</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.LocalJobRunner.submitJob(LocalJobRunner.java:<span class="hljs-number">758</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:<span class="hljs-number">244</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapreduce.Job$<span class="hljs-number">10.</span><span class="hljs-built_in">run</span>(Job.java:<span class="hljs-number">1307</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapreduce.Job$<span class="hljs-number">10.</span><span class="hljs-built_in">run</span>(Job.java:<span class="hljs-number">1304</span>)
+        <span class="hljs-keyword">at</span> java.security.AccessController.doPrivileged(Native Method)
+        <span class="hljs-keyword">at</span> javax.security.auth.Subject.doAs(Subject.java:<span class="hljs-number">422</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:<span class="hljs-number">1917</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapreduce.Job.submit(Job.java:<span class="hljs-number">1304</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.JobClient$<span class="hljs-number">1.</span><span class="hljs-built_in">run</span>(JobClient.java:<span class="hljs-number">578</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.JobClient$<span class="hljs-number">1.</span><span class="hljs-built_in">run</span>(JobClient.java:<span class="hljs-number">573</span>)
+        <span class="hljs-keyword">at</span> java.security.AccessController.doPrivileged(Native Method)
+        <span class="hljs-keyword">at</span> javax.security.auth.Subject.doAs(Subject.java:<span class="hljs-number">422</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:<span class="hljs-number">1917</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.JobClient.submitJobInternal(JobClient.java:<span class="hljs-number">573</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.JobClient.submitJob(JobClient.java:<span class="hljs-number">564</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.mr.ExecDriver.execute(ExecDriver.java:<span class="hljs-number">436</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.mr.MapRedTask.execute(MapRedTask.java:<span class="hljs-number">142</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:<span class="hljs-number">214</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:<span class="hljs-number">99</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.TaskRunner.<span class="hljs-built_in">run</span>(TaskRunner.java:<span class="hljs-number">79</span>)
+Caused <span class="hljs-keyword">by</span>: java.util.concurrent.ExecutionException: java.io.IOException: Unable <span class="hljs-keyword">to</span> rename <span class="hljs-built_in">file</span>: [/tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tmp/tmp_hive-exec<span class="hljs-number">-1.1</span><span class="hljs-number">.0</span>-cdh5<span class="hljs-number">.12</span><span class="hljs-number">.1</span>-core.jar] <span class="hljs-keyword">to</span> [
+/tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tmp/hive-exec<span class="hljs-number">-1.1</span><span class="hljs-number">.0</span>-cdh5<span class="hljs-number">.12</span><span class="hljs-number">.1</span>-core.jar]
+        <span class="hljs-keyword">at</span> java.util.concurrent.FutureTask.report(FutureTask.java:<span class="hljs-number">122</span>)
+        <span class="hljs-keyword">at</span> java.util.concurrent.FutureTask.<span class="hljs-keyword">get</span>(FutureTask.java:<span class="hljs-number">192</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:<span class="hljs-number">139</span>)
+        ... <span class="hljs-number">21</span> more
+Caused <span class="hljs-keyword">by</span>: java.io.IOException: Unable <span class="hljs-keyword">to</span> rename <span class="hljs-built_in">file</span>: [/tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tmp/tmp_hive-exec<span class="hljs-number">-1.1</span><span class="hljs-number">.0</span>-cdh5<span class="hljs-number">.12</span><span class="hljs-number">.1</span>-core.jar] <span class="hljs-keyword">to</span> [/tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">15260092964</span>
+<span class="hljs-number">91</span>_tmp/hive-exec<span class="hljs-number">-1.1</span><span class="hljs-number">.0</span>-cdh5<span class="hljs-number">.12</span><span class="hljs-number">.1</span>-core.jar]
+        <span class="hljs-keyword">at</span> org.apache.hadoop.yarn.util.FSDownload.unpack(FSDownload.java:<span class="hljs-number">327</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:<span class="hljs-number">362</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:<span class="hljs-number">60</span>)
+        <span class="hljs-keyword">at</span> java.util.concurrent.FutureTask.<span class="hljs-built_in">run</span>(FutureTask.java:<span class="hljs-number">266</span>)
+        <span class="hljs-keyword">at</span> java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:<span class="hljs-number">1149</span>)
+        <span class="hljs-keyword">at</span> java.util.concurrent.ThreadPoolExecutor$Worker.<span class="hljs-built_in">run</span>(ThreadPoolExecutor.java:<span class="hljs-number">624</span>)
+        <span class="hljs-keyword">at</span> java.lang.Thread.<span class="hljs-built_in">run</span>(Thread.java:<span class="hljs-number">748</span>)
+ 
+ 
+INFO  : Cleaning up <span class="hljs-keyword">the</span> staging area <span class="hljs-built_in">file</span>:/tmp/hadoop-hive/mapred/staging/hive1101623315/.staging/job_local1101623315_0934
+ERROR : Job Submission failed <span class="hljs-keyword">with</span> exception 'java.io.IOException(java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File /tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tm
+p <span class="hljs-keyword">does</span> <span class="hljs-keyword">not</span> exist)'
+java.io.IOException: java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File /tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tmp <span class="hljs-keyword">does</span> <span class="hljs-keyword">not</span> exist
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:<span class="hljs-number">143</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.LocalJobRunner$Job.<init>(LocalJobRunner.java:<span class="hljs-number">171</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.LocalJobRunner.submitJob(LocalJobRunner.java:<span class="hljs-number">758</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:<span class="hljs-number">244</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapreduce.Job$<span class="hljs-number">10.</span><span class="hljs-built_in">run</span>(Job.java:<span class="hljs-number">1307</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapreduce.Job$<span class="hljs-number">10.</span><span class="hljs-built_in">run</span>(Job.java:<span class="hljs-number">1304</span>)
+        <span class="hljs-keyword">at</span> java.security.AccessController.doPrivileged(Native Method)
+        <span class="hljs-keyword">at</span> javax.security.auth.Subject.doAs(Subject.java:<span class="hljs-number">422</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:<span class="hljs-number">1917</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapreduce.Job.submit(Job.java:<span class="hljs-number">1304</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.JobClient$<span class="hljs-number">1.</span><span class="hljs-built_in">run</span>(JobClient.java:<span class="hljs-number">578</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.JobClient$<span class="hljs-number">1.</span><span class="hljs-built_in">run</span>(JobClient.java:<span class="hljs-number">573</span>)
+        <span class="hljs-keyword">at</span> java.security.AccessController.doPrivileged(Native Method)
+        <span class="hljs-keyword">at</span> javax.security.auth.Subject.doAs(Subject.java:<span class="hljs-number">422</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:<span class="hljs-number">1917</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.JobClient.submitJobInternal(JobClient.java:<span class="hljs-number">573</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.JobClient.submitJob(JobClient.java:<span class="hljs-number">564</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.mr.ExecDriver.execute(ExecDriver.java:<span class="hljs-number">436</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.mr.MapRedTask.execute(MapRedTask.java:<span class="hljs-number">142</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:<span class="hljs-number">214</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:<span class="hljs-number">99</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.hive.ql.exec.TaskRunner.<span class="hljs-built_in">run</span>(TaskRunner.java:<span class="hljs-number">79</span>)
+Caused <span class="hljs-keyword">by</span>: java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File /tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tmp <span class="hljs-keyword">does</span> <span class="hljs-keyword">not</span> exist
+        <span class="hljs-keyword">at</span> java.util.concurrent.FutureTask.report(FutureTask.java:<span class="hljs-number">122</span>)
+        <span class="hljs-keyword">at</span> java.util.concurrent.FutureTask.<span class="hljs-keyword">get</span>(FutureTask.java:<span class="hljs-number">192</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:<span class="hljs-number">139</span>)
+        ... <span class="hljs-number">21</span> more
+Caused <span class="hljs-keyword">by</span>: java.io.FileNotFoundException: File /tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009296491</span>_tmp <span class="hljs-keyword">does</span> <span class="hljs-keyword">not</span> exist
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileStatus(RawLocalFileSystem.java:<span class="hljs-number">598</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:<span class="hljs-number">811</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.RawLocalFileSystem.getFileStatus(RawLocalFileSystem.java:<span class="hljs-number">588</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileLinkStatusInternal(RawLocalFileSystem.java:<span class="hljs-number">827</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:<span class="hljs-number">813</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatus(RawLocalFileSystem.java:<span class="hljs-number">784</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.DelegateToFileSystem.getFileLinkStatus(DelegateToFileSystem.java:<span class="hljs-number">132</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.AbstractFileSystem.renameInternal(AbstractFileSystem.java:<span class="hljs-number">701</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.FilterFs.renameInternal(FilterFs.java:<span class="hljs-number">236</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.AbstractFileSystem.rename(AbstractFileSystem.java:<span class="hljs-number">674</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.fs.FileContext.rename(FileContext.java:<span class="hljs-number">932</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:<span class="hljs-number">364</span>)
+        <span class="hljs-keyword">at</span> org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:<span class="hljs-number">60</span>)
+        <span class="hljs-keyword">at</span> java.util.concurrent.FutureTask.<span class="hljs-built_in">run</span>(FutureTask.java:<span class="hljs-number">266</span>)
+        <span class="hljs-keyword">at</span> java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:<span class="hljs-number">1149</span>)
+        <span class="hljs-keyword">at</span> java.util.concurrent.ThreadPoolExecutor$Worker.<span class="hljs-built_in">run</span>(ThreadPoolExecutor.java:<span class="hljs-number">624</span>)
+        <span class="hljs-keyword">at</span> java.lang.Thread.<span class="hljs-built_in">run</span>(Thread.java:<span class="hljs-number">748</span>)
+ 
+ERROR : FAILED: Execution Error, <span class="hljs-literal">return</span> code <span class="hljs-number">1</span> <span class="hljs-keyword">from</span> org.apache.hadoop.hive.ql.exec.mr.MapRedTask
+INFO  : Completed executing command(queryId=hive_20180511112828_b253761f-a1ae<span class="hljs-number">-40</span>bc-ae7e<span class="hljs-number">-650</span>cfa4c7b79); Time taken: <span class="hljs-number">9.506</span> seconds
+ 
+Error: Error <span class="hljs-keyword">while</span> processing statement: FAILED: Execution Error, <span class="hljs-literal">return</span> code <span class="hljs-number">1</span> <span class="hljs-keyword">from</span> org.apache.hadoop.hive.ql.exec.mr.MapRedTask (state=<span class="hljs-number">08</span>S01,code=<span class="hljs-number">1</span>)
+Closing: <span class="hljs-number">0</span>:</init></init></code></span></pre>
 <p>  想要排查问题，该问题又不会定期出现，在运行几百个JOB中，偶尔出现几个这样的报错信息。<br>  最后还是找到了这样一篇文章：<a href="https://my.oschina.net/u/186712/blog/827949" target="_blank" rel="noopener">一台服务器同时起多个hive跑local mr很大机率会报 FileAlreadyExistsException</a>。根据该文中的报错信息，以及源代码的内容，可以看出我们这里的报错应该也是同类，或同一个出处。至此为我们的问题找打了一个合理的解释，因此可以对症下药解决问题。</p>
 
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E9%97%AE%E9%A2%98/">问题</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Hive/">Hive</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/06/29/%E8%B0%83%E5%BA%A6%E5%B7%A5%E5%85%B7%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%E4%B8%8E%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">调度工具技术选型与开发参考</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2018/06/29/Java%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95/">
+                        <span class="hidden-mobile">Java单例模式的几种写法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
 
     
-    
-    
-<div>
+  </main>
+
   
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
     <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
-    
-</div>
-
-  
-</div>
-        
-
-  <div class="followme">
-    <p>Welcome to my other publishing channels</p>
-
-    <div class="social-list">
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
     </div>
+    
+
+    
+
+    
   </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Hive/" rel="tag"><i class="fa fa-tag"></i>Hive</a>
-              <a href="/tags/%E9%97%AE%E9%A2%98/" rel="tag"><i class="fa fa-tag"></i>问题</a>
-          </div>
 
-        
+<!-- Plugins -->
 
 
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/06/29/Java%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95/" rel="prev" title="Java单例模式的几种写法">
-      <i class="fa fa-chevron-left"></i> Java单例模式的几种写法
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/06/29/%E8%B0%83%E5%BA%A6%E5%B7%A5%E5%85%B7%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%E4%B8%8E%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83/" rel="next" title="调度工具技术选型与开发参考">
-      调度工具技术选型与开发参考 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
+  
     
-  </article>
-  
-  
   
 
 
 
-          </div>
-          
+  <script defer="" src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
+  
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
+
+
+
+
+
+
+  <script src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script>
+  
+
+
+
+  
+  
+
+
+
+  <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/bundle.js"></script><script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
     });
-  }
-</script>
+  ;
 
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "HiveServer遇到一个问题&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  ;
 
-  <aside class="sidebar">
-    <div class="sidebar-inner">
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  ;
 
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  ;
 
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">77</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">53</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/xinshiyou" title="GitHub → https://github.com/xinshiyou" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:shiyou_xin@163.com" title="E-Mail → mailto:shiyou_xin@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://weibo.com/yourname" title="Weibo → https://weibo.com/yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  © 2018 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共91.3k字</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-
-
-<script src="/bundle.js"></script></body></html>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script></body></html>
