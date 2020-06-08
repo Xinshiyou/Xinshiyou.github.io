@@ -194,7 +194,6 @@
             <article class="markdown-body">
               <p>  根据业务需求，将Kafka中数据抽取插入到Hbase中。目前网上可以找到许多相关的文章，这里介绍Github上的一个开源工具。</p>
 <a id="more"></a>
-
 <p>  上一章节讲到选择SparkOnHbase为主要原型，将之修改为我们需要的源代码。这里给出修改之后的源代码，修改之后符合我们的业务需求，并尽量避免引起其他不必要的问题。同时，后期优化程序执行效率问题。</p>
 <h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><pre class=" language-hljs scala"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HBaseContext</span>(<span class="hljs-params"><code class="language-hljs scala"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HBaseContext</span>(<span class="hljs-params"></span></span>
 <span class="hljs-class"><span class="hljs-params">  @transient sc:        <span class="hljs-type">SparkContext</span>,</span></span>
