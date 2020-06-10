@@ -194,12 +194,20 @@
             <article class="markdown-body">
               <p>  简单的Java爬虫框架流程图，不包括容灾机制、异常处理等内容。</p>
 <a id="more"></a>
-
 <h2 id="框架流程图"><a href="#框架流程图" class="headerlink" title="框架流程图"></a>框架流程图</h2><p><img src="001.png" srcset="/img/loading.gif" alt="Java爬虫可行性框架"></p>
 <p>  搭建分布式爬虫系统，框架的主要工作是打通队列、存储之间的联系。之后的工作，包括爬虫策略、容灾机制、错误处理等，都是通过爬虫节点来处理。<br>  事实上，只要框架搭建好之后，不断完善本地爬虫策略【使用内存队列】，就能够很好的实现分布式爬虫。</p>
-<h2 id="爬虫节点"><a href="#爬虫节点" class="headerlink" title="爬虫节点"></a>爬虫节点</h2><p>爬虫节点设计的主要内容，包括但不限于：<br>    1. 爬虫深度；<br>    2. 爬虫策略；<br>    3. 爬虫方式；<br>    4. 内容解析；<br>    5. 错误异常处理机制；<br>    6. 多线程处理.<br>等内容。<br></p>
-<h2 id="主要框架"><a href="#主要框架" class="headerlink" title="主要框架"></a>主要框架</h2><p>目前比较完善的Java爬虫框架，主要包括<br>    1. WebCollector，主要用于单机模式；<br>    2. WebMagic，易于扩展，能够实现分布式爬虫策略。</p>
-
+<h2 id="爬虫节点"><a href="#爬虫节点" class="headerlink" title="爬虫节点"></a>爬虫节点</h2><p>爬虫节点设计的主要内容，包括但不限于：</p>
+<pre><code>1. 爬虫深度；
+2. 爬虫策略；
+3. 爬虫方式；
+4. 内容解析；
+5. 错误异常处理机制；
+6. 多线程处理.
+</code></pre><p>等内容。<br></p>
+<h2 id="主要框架"><a href="#主要框架" class="headerlink" title="主要框架"></a>主要框架</h2><p>目前比较完善的Java爬虫框架，主要包括</p>
+<pre><code>1. WebCollector，主要用于单机模式；
+2. WebMagic，易于扩展，能够实现分布式爬虫策略。
+</code></pre>
             </article>
             <hr>
             <div>

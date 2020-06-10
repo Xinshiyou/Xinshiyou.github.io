@@ -216,9 +216,7 @@ yestoday = <span class="hljs-built_in">date</span>.today() - datetime.timedelta(
 
 生成明天的日期：
 tom = <span class="hljs-built_in">date</span>.today() _ datetime.timedelta(<span class="hljs-number">1</span>)</code></span></pre>
-
-<h2 id="二、时间格式化"><a href="#二、时间格式化" class="headerlink" title="二、时间格式化"></a>二、时间格式化</h2><p>工具包有强大的格式化输出功能，例如isoformat、strftime等输出方法。主要总结一下常见的日期格式输出</p>
-<pre class=" language-hljs clean"><code class="language-hljs clean">#!/bin/python
+<h2 id="二、时间格式化"><a href="#二、时间格式化" class="headerlink" title="二、时间格式化"></a>二、时间格式化</h2><p>工具包有强大的格式化输出功能，例如isoformat、strftime等输出方法。主要总结一下常见的日期格式输出<br></p><pre class=" language-hljs clean"><code class="language-hljs clean">#!/bin/python
 # -*- coding: UTF<span class="hljs-number">-8</span> -*-
 
 <span class="hljs-keyword">from</span> dateutil <span class="hljs-keyword">import</span> parser
@@ -251,9 +249,7 @@ format_string: %Y-%m-%d %H:%M:%S.%f
 datetime.datetime.now(pytz.timezone(<span class="hljs-string">'Asia/Shanghai'</span>)).strftime(<span class="hljs-string">'%Y-%m-%dT%H:%M:%S.%f%z'</span>)
 
 ### 从字符串转化为datetime
-datetime = parser.parser(<span class="hljs-string">'2020-03-25T20:46:24.511426+0800'</span>)</code></pre>
-
-
+datetime = parser.parser(<span class="hljs-string">'2020-03-25T20:46:24.511426+0800'</span>)</code></pre><p></p>
 <h2 id="三、引文"><a href="#三、引文" class="headerlink" title="三、引文"></a>三、引文</h2><ol>
 <li><a href="https://docs.python.org/2/library/datetime.html" target="_blank" rel="noopener">Basic date and time types</a></li>
 </ol>
