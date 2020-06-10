@@ -193,7 +193,9 @@
             
             <article class="markdown-body">
               <h2 id="查找损坏Jar"><a href="#查找损坏Jar" class="headerlink" title="查找损坏Jar"></a>查找损坏Jar</h2><pre class=" language-hljs shell"><code class="language-hljs shell">find  ~/.m2/repository/ -name "*jar" | xargs -L 1 zip -T | grep error | grep invalid</code></pre>
+
 <a id="more"></a>
+
 <h2 id="Maven-plugin备忘"><a href="#Maven-plugin备忘" class="headerlink" title="Maven plugin备忘"></a>Maven plugin备忘</h2><pre class=" language-hljs shell"><code class="language-hljs shell"><!-- maven-jar-plugin:设置JDK版本 -->
 <plugin>
 	<groupid>org.apache.maven.plugins</groupid>
@@ -264,6 +266,8 @@
 		</execution>
 	</executions>
 </plugin></code></pre>
+
+
 <h2 id="Maven将test类打入jar包"><a href="#Maven将test类打入jar包" class="headerlink" title="Maven将test类打入jar包"></a>Maven将test类打入jar包</h2><pre class=" language-hljs shell"><code class="language-hljs shell"><!--  maven plugin -->
 <plugin>
 	<groupid>org.apache.maven.plugins</groupid>
@@ -311,7 +315,9 @@
 		</fileset>
 	</filesets>
 </assembly></code></pre>
+
 <h2 id="向仓库中发布Jar包"><a href="#向仓库中发布Jar包" class="headerlink" title="向仓库中发布Jar包"></a>向仓库中发布Jar包</h2><pre class=" language-hljs shell"><code class="language-hljs shell">mvn deploy:deploy-file -DgroupId=[GroupID] -DartifactId=[ArtifactID] -Dversion=[Jar Version] -Dpackaging=jar -Dfile=[Local Jar path]  -DrepositoryId=[Repository ID, define in POM] -Durl=[Remote Repository URL] -s [default setting.xml or special one]</code></pre>
+
 <h2 id="Maven依赖冲突相关"><a href="#Maven依赖冲突相关" class="headerlink" title="Maven依赖冲突相关"></a>Maven依赖冲突相关</h2><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 查看依赖树</span></span>
 mvn dependency:tree [-Dverbose -D...]
 

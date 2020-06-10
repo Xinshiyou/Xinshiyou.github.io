@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      483 字
+      484 字
     </span>
   
 
@@ -194,18 +194,23 @@
             <article class="markdown-body">
               <p>  使用CDH时，需要针对多个项目进行监控，但又不想太麻烦使用专业的监控工具，所以只使用CDH自带的CDH Manager来查看相关的监控参数，并开启邮件告警通知功能。</p>
 <a id="more"></a>
+
 <p>  虽然最终搞定了但还是需要好好记录下来，以作备忘。</p>
 <h1 id="网络端口确定"><a href="#网络端口确定" class="headerlink" title="网络端口确定"></a>网络端口确定</h1><p>  默认邮件端口是<em>25</em>，所以在确认是否可以发送邮件之前，需要端口25开放，或能够正常访问外网。特殊的邮件服务器，比如Office365/Google等，他们使用特殊的端口，比如587/465/995等端口。</p>
 <p>  在确认使用之前，一般需要自己本地测试一下连通性配置是否准确等。本地发邮件的项目/代码有很多，可以百度/Google一下。</p>
 <h1 id="使用QQ邮箱作为发件服务器"><a href="#使用QQ邮箱作为发件服务器" class="headerlink" title="使用QQ邮箱作为发件服务器"></a>使用QQ邮箱作为发件服务器</h1><p>  使用QQ邮箱作为邮件发送服务器，基本上不存在问题，只需要配置起来即可。配置如下所示<br><img src="001.png" srcset="/img/loading.gif" alt="CDH-manager-configure"></p>
-<h1 id="使用office365邮箱"><a href="#使用office365邮箱" class="headerlink" title="使用office365邮箱"></a>使用office365邮箱</h1><p>  office365邮箱与普通邮箱的一个不同在于，需要使用SSL传输，如果不是那么会报错：<br></p><pre class=" language-hljs css"><span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.sun</span><span class="hljs-selector-class">.mail</span><span class="hljs-selector-class">.smtp</span><span class="hljs-selector-class">.SMTPSendFailedException</span>: 530 5<span class="hljs-selector-class">.7</span><span class="hljs-selector-class">.57</span> <span class="hljs-selector-tag">SMTP</span>; <span class="hljs-selector-tag">Client</span> <span class="hljs-selector-tag">was</span> <span class="hljs-selector-tag">not</span> <span class="hljs-selector-tag">authenticated</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">send</span> <span class="hljs-selector-tag">anonymous</span> <span class="hljs-selector-tag">mail</span> <span class="hljs-selector-tag">during</span> <span class="hljs-selector-tag">MAIL</span> <span class="hljs-selector-tag">FROM</span> <span class="hljs-selector-attr"><code class="language-hljs css"><span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.sun</span><span class="hljs-selector-class">.mail</span><span class="hljs-selector-class">.smtp</span><span class="hljs-selector-class">.SMTPSendFailedException</span>: 530 5<span class="hljs-selector-class">.7</span><span class="hljs-selector-class">.57</span> <span class="hljs-selector-tag">SMTP</span>; <span class="hljs-selector-tag">Client</span> <span class="hljs-selector-tag">was</span> <span class="hljs-selector-tag">not</span> <span class="hljs-selector-tag">authenticated</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">send</span> <span class="hljs-selector-tag">anonymous</span> <span class="hljs-selector-tag">mail</span> <span class="hljs-selector-tag">during</span> <span class="hljs-selector-tag">MAIL</span> <span class="hljs-selector-tag">FROM</span> <span class="hljs-selector-attr">[HK2PR0401CA0016.apcprd04.prod.outlook.com]</span>
+<h1 id="使用office365邮箱"><a href="#使用office365邮箱" class="headerlink" title="使用office365邮箱"></a>使用office365邮箱</h1><p>  office365邮箱与普通邮箱的一个不同在于，需要使用SSL传输，如果不是那么会报错：</p>
+<pre class=" language-hljs css"><span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.sun</span><span class="hljs-selector-class">.mail</span><span class="hljs-selector-class">.smtp</span><span class="hljs-selector-class">.SMTPSendFailedException</span>: 530 5<span class="hljs-selector-class">.7</span><span class="hljs-selector-class">.57</span> <span class="hljs-selector-tag">SMTP</span>; <span class="hljs-selector-tag">Client</span> <span class="hljs-selector-tag">was</span> <span class="hljs-selector-tag">not</span> <span class="hljs-selector-tag">authenticated</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">send</span> <span class="hljs-selector-tag">anonymous</span> <span class="hljs-selector-tag">mail</span> <span class="hljs-selector-tag">during</span> <span class="hljs-selector-tag">MAIL</span> <span class="hljs-selector-tag">FROM</span> <span class="hljs-selector-attr"><code class="language-hljs css"><span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.sun</span><span class="hljs-selector-class">.mail</span><span class="hljs-selector-class">.smtp</span><span class="hljs-selector-class">.SMTPSendFailedException</span>: 530 5<span class="hljs-selector-class">.7</span><span class="hljs-selector-class">.57</span> <span class="hljs-selector-tag">SMTP</span>; <span class="hljs-selector-tag">Client</span> <span class="hljs-selector-tag">was</span> <span class="hljs-selector-tag">not</span> <span class="hljs-selector-tag">authenticated</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">send</span> <span class="hljs-selector-tag">anonymous</span> <span class="hljs-selector-tag">mail</span> <span class="hljs-selector-tag">during</span> <span class="hljs-selector-tag">MAIL</span> <span class="hljs-selector-tag">FROM</span> <span class="hljs-selector-attr">[HK2PR0401CA0016.apcprd04.prod.outlook.com]</span>
 	<span class="hljs-selector-tag">at</span> <span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.sun</span><span class="hljs-selector-class">.mail</span><span class="hljs-selector-class">.smtp</span><span class="hljs-selector-class">.SMTPTransport</span><span class="hljs-selector-class">.issueSendCommand</span>(<span class="hljs-selector-tag">SMTPTransport</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-pseudo">:2202)</span>
 	<span class="hljs-selector-tag">at</span> <span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.sun</span><span class="hljs-selector-class">.mail</span><span class="hljs-selector-class">.smtp</span><span class="hljs-selector-class">.SMTPTransport</span><span class="hljs-selector-class">.mailFrom</span>(<span class="hljs-selector-tag">SMTPTransport</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-pseudo">:1693)</span>
 	<span class="hljs-selector-tag">at</span> <span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.sun</span><span class="hljs-selector-class">.mail</span><span class="hljs-selector-class">.smtp</span><span class="hljs-selector-class">.SMTPTransport</span><span class="hljs-selector-class">.sendMessage</span>(<span class="hljs-selector-tag">SMTPTransport</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-pseudo">:1194)</span>
 	<span class="hljs-selector-tag">at</span> <span class="hljs-selector-tag">javax</span><span class="hljs-selector-class">.mail</span><span class="hljs-selector-class">.Transport</span><span class="hljs-selector-class">.send0</span>(<span class="hljs-selector-tag">Transport</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-pseudo">:254)</span>
 	<span class="hljs-selector-tag">at</span> <span class="hljs-selector-tag">javax</span><span class="hljs-selector-class">.mail</span><span class="hljs-selector-class">.Transport</span><span class="hljs-selector-class">.send</span>(<span class="hljs-selector-tag">Transport</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-pseudo">:146)</span>
 	<span class="hljs-selector-tag">at</span> <span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.hundun</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-class">.email</span><span class="hljs-selector-class">.SendMail</span><span class="hljs-selector-class">.sendMessage</span>(<span class="hljs-selector-tag">SendMail</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-pseudo">:57)</span>
-	<span class="hljs-selector-tag">at</span> <span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.hundun</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-class">.email</span><span class="hljs-selector-class">.Main</span><span class="hljs-selector-class">.main</span>(<span class="hljs-selector-tag">Main</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-pseudo">:9)</span></code></span></pre><br>使用邮件客户端，或Java程序中， 可以配置：<br><pre class=" language-hljs arduino">props.<span class="hljs-built_in">put</span>(<span class="hljs-string">"mail.smtp.starttls.enable"</span>, <span class="hljs-string">"true"</span>);<span class="hljs-comment"><code class="language-hljs arduino">props.<span class="hljs-built_in">put</span>(<span class="hljs-string">"mail.smtp.starttls.enable"</span>, <span class="hljs-string">"true"</span>);<span class="hljs-comment">// 使用 STARTTLS安全连接</span></code></span></pre><br>但在CDH中没有找到这个配置的位置，不知道是不是这个配置引起的。<p></p>
+	<span class="hljs-selector-tag">at</span> <span class="hljs-selector-tag">com</span><span class="hljs-selector-class">.hundun</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-class">.email</span><span class="hljs-selector-class">.Main</span><span class="hljs-selector-class">.main</span>(<span class="hljs-selector-tag">Main</span><span class="hljs-selector-class">.java</span><span class="hljs-selector-pseudo">:9)</span></code></span></pre>
+<p>使用邮件客户端，或Java程序中， 可以配置：</p>
+<pre class=" language-hljs arduino">props.<span class="hljs-built_in">put</span>(<span class="hljs-string">"mail.smtp.starttls.enable"</span>, <span class="hljs-string">"true"</span>);<span class="hljs-comment"><code class="language-hljs arduino">props.<span class="hljs-built_in">put</span>(<span class="hljs-string">"mail.smtp.starttls.enable"</span>, <span class="hljs-string">"true"</span>);<span class="hljs-comment">// 使用 STARTTLS安全连接</span></code></span></pre>
+<p>但在CDH中没有找到这个配置的位置，不知道是不是这个配置引起的。</p>
 
             </article>
             <hr>
@@ -238,9 +243,9 @@
                   <div class="post-prev col-6">
                     
                     
-                      <a href="/2018/06/29/Apache-Kylin%E7%BC%96%E8%AF%91CDH5-12-X/">
+                      <a href="/2018/06/29/%E8%AE%B0%E4%B8%80%E4%B8%AASpark%E6%A8%A1%E5%9D%97Hive-thriftserver%E7%BC%96%E8%AF%91%E6%8A%A5%E9%94%99/">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Apache-Kylin编译CDH5.12.X</span>
+                        <span class="hidden-mobile">记一个Spark模块Hive-thriftserver编译报错</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -248,8 +253,8 @@
                   <div class="post-next col-6">
                     
                     
-                      <a href="/2018/06/29/%E8%B0%83%E5%BA%A6%E5%B7%A5%E5%85%B7%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%E4%B8%8E%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83/">
-                        <span class="hidden-mobile">调度工具技术选型与开发参考</span>
+                      <a href="/2018/06/29/Apache-Kylin%E7%BC%96%E8%AF%91CDH5-12-X/">
+                        <span class="hidden-mobile">Apache-Kylin编译CDH5.12.X</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

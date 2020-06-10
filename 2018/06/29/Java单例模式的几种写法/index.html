@@ -194,6 +194,7 @@
             <article class="markdown-body">
               <p>《Java并发编程 从入门到精通》读书笔记。</p>
 <a id="more"></a>
+
 <h2 id="错误模式"><a href="#错误模式" class="headerlink" title="错误模式"></a>错误模式</h2><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{
 
 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
@@ -205,6 +206,7 @@
 		<span class="hljs-keyword">return</span> instance;
 	}
 }</code></span></span></pre>
+
 <h2 id="低效模式：synchronized"><a href="#低效模式：synchronized" class="headerlink" title="低效模式：synchronized"></a>低效模式：synchronized</h2><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{
 
 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
@@ -216,6 +218,7 @@
 		<span class="hljs-keyword">return</span> instance;
 	}
 }</code></span></span></pre>
+
 <h2 id="常见模式：使用对象锁"><a href="#常见模式：使用对象锁" class="headerlink" title="常见模式：使用对象锁"></a>常见模式：使用对象锁</h2><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{
 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] lock = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">0</span>];
@@ -231,6 +234,7 @@
 		<span class="hljs-keyword">return</span> instance;
 	}
 }</code></span></span></pre>
+
 <h2 id="常见模式：ReentranLock"><a href="#常见模式：ReentranLock" class="headerlink" title="常见模式：ReentranLock"></a>常见模式：ReentranLock</h2><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{
 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
 	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> ReentranLock lock = <span class="hljs-keyword">new</span> ReentranLock();

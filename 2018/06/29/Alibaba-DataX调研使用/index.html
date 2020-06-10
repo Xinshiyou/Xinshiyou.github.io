@@ -194,6 +194,7 @@
             <article class="markdown-body">
               <p>  接触DataX是基于公司离线数据同步需求，从而开始接触到DataX的使用。前异构数据之间开源同步工具，主要有</p>
 <a id="more"></a>
+
 <h2 id="同步工具调研"><a href="#同步工具调研" class="headerlink" title="同步工具调研"></a>同步工具调研</h2><ol>
 <li><p>Sqoop<br>  Sqoop是一款开源的工具，主要用于Hadoop与传统RDBMS之间的数据同步，可以将RDBMS中的数据同步到HDFS中，也可以进行逆向操作。主要是基于MR任务的进行同步，具有支持并发、增量更新、支持海量数据同步等优点。<br>  <a href="https://github.com/cloudera/sqoop/wiki" target="_blank" rel="noopener">Sqoop Wiki</a><br>  <a href="https://github.com/cloudera/sqoop/wiki" target="_blank" rel="noopener">Sqoop官网</a></p>
 </li>
@@ -201,11 +202,14 @@
 </li>
 <li><p>Kettle<br>  Kettle是一款开源的ETL工具，具有集群模式。Kettle主要用来做ETL数据处理，具有方便快捷、可视化等优点，适合于一般中小业务的使用。</p>
 </li>
-<li>DataX<br>  DataX是由Alibaba开源的一款异构数据同步工具，可以在常见的各种数据源之间进行同步，并仅依赖Java环境，具有轻量、插件式、方便等优点，可以快速完成同步任务。一般公司的数据同步任务，基本可以满足。</li>
-<li>canal+otter<br>  canal+otter数据同步方案，同样是Alibaba开源的同步工具。该方案适用于大规模、扩机房、跨区域等重量级数据同步任务，并具有监控、近实时同步等优点。</li>
-<li>SymmetricDS<br>  同样是一款基于Java开发的分布式开源同步软件，基于复制原理，源于Java的特性，SymmetricDS具有跨平台、多线程、可监控等优点。</li>
+<li><p>DataX<br>  DataX是由Alibaba开源的一款异构数据同步工具，可以在常见的各种数据源之间进行同步，并仅依赖Java环境，具有轻量、插件式、方便等优点，可以快速完成同步任务。一般公司的数据同步任务，基本可以满足。</p>
+</li>
+<li><p>canal+otter<br>  canal+otter数据同步方案，同样是Alibaba开源的同步工具。该方案适用于大规模、扩机房、跨区域等重量级数据同步任务，并具有监控、近实时同步等优点。</p>
+</li>
+<li><p>SymmetricDS<br>  同样是一款基于Java开发的分布式开源同步软件，基于复制原理，源于Java的特性，SymmetricDS具有跨平台、多线程、可监控等优点。</p>
+</li>
 </ol>
-<p>  博主公司具有实时同步数据与离线同步数据的需求，因此需要调研数据同步工具。其中实时同步主要是从MySQL同步数据到Hive，这里我们选择的是MySQL Binlog方式进行实时同步；离线同步，主要是从各种数据源—如MySQL、ODPS、HIVE等—之间的数据同步。</p>
+<p>  博主公司具有实时同步数据与离线同步数据的需求，因此需要调研数据同步工具。其中实时同步主要是从MySQL同步数据到Hive，这里我们选择的是MySQL Binlog方式进行实时同步；离线同步，主要是从各种数据源–如MySQL、ODPS、HIVE等–之间的数据同步。</p>
 <p>  经过调研发现，DataX具有以下优点</p>
 <ol>
 <li>社区活跃，虽然Alibaba没有开源集群模式，仍有许多用户群体；</li>
