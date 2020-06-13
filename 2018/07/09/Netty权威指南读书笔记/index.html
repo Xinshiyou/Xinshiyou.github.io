@@ -473,10 +473,10 @@
 <li>通过在消息头中定义长度字段来标识消息的长度</li>
 </ol>
 <h3 id="DelimiterBasedFrameDecoder应用开发"><a href="#DelimiterBasedFrameDecoder应用开发" class="headerlink" title="DelimiterBasedFrameDecoder应用开发"></a>DelimiterBasedFrameDecoder应用开发</h3><p>  DelimiterBasedFrameDecoder可以根据自定义分隔符作为结束位置，在使用的时候传入两个参数</p>
-<div class="hljs"><pre class=" language-hljs reasonml"><span class="hljs-keyword">new</span> <span class="hljs-constructor">DelimiterBasedFrameDecoder(1024,Bytebuf:: <span class="hljs-params"><code class="language-hljs reasonml"><span class="hljs-keyword">new</span> <span class="hljs-constructor">DelimiterBasedFrameDecoder(1024,Bytebuf:: <span class="hljs-params">delimiter</span>)</span></code></span></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">new DelimiterBasedFrameDecoder(1024,Bytebuf:: delimiter)</code></pre></div>
 <p>其中第一个参数表示消息的最大长度，第二参数表示分隔符。</p>
 <h3 id="FixedLengthFrameDecoder应用开发"><a href="#FixedLengthFrameDecoder应用开发" class="headerlink" title="FixedLengthFrameDecoder应用开发"></a>FixedLengthFrameDecoder应用开发</h3><p>  FixedLengthFrameDecoder是固定长度解码器，它能够按照固定的长度对消息进行自动解码，开发者不需要考虑TCP的黏包和拆包问题。</p>
-<div class="hljs"><pre class=" language-hljs haxe"><span class="hljs-keyword">new</span> <span class="hljs-type">FixedLengthFrameDecoder</span>(<span class="hljs-number"><code class="language-hljs haxe"><span class="hljs-keyword">new</span> <span class="hljs-type">FixedLengthFrameDecoder</span>(<span class="hljs-number">10</span>)</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">new FixedLengthFrameDecoder(10)</code></pre></div>
 <p>其中10表示固定长度。</p>
 <h1 id="中级篇-Netty编解码开发指南"><a href="#中级篇-Netty编解码开发指南" class="headerlink" title="中级篇 Netty编解码开发指南"></a>中级篇 Netty编解码开发指南</h1><p>  了解Netty内置的编码器之后，继续学习Netty的编码解码款框架的应用，例如java序列化、二进制编码、Google Protobuf和JBoss的Marshallling序列化框架。</p>
 <h2 id="编解码技术"><a href="#编解码技术" class="headerlink" title="编解码技术"></a>编解码技术</h2><p>  基于Java提供的对象输入/输出流ObjectInputStreaming和ObjectOutputStreaming，可以直接把Java对象作为可存储的字节流写入文件，也可以传输到网上。对程序员而言，序列化可提高开发效率。</p>

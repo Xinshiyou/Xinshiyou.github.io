@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      135 字
+      137 字
     </span>
   
 
@@ -196,18 +196,18 @@
 <a id="more"></a>
 
 <p>  本小节主要是Git-CI/CD配置。</p>
-<h2 id="样例配置"><a href="#样例配置" class="headerlink" title="样例配置"></a>样例配置</h2><div class="hljs"><pre class=" language-hljs less"><span class="hljs-attribute"><code class="language-hljs less"><span class="hljs-attribute">stages</span>:
+<h2 id="样例配置"><a href="#样例配置" class="headerlink" title="样例配置"></a>样例配置</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">stages:
   - build
 
-<span class="hljs-attribute">build_staging</span>:
-  <span class="hljs-attribute">stage</span>: build
-  <span class="hljs-attribute">environment</span>:
-    <span class="hljs-attribute">name</span>: staging
-  <span class="hljs-attribute">image</span>: rastasheep/<span class="hljs-attribute">ubuntu-sshd</span>:<span class="hljs-number">16</span>
-  <span class="hljs-attribute">script</span>:
+build_staging:
+  stage: build
+  environment:
+    name: staging
+  image: rastasheep/ubuntu-sshd:16
+  script:
     - bin/build.sh
-  <span class="hljs-attribute">only</span>:
-    - master</code></span></pre></div>
+  only:
+    - master</code></pre></div>
 
 <h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
 <li><a href="https://www.jianshu.com/p/c840632cef38" target="_blank" rel="noopener">https://www.jianshu.com/p/c840632cef38</a></li>

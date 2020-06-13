@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      477 字
+      474 字
     </span>
   
 
@@ -195,10 +195,10 @@
               <p>  Ganglia是一款优秀的监控软件，能够监控节点级别以及组件级别的监控，并且与Nagios配合可以做到监控提示的发送通知功能。</p>
 <a id="more"></a>
 
-<h3 id="Ganliga安装"><a href="#Ganliga安装" class="headerlink" title="Ganliga安装"></a>Ganliga安装</h3><h3 id="预先安装配置"><a href="#预先安装配置" class="headerlink" title="预先安装配置"></a>预先安装配置</h3><div class="hljs"><pre class=" language-hljs sql"><span class="hljs-comment"><code class="language-hljs sql"><span class="hljs-comment">## 服务器端</span>
-yum <span class="hljs-keyword">install</span> -y rrdtool epel-<span class="hljs-keyword">release</span> ganglia-devel ganglia-gmetad ganglia-gmond ganglia-web httpd php
-<span class="hljs-comment">## 客户端</span>
-yum <span class="hljs-keyword">install</span> -y ganglia-gmond epel-<span class="hljs-keyword">release</span></code></span></pre></div>
+<h3 id="Ganliga安装"><a href="#Ganliga安装" class="headerlink" title="Ganliga安装"></a>Ganliga安装</h3><h3 id="预先安装配置"><a href="#预先安装配置" class="headerlink" title="预先安装配置"></a>预先安装配置</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 服务器端
+yum install -y rrdtool epel-release ganglia-devel ganglia-gmetad ganglia-gmond ganglia-web httpd php
+## 客户端
+yum install -y ganglia-gmond epel-release</code></pre></div>
 
 <h3 id="Ganglia配置"><a href="#Ganglia配置" class="headerlink" title="Ganglia配置"></a>Ganglia配置</h3><ol>
 <li>Gmetad配置</li>
@@ -214,32 +214,32 @@ service httpd start
 service gmond start</code></span></span></pre></div>
 
 <h3 id="Ganglia-Hadoop配置"><a href="#Ganglia-Hadoop配置" class="headerlink" title="Ganglia-Hadoop配置"></a>Ganglia-Hadoop配置</h3><p>  默认Hadoop支持Ganglia元数据收集，所以只需要配置起来，即可使用Ganglia查看Hadoop集群的相关数据。</p>
-<div class="hljs"><pre class=" language-hljs routeros"><span class="hljs-comment"><code class="language-hljs routeros"><span class="hljs-comment">## 在hadoop-metrics2.properties中添加一下配置</span>
-*.sink.ganglia.<span class="hljs-attribute">class</span>=org.apache.hadoop.metrics2.sink.ganglia.GangliaSink31
-*.sink.ganglia.<span class="hljs-attribute">period</span>=10
-datanode.sink.ganglia.<span class="hljs-attribute">servers</span>=ganglia-server:8649</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 在hadoop-metrics2.properties中添加一下配置
+*.sink.ganglia.class=org.apache.hadoop.metrics2.sink.ganglia.GangliaSink31
+*.sink.ganglia.period=10
+datanode.sink.ganglia.servers=ganglia-server:8649</code></pre></div>
 
 <h2 id="Ganglia-Spark编译使用"><a href="#Ganglia-Spark编译使用" class="headerlink" title="Ganglia-Spark编译使用"></a>Ganglia-Spark编译使用</h2><p>  因为需要通过Ganglia监控Spark的相关数据，而Spark的licence与Ganglia用到的组件不同，所以在原生的Spark中，不支持Ganglia监控的支持。所以好多公开资料，都是自行编译带有Ganglia的版本。<br>  因此，本文作者自行编译Spark版本的Spark软件。</p>
-<div class="hljs"><pre class=" language-hljs livescript">./make-distribution.sh <span class="hljs-string"><code class="language-hljs livescript">./make-distribution.sh <span class="hljs-string">\</span>
---tgz <span class="hljs-string">\</span>
--Psparkr <span class="hljs-string">\</span>
--Pyarn <span class="hljs-string">\</span>
--Phadoop-<span class="hljs-number">2.6</span> <span class="hljs-string">\</span>
--Dhadoop.version=<span class="hljs-number">2.6</span>.<span class="hljs-number">0</span>-cdh5.<span class="hljs-number">12.1</span> <span class="hljs-string">\</span>
--Phive <span class="hljs-string">\</span>
--DskipTests <span class="hljs-string">\</span>
--Phive-thriftserver <span class="hljs-string">\</span>
--Pspark-ganglia-lgpl <span class="hljs-string">\</span>
--Dscala-<span class="hljs-number">2.10</span>.<span class="hljs-number">7</span> <span class="hljs-string">\</span>
-clean package</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">./make-distribution.sh \
+--tgz \
+-Psparkr \
+-Pyarn \
+-Phadoop-2.6 \
+-Dhadoop.version=2.6.0-cdh5.12.1 \
+-Phive \
+-DskipTests \
+-Phive-thriftserver \
+-Pspark-ganglia-lgpl \
+-Dscala-2.10.7 \
+clean package</code></pre></div>
 <p>编译过程可能会遇到未预期错误，具体问题具体分析。</p>
 <h2 id="Ganglia-Kafka安装使用"><a href="#Ganglia-Kafka安装使用" class="headerlink" title="Ganglia-Kafka安装使用"></a>Ganglia-Kafka安装使用</h2><p>  Ganglia针对Kafka的支持是基于Ganglia API的实现：(<a href="https://github.com/Xinshiyou/kafka-ganglia)。" target="_blank" rel="noopener">https://github.com/Xinshiyou/kafka-ganglia)。</a></p>
 <p>一般配置步骤如下</p>
 <ol>
 <li>编译开源软件kafka-ganglia</li>
 <li>将JAR包：kafka-ganglia-1.0.0.jar， metrics-ganglia-2.2.0.jar复制到Kafka响应的kafka libs下</li>
-<li>针对Kafka添加配置,在kafka.properties中<div class="hljs"><pre class=" language-hljs stylus">kafka<span class="hljs-selector-class">.metrics</span>.reporters=com<span class="hljs-selector-class">.criteo</span><span class="hljs-selector-class">.kafka</span><span class="hljs-selector-class">.KafkaGangliaMetricsReporter</span>,kafka<span class="hljs-selector-class"><code class="language-hljs stylus">kafka<span class="hljs-selector-class">.metrics</span>.reporters=com<span class="hljs-selector-class">.criteo</span><span class="hljs-selector-class">.kafka</span><span class="hljs-selector-class">.KafkaGangliaMetricsReporter</span>,kafka<span class="hljs-selector-class">.metrics</span>.KafkaCSVMetricsReporter
-kafka<span class="hljs-selector-class">.ganglia</span><span class="hljs-selector-class">.metrics</span><span class="hljs-selector-class">.reporter</span>.enabled=true</code></span></pre></div></li>
+<li>针对Kafka添加配置,在kafka.properties中<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">kafka.metrics.reporters=com.criteo.kafka.KafkaGangliaMetricsReporter,kafka.metrics.KafkaCSVMetricsReporter
+kafka.ganglia.metrics.reporter.enabled=true</code></pre></div></li>
 <li>重启Kafka服务，使之生效。</li>
 </ol>
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><p>  这样操作可能会是CDH-Kafka中，失去controller角色引起其他问题[未做详细测试]。</p>

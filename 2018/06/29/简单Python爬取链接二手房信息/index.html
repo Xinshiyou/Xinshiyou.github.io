@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      709 字
+      755 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      11
+      12
        分钟
     </span>
   
@@ -197,62 +197,62 @@
 
 <p>  本文主要研究使用简单的线程、urllib、bs4.BeautifulSoup等爬取链家网站二手房信息。主要的原理在于链家网站具有比较简单的网页结构，同时也是静态网页；使用的手段，主要是通过网页之间的地址链接，不断获取房子详细页面的内容。</p>
 <h2 id="主要用到的包"><a href="#主要用到的包" class="headerlink" title="主要用到的包"></a>主要用到的包</h2><p>本文主要使用以下package:</p>
-<div class="hljs"><pre class=" language-hljs xl"><span class="hljs-keyword"><code class="language-hljs xl"><span class="hljs-keyword">import</span> Queue
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">import Queue
 
-<span class="hljs-keyword">import</span> MysqlDB
-<span class="hljs-keyword">import</span> parserURL
+import MysqlDB
+import parserURL
 
-<span class="hljs-keyword">import</span> threading
-<span class="hljs-keyword">import</span> <span class="hljs-built_in">time</span>
-<span class="hljs-keyword">import</span> urllib
+import threading
+import time
+import urllib
 
-from bs4 <span class="hljs-keyword">import</span> BeautifulSoup</code></span></pre></div>
+from bs4 import BeautifulSoup</code></pre></div>
 <p>使用的线程信息，但由于存在链家可能存在反扒措施，或对同一IP存在访问数限制，因此这里主要使用单一线程。</p>
 <h2 id="主要代码"><a href="#主要代码" class="headerlink" title="主要代码"></a>主要代码</h2><p>浏览页面网页解析：</p>
-<div class="hljs"><pre class=" language-hljs ruby"><span class="hljs-comment"><code class="language-hljs ruby"><span class="hljs-comment">## 解析网页信息</span>
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">parserURL</span>(<span class="hljs-title">threading</span>.<span class="hljs-title">Thread</span>):</span>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 解析网页信息
+class parserURL(threading.Thread):
     
-    counts = <span class="hljs-number">0</span>
-    preurl = <span class="hljs-string">""</span>
+    counts = 0
+    preurl = ""
     
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(<span class="hljs-keyword">self</span>, html_queue, two_html_queue)</span></span><span class="hljs-symbol">:</span>
-        threading.Thread.__init_<span class="hljs-number">_</span>(<span class="hljs-keyword">self</span>)
-        <span class="hljs-keyword">self</span>.html_queue = html_queue
-        <span class="hljs-keyword">self</span>.two_html_queue = two_html_queue
+    def __init__(self, html_queue, two_html_queue):
+        threading.Thread.__init__(self)
+        self.html_queue = html_queue
+        self.two_html_queue = two_html_queue
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(<span class="hljs-keyword">self</span>)</span></span><span class="hljs-symbol">:</span>
-        <span class="hljs-keyword">while</span> <span class="hljs-symbol">True:</span>
-            <span class="hljs-symbol">try:</span>
-                <span class="hljs-keyword">self</span>.detail_url_parser()
-                <span class="hljs-keyword">self</span>.counts = <span class="hljs-keyword">self</span>.counts + <span class="hljs-number">1</span>
-                <span class="hljs-keyword">if</span> <span class="hljs-keyword">self</span>.counts % <span class="hljs-number">100</span> == <span class="hljs-number">0</span><span class="hljs-symbol">:</span>
-                    time.sleep(<span class="hljs-number">60</span>)
-            except <span class="hljs-symbol">Exception:</span>
-                <span class="hljs-keyword">self</span>.html_queue.put(<span class="hljs-keyword">self</span>.preurl)
-                print <span class="hljs-string">"parserURL: Hello, world"</span>
+    def run(self):
+        while True:
+            try:
+                self.detail_url_parser()
+                self.counts = self.counts + 1
+                if self.counts % 100 == 0:
+                    time.sleep(60)
+            except Exception:
+                self.html_queue.put(self.preurl)
+                print "parserURL: Hello, world"
     
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">detail_url_parser</span><span class="hljs-params">(<span class="hljs-keyword">self</span>)</span></span><span class="hljs-symbol">:</span>
-        s = <span class="hljs-keyword">self</span>.html_queue.get()
-        print <span class="hljs-string">"parserURL: "</span>, s
-        <span class="hljs-keyword">self</span>.preurl = s
+    def detail_url_parser(self):
+        s = self.html_queue.get()
+        print "parserURL: ", s
+        self.preurl = s
         s = urllib.urlopen(s).read()
-        s = BeautifulSoup(s, <span class="hljs-string">'html.parser'</span>).find(<span class="hljs-string">'ul'</span>, attrs={<span class="hljs-string">'class'</span><span class="hljs-symbol">:<span class="hljs-string">'house-lst'</span></span>})
-        lis = s.find_all(<span class="hljs-string">'li'</span>)
+        s = BeautifulSoup(s, 'html.parser').find('ul', attrs={'class':'house-lst'})
+        lis = s.find_all('li')
         
-        <span class="hljs-keyword">for</span> li <span class="hljs-keyword">in</span> <span class="hljs-symbol">lis:</span>
-            detail = li.find(<span class="hljs-string">'h2'</span>).find(<span class="hljs-string">'a'</span>)
-            detail_href = detail[<span class="hljs-string">'href'</span>]
-            <span class="hljs-keyword">self</span>.two_html_queue.put(<span class="hljs-string">"http://sh.lianjia.com"</span> + detail_href)</code></span></pre></div>
+        for li in lis:
+            detail = li.find('h2').find('a')
+            detail_href = detail['href']
+            self.two_html_queue.put("http://sh.lianjia.com" + detail_href)</code></pre></div>
 <p>解析房子详细页面信息，并将爬取内容写入数据库：</p>
-<div class="hljs"><pre class=" language-hljs perl">sql = <span class="hljs-string"><code class="language-hljs perl">sql = <span class="hljs-string">"insert into house_infos(tag,type,total_price,house_type,house_area,house_avg_price,house_floor,house_year,house_desc,house_direction,first_pay,monthly_pay,district,district_address,city) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"</span>
-<span class="hljs-comment">## 解析二手房信息</span>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">sql = "insert into house_infos(tag,type,total_price,house_type,house_area,house_avg_price,house_floor,house_year,house_desc,house_direction,first_pay,monthly_pay,district,district_address,city) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+## 解析二手房信息
 class parserErShouFang(threading.Thread):
     
-    counts = <span class="hljs-number">0</span>
-    preurl = <span class="hljs-string">""</span>
+    counts = 0
+    preurl = ""
     
-    def __init_<span class="hljs-number">_</span>(self, db, tag, city, house_type, html_queue):
-        threading.Thread.__init_<span class="hljs-number">_</span>(self)
+    def __init__(self, db, tag, city, house_type, html_queue):
+        threading.Thread.__init__(self)
         self.html_queue = html_queue
         self.db = db
         self.tag = tag
@@ -260,14 +260,14 @@ class parserErShouFang(threading.Thread):
         self.house_type = house_type
         
     def run(self):
-        <span class="hljs-keyword">while</span> True:
+        while True:
             try:
                 self.ershoufang_html()
-                self.counts = self.counts + <span class="hljs-number">1</span>
-                <span class="hljs-keyword">if</span> self.counts % <span class="hljs-number">500</span> == <span class="hljs-number">0</span>:
-                    time.sleep(<span class="hljs-number">60</span>)
+                self.counts = self.counts + 1
+                if self.counts % 500 == 0:
+                    time.sleep(60)
             except Exception:
-                <span class="hljs-keyword">print</span> <span class="hljs-string">"parserErShowFang: Hello, world!"</span>
+                print "parserErShowFang: Hello, world!"
                 self.html_queue.put(self.preurl)
     
     def ershoufang_html(self):
@@ -275,37 +275,37 @@ class parserErShouFang(threading.Thread):
 
         h = self.html_queue.get()
         self.preurl = h
-        <span class="hljs-keyword">print</span> <span class="hljs-string">"sdf: "</span>, h
-        <span class="hljs-keyword">s</span> = urllib.urlopen(h).read()
-        <span class="hljs-keyword">s</span> = BeautifulSoup(<span class="hljs-keyword">s</span>, <span class="hljs-string">'html.parser'</span>)
+        print "sdf: ", h
+        s = urllib.urlopen(h).read()
+        s = BeautifulSoup(s, 'html.parser')
         
         param.append(self.tag)
         param.append(self.house_type)
         
-        <span class="hljs-comment"># 价格信息</span>
-        price = s.find(<span class="hljs-string">'div'</span>, attrs={<span class="hljs-string">'class'</span>:<span class="hljs-string">'price'</span>}).find(<span class="hljs-string">'div'</span>, attrs={<span class="hljs-string">'class'</span>:<span class="hljs-string">'mainInfo bold'</span>}).text
+        # 价格信息
+        price = s.find('div', attrs={'class':'price'}).find('div', attrs={'class':'mainInfo bold'}).text
         param.append(price)
-        <span class="hljs-comment"># 户型信息</span>
-        huxing = s.find(<span class="hljs-string">'div'</span>, attrs={<span class="hljs-string">'class'</span>:<span class="hljs-string">'room'</span>}).find(<span class="hljs-string">'div'</span>, attrs={<span class="hljs-string">'class'</span>:<span class="hljs-string">'mainInfo'</span>}).text.replace(<span class="hljs-string">' '</span>, <span class="hljs-string">''</span>)
+        # 户型信息
+        huxing = s.find('div', attrs={'class':'room'}).find('div', attrs={'class':'mainInfo'}).text.replace(' ', '')
         param.append(huxing)
-        <span class="hljs-comment"># 面积信息</span>
-        area = s.find(<span class="hljs-string">'div'</span>, attrs={<span class="hljs-string">'class'</span>:<span class="hljs-string">'area'</span>}).find(<span class="hljs-string">'div'</span>, attrs={<span class="hljs-string">'class'</span>:<span class="hljs-string">'mainInfo'</span>}).text.replace(<span class="hljs-string">' '</span>, <span class="hljs-string">''</span>)
+        # 面积信息
+        area = s.find('div', attrs={'class':'area'}).find('div', attrs={'class':'mainInfo'}).text.replace(' ', '')
         param.append(area)
 
-        lis = s.find(<span class="hljs-string">'table'</span>, attrs={<span class="hljs-string">'class'</span>:<span class="hljs-string">'aroundInfo'</span>}).find_all(<span class="hljs-string">'td'</span>)
-        <span class="hljs-keyword">for</span> l in lis:
-            p = l.text.replace(<span class="hljs-string">'\t'</span>, <span class="hljs-string">''</span>).replace(<span class="hljs-string">'\r\n'</span>, <span class="hljs-string">''</span>).replace(<span class="hljs-string">' '</span>, <span class="hljs-string">''</span>).replace(<span class="hljs-string">'\n'</span>, <span class="hljs-string">''</span>)
-            tmp = p.<span class="hljs-keyword">split</span>(<span class="hljs-string">'\n'</span>)
-            <span class="hljs-keyword">for</span> <span class="hljs-keyword">q</span> in tmp:
-                pq = q.<span class="hljs-keyword">split</span>(u<span class="hljs-string">'\uff1a'</span>)
-                <span class="hljs-keyword">if</span> p<span class="hljs-string">q[0]</span>.startswith(u<span class="hljs-string">'房源编号'</span>):
-                    <span class="hljs-keyword">break</span>;
-                <span class="hljs-keyword">if</span> len(pq) &gt; <span class="hljs-number">1</span>:
-                    param.append(p<span class="hljs-string">q[1]</span>)
-                    <span class="hljs-keyword">print</span> p<span class="hljs-string">q[0]</span>, p<span class="hljs-string">q[1]</span>
+        lis = s.find('table', attrs={'class':'aroundInfo'}).find_all('td')
+        for l in lis:
+            p = l.text.replace('\t', '').replace('\r\n', '').replace(' ', '').replace('\n', '')
+            tmp = p.split('\n')
+            for q in tmp:
+                pq = q.split(u'\uff1a')
+                if pq[0].startswith(u'房源编号'):
+                    break;
+                if len(pq) &gt; 1:
+                    param.append(pq[1])
+                    print pq[0], pq[1]
         param.append(self.city)
         
-        self.db.execute(sql, param)</code></span></pre></div>
+        self.db.execute(sql, param)</code></pre></div>
 
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><p>  博主采用的手段比较低级，主要通过网页中的标签来获取相应的数据，后期可能通过xpath、正则表达式等方式来获取相应的内容。</p>
 

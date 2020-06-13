@@ -196,8 +196,8 @@
 <a id="more"></a>
 
 <h2 id="1-命令行模式"><a href="#1-命令行模式" class="headerlink" title="1. 命令行模式"></a>1. 命令行模式</h2><p>  在CMD或Shell中，直接输入phantomjs回车，进入命令行模式，能够完成各种操作。但一般情况是通过命令用调用phantomjs来完成爬虫或模拟工作，具体的代码放在JS中。如</p>
-<div class="hljs"><pre class=" language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string"><code class="language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./server.js</span> 8910
-<span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./hello.js</span></code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">../bin/phantomjs --debug=yes ./server.js 8910
+../bin/phantomjs --debug=yes ./hello.js</code></pre></div>
 <p>其中phantomjs参数直接放在phantomjs后面，脚本作为参数放在其次，最后添加脚本的参数列表。</p>
 <h2 id="2-selenium调用"><a href="#2-selenium调用" class="headerlink" title="2. selenium调用"></a>2. selenium调用</h2><p>  selenium是一套完整的测试爬虫工具，能够调用IE、Chrome、Firefox等浏览器内核API完成相应的功能，也可以调用如Phantomjs、HtmlUnitDriver等模拟浏览器作为调用接口。</p>
 <p>  调用浏览器内核与不调用浏览器内核的浏览器[这里指的是HtmlUnitDriver]，浏览器内核的API，可以完成截图功能及其他浏览器功能，但HtmlunitDriver采用的是JS模拟浏览器的策略，因此不具备截图等浏览器功能。</p>

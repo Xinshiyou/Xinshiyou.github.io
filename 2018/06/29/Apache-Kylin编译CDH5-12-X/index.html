@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      339 字
+      351 字
     </span>
   
 
@@ -196,14 +196,14 @@
 <a id="more"></a>
 
 <h2 id="1-编译"><a href="#1-编译" class="headerlink" title="1. 编译"></a>1. 编译</h2><p>  官方提供的Apache Kylin目前仅支持到CDH5.7，更高版本的没有发布，或测试。针对公司的CDH版本，需要进行相关设置与编译，才能适用于公司的环境。</p>
-<h3 id="1-1-Github获取代码"><a href="#1-1-Github获取代码" class="headerlink" title="1.1. Github获取代码"></a>1.1. Github获取代码</h3><div class="hljs"><pre class=" language-hljs crmsh">git <span class="hljs-keyword">clone</span> <span class="hljs-title"><code class="language-hljs crmsh">git <span class="hljs-keyword">clone</span> <span class="hljs-title">https</span>://github.com/apache/kylin.git
-git checkout yang21-cdh5.<span class="hljs-number">7</span></code></span></pre></div>
+<h3 id="1-1-Github获取代码"><a href="#1-1-Github获取代码" class="headerlink" title="1.1. Github获取代码"></a>1.1. Github获取代码</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">git clone https://github.com/apache/kylin.git
+git checkout yang21-cdh5.7</code></pre></div>
 <h3 id="1-2-进行配置"><a href="#1-2-进行配置" class="headerlink" title="1.2. 进行配置"></a>1.2. 进行配置</h3><p>主要进行一下几方面的更改：</p>
 <ol>
 <li>JDK版本：1.7→1.8</li>
 <li>CDH版本：cdh5.7.0→cdh5.12.1</li>
-<li>代码修改：涉及到的类<div class="hljs"><pre class=" language-hljs dts">A、engine-spark<span class="hljs-meta-keyword">/src/</span>main<span class="hljs-meta-keyword">/java/</span>org<span class="hljs-meta-keyword">/apache/</span>kylin<span class="hljs-meta-keyword"><code class="language-hljs dts">A、engine-spark<span class="hljs-meta-keyword">/src/</span>main<span class="hljs-meta-keyword">/java/</span>org<span class="hljs-meta-keyword">/apache/</span>kylin<span class="hljs-meta-keyword">/engine/</span>spark/SparkCubing.java 
-B、server-base<span class="hljs-meta-keyword">/src/</span>main<span class="hljs-meta-keyword">/java/</span>org<span class="hljs-meta-keyword">/apache/</span>kylin<span class="hljs-meta-keyword">/rest/</span>security/MockHTable.java</code></span></pre></div>
+<li>代码修改：涉及到的类<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">A、engine-spark/src/main/java/org/apache/kylin/engine/spark/SparkCubing.java 
+B、server-base/src/main/java/org/apache/kylin/rest/security/MockHTable.java</code></pre></div>
 
 </li>
 </ol>

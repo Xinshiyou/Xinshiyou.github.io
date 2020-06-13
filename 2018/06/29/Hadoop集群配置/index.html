@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      538 字
+      573 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      7
+      8
        分钟
     </span>
   
@@ -201,10 +201,10 @@
 <li>下载JDK1.8.0_111；</li>
 <li>在master上安装vim\wget\telnet等组件；</li>
 <li>打通MASTER与SLAVE之间的通道(生成Key/复制Key)：ssh-keygen -t rsa；</li>
-<li>将Master与Slave的IP地址添加到/etc/hosts里面：<div class="hljs"><pre class=" language-hljs accesslog"><span class="hljs-number"><code class="language-hljs accesslog"><span class="hljs-number">172.198.0.12</span> MASTER
-<span class="hljs-number">172.198.0.13</span> SLAVE1
-<span class="hljs-number">172.198.0.14</span> SLAVE2
-<span class="hljs-number">172.198.0.15</span> SLAVE3</code></span></pre></div>
+<li>将Master与Slave的IP地址添加到/etc/hosts里面：<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">172.198.0.12 MASTER
+172.198.0.13 SLAVE1
+172.198.0.14 SLAVE2
+172.198.0.15 SLAVE3</code></pre></div>
 
 </li>
 </ol>
@@ -217,90 +217,90 @@
 <h3 id="配置Hadoop"><a href="#配置Hadoop" class="headerlink" title="配置Hadoop"></a>配置Hadoop</h3><p>安装思路：首先在MASTER节点中配置完成，然后复制到SLAVE节点中。</p>
 <p><em>配置文件</em></p>
 <p>core-site.xml:</p>
-<div class="hljs"><pre class=" language-hljs dts"><span class="hljs-params"><code class="language-hljs dts"><span class="hljs-params"><property></property></span>
-        <span class="hljs-params"><name></name></span>hadoop.tmp.dir<span class="hljs-params"></span>
-        <span class="hljs-params"><value></value></span><span class="hljs-meta-keyword">/home/</span>appuser<span class="hljs-meta-keyword">/hadoop/</span>tmp<span class="hljs-params"></span>
-<span class="hljs-params"></span>
-<span class="hljs-params"><property></property></span>
-        <span class="hljs-params"><name></name></span>fs.default.name<span class="hljs-params"></span>
-        <span class="hljs-params"><value></value></span>hdfs:<span class="hljs-comment">//master:9000</span>
-<span class="hljs-params"></span>
-<span class="hljs-params"></span></code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><property>
+        <name>hadoop.tmp.dir&lt;/name&gt;
+        <value>/home/appuser/hadoop/tmp&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>fs.default.name&lt;/name&gt;
+        <value>hdfs://master:9000&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;</value></name></property></value></name></property></code></pre></div>
 
 <p>hdfs-site.xml:</p>
-<div class="hljs"><pre class=" language-hljs dts"><span class="hljs-params"><code class="language-hljs dts"><span class="hljs-params"><configuration></configuration></span>
-<span class="hljs-params"><property></property></span>
-        <span class="hljs-params"><name></name></span>dfs.name.dir<span class="hljs-params"></span>
-        <span class="hljs-params"><value></value></span><span class="hljs-meta-keyword">/home/</span>appuser<span class="hljs-meta-keyword">/hadoop/</span>tmp/namedir<span class="hljs-params"></span>
-<span class="hljs-params"></span>
-<span class="hljs-params"><property></property></span>
-        <span class="hljs-params"><name></name></span>dfs.data.dir<span class="hljs-params"></span>
-        <span class="hljs-params"><value></value></span><span class="hljs-meta-keyword">/home/</span>appuser<span class="hljs-meta-keyword">/hadoop/</span>tmp/datadir<span class="hljs-params"></span>
-<span class="hljs-params"></span>
-<span class="hljs-params"><property></property></span>
-        <span class="hljs-params"><name></name></span>dfs.replication<span class="hljs-params"></span>
-        <span class="hljs-params"><value></value></span><span class="hljs-number">2</span><span class="hljs-params"></span>
-<span class="hljs-params"></span>
-<span class="hljs-params"><property></property></span>
-        <span class="hljs-params"><name></name></span>dfs.http.address<span class="hljs-params"></span>
-        <span class="hljs-params"><value></value></span>master:<span class="hljs-number">50070</span><span class="hljs-params"></span>
-<span class="hljs-params"></span>
-<span class="hljs-params"><property></property></span>
-        <span class="hljs-params"><name></name></span>dfs.namenode.seconday.http-address<span class="hljs-params"></span>
-        <span class="hljs-params"><value></value></span>slave1:<span class="hljs-number">50070</span><span class="hljs-params"></span>
-<span class="hljs-params"></span>
-<span class="hljs-params"><property></property></span>
-        <span class="hljs-params"><name></name></span>dfs.webhdfs.enabled<span class="hljs-params"></span>
-        <span class="hljs-params"><value></value></span>true<span class="hljs-params"></span>
-<span class="hljs-params"></span>
-<span class="hljs-params"></span></code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><configuration>
+<property>
+        <name>dfs.name.dir&lt;/name&gt;
+        <value>/home/appuser/hadoop/tmp/namedir&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>dfs.data.dir&lt;/name&gt;
+        <value>/home/appuser/hadoop/tmp/datadir&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>dfs.replication&lt;/name&gt;
+        <value>2&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>dfs.http.address&lt;/name&gt;
+        <value>master:50070&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>dfs.namenode.seconday.http-address&lt;/name&gt;
+        <value>slave1:50070&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>dfs.webhdfs.enabled&lt;/name&gt;
+        <value>true&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;</value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></configuration></code></pre></div>
 
 <p>mapred-site.xml:</p>
-<div class="hljs"><pre class=" language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name"><code class="language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">configuration</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>mapred.job.tracker<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</code></span><code class="language-hljs xml">
-        <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>master:9001<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</code></span><code class="language-hljs xml">
-<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;
-<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>mapreduce.jobhistory.address<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;
-        <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>master:10020<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;
-<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;
-<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>mapreduce.framework.name<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;
-        <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>yarn<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;
-<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;
-<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>mapreduce.map.tasks<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;
-        <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>20<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;
-<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;
-<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>mapreduce.reduce.tasks<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;
-        <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>20<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;
-<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;
-<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>mapreduce.jobhistory.webapp.address<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;
-        <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>master:19888<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;
-<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;
-<span class="hljs-tag"><!--<span class="hljs-name"-->configuration</span>&gt;</code></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><configuration>
+<property>
+        <name>mapred.job.tracker&lt;/name&gt;
+        <value>master:9001&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>mapreduce.jobhistory.address&lt;/name&gt;
+        <value>master:10020&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>mapreduce.framework.name&lt;/name&gt;
+        <value>yarn&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>mapreduce.map.tasks&lt;/name&gt;
+        <value>20&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>mapreduce.reduce.tasks&lt;/name&gt;
+        <value>20&lt;/value&gt;
+&lt;/property&gt;
+<property>
+        <name>mapreduce.jobhistory.webapp.address&lt;/name&gt;
+        <value>master:19888&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;</value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></configuration></code></pre></div>
 
 <p>hadoop-env.sh:</p>
-<div class="hljs"><pre class=" language-hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute"><code class="language-hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute">JAVA_HOME</span>=/home/appuser/jdk1.8.0_111</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">export JAVA_HOME=/home/appuser/jdk1.8.0_111</code></pre></div>
 
 <h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p><em>分发到SLAVE节点</em></p>
-<div class="hljs"><pre class=" language-hljs angelscript"><code class="language-hljs angelscript"># Copy Hadoop File
-scp -r ~/hadoop<span class="hljs-number">-2.6</span><span class="hljs-number">.0</span>/ slave1:~/
-scp -r ~/hadoop<span class="hljs-number">-2.6</span><span class="hljs-number">.0</span>/ slave2:~/
-scp -r ~/hadoop<span class="hljs-number">-2.6</span><span class="hljs-number">.0</span>/ slave3:~/
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Copy Hadoop File
+scp -r ~/hadoop-2.6.0/ slave1:~/
+scp -r ~/hadoop-2.6.0/ slave2:~/
+scp -r ~/hadoop-2.6.0/ slave3:~/
 # Copy Jdk File
-scp -r ~/jdk1<span class="hljs-number">.8</span><span class="hljs-number">.0</span>_111/ slave1:~/
-scp -r ~/jdk1<span class="hljs-number">.8</span><span class="hljs-number">.0</span>_111/ slave2:~/
-scp -r ~/jdk1<span class="hljs-number">.8</span><span class="hljs-number">.0</span>_111/ slave3:~/</code></pre></div>
+scp -r ~/jdk1.8.0_111/ slave1:~/
+scp -r ~/jdk1.8.0_111/ slave2:~/
+scp -r ~/jdk1.8.0_111/ slave3:~/</code></pre></div>
 
 <p><em>格式化NamdeNode</em></p>
-<div class="hljs"><pre class=" language-hljs armasm"><span class="hljs-keyword"><code class="language-hljs armasm"><span class="hljs-keyword">bin/hadoop </span>namenode -format</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">bin/hadoop namenode -format</code></pre></div>
 <p>如果在Log中出现：<em>successfully …</em>，说明格式化成功。</p>
 <p><em>启动Hadoop集群</em></p>
-<div class="hljs"><pre class=" language-hljs angelscript">~/hadoop<span class="hljs-number">-2.6</span><span class="hljs-number"><code class="language-hljs angelscript">~/hadoop<span class="hljs-number">-2.6</span><span class="hljs-number">.0</span>/sbin/start-all.sh</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">~/hadoop-2.6.0/sbin/start-all.sh</code></pre></div>
 
 
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>

@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      35
+      36
        分钟
     </span>
   
@@ -218,89 +218,89 @@ gpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub
 1.sudo yum install google-chrome-stable 来安装最新稳定版
 2.sudo yum install google-chrome-unstable 最新版chrome</code></pre></div>
 <p>这里有个问题，可能博主使用的Centos环境有问题。通过此方式安装之后存在各种依赖问题，导致无法安装成功。</p>
-<h3 id="安装方式二：下载安装"><a href="#安装方式二：下载安装" class="headerlink" title="安装方式二：下载安装"></a>安装方式二：下载安装</h3><div class="hljs"><pre class=" language-hljs vim"><code class="language-hljs vim">## Ubuntu系统安装，此方通过修改URL路径，适用于Centos
-sudo apt-<span class="hljs-built_in">get</span> install libxss1 libappindicator1 libindicator7
-wget http<span class="hljs-variable">s:</span>//<span class="hljs-keyword">dl</span>.google.<span class="hljs-keyword">com</span>/linux/direct/google-chrome-stable_current_amd64.<span class="hljs-keyword">deb</span>
-sudo dpkg -i google-chrome-stable_current_amd64.<span class="hljs-keyword">deb</span>
-sudo apt-<span class="hljs-built_in">get</span> install -<span class="hljs-keyword">f</span></code></pre></div>
+<h3 id="安装方式二：下载安装"><a href="#安装方式二：下载安装" class="headerlink" title="安装方式二：下载安装"></a>安装方式二：下载安装</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## Ubuntu系统安装，此方通过修改URL路径，适用于Centos
+sudo apt-get install libxss1 libappindicator1 libindicator7
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt-get install -f</code></pre></div>
 <p>跟上面一种方式一样， 存在各种依赖问题，导致无法安装成功。</p>
-<h3 id="使用脚本安装"><a href="#使用脚本安装" class="headerlink" title="使用脚本安装"></a>使用脚本安装</h3><div class="hljs"><pre class=" language-hljs vim">curl http<span class="hljs-variable">s:</span>//intoli.<span class="hljs-keyword">com</span>/install-google-chrome.<span class="hljs-keyword"><code class="language-hljs vim">curl http<span class="hljs-variable">s:</span>//intoli.<span class="hljs-keyword">com</span>/install-google-chrome.<span class="hljs-keyword">sh</span> | bash</code></span></pre></div>
+<h3 id="使用脚本安装"><a href="#使用脚本安装" class="headerlink" title="使用脚本安装"></a>使用脚本安装</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl https://intoli.com/install-google-chrome.sh | bash</code></pre></div>
 
 <p>  通过上网查阅发现<a href="https://intoli.com这个网站是专门从事headless" target="_blank" rel="noopener">https://intoli.com这个网站是专门从事headless</a> browsers使用简化，提供云服务的一家公司。其中在该公司的博客中，可以看到许多关于Google Chrome的文章。</p>
 <p>  该公司提供的这个脚本，能够自动查找相关依赖，并安装。这样我们就不必担心依赖问题，导致无法安装成功。</p>
 <h2 id="使用进阶"><a href="#使用进阶" class="headerlink" title="使用进阶"></a>使用进阶</h2><p>  安装Chrome Headless之后，就可以直接使用了。不过这里有一个注意的点，那就是需要安装ChromeDriver这个东东。</p>
-<div class="hljs"><pre class=" language-hljs clean"><code class="language-hljs clean">## 下载
-wget https:<span class="hljs-comment">//chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip</span>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 下载
+wget https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
 
 ## 解压
 tar xvf chromedriver_linux64.zip
 
 ## 权限
-chmod <span class="hljs-number">755</span> chromedriver</code></pre></div>
+chmod 755 chromedriver</code></pre></div>
 
 
 <h3 id="初级使用"><a href="#初级使用" class="headerlink" title="初级使用"></a>初级使用</h3><p>  初级使用的目标是可以运行起来，不报错，能够完成预期的目标。<br>代码如下：</p>
-<div class="hljs"><pre class=" language-hljs reasonml">   <span class="hljs-comment"><code class="language-hljs reasonml">   <span class="hljs-comment">/**</span>
-<span class="hljs-comment"> * @desc main method</span>
-<span class="hljs-comment"> * @param args</span>
-<span class="hljs-comment"> * @throws IOException</span>
-<span class="hljs-comment"> */</span>
-public static void main(String<span class="hljs-literal">[]</span> args) throws IOException {
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   /**
+ * @desc main method
+ * @param args
+ * @throws IOException
+ */
+public static void main(String[] args) throws IOException {
 
-       String driverPath = <span class="hljs-string">"/root/chrome/chromedriver"</span>;
-       String targetURL = <span class="hljs-string">""</span>;
+       String driverPath = "/root/chrome/chromedriver";
+       String targetURL = "";
 
-	<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">System</span>.</span></span>set<span class="hljs-constructor">Property(<span class="hljs-string">"webdriver.chrome.driver"</span>, <span class="hljs-params">driverPath</span>)</span>;
-	ChromeDriver driver = get<span class="hljs-constructor">Driver()</span>;
+	System.setProperty("webdriver.chrome.driver", driverPath);
+	ChromeDriver driver = getDriver();
 
-       <span class="hljs-comment">// 对网页内容作处理</span>
-       Document doc = get<span class="hljs-constructor">Document(<span class="hljs-params">targetURL</span>)</span>;
+       // 对网页内容作处理
+       Document doc = getDocument(targetURL);
 
-       <span class="hljs-comment">// 如果对网页做操作，直接使用Driver</span>
+       // 如果对网页做操作，直接使用Driver
 
 }
 
-<span class="hljs-comment">/**</span>
-<span class="hljs-comment"> * @desc get chrome driver</span>
-<span class="hljs-comment"> */</span>
-public static ChromeDriver get<span class="hljs-constructor">Driver()</span> {
+/**
+ * @desc get chrome driver
+ */
+public static ChromeDriver getDriver() {
 
-	String userAgent = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">AppForum</span>.</span></span>get<span class="hljs-constructor">Agents()</span>;
-	ChromeOptions options = <span class="hljs-keyword">new</span> <span class="hljs-constructor">ChromeOptions()</span>;
-	options.set<span class="hljs-constructor">Binary(<span class="hljs-string">"/usr/bin/google-chrome-stable"</span>)</span>;
-	options.add<span class="hljs-constructor">Arguments(<span class="hljs-string">"--no-sandbox"</span>, <span class="hljs-string">"--test-type"</span>，<span class="hljs-string">"--headless"</span>, <span class="hljs-string">"--disable-gpu"</span>)</span>;
+	String userAgent = AppForum.getAgents();
+	ChromeOptions options = new ChromeOptions();
+	options.setBinary("/usr/bin/google-chrome-stable");
+	options.addArguments("--no-sandbox", "--test-type"，"--headless", "--disable-gpu");
 
-	DesiredCapabilities capabilities = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">DesiredCapabilities</span>.</span></span>chrome<span class="hljs-literal">()</span>;
-	capabilities.set<span class="hljs-constructor">Capability(ChromeOptions.CAPABILITY, <span class="hljs-params">options</span>)</span>;
-	capabilities.set<span class="hljs-constructor">JavascriptEnabled(<span class="hljs-params">true</span>)</span>;
+	DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+	capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+	capabilities.setJavascriptEnabled(true);
 
-	ChromeDriver driver = <span class="hljs-keyword">new</span> <span class="hljs-constructor">ChromeDriver(<span class="hljs-params">capabilities</span>)</span>;
-	driver.manage<span class="hljs-literal">()</span>.timeouts<span class="hljs-literal">()</span>.set<span class="hljs-constructor">ScriptTimeout(5, TimeUnit.SECONDS)</span>;
+	ChromeDriver driver = new ChromeDriver(capabilities);
+	driver.manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
 
 	return driver;
 }
 
-<span class="hljs-comment">/**</span>
-<span class="hljs-comment"> * @desc crawler html content</span>
-<span class="hljs-comment"> * @param url</span>
-<span class="hljs-comment"> */</span>
-public static Document get<span class="hljs-constructor">Document(String <span class="hljs-params">url</span>)</span> {
+/**
+ * @desc crawler html content
+ * @param url
+ */
+public static Document getDocument(String url) {
 
-	ChromeDriver driver = get<span class="hljs-constructor">Driver()</span>;
+	ChromeDriver driver = getDriver();
 	Document doc = null;
-	<span class="hljs-keyword">try</span> {
+	try {
 		driver.get(url);
-		doc = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Jsoup</span>.</span></span>parse(driver.get<span class="hljs-constructor">PageSource()</span>);
+		doc = Jsoup.parse(driver.getPageSource());
 	} catch (Exception e) {
 	} finally {
-		<span class="hljs-keyword">try</span> {
-			driver.quit<span class="hljs-literal">()</span>;
+		try {
+			driver.quit();
 		} catch (Exception e) {
 		}
 	}
 
 	return doc;
-}</code></span></pre></div>
+}</code></pre></div>
 
 
 <h3 id="中阶使用"><a href="#中阶使用" class="headerlink" title="中阶使用"></a>中阶使用</h3><p>中阶也即提高级，主要区别是开发研究一些重要的功能，比如时候网速、加载速度等内容</p>
@@ -312,137 +312,137 @@ public static Document get<span class="hljs-constructor">Document(String <span c
 <li>使用Driver执行特定JS等</li>
 </ol>
 <p>代码如下：</p>
-<div class="hljs"><pre class=" language-hljs reasonml">   <span class="hljs-comment"><code class="language-hljs reasonml">   <span class="hljs-comment">/**</span>
-<span class="hljs-comment"> * @desc main method</span>
-<span class="hljs-comment"> * @param args</span>
-<span class="hljs-comment"> * @throws IOException</span>
-<span class="hljs-comment"> */</span>
-public static void main(String<span class="hljs-literal">[]</span> args) throws IOException {
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   /**
+ * @desc main method
+ * @param args
+ * @throws IOException
+ */
+public static void main(String[] args) throws IOException {
 
-       String driverPath = <span class="hljs-string">"/root/chrome/chromedriver"</span>;
-       String targetURL = <span class="hljs-string">""</span>;
+       String driverPath = "/root/chrome/chromedriver";
+       String targetURL = "";
 
-	<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">System</span>.</span></span>set<span class="hljs-constructor">Property(<span class="hljs-string">"webdriver.chrome.driver"</span>, <span class="hljs-params">driverPath</span>)</span>;
-	ChromeDriver driver = get<span class="hljs-constructor">Driver()</span>;
+	System.setProperty("webdriver.chrome.driver", driverPath);
+	ChromeDriver driver = getDriver();
 
-       <span class="hljs-comment">// 对网页内容作处理</span>
-       Document doc = get<span class="hljs-constructor">Document(<span class="hljs-params">targetURL</span>)</span>;
+       // 对网页内容作处理
+       Document doc = getDocument(targetURL);
 
-       <span class="hljs-comment">// 如果对网页做操作，直接使用Driver</span>
-       <span class="hljs-comment">// 执行JS：滚动效果</span>
-       driver.execute<span class="hljs-constructor">Script(<span class="hljs-string">"scrollTo(0,10000)"</span>)</span>;
+       // 如果对网页做操作，直接使用Driver
+       // 执行JS：滚动效果
+       driver.executeScript("scrollTo(0,10000)");
 
-       <span class="hljs-comment">// 等待加载示例</span>
-       <span class="hljs-comment">// 1. 超时加载等待</span>
-       driver.manage<span class="hljs-literal">()</span>.timeouts<span class="hljs-literal">()</span>.implicitly<span class="hljs-constructor">Wait(20, TimeUnit.SECONDS)</span>;
+       // 等待加载示例
+       // 1. 超时加载等待
+       driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 
-       <span class="hljs-comment">// 2. 等待加载组件</span>
-       WebDriverWait wait = <span class="hljs-keyword">new</span> <span class="hljs-constructor">WebDriverWait(<span class="hljs-params">driver</span>, 20)</span>;
-       wait.until(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">ExpectedConditions</span>.</span></span>presence<span class="hljs-constructor">OfElementLocated(By.<span class="hljs-params">cssSelector</span>(<span class="hljs-string">".red_box"</span>)</span>));
+       // 2. 等待加载组件
+       WebDriverWait wait = new WebDriverWait(driver, 20);
+       wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".red_box")));
 
 }
 
-<span class="hljs-comment">/**</span>
-<span class="hljs-comment"> * @desc get chrome driver</span>
-<span class="hljs-comment"> */</span>
-public static ChromeDriver get<span class="hljs-constructor">Driver()</span> {
+/**
+ * @desc get chrome driver
+ */
+public static ChromeDriver getDriver() {
 
-	HashMap<string, object=""> prefs = <span class="hljs-keyword">new</span> HashMap<string, object=""><span class="hljs-literal">()</span>;
-	prefs.put(<span class="hljs-string">"profile.default_content_settings"</span>, <span class="hljs-number">2</span>);
-	prefs.put(<span class="hljs-string">"profile.default_content_setting_values"</span>, <span class="hljs-number">2</span>);
-	prefs.put(<span class="hljs-string">"profile.managed_default_content_settings.images"</span>, <span class="hljs-number">2</span>);
+	HashMap<string, object=""> prefs = new HashMap<string, object="">();
+	prefs.put("profile.default_content_settings", 2);
+	prefs.put("profile.default_content_setting_values", 2);
+	prefs.put("profile.managed_default_content_settings.images", 2);
 
-	String userAgent = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">AppForum</span>.</span></span>get<span class="hljs-constructor">Agents()</span>;
-	ChromeOptions options = <span class="hljs-keyword">new</span> <span class="hljs-constructor">ChromeOptions()</span>;
-	options.set<span class="hljs-constructor">Binary(<span class="hljs-string">"/usr/bin/google-chrome-stable"</span>)</span>;
-	options.set<span class="hljs-constructor">ExperimentalOption(<span class="hljs-string">"prefs"</span>, <span class="hljs-params">prefs</span>)</span>;
-	options.add<span class="hljs-constructor">Arguments(<span class="hljs-string">"--user-agent="</span> + <span class="hljs-params">userAgent</span>，<span class="hljs-string">"--no-sandbox"</span>, <span class="hljs-string">"--test-type"</span>)</span>;
-	options.add<span class="hljs-constructor">Arguments(<span class="hljs-string">"--disable-infobars"</span>, <span class="hljs-string">"--headless"</span>, <span class="hljs-string">"--disable-gpu"</span>，<span class="hljs-string">"--enable-strict-powerful-feature-restrictions"</span>)</span>;
-	options.add<span class="hljs-constructor">Arguments(<span class="hljs-string">"--disable-plugins"</span>, <span class="hljs-string">"--disable-images"</span>, <span class="hljs-string">"--start-maximized"</span>)</span>;
+	String userAgent = AppForum.getAgents();
+	ChromeOptions options = new ChromeOptions();
+	options.setBinary("/usr/bin/google-chrome-stable");
+	options.setExperimentalOption("prefs", prefs);
+	options.addArguments("--user-agent=" + userAgent，"--no-sandbox", "--test-type");
+	options.addArguments("--disable-infobars", "--headless", "--disable-gpu"，"--enable-strict-powerful-feature-restrictions");
+	options.addArguments("--disable-plugins", "--disable-images", "--start-maximized");
 
-	DesiredCapabilities capabilities = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">DesiredCapabilities</span>.</span></span>chrome<span class="hljs-literal">()</span>;
-	capabilities.set<span class="hljs-constructor">Capability(ChromeOptions.CAPABILITY, <span class="hljs-params">options</span>)</span>;
-	capabilities.set<span class="hljs-constructor">JavascriptEnabled(<span class="hljs-params">true</span>)</span>;
+	DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+	capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+	capabilities.setJavascriptEnabled(true);
 
-	return <span class="hljs-keyword">new</span> <span class="hljs-constructor">ChromeDriver(<span class="hljs-params">capabilities</span>)</span>;
+	return new ChromeDriver(capabilities);
 }
 
-<span class="hljs-comment">/**</span>
-<span class="hljs-comment"> * @desc crawler html content</span>
-<span class="hljs-comment"> * @param url</span>
-<span class="hljs-comment"> */</span>
-public static Document get<span class="hljs-constructor">Document(String <span class="hljs-params">url</span>)</span> {
+/**
+ * @desc crawler html content
+ * @param url
+ */
+public static Document getDocument(String url) {
 
-	ChromeDriver driver = get<span class="hljs-constructor">Driver()</span>;
+	ChromeDriver driver = getDriver();
 	Document doc = null;
-	<span class="hljs-keyword">try</span> {
+	try {
 		driver.get(url);
-		doc = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Jsoup</span>.</span></span>parse(driver.get<span class="hljs-constructor">PageSource()</span>);
+		doc = Jsoup.parse(driver.getPageSource());
 	} catch (Exception e) {
 	} finally {
-		<span class="hljs-keyword">try</span> {
-			driver.quit<span class="hljs-literal">()</span>;
-			driver.close<span class="hljs-literal">()</span>;
+		try {
+			driver.quit();
+			driver.close();
 		} catch (Exception e) {
 		}
 	}
 
 	return doc;
-}</string,></string,></code></span></pre></div>
+}</string,></string,></code></pre></div>
 
 
 <h3 id="高级使用"><a href="#高级使用" class="headerlink" title="高级使用"></a>高级使用</h3><h4 id="设置代理服务器"><a href="#设置代理服务器" class="headerlink" title="设置代理服务器"></a>设置代理服务器</h4><p>  代理服务器的设置，可以参考Google-chrome的帮助信息，在代码层面很容易实现。</p>
 <p><img src="001.png" srcset="/img/loading.gif" alt="Google-chrome帮助信息"></p>
 <h4 id="Driver生命周期"><a href="#Driver生命周期" class="headerlink" title="Driver生命周期"></a>Driver生命周期</h4><p>  在我们的代码中“new ChromeDriver()”的时候，产生了多个外部进程，如下所示</p>
-<div class="hljs"><pre class=" language-hljs angelscript">root      <span class="hljs-number">8508</span>  <span class="hljs-number">8499</span>  <span class="hljs-number">1</span> <span class="hljs-number">04</span>:<span class="hljs-number">26</span> ?        <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">01</span> /usr/bin/google-chrome-stable --disable-background-networking --disable-client-side-phishing-detection --disable-<span class="hljs-keyword">default</span>-apps --disable-gpu --disable-hang-monitor --disable-images --disable-infobars --disable-plugins --disable-popup-blocking --disable-prompt-on-repost --disable-sync --disable-web-resources --enable-<span class="hljs-built_in">auto</span>mation --enable-logging --enable-strict-powerful-feature-restrictions --force-fieldtrials=SiteIsolationExtensions/Control --headless --ignore-certificate-errors --load-extension=/tmp/.org.chromium.Chromium<span class="hljs-number">.7</span>tAd3h/<span class="hljs-built_in">int</span>ernal --log-level=<span class="hljs-number">0</span> --metrics-recording-only --no-first-run --no-sandbox --password-store=basic --remote-debugging-port=<span class="hljs-number">0</span> --start-maximized --test-type --use-mock-keychain --user-agent=Mozilla/<span class="hljs-number">4.0</span> (compatible;MSIE7<span class="hljs-number">.0</span>;WindowsNT5<span class="hljs-number">.1</span>;Trident/<span class="hljs-number">4.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;.NETCLR2<span class="hljs-number">.0</span><span class="hljs-number">.50727</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>) --user-data-dir=/tmp/.org.chromium.Chromium<span class="hljs-number"><code class="language-hljs angelscript">root      <span class="hljs-number">8508</span>  <span class="hljs-number">8499</span>  <span class="hljs-number">1</span> <span class="hljs-number">04</span>:<span class="hljs-number">26</span> ?        <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">01</span> /usr/bin/google-chrome-stable --disable-background-networking --disable-client-side-phishing-detection --disable-<span class="hljs-keyword">default</span>-apps --disable-gpu --disable-hang-monitor --disable-images --disable-infobars --disable-plugins --disable-popup-blocking --disable-prompt-on-repost --disable-sync --disable-web-resources --enable-<span class="hljs-built_in">auto</span>mation --enable-logging --enable-strict-powerful-feature-restrictions --force-fieldtrials=SiteIsolationExtensions/Control --headless --ignore-certificate-errors --load-extension=/tmp/.org.chromium.Chromium<span class="hljs-number">.7</span>tAd3h/<span class="hljs-built_in">int</span>ernal --log-level=<span class="hljs-number">0</span> --metrics-recording-only --no-first-run --no-sandbox --password-store=basic --remote-debugging-port=<span class="hljs-number">0</span> --start-maximized --test-type --use-mock-keychain --user-agent=Mozilla/<span class="hljs-number">4.0</span> (compatible;MSIE7<span class="hljs-number">.0</span>;WindowsNT5<span class="hljs-number">.1</span>;Trident/<span class="hljs-number">4.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;.NETCLR2<span class="hljs-number">.0</span><span class="hljs-number">.50727</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>) --user-data-dir=/tmp/.org.chromium.Chromium<span class="hljs-number">.4</span>Sd7ob data:,
-root      <span class="hljs-number">8515</span>  <span class="hljs-number">8508</span>  <span class="hljs-number">0</span> <span class="hljs-number">04</span>:<span class="hljs-number">26</span> ?        <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span> /opt/google/chrome/chrome --type=zygote --no-sandbox --enable-logging --headless --log-level=<span class="hljs-number">0</span> --headless --user-agent=Mozilla/<span class="hljs-number">4.0</span> (compatible;MSIE7<span class="hljs-number">.0</span>;WindowsNT5<span class="hljs-number">.1</span>;Trident/<span class="hljs-number">4.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;.NETCLR2<span class="hljs-number">.0</span><span class="hljs-number">.50727</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>) --enable-crash-reporter
-root      <span class="hljs-number">8539</span>  <span class="hljs-number">8508</span>  <span class="hljs-number">0</span> <span class="hljs-number">04</span>:<span class="hljs-number">26</span> ?        <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span> /opt/google/chrome/chrome --type=gpu-process --enable-logging --headless --log-level=<span class="hljs-number">0</span> --no-sandbox --headless --user-agent=Mozilla/<span class="hljs-number">4.0</span> (compatible;MSIE7<span class="hljs-number">.0</span>;WindowsNT5<span class="hljs-number">.1</span>;Trident/<span class="hljs-number">4.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;.NETCLR2<span class="hljs-number">.0</span><span class="hljs-number">.50727</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>) --enable-crash-reporter --gpu-preferences=KAAAAAAAAACAAACAAQAAAAAAAAAAAGAAEAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA --use-gl=swiftshader-webgl --<span class="hljs-keyword">override</span>-use-software-gl-<span class="hljs-keyword">for</span>-tests --headless --user-agent=Mozilla/<span class="hljs-number">4.0</span> (compatible;MSIE7<span class="hljs-number">.0</span>;WindowsNT5<span class="hljs-number">.1</span>;Trident/<span class="hljs-number">4.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;.NETCLR2<span class="hljs-number">.0</span><span class="hljs-number">.50727</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>) --enable-crash-reporter --enable-logging --log-level=<span class="hljs-number">0</span> --service-request-channel-token=<span class="hljs-number">84633</span>B7AB3844DE44C0ADE5922EAFCB4
-root      <span class="hljs-number">8551</span>  <span class="hljs-number">8515</span>  <span class="hljs-number">9</span> <span class="hljs-number">04</span>:<span class="hljs-number">26</span> ?        <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">12</span> /opt/google/chrome/chrome --type=renderer --enable-<span class="hljs-built_in">auto</span>mation --enable-logging --log-level=<span class="hljs-number">0</span> --no-sandbox --test-type --use-gl=swiftshader-webgl --disable-gpu-compositing --service-pipe-token=<span class="hljs-number">0</span>D2C2CC1CF67A5903FDFECE210FEB597 --lang=en-US --headless --user-agent=Mozilla/<span class="hljs-number">4.0</span> (compatible;MSIE7<span class="hljs-number">.0</span>;WindowsNT5<span class="hljs-number">.1</span>;Trident/<span class="hljs-number">4.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>;.NETCLR2<span class="hljs-number">.0</span><span class="hljs-number">.50727</span>;SE2.XMetaSr1<span class="hljs-number">.0</span>) --enable-crash-reporter --num-raster-threads=<span class="hljs-number">1</span> --service-request-channel-token=<span class="hljs-number">0</span>D2C2CC1CF67A5903FDFECE210FEB597 --renderer-client-id=<span class="hljs-number">4</span> --<span class="hljs-keyword">shared</span>-files=v8_context_snapshot_data:<span class="hljs-number">100</span>,v8_natives_data:<span class="hljs-number">101</span></code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">root      8508  8499  1 04:26 ?        00:00:01 /usr/bin/google-chrome-stable --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-gpu --disable-hang-monitor --disable-images --disable-infobars --disable-plugins --disable-popup-blocking --disable-prompt-on-repost --disable-sync --disable-web-resources --enable-automation --enable-logging --enable-strict-powerful-feature-restrictions --force-fieldtrials=SiteIsolationExtensions/Control --headless --ignore-certificate-errors --load-extension=/tmp/.org.chromium.Chromium.7tAd3h/internal --log-level=0 --metrics-recording-only --no-first-run --no-sandbox --password-store=basic --remote-debugging-port=0 --start-maximized --test-type --use-mock-keychain --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --user-data-dir=/tmp/.org.chromium.Chromium.4Sd7ob data:,
+root      8515  8508  0 04:26 ?        00:00:00 /opt/google/chrome/chrome --type=zygote --no-sandbox --enable-logging --headless --log-level=0 --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter
+root      8539  8508  0 04:26 ?        00:00:00 /opt/google/chrome/chrome --type=gpu-process --enable-logging --headless --log-level=0 --no-sandbox --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --gpu-preferences=KAAAAAAAAACAAACAAQAAAAAAAAAAAGAAEAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA --use-gl=swiftshader-webgl --override-use-software-gl-for-tests --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --enable-logging --log-level=0 --service-request-channel-token=84633B7AB3844DE44C0ADE5922EAFCB4
+root      8551  8515  9 04:26 ?        00:00:12 /opt/google/chrome/chrome --type=renderer --enable-automation --enable-logging --log-level=0 --no-sandbox --test-type --use-gl=swiftshader-webgl --disable-gpu-compositing --service-pipe-token=0D2C2CC1CF67A5903FDFECE210FEB597 --lang=en-US --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --num-raster-threads=1 --service-request-channel-token=0D2C2CC1CF67A5903FDFECE210FEB597 --renderer-client-id=4 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101</code></pre></div>
 <p>可以看出其中只有一个Google-chrome浏览器的进程，其余三个是对应ChromeDriver的进程。这些进程实际上是通过系统层面来管理，我们的程序无法直接去操作进程的状态，比如Kill/Shutdown等，因此需要格外主要这些进程的生命周期。</p>
 <p>  如果我们的程序正常退出或意外推出了，这些进程有可能还存在于系统当中，占有一定资源，一般来说这些进程占有的资源从50MB-300MB之间，甚至更多。保留在系统中的这些进程，最终会成为”僵尸”进程，不退出也不释放资源。</p>
 <p>  一种简单粗暴的做法是，在系统中启动一个crontab任务，定期清理超过一定时间的chrome进程：</p>
-<div class="hljs"><pre class=" language-hljs bash"><span class="hljs-comment"><code class="language-hljs bash"><span class="hljs-comment">## 执行脚本：这里设置的阈值为5分钟</span>
-<span class="hljs-meta">#!/bin/bash</span>
-<span class="hljs-comment">## check PID's process time</span>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 执行脚本：这里设置的阈值为5分钟
+#!/bin/bash
+## check PID's process time
 
-<span class="hljs-keyword">function</span> show_elapsed_time()
+function show_elapsed_time()
 {
  user_hz=$(getconf CLK_TCK)
- pid=<span class="hljs-variable">$1</span>
- jiffies=$(cat /proc/<span class="hljs-variable">$pid</span>/<span class="hljs-built_in">stat</span> | cut -d<span class="hljs-string">" "</span> -f22)
- sys_uptime=$(cat /proc/uptime | cut -d<span class="hljs-string">" "</span> -f1)
- last_time=$(( <span class="hljs-variable">${sys_uptime%.*}</span> - <span class="hljs-variable">$jiffies</span>/<span class="hljs-variable">$user_hz</span> ))
- <span class="hljs-keyword">if</span> [ <span class="hljs-variable">$last_time</span> -gt 600 ] ; <span class="hljs-keyword">then</span>
-	<span class="hljs-built_in">echo</span> <span class="hljs-string">"kill process : <span class="hljs-variable">$pid</span>"</span>
-	<span class="hljs-built_in">kill</span> -9 <span class="hljs-variable">$pid</span>
- <span class="hljs-keyword">fi</span>
- <span class="hljs-built_in">echo</span> <span class="hljs-string">"the process <span class="hljs-variable">$pid</span> lasts for <span class="hljs-variable">$last_time</span> seconds."</span>
+ pid=$1
+ jiffies=$(cat /proc/$pid/stat | cut -d" " -f22)
+ sys_uptime=$(cat /proc/uptime | cut -d" " -f1)
+ last_time=$(( ${sys_uptime%.*} - $jiffies/$user_hz ))
+ if [ $last_time -gt 600 ] ; then
+	echo "kill process : $pid"
+	kill -9 $pid
+ fi
+ echo "the process $pid lasts for $last_time seconds."
 }
 
-<span class="hljs-built_in">echo</span> <span class="hljs-string">""</span>
-<span class="hljs-built_in">echo</span> `date <span class="hljs-string">"+%Y-%m-%d %H:%M:%S"</span>`
-<span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> `ps -ef | grep <span class="hljs-string">"google-chrome"</span> | grep -v grep | awk <span class="hljs-string">'{print $2}'</span> `;
-<span class="hljs-keyword">do</span>	
-	<span class="hljs-built_in">echo</span> <span class="hljs-string">"PID: <span class="hljs-variable">$item</span>"</span>
-	show_elapsed_time <span class="hljs-variable">$item</span>
-<span class="hljs-keyword">done</span>;
+echo ""
+echo `date "+%Y-%m-%d %H:%M:%S"`
+for item in `ps -ef | grep "google-chrome" | grep -v grep | awk '{print $2}' `;
+do	
+	echo "PID: $item"
+	show_elapsed_time $item
+done;
 
-<span class="hljs-comment">## crontab命令</span>
-*/1 * * * * sh /root/chrome/check.sh &gt;&gt; /root/chrome/logs.txt</code></span></pre></div>
+## crontab命令
+*/1 * * * * sh /root/chrome/check.sh &gt;&gt; /root/chrome/logs.txt</code></pre></div>
 
 <p>  如果是正常退出，或者能够检测到ShutdownHook，可以在ShutdownHook里面全部Kill外部的Chrome进程：</p>
-<div class="hljs"><pre class=" language-hljs arduino">Runtime.getRuntime.addShutdownHook(<span class="hljs-keyword"><code class="language-hljs arduino">Runtime.getRuntime.addShutdownHook(<span class="hljs-keyword">new</span> Thread(){
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-built_in">run</span>(){
-        <span class="hljs-comment">// 执行脚本，获取外部Chrome进程PID</span>
-        <span class="hljs-comment">// 通过PID，KILL进程</span>
-        <span class="hljs-comment">// 这里需要用到JNA：</span>
-        <span class="hljs-comment">//<dependency></dependency></span>
-        <span class="hljs-comment">//	<groupid>net.java.dev.jna</groupid></span>
-        <span class="hljs-comment">//	<artifactid>jna</artifactid></span>
-        <span class="hljs-comment">//</span>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Runtime.getRuntime.addShutdownHook(new Thread(){
+    public void run(){
+        // 执行脚本，获取外部Chrome进程PID
+        // 通过PID，KILL进程
+        // 这里需要用到JNA：
+        //<dependency>
+        //	<groupid>net.java.dev.jna&lt;/groupId&gt;
+        //	<artifactid>jna&lt;/artifactId&gt;
+        //&lt;/dependency&gt;
 
     }
-});</code></span></pre></div>
+});</artifactid></groupid></dependency></code></pre></div>
 
 <h4 id="Tab使用"><a href="#Tab使用" class="headerlink" title="Tab使用"></a>Tab使用</h4><p>  这里还有一个优化的点就是，是不是考虑使用tab标签页来完成每个URL，不需要每次都产生一个Chrome对象，减少程序开支。</p>
 

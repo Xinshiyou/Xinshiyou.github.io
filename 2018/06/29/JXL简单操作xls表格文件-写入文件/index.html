@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      439 字
+      438 字
     </span>
   
 
@@ -278,10 +278,10 @@
 }</code></span></span></pre></div>
 
 <p>调用时，可参考如下方式：</p>
-<div class="hljs"><pre class=" language-hljs armasm"><span class="hljs-symbol">WritableWorkbook</span> <span class="hljs-keyword">book </span>= getWorkBook(<span class="hljs-string">"Filepath"</span>)<span class="hljs-comment"><code class="language-hljs armasm"><span class="hljs-symbol">WritableWorkbook</span> <span class="hljs-keyword">book </span>= getWorkBook(<span class="hljs-string">"Filepath"</span>)<span class="hljs-comment">;</span>
-// your <span class="hljs-meta">data</span> format: list for list&lt;<span class="hljs-meta">map</span>&gt; <span class="hljs-meta">data</span>
-<span class="hljs-symbol">write2xlsMap</span>(<span class="hljs-keyword">book,...);</span>
-<span class="hljs-keyword">book.close();</span></code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">WritableWorkbook book = getWorkBook("Filepath");
+// your data format: list for list<map> data
+write2xlsMap(book,...);
+book.close();</map></code></pre></div>
             </article>
             <hr>
             <div>

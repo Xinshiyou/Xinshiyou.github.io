@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      551 字
+      604 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      8
+      9
        分钟
     </span>
   
@@ -197,138 +197,138 @@
 
 <p>  EasyPR中关于车牌的识别已经比较完善，这里主要涉及到三个地方的修改：颜色枚举类、颜色识别逻辑、增加字符限制。</p>
 <h2 id="添加颜色"><a href="#添加颜色" class="headerlink" title="添加颜色"></a>添加颜色</h2><p>在自定义Color的枚举类中，添加 绿色，修改之后为：</p>
-<div class="hljs"><pre class=" language-hljs crystal">public <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title"><code class="language-hljs crystal">public <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">Color</span> {</span>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">public enum Color {
 	UNKNOWN, BLUE, YELLOW, GREEN
-};</code></span></span></pre></div>
+};</code></pre></div>
 
 <h2 id="添加绿色识别"><a href="#添加绿色识别" class="headerlink" title="添加绿色识别"></a>添加绿色识别</h2><p>  在OpenCV或其他软件中，识别颜色主要通过RGB映射到HSV空间，通过判断H、S、V的相关值来判断颜色的，主要原理可以参考：<a href="http://blog.csdn.net/liuqz2009/article/details/47623399" target="_blank" rel="noopener">OpenCV颜色识别</a>。修改之后的部分代码如下：</p>
-<div class="hljs"><pre class=" language-hljs angelscript"><span class="hljs-keyword">public</span> static Mat colorMatch(<span class="hljs-keyword">final</span> Mat src, <span class="hljs-keyword"><code class="language-hljs angelscript"><span class="hljs-keyword">public</span> static Mat colorMatch(<span class="hljs-keyword">final</span> Mat src, <span class="hljs-keyword">final</span> Color r,
-		<span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span>ean adaptive_minsv) {
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">public static Mat colorMatch(final Mat src, final Color r,
+		final boolean adaptive_minsv) {
 
-	<span class="hljs-keyword">final</span> <span class="hljs-built_in">float</span> max_sv = <span class="hljs-number">255</span>;
-	<span class="hljs-keyword">final</span> <span class="hljs-built_in">float</span> minref_sv = <span class="hljs-number">40</span>;
-	<span class="hljs-keyword">final</span> <span class="hljs-built_in">float</span> minabs_sv = <span class="hljs-number">60</span>;
+	final float max_sv = 255;
+	final float minref_sv = 40;
+	final float minabs_sv = 60;
 
-	<span class="hljs-comment">// blue的H范围75-130</span>
-	<span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> min_blue = <span class="hljs-number">100</span>;
-	<span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> max_blue = <span class="hljs-number">140</span>;
+	// blue的H范围75-130
+	final int min_blue = 100;
+	final int max_blue = 140;
 
-	<span class="hljs-comment">// yellow的H范围22- 38</span>
-	<span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> min_yellow = <span class="hljs-number">10</span>;
-	<span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> max_yellow = <span class="hljs-number">35</span>;
+	// yellow的H范围22- 38
+	final int min_yellow = 10;
+	final int max_yellow = 35;
 
-	<span class="hljs-comment">// green的H范围38-75// -- 增加绿色判断范围 --</span>
-	<span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> min_green = <span class="hljs-number">35</span>;
-	<span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> max_green = <span class="hljs-number">80</span>;
+	// green的H范围38-75// -- 增加绿色判断范围 --
+	final int min_green = 35;
+	final int max_green = 80;
 
-	<span class="hljs-comment">// 转到HSV空间进行处理，颜色搜索主要使用的是H分量进行蓝色与黄色、绿色的匹配工作</span>
+	// 转到HSV空间进行处理，颜色搜索主要使用的是H分量进行蓝色与黄色、绿色的匹配工作
 	Mat src_hsv = new Mat();
 	cvtColor(src, src_hsv, CV_BGR2HSV);
 	MatVector hsvSplit = new MatVector();
 	split(src_hsv, hsvSplit);
-	equalizeHist(hsvSplit.<span class="hljs-keyword">get</span>(<span class="hljs-number">2</span>), hsvSplit.<span class="hljs-keyword">get</span>(<span class="hljs-number">2</span>));
+	equalizeHist(hsvSplit.get(2), hsvSplit.get(2));
 	merge(hsvSplit, src_hsv);
 
-	<span class="hljs-comment">// 匹配模板基色,切换以查找想要的基色</span>
-	<span class="hljs-built_in">int</span> min_h = <span class="hljs-number">0</span>;
-	<span class="hljs-built_in">int</span> max_h = <span class="hljs-number">0</span>;
-	<span class="hljs-keyword">switch</span> (r) {
-	<span class="hljs-keyword">case</span> BLUE:
+	// 匹配模板基色,切换以查找想要的基色
+	int min_h = 0;
+	int max_h = 0;
+	switch (r) {
+	case BLUE:
 		min_h = min_blue;
 		max_h = max_blue;
-		<span class="hljs-keyword">break</span>;
-	<span class="hljs-keyword">case</span> YELLOW:
+		break;
+	case YELLOW:
 		min_h = min_yellow;
 		max_h = max_yellow;
-		<span class="hljs-keyword">break</span>;
-	<span class="hljs-keyword">case</span> GREEN:
+		break;
+	case GREEN:
 		min_h = min_green;
 		max_h = max_green;
-	<span class="hljs-keyword">default</span>:
-		<span class="hljs-keyword">break</span>;
+	default:
+		break;
 	}
 
-	<span class="hljs-built_in">float</span> diff_h = (<span class="hljs-built_in">float</span>) ((max_h - min_h) / <span class="hljs-number">2</span>);
-	<span class="hljs-built_in">int</span> avg_h = (<span class="hljs-built_in">int</span>) (min_h + diff_h);
+	float diff_h = (float) ((max_h - min_h) / 2);
+	int avg_h = (int) (min_h + diff_h);
 
-	<span class="hljs-built_in">int</span> channels = src_hsv.channels();
-	<span class="hljs-built_in">int</span> nRows = src_hsv.rows();
-	<span class="hljs-comment">// 图像数据列需要考虑通道数的影响；</span>
-	<span class="hljs-built_in">int</span> nCols = src_hsv.cols() * channels;
+	int channels = src_hsv.channels();
+	int nRows = src_hsv.rows();
+	// 图像数据列需要考虑通道数的影响；
+	int nCols = src_hsv.cols() * channels;
 
-	<span class="hljs-comment">// 连续存储的数据，按一行处理</span>
-	<span class="hljs-keyword">if</span> (src_hsv.isContinuous()) {
+	// 连续存储的数据，按一行处理
+	if (src_hsv.isContinuous()) {
 		nCols *= nRows;
-		nRows = <span class="hljs-number">1</span>;
+		nRows = 1;
 	}
 
-	<span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; nRows; ++i) {
+	for (int i = 0; i &lt; nRows; ++i) {
 		BytePointer p = src_hsv.ptr(i);
-		<span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> j = <span class="hljs-number">0</span>; j &lt; nCols; j += <span class="hljs-number">3</span>) {
-			<span class="hljs-built_in">int</span> H = p.<span class="hljs-keyword">get</span>(j) &amp; <span class="hljs-number">0xFF</span>;
-			<span class="hljs-built_in">int</span> S = p.<span class="hljs-keyword">get</span>(j + <span class="hljs-number">1</span>) &amp; <span class="hljs-number">0xFF</span>;
-			<span class="hljs-built_in">int</span> V = p.<span class="hljs-keyword">get</span>(j + <span class="hljs-number">2</span>) &amp; <span class="hljs-number">0xFF</span>;
+		for (int j = 0; j &lt; nCols; j += 3) {
+			int H = p.get(j) &amp; 0xFF;
+			int S = p.get(j + 1) &amp; 0xFF;
+			int V = p.get(j + 2) &amp; 0xFF;
 
-			<span class="hljs-built_in">bool</span>ean colorMatched = <span class="hljs-literal">false</span>;
+			boolean colorMatched = false;
 
-			<span class="hljs-keyword">if</span> (H &gt; min_h &amp;&amp; H &lt; max_h) {
+			if (H &gt; min_h &amp;&amp; H &lt; max_h) {
 
-				<span class="hljs-built_in">int</span> Hdiff = <span class="hljs-number">0</span>;
-				<span class="hljs-keyword">if</span> (H &gt; avg_h)
+				int Hdiff = 0;
+				if (H &gt; avg_h)
 					Hdiff = H - avg_h;
-				<span class="hljs-keyword">else</span>
+				else
 					Hdiff = avg_h - H;
 
-				<span class="hljs-built_in">float</span> Hdiff_p = Hdiff / diff_h;
+				float Hdiff_p = Hdiff / diff_h;
 
-				<span class="hljs-built_in">float</span> min_sv = <span class="hljs-number">0</span>;
-				<span class="hljs-keyword">if</span> (<span class="hljs-literal">true</span> == adaptive_minsv)
-					min_sv = minref_sv - minref_sv / <span class="hljs-number">2</span> * (<span class="hljs-number">1</span> - Hdiff_p);
-				<span class="hljs-keyword">else</span>
+				float min_sv = 0;
+				if (true == adaptive_minsv)
+					min_sv = minref_sv - minref_sv / 2 * (1 - Hdiff_p);
+				else
 					min_sv = minabs_sv;
 
-				<span class="hljs-keyword">if</span> ((S &gt; min_sv &amp;&amp; S &lt;= max_sv)
+				if ((S &gt; min_sv &amp;&amp; S &lt;= max_sv)
 						&amp;&amp; (V &gt; min_sv &amp;&amp; V &lt;= max_sv))
-					colorMatched = <span class="hljs-literal">true</span>;
+					colorMatched = true;
 			}
 
-			<span class="hljs-keyword">if</span> (colorMatched == <span class="hljs-literal">true</span>) {
-				p.put(j, (byte) <span class="hljs-number">0</span>);
-				p.put(j + <span class="hljs-number">1</span>, (byte) <span class="hljs-number">0</span>);
-				p.put(j + <span class="hljs-number">2</span>, (byte) <span class="hljs-number">255</span>);
-			} <span class="hljs-keyword">else</span> {
-				p.put(j, (byte) <span class="hljs-number">0</span>);
-				p.put(j + <span class="hljs-number">1</span>, (byte) <span class="hljs-number">0</span>);
-				p.put(j + <span class="hljs-number">2</span>, (byte) <span class="hljs-number">0</span>);
+			if (colorMatched == true) {
+				p.put(j, (byte) 0);
+				p.put(j + 1, (byte) 0);
+				p.put(j + 2, (byte) 255);
+			} else {
+				p.put(j, (byte) 0);
+				p.put(j + 1, (byte) 0);
+				p.put(j + 2, (byte) 0);
 			}
 		}
 	}
 
-	<span class="hljs-comment">// 获取颜色匹配后的二值灰度图</span>
+	// 获取颜色匹配后的二值灰度图
 	MatVector hsvSplit_done = new MatVector();
 	split(src_hsv, hsvSplit_done);
-	Mat src_grey = hsvSplit_done.<span class="hljs-keyword">get</span>(<span class="hljs-number">2</span>);
+	Mat src_grey = hsvSplit_done.get(2);
 
-	<span class="hljs-keyword">return</span> src_grey;
-}</code></span></pre></div>
+	return src_grey;
+}</code></pre></div>
 <p>其中RGB与HSV颜色识别对应的关系，可以参考：<a href="http://www.cnblogs.com/wangyblzu/p/5710715.html" target="_blank" rel="noopener">OpenCV中HSV颜色模型及颜色分量范围</a></p>
 <h2 id="增加字符限制"><a href="#增加字符限制" class="headerlink" title="增加字符限制"></a>增加字符限制</h2><p>  以前的车牌主要是7位字符，包括省 <strong>[A-Z].[5位字符]</strong> 的方式。但新能源车牌，后面5为字符变为6位字符，因此之前的判断方法不能够获取全部车牌，最好的情况也只能获得前面的7位字符。因此需要修改为：</p>
-<div class="hljs"><pre class=" language-hljs angelscript"><span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> RebuildRect(<span class="hljs-keyword"><code class="language-hljs angelscript"><span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> RebuildRect(<span class="hljs-keyword">final</span> Vector<rect> vecRect, Vector<rect> outRect,
-		<span class="hljs-built_in">int</span> specIndex) {
-	<span class="hljs-comment">// 最大只能有7个Rect,减去中文的就只有6个Rect</span>
-	<span class="hljs-built_in">int</span> count = <span class="hljs-number">7</span>;<span class="hljs-comment">// --这里将6修改为7即可--</span>
-	<span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; vecRect.size(); i++) {
-		<span class="hljs-comment">// 将特殊字符左边的Rect去掉，这个可能会去掉中文Rect，不过没关系，我们后面会重建。</span>
-		<span class="hljs-keyword">if</span> (i &lt; specIndex)
-			<span class="hljs-keyword">continue</span>;
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">private int RebuildRect(final Vector<rect> vecRect, Vector<rect> outRect,
+		int specIndex) {
+	// 最大只能有7个Rect,减去中文的就只有6个Rect
+	int count = 7;// --这里将6修改为7即可--
+	for (int i = 0; i &lt; vecRect.size(); i++) {
+		// 将特殊字符左边的Rect去掉，这个可能会去掉中文Rect，不过没关系，我们后面会重建。
+		if (i &lt; specIndex)
+			continue;
 
-		outRect.add(vecRect.<span class="hljs-keyword">get</span>(i));
-		<span class="hljs-keyword">if</span> (--count == <span class="hljs-number">0</span>)
-			<span class="hljs-keyword">break</span>;
+		outRect.add(vecRect.get(i));
+		if (--count == 0)
+			break;
 	}
 
-	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-}</rect></rect></code></span></pre></div>
+	return 0;
+}</rect></rect></code></pre></div>
 <p>至此，可以识别绿色车牌。</p>
 
             </article>

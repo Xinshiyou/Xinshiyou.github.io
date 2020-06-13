@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      883 字
+      932 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      14
+      15
        分钟
     </span>
   
@@ -197,117 +197,117 @@
 
 
 <h2 id="安装Hive"><a href="#安装Hive" class="headerlink" title="安装Hive"></a>安装Hive</h2><p><strong>1.下载Hive</strong><br><a href="http://apache.mirrors.ionfish.org/hive/" target="_blank" rel="noopener">http://apache.mirrors.ionfish.org/hive/</a><br>我安装的是apache-hive-1.2.1-bin.tar.gz</p>
-<div class="hljs"><pre class=" language-hljs angelscript">[<span class="hljs-symbol"><code class="language-hljs angelscript">[<span class="hljs-symbol">hadoop@</span>hftclclw0001 ~]$ pwd
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 ~]$ pwd
 /home/hadoop
 
-[<span class="hljs-symbol">hadoop@</span>hftclclw0001 ~]$ wget http:<span class="hljs-comment">//apache.mirrors.ionfish.org/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz</span>
+[hadoop@hftclclw0001 ~]$ wget http://apache.mirrors.ionfish.org/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
 
-[<span class="hljs-symbol">hadoop@</span>hftclclw0001 ~]$ ll
-total <span class="hljs-number">637256</span>
-drwx------ <span class="hljs-number">10</span> hadoop root      <span class="hljs-number">4096</span> Oct <span class="hljs-number">27</span> <span class="hljs-number">02</span>:<span class="hljs-number">22</span> apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number">.1</span>-bin
--rw-------  <span class="hljs-number">1</span> hadoop root  <span class="hljs-number">92834839</span> Jun <span class="hljs-number">26</span> <span class="hljs-number">18</span>:<span class="hljs-number">34</span> apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number">.1</span>-bin.tar.gz
-drwx------  <span class="hljs-number">3</span> hadoop root      <span class="hljs-number">4096</span> Oct <span class="hljs-number">27</span> <span class="hljs-number">09</span>:<span class="hljs-number">05</span> data
-drwx------ <span class="hljs-number">11</span> hadoop root      <span class="hljs-number">4096</span> Oct <span class="hljs-number">21</span> <span class="hljs-number">03</span>:<span class="hljs-number">20</span> hadoop<span class="hljs-number">-2.7</span><span class="hljs-number">.1</span>
--rw-------  <span class="hljs-number">1</span> hadoop root <span class="hljs-number">210606807</span> Oct <span class="hljs-number">20</span> <span class="hljs-number">09</span>:<span class="hljs-number">00</span> hadoop<span class="hljs-number">-2.7</span><span class="hljs-number">.1</span>.tar.gz
-drwx------  <span class="hljs-number">2</span> hadoop root      <span class="hljs-number">4096</span> Oct <span class="hljs-number">23</span> <span class="hljs-number">02</span>:<span class="hljs-number">08</span> install-sqoop
-drwx------ <span class="hljs-number">13</span> hadoop root      <span class="hljs-number">4096</span> Oct <span class="hljs-number">20</span> <span class="hljs-number">09</span>:<span class="hljs-number">22</span> spark<span class="hljs-number">-1.5</span><span class="hljs-number">.1</span>-bin-hadoop2<span class="hljs-number">.6</span>
--rw-------  <span class="hljs-number">1</span> hadoop root <span class="hljs-number">280901736</span> Oct <span class="hljs-number">20</span> <span class="hljs-number">09</span>:<span class="hljs-number">19</span> spark<span class="hljs-number">-1.5</span><span class="hljs-number">.1</span>-bin-hadoop2<span class="hljs-number">.6</span>.tgz
-drwx------ <span class="hljs-number">22</span> hadoop root      <span class="hljs-number">4096</span> Oct <span class="hljs-number">23</span> <span class="hljs-number">02</span>:<span class="hljs-number">08</span> sqoop<span class="hljs-number">-1.99</span><span class="hljs-number">.6</span>-bin-hadoop200
--rw-------  <span class="hljs-number">1</span> hadoop root  <span class="hljs-number">68177818</span> May  <span class="hljs-number">5</span> <span class="hljs-number">22</span>:<span class="hljs-number">34</span> sqoop<span class="hljs-number">-1.99</span><span class="hljs-number">.6</span>-bin-hadoop200.tar.gz
+[hadoop@hftclclw0001 ~]$ ll
+total 637256
+drwx------ 10 hadoop root      4096 Oct 27 02:22 apache-hive-1.2.1-bin
+-rw-------  1 hadoop root  92834839 Jun 26 18:34 apache-hive-1.2.1-bin.tar.gz
+drwx------  3 hadoop root      4096 Oct 27 09:05 data
+drwx------ 11 hadoop root      4096 Oct 21 03:20 hadoop-2.7.1
+-rw-------  1 hadoop root 210606807 Oct 20 09:00 hadoop-2.7.1.tar.gz
+drwx------  2 hadoop root      4096 Oct 23 02:08 install-sqoop
+drwx------ 13 hadoop root      4096 Oct 20 09:22 spark-1.5.1-bin-hadoop2.6
+-rw-------  1 hadoop root 280901736 Oct 20 09:19 spark-1.5.1-bin-hadoop2.6.tgz
+drwx------ 22 hadoop root      4096 Oct 23 02:08 sqoop-1.99.6-bin-hadoop200
+-rw-------  1 hadoop root  68177818 May  5 22:34 sqoop-1.99.6-bin-hadoop200.tar.gz
 
-[<span class="hljs-symbol">hadoop@</span>hftclclw0001 ~]$ cd apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number">.1</span>-bin/conf/
+[hadoop@hftclclw0001 ~]$ cd apache-hive-1.2.1-bin/conf/
 
-[<span class="hljs-symbol">hadoop@</span>hftclclw0001 conf]$ pwd
-/home/hadoop/apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number">.1</span>-bin/conf
+[hadoop@hftclclw0001 conf]$ pwd
+/home/hadoop/apache-hive-1.2.1-bin/conf
 
-[<span class="hljs-symbol">hadoop@</span>hftclclw0001 conf]$ vi hive-env.sh
+[hadoop@hftclclw0001 conf]$ vi hive-env.sh
 
-HADOOP_HOME=/home/hadoop/hadoop<span class="hljs-number">-2.7</span><span class="hljs-number">.1</span> =&gt;配置Hadoop_Home
+HADOOP_HOME=/home/hadoop/hadoop-2.7.1 =&gt;配置Hadoop_Home
 
-export HIVE_CONF_DIR=/home/hadoop/apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number">.1</span>-bin/conf=&gt;配置HIVE_conf_home
-export HIVE_AUX_JARS_PATH=/home/hadoop/apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number">.1</span>-bin/lib/</code></span></pre></div>
+export HIVE_CONF_DIR=/home/hadoop/apache-hive-1.2.1-bin/conf=&gt;配置HIVE_conf_home
+export HIVE_AUX_JARS_PATH=/home/hadoop/apache-hive-1.2.1-bin/lib/</code></pre></div>
 <p>我使用了mysql作为metastore ，则需要在lib目录下添加mysql的驱动</p>
-<div class="hljs"><pre class=" language-hljs dust"><span class="xml"><code class="language-hljs dust"><span class="xml">[hadoop@hftclclw0001 lib]$ pwd</span>
-<span class="xml">/home/hadoop/apache-hive-1.2.1-bin/lib</span>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 lib]$ pwd
+/home/hadoop/apache-hive-1.2.1-bin/lib
 
-<span class="xml">[hadoop@hftclclw0001 lib]$ ll | grep mysql</span>
-<span class="xml">-rw-------  1 hadoop root   848401 Oct 27 01:48 mysql-connector-java-5.1.25-bin.jar</span>
+[hadoop@hftclclw0001 lib]$ ll | grep mysql
+-rw-------  1 hadoop root   848401 Oct 27 01:48 mysql-connector-java-5.1.25-bin.jar
 
-<span class="xml">[hadoop@hftclclw0001 conf]$ vi hive-site.xml</span>
-<span class="xml">[hadoop@hftclclw0001 conf]$ cat hive-site.xml </span>
-<span class="xml"><span class="hljs-meta"><!--?xml version="1.0"?--></span></span>
-<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">configuration</span>&gt;</span></span>
-<span class="xml">	<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span></span>
-<span class="xml">    		<span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>hive.metastore.local<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</span></code></span><code class="language-hljs dust">
-<span class="xml">    		<span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>false<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</span>                                    =&gt;metastore我的mysql不是在该server上
-<span class="xml">    	<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</span>
-<span class="xml">	<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span></span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>jdbc:mysql://</span><span class="hljs-template-variable">{ip:port}</span><span class="xml">/</span><span class="hljs-template-variable">{databases}</span><span class="xml"><span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</span>        =&gt; mysql服务的ip和端口号
-<span class="xml">	<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</span>
-<span class="xml">	<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span></span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>javax.jdo.option.ConnectionDriveName<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</span>
-<span class="xml">	<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</span>
-<span class="xml">	<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span></span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span></span><span class="hljs-template-variable">{username}</span><span class="xml"><span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</span>
-<span class="xml">	<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</span>
-<span class="xml">	<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span></span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span></span><span class="hljs-template-variable">{password}</span><span class="xml"><span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</span>
-<span class="xml">	<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</span>
-<span class="xml">	<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span></span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>hive.metastore.warehouse.dir<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</span>
-<span class="xml">		<span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>/hive/warehouse<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</span>                      =&gt;hive的仓库目录，需要在HDFS上创建，并修改权限
-<span class="xml">	<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</span>
-<span class="xml">	<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span></span>
-<span class="xml">	        <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>hive.metastore.uris<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</span>
-<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>thrift://</span><span class="hljs-template-variable">{ip}</span><span class="xml">:</span><span class="hljs-template-variable">{port}</span><span class="xml"><span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</span>                 =&gt;本机ip和端口号，启动metastore服务
-<span class="xml">	<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</span>
-<span class="xml"><span class="hljs-tag"><!--<span class="hljs-name"-->configuration</span>&gt;</span>
-<span class="xml">[hadoop@hftclclw0001 conf]$ vi hive-log4j.properties                =&gt; Log4j的配置，可以修改日志目录</span></code></pre></div>
+[hadoop@hftclclw0001 conf]$ vi hive-site.xml
+[hadoop@hftclclw0001 conf]$ cat hive-site.xml 
+<!--?xml version&#x3D;"1.0"?-->
+<configuration>
+	<property>
+    		<name>hive.metastore.local&lt;/name&gt;
+    		<value>false&lt;/value&gt;                                    =&gt;metastore我的mysql不是在该server上
+    	&lt;/property&gt;
+	<property>
+		<name>javax.jdo.option.ConnectionURL&lt;/name&gt;
+		<value>jdbc:mysql://{ip:port}/{databases}&lt;/value&gt;        =&gt; mysql服务的ip和端口号
+	&lt;/property&gt;
+	<property>
+		<name>javax.jdo.option.ConnectionDriveName&lt;/name&gt;
+		<value>com.mysql.jdbc.Driver&lt;/value&gt;
+	&lt;/property&gt;
+	<property>
+		<name>javax.jdo.option.ConnectionUserName&lt;/name&gt;
+		<value>{username}&lt;/value&gt;
+	&lt;/property&gt;
+	<property>
+		<name>javax.jdo.option.ConnectionPassword&lt;/name&gt;
+		<value>{password}&lt;/value&gt;
+	&lt;/property&gt;
+	<property>
+		<name>hive.metastore.warehouse.dir&lt;/name&gt;
+		<value>/hive/warehouse&lt;/value&gt;                      =&gt;hive的仓库目录，需要在HDFS上创建，并修改权限
+	&lt;/property&gt;
+	<property>
+	        <name>hive.metastore.uris&lt;/name&gt;
+            <value>thrift://{ip}:{port}&lt;/value&gt;                 =&gt;本机ip和端口号，启动metastore服务
+	&lt;/property&gt;
+&lt;/configuration&gt;
+[hadoop@hftclclw0001 conf]$ vi hive-log4j.properties                =&gt; Log4j的配置，可以修改日志目录</value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></configuration></code></pre></div>
 <p><strong>2.启动metastore</strong></p>
-<div class="hljs"><pre class=" language-hljs elixir">[hadoop<span class="hljs-variable">@hftclclw0001</span> bin]<span class="hljs-variable"><code class="language-hljs elixir">[hadoop<span class="hljs-variable">@hftclclw0001</span> bin]<span class="hljs-variable">$ </span>pwd
-/home/hadoop/apache-hive<span class="hljs-number">-1.2</span>.<span class="hljs-number">1</span>-bin/bin
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 bin]$ pwd
+/home/hadoop/apache-hive-1.2.1-bin/bin
 
-[hadoop<span class="hljs-variable">@hftclclw0001</span> bin]<span class="hljs-variable">$ </span>./hive --service metastore &amp;
+[hadoop@hftclclw0001 bin]$ ./hive --service metastore &amp;
 
-[hadoop<span class="hljs-variable">@hftclclw0001</span> bin]<span class="hljs-variable">$ </span>ps ax|grep metastore</code></span></pre></div>
+[hadoop@hftclclw0001 bin]$ ps ax|grep metastore</code></pre></div>
 <p><strong>3.启动HiveServer2</strong></p>
-<div class="hljs"><pre class=" language-hljs elixir">[hadoop<span class="hljs-variable">@hftclclw0001</span> bin]<span class="hljs-variable"><code class="language-hljs elixir">[hadoop<span class="hljs-variable">@hftclclw0001</span> bin]<span class="hljs-variable">$ </span>pwd
-/home/hadoop/apache-hive<span class="hljs-number">-1.2</span>.<span class="hljs-number">1</span>-bin/bin
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 bin]$ pwd
+/home/hadoop/apache-hive-1.2.1-bin/bin
 
-[hadoop<span class="hljs-variable">@hftclclw0001</span> bin]<span class="hljs-variable">$ </span>./hive --service hiveserver2 &amp;
+[hadoop@hftclclw0001 bin]$ ./hive --service hiveserver2 &amp;
 
-[hadoop<span class="hljs-variable">@hftclclw0001</span> bin]<span class="hljs-variable">$ </span>ps ax|grep HiveServer2</code></span></pre></div>
+[hadoop@hftclclw0001 bin]$ ps ax|grep HiveServer2</code></pre></div>
 <p><strong>4.启动shell 或是 beeline</strong></p>
-<div class="hljs"><pre class=" language-hljs dockerfile">[hadoop@hftclclw0001 bin]$ ./hive <span class="hljs-keyword"><code class="language-hljs dockerfile">[hadoop@hftclclw0001 bin]$ ./hive <span class="hljs-keyword">shell</span></code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 bin]$ ./hive shell</code></pre></div>
 <h2 id="metastore"><a href="#metastore" class="headerlink" title="metastore"></a>metastore</h2><p>原文请参考：<a href="http://www.cloudera.com/content/www/en-us/documentation/archive/cdh/4-x/4-2-0/CDH4-Installation-Guide/cdh4ig_topic_18_4.html" target="_blank" rel="noopener">Configuring the Hive Metastore</a>。</p>
 <p>1.内置模式：将数据保存在内置的Derby数据库中，这种方式最简单，但是Derby每次只能访问一个数据文件。<br>Drive ==&gt;  Metastore  ==&gt; Derby</p>
 <p>2.本地模式：将元数据保存在本地的独立数据库(如mysql)等<br>Driver ===&gt; Metastore<br>Driver ===&gt; Metastore       ===&gt; DB<br>Driver ===&gt; Metastore<br>每个server都需要配置metastore，并启动metastore服务</p>
 <p>3.远程模式：使用thrift访问metastore<br>Client1<br>Client2   ===&gt; Metastore ===&gt; DB<br>Client3 </p>
 <p>4.配置：<br>如上述配置，我们已经启动了metastore服务在上述hftclclw0001机器上，<br>我们在另一台server上，如hftclcld0001机器上，安装hive，配置如上述配置一直，仅仅修改hive-site.xml如下：</p>
-<div class="hljs"><pre class=" language-hljs dust"><span class="xml"><span class="hljs-meta"><code class="language-hljs dust"><span class="xml"><span class="hljs-meta"><!--?xml version="1.0"?--></span></span>
-<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">configuration</span>&gt;</span></span>
-<span class="xml">    	<span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span></span>
-<span class="xml">	        <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>hive.metastore.uris<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</span></code></span><code class="language-hljs dust">
-<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>thrift://</span><span class="hljs-template-variable">{ip}</span><span class="xml">:</span><span class="hljs-template-variable">{port}</span><span class="xml"><span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</span></code></span><code class="language-hljs dust">
-<span class="xml">	<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</span>
-<span class="xml"><span class="hljs-tag"><!--<span class="hljs-name"-->configuration</span>&gt;</span></code></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><!--?xml version&#x3D;"1.0"?-->
+<configuration>
+    	<property>
+	        <name>hive.metastore.uris&lt;/name&gt;
+            <value>thrift://{ip}:{port}&lt;/value&gt;
+	&lt;/property&gt;
+&lt;/configuration&gt;</value></name></property></configuration></code></pre></div>
 <p>即我们通过thrift协议，访问hftclclw0001上面的metastore，并访问hive的元数据</p>
-<div class="hljs"><pre class=" language-hljs angelscript">[<span class="hljs-symbol">root@</span>hftclcld0001 apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number"><code class="language-hljs angelscript">[<span class="hljs-symbol">root@</span>hftclcld0001 apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number">.1</span>-bin]# pwd
-/home/hadoop/apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number">.1</span>-bin
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[root@hftclcld0001 apache-hive-1.2.1-bin]# pwd
+/home/hadoop/apache-hive-1.2.1-bin
 
-[<span class="hljs-symbol">root@</span>hftclcld0001 apache-hive<span class="hljs-number">-1.2</span><span class="hljs-number">.1</span>-bin]# ./bin/hive shell
+[root@hftclcld0001 apache-hive-1.2.1-bin]# ./bin/hive shell
 hive&gt; 
 
 hive&gt; show databases;
 OK
-<span class="hljs-keyword">default</span>
+default
 hive      =&gt;能访问到hive的metastore，访问到元数据(我们之前创建的)
 human_resources
-Time taken: <span class="hljs-number">0.388</span> seconds, Fetched: <span class="hljs-number">3</span> row(s)</code></span></pre></div>
+Time taken: 0.388 seconds, Fetched: 3 row(s)</code></pre></div>
 
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
 <li><a href="http://www.36dsj.com/archives/60604" target="_blank" rel="noopener">Apache Hive2.0的新特性介绍</a></li>
@@ -332,9 +332,9 @@ Time taken: <span class="hljs-number">0.388</span> seconds, Fetched: <span class
                     
                       <a class="hover-with-bg" href="/tags/%E9%83%A8%E7%BD%B2/">部署</a>
                     
-                      <a class="hover-with-bg" href="/tags/Hive/">Hive</a>
-                    
                       <a class="hover-with-bg" href="/tags/%E5%AE%89%E8%A3%85/">安装</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Hive/">Hive</a>
                     
                   </div>
                 

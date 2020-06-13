@@ -199,73 +199,73 @@
 <p>  在最近几年，围绕着Hive社区的<a href="https://zh.hortonworks.com/blog/100x-faster-hive/" target="_blank" rel="noopener">Stinger Initiative</a> 的创新驱动，Hive的查询时间有了明显的提升，这使得Hive能够在速度和尺度上较好的支持批处理和交互式查询。</p>
 <p>  然而，许多数据科学教依然不熟悉这些能够使Hive查询最快运行的基础技术手段和最佳实践。在本篇博文中，我展示了几种平时用到的简单技术手段来提高Hive查询的性能。</p>
 <h2 id="使用Tez"><a href="#使用Tez" class="headerlink" title="使用Tez"></a>使用Tez</h2><p>  Hive可以使用<a href="https://zh.hortonworks.com/apache/tez/" target="_blank" rel="noopener">Apache Tez</a> 作为执行引擎，替换传统的Map-Reduce引擎。我不会在这里细说Tez更多的详细细节，相反，我只是做一个简单的推荐：如果在你的环境中没有开启，那么可以通过如下设置在你的Hive查询中开启Tez</p>
-<div class="hljs"><pre class=" language-hljs routeros"><span class="hljs-builtin-name">set</span> hive.execution.<span class="hljs-attribute"><code class="language-hljs routeros"><span class="hljs-builtin-name">set</span> hive.execution.<span class="hljs-attribute">engine</span>=tez;</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">set hive.execution.engine=tez;</code></pre></div>
 <p>通过以上的设置，执行的Hive查询可以充分使用Tez的优势。</p>
 <h2 id="使用ORCFile"><a href="#使用ORCFile" class="headerlink" title="使用ORCFile"></a>使用ORCFile</h2><p>  Hive支持ROCFILE文件格式，一种新的表数据存储格式，其通过一些技术支持可观的查询速度提升，这些技术包括预测性下钻、压缩等技术手段。</p>
 <p>  对每一张表使用ORCFILE文件格式，对于Hive查询的性能提升应该是非常轻松和巨大的好处。</p>
 <p>  作为示例，假设两张大表A和B(存储为文本格式，这里不具体列出表中列的信息)。一个简单的查询如下</p>
-<div class="hljs"><pre class=" language-hljs sql"><span class="hljs-keyword">SELECT</span> A.customerID, A.name, A.age, A.address <span class="hljs-keyword"><code class="language-hljs sql"><span class="hljs-keyword">SELECT</span> A.customerID, A.name, A.age, A.address <span class="hljs-keyword">join</span>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">SELECT A.customerID, A.name, A.age, A.address join
 
 B.role, B.department, B.salary
 
-<span class="hljs-keyword">ON</span> A.customerID=B.customerID;
+ON A.customerID=B.customerID;
 
-This query may take a long time to <span class="hljs-keyword">execute</span> since <span class="hljs-keyword">tables</span> A <span class="hljs-keyword">and</span> B <span class="hljs-keyword">are</span> <span class="hljs-keyword">both</span> <span class="hljs-keyword">stored</span> <span class="hljs-keyword">as</span> TEXT. Converting these <span class="hljs-keyword">tables</span> <span class="hljs-keyword">to</span> ORCFile <span class="hljs-keyword">format</span> will usually reduce <span class="hljs-keyword">query</span> <span class="hljs-built_in">time</span> significantly:
+This query may take a long time to execute since tables A and B are both stored as TEXT. Converting these tables to ORCFile format will usually reduce query time significantly:
 
-<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> A_ORC (
+CREATE TABLE A_ORC (
 
-customerID <span class="hljs-built_in">int</span>, <span class="hljs-keyword">name</span> <span class="hljs-keyword">string</span>, age <span class="hljs-built_in">int</span>, address <span class="hljs-keyword">string</span>
+customerID int, name string, age int, address string
 
-) <span class="hljs-keyword">STORED</span> <span class="hljs-keyword">AS</span> ORC tblproperties (“orc.compress<span class="hljs-string">" = “SNAPPY”);</span>
-<span class="hljs-string">INSERT INTO TABLE A_ORC SELECT * FROM A;</span>
-<span class="hljs-string">CREATE TABLE B_ORC (</span>
-<span class="hljs-string"></span>
-<span class="hljs-string">customerID int, role string, salary float, department string</span>
-<span class="hljs-string"></span>
-<span class="hljs-string">) STORED AS ORC tblproperties (“orc.compress"</span> = “SNAPPY”);
-<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> <span class="hljs-keyword">TABLE</span> B_ORC <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> B;
-<span class="hljs-keyword">SELECT</span> A_ORC.customerID, A_ORC.name,
+) STORED AS ORC tblproperties (“orc.compress" = “SNAPPY”);
+INSERT INTO TABLE A_ORC SELECT * FROM A;
+CREATE TABLE B_ORC (
 
-A_ORC.age, A_ORC.address <span class="hljs-keyword">join</span>
+customerID int, role string, salary float, department string
+
+) STORED AS ORC tblproperties (“orc.compress" = “SNAPPY”);
+INSERT INTO TABLE B_ORC SELECT * FROM B;
+SELECT A_ORC.customerID, A_ORC.name,
+
+A_ORC.age, A_ORC.address join
 
 B_ORC.role, B_ORC.department, B_ORC.salary
 
-<span class="hljs-keyword">ON</span> A_ORC.customerID=B_ORC.customerID;</code></span></pre></div>
+ON A_ORC.customerID=B_ORC.customerID;</code></pre></div>
 
 <p>  ORC支持压缩存储，也可以不压缩存储。如压缩存储，支持ZLIB和SNAPPY压缩格式。</p>
 <p>  将表格的数据存储格式更改为ORC，通常是本团队的职责。根据他们的工作排班，这通常需要花费一些时间。受众于ORCFILE的绝大好处，我通常建议将文本存储格式转化为ORC存储格式。这样的话，查询通常会有明显的速度提升，而不需要依赖其他团队。</p>
 <h2 id="使用向量化"><a href="#使用向量化" class="headerlink" title="使用向量化"></a>使用向量化</h2><p>  支持向量化查询，能够提升一些操作的性能，例如扫描、聚合、过滤和join操作。通过一次1000条的批处理，替代每次一条的处理方式。</p>
 <p>  Hive0.13引入了向量化支持，这个特性显著地提升了查询的执行时间，并且该特性能够方便的通过以下两个参数设置</p>
-<div class="hljs"><pre class=" language-hljs routeros"><span class="hljs-builtin-name">set</span> hive.vectorized.execution.<span class="hljs-attribute">enabled</span>=<span class="hljs-literal"><code class="language-hljs routeros"><span class="hljs-builtin-name">set</span> hive.vectorized.execution.<span class="hljs-attribute">enabled</span>=<span class="hljs-literal">true</span>;
-<span class="hljs-builtin-name">set</span> hive.vectorized.execution.reduce.<span class="hljs-attribute">enable</span>=<span class="hljs-literal">true</span>;</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">set hive.vectorized.execution.enabled=true;
+set hive.vectorized.execution.reduce.enable=true;</code></pre></div>
 
 <h2 id="基于代价的优化：CBO"><a href="#基于代价的优化：CBO" class="headerlink" title="基于代价的优化：CBO"></a>基于代价的优化：CBO</h2><p>  Hive在最终执行之前，会进行查询语句的逻辑优化和物理执行计划的优化。这些优化并不是基于CBO的，直到现在。</p>
 <p>  最近，CBO被加入到Hive中，基于代价优化能够进一步优化性能，导致了一些潜在的不同选择：如何组织join，什么类型的join可以优化，不支持并行化处理等等。</p>
 <p>  使用CDO优化，在查询之前设置一下参数</p>
-<div class="hljs"><pre class=" language-hljs routeros"><span class="hljs-builtin-name">set</span> hive.cbo.<span class="hljs-attribute">enable</span>=<span class="hljs-literal"><code class="language-hljs routeros"><span class="hljs-builtin-name">set</span> hive.cbo.<span class="hljs-attribute">enable</span>=<span class="hljs-literal">true</span>;
-<span class="hljs-builtin-name">set</span> hive.compute.query.using.<span class="hljs-attribute">stats</span>=<span class="hljs-literal">true</span>;
-<span class="hljs-builtin-name">set</span> hive.stats.fetch.column.<span class="hljs-attribute">stats</span>=<span class="hljs-literal">true</span>;
-<span class="hljs-builtin-name">set</span> hive.stats.fetch.partition.<span class="hljs-attribute">stats</span>=<span class="hljs-literal">true</span>;</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">set hive.cbo.enable=true;
+set hive.compute.query.using.stats=true;
+set hive.stats.fetch.column.stats=true;
+set hive.stats.fetch.partition.stats=true;</code></pre></div>
 <p>这些设置之后，通过运行Hive的analyze能够收集CDO优化目标的多种统计参数。</p>
 <h2 id="使用好SQL"><a href="#使用好SQL" class="headerlink" title="使用好SQL"></a>使用好SQL</h2><p>  SQL是一种非常强大的声明式语言。像其他声明式语言，存在不止一种写SQL语句的方式。虽然语句的功能相同，但可能存在多种不同的表达式。</p>
 <p>  作为一个示例，考虑如下表</p>
-<div class="hljs"><pre class=" language-hljs sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword"><code class="language-hljs sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> clicks (
-<span class="hljs-built_in">timestamp</span> <span class="hljs-built_in">date</span>, sessionID <span class="hljs-keyword">string</span>, <span class="hljs-keyword">url</span> <span class="hljs-keyword">string</span>, source_ip <span class="hljs-keyword">string</span>
-) <span class="hljs-keyword">STORED</span> <span class="hljs-keyword">as</span> ORC tblproperties (“orc.compress” = “SNAPPY”);
-Each record represents a click event, and we would like to find the latest URL for each sessionID;</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">CREATE TABLE clicks (
+timestamp date, sessionID string, url string, source_ip string
+) STORED as ORC tblproperties (“orc.compress” = “SNAPPY”);
+Each record represents a click event, and we would like to find the latest URL for each sessionID;</code></pre></div>
 <p>通过如下方式同样可以实现该功能</p>
-<div class="hljs"><pre class=" language-hljs pgsql"><span class="hljs-keyword">SELECT</span> clicks.* <span class="hljs-keyword">FROM</span> clicks <span class="hljs-keyword">inner</span> <span class="hljs-keyword"><code class="language-hljs pgsql"><span class="hljs-keyword">SELECT</span> clicks.* <span class="hljs-keyword">FROM</span> clicks <span class="hljs-keyword">inner</span> <span class="hljs-keyword">join</span>
-(<span class="hljs-keyword">select</span> sessionID, max(<span class="hljs-type">timestamp</span>) <span class="hljs-keyword">as</span> max_ts <span class="hljs-keyword">from</span> clicks
-<span class="hljs-keyword">group</span> <span class="hljs-keyword">by</span> sessionID) latest
-<span class="hljs-keyword">ON</span> clicks.sessionID = latest.sessionID <span class="hljs-keyword">and</span>
-clicks.timestamp = latest.max_ts;</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">SELECT clicks.* FROM clicks inner join
+(select sessionID, max(timestamp) as max_ts from clicks
+group by sessionID) latest
+ON clicks.sessionID = latest.sessionID and
+clicks.timestamp = latest.max_ts;</code></pre></div>
 <p>以上查询，我们构建了一个子查询来收集每个session中最近事件的时间戳，并使用一个inner join来关联过滤外部的结果。</p>
 <p>  虽然这种一种从功能性上考虑的实现方式，实际上还存在更佳的实现方式</p>
-<div class="hljs"><pre class=" language-hljs sql"><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword"><code class="language-hljs sql"><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span>
-(<span class="hljs-keyword">SELECT</span> *, <span class="hljs-keyword">RANK</span>() <span class="hljs-keyword">over</span> (<span class="hljs-keyword">partition</span> <span class="hljs-keyword">by</span> sessionID,
-<span class="hljs-keyword">order</span> <span class="hljs-keyword">by</span> <span class="hljs-built_in">timestamp</span> <span class="hljs-keyword">desc</span>) <span class="hljs-keyword">as</span> <span class="hljs-keyword">rank</span>
-<span class="hljs-keyword">FROM</span> clicks) ranked_clicks
-<span class="hljs-keyword">WHERE</span> ranked_clicks.rank=<span class="hljs-number">1</span>;</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">SELECT * FROM
+(SELECT *, RANK() over (partition by sessionID,
+order by timestamp desc) as rank
+FROM clicks) ranked_clicks
+WHERE ranked_clicks.rank=1;</code></pre></div>
 <p>这里使用了OLAP函数(over，rank)来达到同样的功能，而不适用join。</p>
 <p>  显然移除了非必要的join操作几乎导致更好的表现性能，并当数据量较大时，这种性能差异更大。通常，许多查询语句并不是最优的，因此需要仔细查看每一个SQL语句，是不是存在优化空间。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>  Apache Hive是数据分析师、数据科学家手中强大的工具，并支持批处理和实时交互查询。</p>

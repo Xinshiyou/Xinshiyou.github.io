@@ -299,8 +299,8 @@ Benchmark completed.</code></pre></div>
 <h2 id="1-3-特性调研"><a href="#1-3-特性调研" class="headerlink" title="1.3. 特性调研"></a>1.3. 特性调研</h2><p>主要调研了Minio的擦除码、缓存、压缩等特性。以下特性调研，使用<strong>单机单租户单磁盘模式，且磁盘为HDD硬盘</strong>。</p>
 <h3 id="1-3-1-使用Erase-Code"><a href="#1-3-1-使用Erase-Code" class="headerlink" title="1.3.1. 使用Erase Code"></a>1.3.1. 使用Erase Code</h3><p>当前Minio在体验方面还不是非常友好，默认情况下的EC是Data跟parity是1:1分布的。如果需要修改配比，那么需要使用环境变量或使用MC进行设置。</p>
 <p>下面简单调研一下Minio如何配置EC，以及配置EC的效果。主要配置项为</p>
-<div class="hljs"><pre class=" language-hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute"><code class="language-hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute">MINIO_STORAGE_CLASS_STANDARD</span>=EC:3  
-<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">MINIO_STORAGE_CLASS_RRS</span>=EC:2</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">export MINIO_STORAGE_CLASS_STANDARD=EC:3  
+export MINIO_STORAGE_CLASS_RRS=EC:2</code></pre></div>
 
 <p>通过命令操作单机实例</p>
 <div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 启动之前：随便设置(可以不设置)  

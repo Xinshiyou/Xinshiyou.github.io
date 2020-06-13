@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      190 字
+      188 字
     </span>
   
 
@@ -195,17 +195,17 @@
               <p>  MAC上使用brew安装的MySQL默认没有导出权限，需要手动配置。</p>
 <a id="more"></a>
 
-<h2 id="导出报错"><a href="#导出报错" class="headerlink" title="导出报错"></a>导出报错</h2><div class="hljs"><pre class=" language-hljs routeros">The MySQL<span class="hljs-built_in"><code class="language-hljs routeros">The MySQL<span class="hljs-built_in"> server </span>is running with the --secure-file-priv option</code></span></pre></div>
+<h2 id="导出报错"><a href="#导出报错" class="headerlink" title="导出报错"></a>导出报错</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">The MySQL server is running with the --secure-file-priv option</code></pre></div>
 <p>在MySQL中查看secure-file-priv的值，发现为NULL：</p>
-<div class="hljs"><pre class=" language-hljs mel">mysql&gt; <span class="hljs-keyword">select</span> @@secure-<span class="hljs-keyword"><code class="language-hljs mel">mysql&gt; <span class="hljs-keyword">select</span> @@secure-<span class="hljs-keyword">file</span>-priv;</code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">mysql&gt; select @@secure-file-priv;</code></pre></div>
 
-<h2 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h2><div class="hljs"><pre class=" language-hljs angelscript"><span class="hljs-number"><code class="language-hljs angelscript"><span class="hljs-number">1</span>、MAC OS;
-<span class="hljs-number">2</span>、MySQL <span class="hljs-number">5.7</span>;</code></span></pre></div>
+<h2 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">1、MAC OS;
+2、MySQL 5.7;</code></pre></div>
 
 <h2 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h2><p>  直接安装的MySQL没有导出权限，这可以通过启动MySQL的log信息看到，其默认是关闭的。可以通过my.cnf来配置导出权限：</p>
-<div class="hljs"><pre class=" language-hljs ini"><span class="hljs-comment"><code class="language-hljs ini"><span class="hljs-comment">#[/private/etc/my.cnf]</span>
-<span class="hljs-section">[mysqld]</span>
-<span class="hljs-attr">secure-file-priv</span>=<span class="hljs-string">"Your Path"</span></code></span></pre></div>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">#[/private/etc/my.cnf]
+[mysqld]
+secure-file-priv="Your Path"</code></pre></div>
 <p>  其中”Your Path”是你需要制定的能够访问的路径。配置好之后，可以重新启动MySQL的服务来使配置生效。启动方式，可以参考博主前面的文章。</p>
 
             </article>

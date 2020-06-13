@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      528 字
+      529 字
     </span>
   
 
@@ -197,22 +197,22 @@
 
 <p>  Matlab使用方便、编程简单，且无论在数值计算，还是在图像处理、模拟过程等方面都非常具有优势，缺点就是软件不开源、价格昂贵，因此滋生了如博主一样的广大盗版软件使用者_^_ 。</p>
 <h2 id="Matlab基础"><a href="#Matlab基础" class="headerlink" title="Matlab基础"></a>Matlab基础</h2><ol>
-<li>导入数据：<div class="hljs"><pre class=" language-hljs prolog">load(<span class="hljs-string"><code class="language-hljs prolog">load(<span class="hljs-string">'you data path'</span>)
-<span class="hljs-comment">%获取文件名称、路径</span>
-[filename,filepath]=uigetfile()</code></span></pre></div></li>
-<li>读写图像：<div class="hljs"><pre class=" language-hljs gcode">[X, map] = imread<span class="hljs-comment">(filename,format)</span>;<span class="hljs-meta"><code class="language-hljs gcode">[X, map] = imread<span class="hljs-comment">(filename,format)</span>;<span class="hljs-meta">%</span>读入操作
-imgray = rgb<span class="hljs-number">2</span>gray<span class="hljs-comment">(X)</span>;<span class="hljs-meta">%</span>转化为灰度图像
-imwrite<span class="hljs-comment">(image,filename)</span>;<span class="hljs-meta">%</span>图像写入文件操作</code></span></pre></div></li>
-<li>图像展示：<div class="hljs"><pre class=" language-hljs gcode">imshow<span class="hljs-comment">(X,map)</span>;<span class="hljs-meta"><code class="language-hljs gcode">imshow<span class="hljs-comment">(X,map)</span>;<span class="hljs-meta">%</span>显示图像
-<span class="hljs-meta">%</span> 同一界面中显示多个图像
-figure<span class="hljs-meta">%</span>假设显示四个图像
-subplot<span class="hljs-comment">(221)</span>,imshow<span class="hljs-comment">(image1)</span>
-subplot<span class="hljs-comment">(222)</span>,imshow<span class="hljs-comment">(image2)</span>
-subplot<span class="hljs-comment">(223)</span>,imshow<span class="hljs-comment">(image3)</span>
-subplot<span class="hljs-comment">(224)</span>,imshow<span class="hljs-comment">(image4)</span></code></span></pre></div></li>
-<li>其它常识：<div class="hljs"><pre class=" language-hljs mel"><span class="hljs-keyword"><code class="language-hljs mel"><span class="hljs-keyword">clear</span> all%清空所有变量
+<li>导入数据：<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">load('you data path')
+%获取文件名称、路径
+[filename,filepath]=uigetfile()</code></pre></div></li>
+<li>读写图像：<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[X, map] = imread(filename,format);%读入操作
+imgray = rgb2gray(X);%转化为灰度图像
+imwrite(image,filename);%图像写入文件操作</code></pre></div></li>
+<li>图像展示：<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">imshow(X,map);%显示图像
+% 同一界面中显示多个图像
+figure%假设显示四个图像
+subplot(221),imshow(image1)
+subplot(222),imshow(image2)
+subplot(223),imshow(image3)
+subplot(224),imshow(image4)</code></pre></div></li>
+<li>其它常识：<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">clear all%清空所有变量
 close all%关闭所有Figure界面
-<span class="hljs-keyword">quit</span>/exit%退出Matlab</code></span></pre></div>
+quit/exit%退出Matlab</code></pre></div>
 
 </li>
 </ol>
@@ -228,22 +228,22 @@ close all%关闭所有Figure界面
 <li>readme.html</li>
 <li>test_batch.mat<br>其中data_batch_i(1,2,3,4,5).mat中包含10000个32$*$32图片，共有50000张图片；test_batch.mat为测试集数据，共有10000张图片。</li>
 </ul>
-<h2 id="Matlab代码"><a href="#Matlab代码" class="headerlink" title="Matlab代码"></a>Matlab代码</h2><div class="hljs"><pre class=" language-hljs matlab"><span class="hljs-keyword">for</span> <span class="hljs-built_in">j</span>=<span class="hljs-number">1</span>:<span class="hljs-number">5</span>,<span class="hljs-comment"><code class="language-hljs matlab"><span class="hljs-keyword">for</span> <span class="hljs-built_in">j</span>=<span class="hljs-number">1</span>:<span class="hljs-number">5</span>,<span class="hljs-comment">%读取训练集数据</span>
-	％读入第<span class="hljs-built_in">j</span>个batch的数据
-    load([<span class="hljs-string">'data_batch_'</span> num2str(<span class="hljs-built_in">j</span>) <span class="hljs-string">'.mat'</span>])
-    <span class="hljs-keyword">for</span> <span class="hljs-built_in">i</span>=<span class="hljs-number">1</span>:<span class="hljs-built_in">size</span>(data,<span class="hljs-number">1</span>),％循环转化并写入文件
-        p=data(<span class="hljs-built_in">i</span>,:);
-        label=labels(<span class="hljs-built_in">i</span>);
+<h2 id="Matlab代码"><a href="#Matlab代码" class="headerlink" title="Matlab代码"></a>Matlab代码</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">for j=1:5,%读取训练集数据
+	％读入第j个batch的数据
+    load(['data_batch_' num2str(j) '.mat'])
+    for i=1:size(data,1),％循环转化并写入文件
+        p=data(i,:);
+        label=labels(i);
 
-        fig=<span class="hljs-built_in">zeros</span>(<span class="hljs-number">32</span>,<span class="hljs-number">32</span>,<span class="hljs-number">3</span>);
-        fig(:,:,<span class="hljs-number">1</span>)=<span class="hljs-built_in">reshape</span>(p(<span class="hljs-number">1</span>:<span class="hljs-number">1024</span>),<span class="hljs-number">32</span>,<span class="hljs-number">32</span>)';
-        fig(:,:,<span class="hljs-number">2</span>)=<span class="hljs-built_in">reshape</span>(p(<span class="hljs-number">1025</span>:<span class="hljs-number">2048</span>),<span class="hljs-number">32</span>,<span class="hljs-number">32</span>)';
-        fig(:,:,<span class="hljs-number">3</span>)=<span class="hljs-built_in">reshape</span>(p(<span class="hljs-number">2049</span>:<span class="hljs-keyword">end</span>),<span class="hljs-number">32</span>,<span class="hljs-number">32</span>)';
+        fig=zeros(32,32,3);
+        fig(:,:,1)=reshape(p(1:1024),32,32)';
+        fig(:,:,2)=reshape(p(1025:2048),32,32)';
+        fig(:,:,3)=reshape(p(2049:end),32,32)';
         
         ％将数据保存为PNG格式
-        imwrite(fig/<span class="hljs-number">256</span>,[<span class="hljs-string">'image/batch_'</span> num2str(<span class="hljs-built_in">j</span>) <span class="hljs-string">'_label_'</span> num2str(label) <span class="hljs-string">'_'</span> num2str(<span class="hljs-built_in">i</span>)  <span class="hljs-string">'.png'</span>])
-    <span class="hljs-keyword">end</span>;
-<span class="hljs-keyword">end</span>;</code></span></pre></div>
+        imwrite(fig/256,['image/batch_' num2str(j) '_label_' num2str(label) '_' num2str(i)  '.png'])
+    end;
+end;</code></pre></div>
 
             </article>
             <hr>
