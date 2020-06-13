@@ -194,6 +194,7 @@
             <article class="markdown-body">
               <p>  Netty权威指南，是一本广受欢迎的Netty书籍。博主研读的是2014年6月第一版，第二次印刷的书本。</p>
 <a id="more"></a>
+
 <h1 id="基础篇-走进Java-NIO"><a href="#基础篇-走进Java-NIO" class="headerlink" title="基础篇  走进Java NIO"></a>基础篇  走进Java NIO</h1><h2 id="Java的I-O演进之路"><a href="#Java的I-O演进之路" class="headerlink" title="Java的I/O演进之路"></a>Java的I/O演进之路</h2><h3 id="I-O入门"><a href="#I-O入门" class="headerlink" title="I/O入门"></a>I/O入门</h3><p>  Java1.4之前，Java的I/O还不完善，开发人员在开发该性能I/O时，会遇到困难：</p>
 <ul>
 <li>没有缓冲区，I/O性能存在问题</li>
@@ -214,7 +215,7 @@
 <li>服务器需要同时处理多个监听状态或连接状态的套接字</li>
 <li>服务器需要同时处理多种网络协议的套接字</li>
 </ul>
-<p>  Linux网络I/O模型总结：select—&gt;epoll</p>
+<p>  Linux网络I/O模型总结：select–&gt;epoll</p>
 <ol>
 <li>支持一个进程打开的socket描述符不受限制(仅受限于系统的最大文件句柄数)</li>
 <li>I/O效率不会随着FD数目的增加而线性下降</li>
@@ -249,7 +250,7 @@
 <li>FloatBuffer</li>
 <li>DoubleBuffer</li>
 </ul>
-<ol>
+<ol start="2">
 <li>通道Channel<ul>
 <li>网络读写SelectableChannel</li>
 <li>文件操作的FileChannel</li>
@@ -272,7 +273,7 @@
 <li>可靠性能差，工作难度较大</li>
 <li>JDK NIO存在BUG</li>
 </ul>
-<ol>
+<ol start="2">
 <li>为什么选择Netty</li>
 </ol>
 <ul>
@@ -283,7 +284,8 @@
 <li>成熟、稳定</li>
 <li>社区活跃，班底迭代周期短，发现的BUG被及时修复</li>
 </ul>
-<h1 id="入门篇-Netty-NIO开发指南"><a href="#入门篇-Netty-NIO开发指南" class="headerlink" title="入门篇 Netty NIO开发指南"></a>入门篇 Netty NIO开发指南</h1><h2 id="Netty入门应用"><a href="#Netty入门应用" class="headerlink" title="Netty入门应用"></a>Netty入门应用</h2><p>  使用Netty实现TimeServer服务器端与客户端通讯服务<br></p><pre class=" language-hljs java"><code class="language-hljs java">## 服务器端代码
+<h1 id="入门篇-Netty-NIO开发指南"><a href="#入门篇-Netty-NIO开发指南" class="headerlink" title="入门篇 Netty NIO开发指南"></a>入门篇 Netty NIO开发指南</h1><h2 id="Netty入门应用"><a href="#Netty入门应用" class="headerlink" title="Netty入门应用"></a>Netty入门应用</h2><p>  使用Netty实现TimeServer服务器端与客户端通讯服务</p>
+<pre class=" language-hljs java"><code class="language-hljs java">## 服务器端代码
 <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TimerServer</span></span>{
 
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">bind</span><span class="hljs-params">(<span class="hljs-keyword">int</span> port)</span> <span class="hljs-keyword">throws</span> Exception</span>{
@@ -442,7 +444,9 @@
         <span class="hljs-comment">// 释放资源</span>
         ctx.close();
     }
-}</code></pre><p></p>
+}</code></pre>
+
+
 <h2 id="TCP黏包-拆包的解决之道"><a href="#TCP黏包-拆包的解决之道" class="headerlink" title="TCP黏包/拆包的解决之道"></a>TCP黏包/拆包的解决之道</h2><p>  使用TCP协议，在发送或传输过程中都需要考虑黏包、拆包问题。</p>
 <h3 id="TCP黏包-拆包"><a href="#TCP黏包-拆包" class="headerlink" title="TCP黏包/拆包"></a>TCP黏包/拆包</h3><p>  TCP是一个流协议，是一串没有边界的字符流。TCP底层并不了解上层数据业务数据的含义，他会根据TCP缓冲区的实践情况进行划分，所以在业务上完整的一个包可能会被拆分成多个包进行发送，也有可能多个小包封装成一个大包进行发送，这就是所谓的黏包、拆包问题。</p>
 <p>  问题产生的原因：</p>
@@ -468,8 +472,12 @@
 <li>将特殊的分隔符作为消息的结束位置</li>
 <li>通过在消息头中定义长度字段来标识消息的长度</li>
 </ol>
-<h3 id="DelimiterBasedFrameDecoder应用开发"><a href="#DelimiterBasedFrameDecoder应用开发" class="headerlink" title="DelimiterBasedFrameDecoder应用开发"></a>DelimiterBasedFrameDecoder应用开发</h3><p>  DelimiterBasedFrameDecoder可以根据自定义分隔符作为结束位置，在使用的时候传入两个参数<br></p><pre class=" language-hljs reasonml"><span class="hljs-keyword">new</span> <span class="hljs-constructor">DelimiterBasedFrameDecoder(1024,Bytebuf:: <span class="hljs-params"><code class="language-hljs reasonml"><span class="hljs-keyword">new</span> <span class="hljs-constructor">DelimiterBasedFrameDecoder(1024,Bytebuf:: <span class="hljs-params">delimiter</span>)</span></code></span></span></pre><br>其中第一个参数表示消息的最大长度，第二参数表示分隔符。<p></p>
-<h3 id="FixedLengthFrameDecoder应用开发"><a href="#FixedLengthFrameDecoder应用开发" class="headerlink" title="FixedLengthFrameDecoder应用开发"></a>FixedLengthFrameDecoder应用开发</h3><p>  FixedLengthFrameDecoder是固定长度解码器，它能够按照固定的长度对消息进行自动解码，开发者不需要考虑TCP的黏包和拆包问题。<br></p><pre class=" language-hljs haxe"><span class="hljs-keyword">new</span> <span class="hljs-type">FixedLengthFrameDecoder</span>(<span class="hljs-number"><code class="language-hljs haxe"><span class="hljs-keyword">new</span> <span class="hljs-type">FixedLengthFrameDecoder</span>(<span class="hljs-number">10</span>)</code></span></pre><br>其中10表示固定长度。<p></p>
+<h3 id="DelimiterBasedFrameDecoder应用开发"><a href="#DelimiterBasedFrameDecoder应用开发" class="headerlink" title="DelimiterBasedFrameDecoder应用开发"></a>DelimiterBasedFrameDecoder应用开发</h3><p>  DelimiterBasedFrameDecoder可以根据自定义分隔符作为结束位置，在使用的时候传入两个参数</p>
+<pre class=" language-hljs reasonml"><span class="hljs-keyword">new</span> <span class="hljs-constructor">DelimiterBasedFrameDecoder(1024,Bytebuf:: <span class="hljs-params"><code class="language-hljs reasonml"><span class="hljs-keyword">new</span> <span class="hljs-constructor">DelimiterBasedFrameDecoder(1024,Bytebuf:: <span class="hljs-params">delimiter</span>)</span></code></span></span></pre>
+<p>其中第一个参数表示消息的最大长度，第二参数表示分隔符。</p>
+<h3 id="FixedLengthFrameDecoder应用开发"><a href="#FixedLengthFrameDecoder应用开发" class="headerlink" title="FixedLengthFrameDecoder应用开发"></a>FixedLengthFrameDecoder应用开发</h3><p>  FixedLengthFrameDecoder是固定长度解码器，它能够按照固定的长度对消息进行自动解码，开发者不需要考虑TCP的黏包和拆包问题。</p>
+<pre class=" language-hljs haxe"><span class="hljs-keyword">new</span> <span class="hljs-type">FixedLengthFrameDecoder</span>(<span class="hljs-number"><code class="language-hljs haxe"><span class="hljs-keyword">new</span> <span class="hljs-type">FixedLengthFrameDecoder</span>(<span class="hljs-number">10</span>)</code></span></pre>
+<p>其中10表示固定长度。</p>
 <h1 id="中级篇-Netty编解码开发指南"><a href="#中级篇-Netty编解码开发指南" class="headerlink" title="中级篇 Netty编解码开发指南"></a>中级篇 Netty编解码开发指南</h1><p>  了解Netty内置的编码器之后，继续学习Netty的编码解码款框架的应用，例如java序列化、二进制编码、Google Protobuf和JBoss的Marshallling序列化框架。</p>
 <h2 id="编解码技术"><a href="#编解码技术" class="headerlink" title="编解码技术"></a>编解码技术</h2><p>  基于Java提供的对象输入/输出流ObjectInputStreaming和ObjectOutputStreaming，可以直接把Java对象作为可存储的字节流写入文件，也可以传输到网上。对程序员而言，序列化可提高开发效率。</p>
 <p>  Java序列化的目的</p>
@@ -483,7 +491,8 @@
 <li>序列化性能太低</li>
 </ol>
 <h3 id="业界主流的编解码框架"><a href="#业界主流的编解码框架" class="headerlink" title="业界主流的编解码框架"></a>业界主流的编解码框架</h3><ol>
-<li>Google Protobuf<br> 主要特点<ul>
+<li><p>Google Protobuf<br> 主要特点</p>
+<ul>
 <li>结构化存储</li>
 <li>搞笑的编解码性能</li>
 <li>语言无关、平台无关、扩展性好</li>
@@ -509,15 +518,18 @@
 <li><p>JBoss Marshalling<br> JBoss Marshalling是一个序列化的API，修正了JDK自带的序列化包的很多问题。相比于前面两种编解码协议，JBoss Marshalling更多是应用于JBoss内部，应用范围有限。</p>
 <h2 id="Java序列化"><a href="#Java序列化" class="headerlink" title="Java序列化"></a>Java序列化</h2></li>
 </ol>
-<p>  Java序列化在Netty NIO框架中的使用方式<br></p><pre class=" language-hljs java"><code class="language-hljs java">## 服务器端：ChannleInitializer<socketchannel>
+<p>  Java序列化在Netty NIO框架中的使用方式</p>
+<pre class=" language-hljs java"><code class="language-hljs java">## 服务器端：ChannleInitializer<socketchannel>
 <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span></span>{
     ch.pipeline()
         .addLast(<span class="hljs-keyword">new</span> ObjectDecoder(<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>,Classresolvers.weakCachingConcurrentResolver(<span class="hljs-keyword">this</span>.getClass().getClassLoader())));
     ch.pipeline().addLast(<span class="hljs-keyword">new</span> OjectEncoder());
     <span class="hljs-comment">// add other handler</span>
-}</socketchannel></code></pre><p></p>
+}</socketchannel></code></pre>
+
 <h2 id="Google-Protobuf编解码"><a href="#Google-Protobuf编解码" class="headerlink" title="Google Protobuf编解码"></a>Google Protobuf编解码</h2><p>  Profotbuf是一个灵活的、小巧的、高效的、结构化的数据序列化框架，相比于XML等传统的序列化工具，它更小、更快、更简单。Profobuf支持一次可以到处使用，甚至跨语言使用，通过代码生成工具可以自动生成不同语言版本的源代码，甚至可以在不同版本的数据结构进程间进行数据传递实现数据结构的前后兼容。</p>
-<h3 id="Protobuf开发环境搭建"><a href="#Protobuf开发环境搭建" class="headerlink" title="Protobuf开发环境搭建"></a>Protobuf开发环境搭建</h3><h3 id="Netty的Protobuf服务端开发"><a href="#Netty的Protobuf服务端开发" class="headerlink" title="Netty的Protobuf服务端开发"></a>Netty的Protobuf服务端开发</h3><p>  各种不同版本的示例程序代码，不同点在于ChannelHandlerAdapter的实现方式。其中本部分基于Protobuf的Netty实现方式如下所示<br></p><pre class=" language-hljs java"><code class="language-hljs java">## 服务器端
+<h3 id="Protobuf开发环境搭建"><a href="#Protobuf开发环境搭建" class="headerlink" title="Protobuf开发环境搭建"></a>Protobuf开发环境搭建</h3><h3 id="Netty的Protobuf服务端开发"><a href="#Netty的Protobuf服务端开发" class="headerlink" title="Netty的Protobuf服务端开发"></a>Netty的Protobuf服务端开发</h3><p>  各种不同版本的示例程序代码，不同点在于ChannelHandlerAdapter的实现方式。其中本部分基于Protobuf的Netty实现方式如下所示</p>
+<pre class=" language-hljs java"><code class="language-hljs java">## 服务器端
 <span class="hljs-keyword">public</span>  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ChannelHandlerAdapter</span></span>{
 
     <span class="hljs-meta">@override</span>
@@ -531,7 +543,8 @@
     }
 }
 
-## 客户端代码类似</code></pre><p></p>
+## 客户端代码类似</code></pre>
+
 <p>  这里使用到的ProtofReq对象，是通过Protobuf自动化生成的类。</p>
 <h2 id="JBoss-Marshelling编解码"><a href="#JBoss-Marshelling编解码" class="headerlink" title="JBoss Marshelling编解码"></a>JBoss Marshelling编解码</h2><p>  JBose Marshalling的序列化编解码框架，应用领域有限不做赘述。</p>
 <h1 id="高级篇-Netty多协议开发和应用"><a href="#高级篇-Netty多协议开发和应用" class="headerlink" title="高级篇 Netty多协议开发和应用"></a>高级篇 Netty多协议开发和应用</h1><h2 id="Http协议开发应用"><a href="#Http协议开发应用" class="headerlink" title="Http协议开发应用"></a>Http协议开发应用</h2><p>  Http协议是建立在TCP传输层协议之上的应用层协议，是一个属于应用层的面向对象的协议。与1990年提出，经过多年的发展逐渐完善。Netty的Http协议栈是基于Netty的NIO通讯框架，因此Netty的Http协议也是异步非阻塞的。</p>
@@ -570,9 +583,46 @@
 <li>5XX: 服务端错误。服务器未能处理请求</li>
 </ul>
 </li>
-<li>常见相应代码与描述<br> |状态码|<center>状态描述</center>|<br> |:-:|:-|<br> |200|OK:客户端请求成功|<br> |400|Bad Request: 客户端请求存在语法错误，不能被服务器所理解|<br> |401|Unauthorized: 请未经授，这个状态代码必须和WWW-Authenticate报头域一起使用|<br> |403|Forbidden:服务器收到请求，但拒绝提供服务|<br> |404|Not Found: 请求资源不存在|<br> |500|Internal Server Error: 服务器发生不可预期的错误|<br> |503|Server Unavailabkle: 服务器当前不能处理客户端的请求，一段时间之后可能恢复|</li>
+<li>常见相应代码与描述<table>
+<thead>
+<tr>
+<th align="center">状态码</th>
+<th align="left"><center>状态描述</center></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">200</td>
+<td align="left">OK:客户端请求成功</td>
+</tr>
+<tr>
+<td align="center">400</td>
+<td align="left">Bad Request: 客户端请求存在语法错误，不能被服务器所理解</td>
+</tr>
+<tr>
+<td align="center">401</td>
+<td align="left">Unauthorized: 请未经授，这个状态代码必须和WWW-Authenticate报头域一起使用</td>
+</tr>
+<tr>
+<td align="center">403</td>
+<td align="left">Forbidden:服务器收到请求，但拒绝提供服务</td>
+</tr>
+<tr>
+<td align="center">404</td>
+<td align="left">Not Found: 请求资源不存在</td>
+</tr>
+<tr>
+<td align="center">500</td>
+<td align="left">Internal Server Error: 服务器发生不可预期的错误</td>
+</tr>
+<tr>
+<td align="center">503</td>
+<td align="left">Server Unavailabkle: 服务器当前不能处理客户端的请求，一段时间之后可能恢复</td>
+</tr>
+</tbody></table>
+</li>
 </ol>
-<h3 id="Http协议的Netty处理"><a href="#Http协议的Netty处理" class="headerlink" title="Http协议的Netty处理"></a>Http协议的Netty处理</h3><p>  服务器端重点代码<br></p><pre class=" language-hljs java"><span class="hljs-meta">@override</span> <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-meta">@override</span> <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception</span>{
+<h3 id="Http协议的Netty处理"><a href="#Http协议的Netty处理" class="headerlink" title="Http协议的Netty处理"></a>Http协议的Netty处理</h3><p>  服务器端重点代码</p>
+<pre class=" language-hljs java"><span class="hljs-meta">@override</span> <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-meta">@override</span> <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception</span>{
     ch.pipleline().addLast(<span class="hljs-string">"http-decoder"</span>,<span class="hljs-keyword">new</span> HttpRequestDecoder());
     ch.pipleline().addLast(<span class="hljs-string">"http-aggregator"</span>,<span class="hljs-keyword">new</span> HttpObjectAgregator(<span class="hljs-number">65536</span>));
     ch.pipleline().addLast(<span class="hljs-string">"http-encoder"</span>,<span class="hljs-keyword">new</span> HttpResponseEncoder());
@@ -580,12 +630,14 @@
 
     <span class="hljs-comment">// 自定义: extends SimpleChannelInboundsHandler<fullhttprequest></fullhttprequest></span>
     ch.pipleline().addLast(<span class="hljs-string">"fileServerHandler"</span>,<span class="hljs-keyword">new</span> HttpFileServerHandler(url);
-}</code></span></span></pre><p></p>
+}</code></span></span></pre>
+
 <h3 id="Netty-Http-XML协议栈开发"><a href="#Netty-Http-XML协议栈开发" class="headerlink" title="Netty Http+XML协议栈开发"></a>Netty Http+XML协议栈开发</h3><p>  由于Http协议的通用性，异构系统间的通讯交互采用Http协议，通过Http协议承载业务数据进行消息交互。例如流行的Http+XML，或RestFUL+JSON。</p>
 <p>  在java领域，最常用的Http协议栈就是基于Serverlet规范的Tomcat等Web容器。由于Google等大佬的强力推荐，Jetty等轻量级Web容器也得到了广泛的应用。但许多场景下，基于Http的应用都是后台应用，Http仅仅是承载数据交换的一个通道，是一个载体而不是Web容器。这种场景下，一般不需要Tomcat这种重量型的Web容器。</p>
 <p>  另外网络安全日益严峻的今天，重量级的Web容器由于功能繁琐，会存在很多安全漏洞，典型的如Tomcat。这意味着需要为Wb容器做很多安全加固工作去修补这些漏洞，然而开发中并没有用到这些功能，这就带来了并发和维护成本。在这种场景下，选择一个更加轻量级的http协议栈是个更好的选择。</p>
 <p><img src="001.png" srcset="/img/loading.gif" alt="Http+XML协议栈开发"></p>
-<p>Netty Http+XML重点代码<br></p><pre class=" language-hljs java"><span class="hljs-meta"><code class="language-hljs java"><span class="hljs-meta">@override</span>
+<p>Netty Http+XML重点代码</p>
+<pre class=" language-hljs java"><span class="hljs-meta"><code class="language-hljs java"><span class="hljs-meta">@override</span>
 <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception </span>{
 
     ch.pipleline().addLast(<span class="hljs-string">"http-decoder"</span>,<span class="hljs-keyword">new</span> HttpResponseDecoder());
@@ -595,7 +647,8 @@
     ch.pipleline().addLast(<span class="hljs-string">"xml-encoder"</span>,<span class="hljs-keyword">new</span> HttpXMLRequestEncoder());
 
     ch.pipleline().addLast(<span class="hljs-string">"fileServerHandler"</span>,<span class="hljs-keyword">new</span> HttpXMLHandler());
-}</code></span></pre><p></p>
+}</code></span></pre>
+
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>  尽管本文中开发的Http+XML协议栈是一个高性能、通用的协议栈，但这里忽略了异常处理、可扩展性的API和配置能力。所以如果想要做产品化的协议栈，还需要一些额外的完善。</p>
 <h2 id="WebSocket协议开发"><a href="#WebSocket协议开发" class="headerlink" title="WebSocket协议开发"></a>WebSocket协议开发</h2><p>  一直以来，网络在很多程度上都是围绕着Http的请求/相应模式而构建的。长期以来存在这个各种技术让服务器得知有数据可用时，立即将数据发送到客户端。最常用的一种技术手段是对服务器发起链接创建假象，被称为长轮循。利用长轮循，客户端可以打开指向服务器的Http连接，而服务器会一直保持链接打开，直到发送响应。服务器只要有数据，就会发送响应。这些问题都存在一个同样的问题，Http协议的开销，到时他们不适用于低延迟应用。</p>
 <p>  为了解决这些问题，WebSocket将网络套接字引入到了客户端和服务器端，浏览器和服务器之间可以通过套接字建立持久的连接，双方随时都可以互发数据给对方，而不是由客户端控制的一对一应答模式。</p>
@@ -618,12 +671,13 @@
 </ul>
 <p>  WebSocket的目的是为了取代轮询和Coment技术，使客户端浏览器具备像C/S架构下桌面系统一样的实时通信能力。</p>
 <ol>
-<li>建立连接<br> <strong>客户端—&gt;握手请求—&gt;服务器—&gt;握手相应</strong></li>
+<li>建立连接<br> <strong>客户端–&gt;握手请求–&gt;服务器–&gt;握手相应</strong></li>
 <li>生命周期<br>   握手成功之后，客户端和服务器端就可以通过”messages”的方式进行通信了，一个消息由一个或多个帧组成，WebSocket的消息并不一定对应某一个特定网络层的帧，它可以被分割成多个或被合并。</li>
 <li>关闭连接<br>   为关闭WebSocket连接，客户端和服务端需要通过一个安全的方法关闭底层TCP连接以及TLS会话。如果合适，丢弃任何核能已经接受的字节。<br>   WebSocket的握手关闭消息带有一个状态码和一个可选的关闭原因，它必须按照协议要求发送一个关闭控制流，当对接接收到关闭控制帧时，需要主动关闭WebSocket连接。</li>
 </ol>
 <h3 id="Netty-WebSocket开发"><a href="#Netty-WebSocket开发" class="headerlink" title="Netty WebSocket开发"></a>Netty WebSocket开发</h3><p>  Netty基于Http协议开发了WebSocket协议栈，利用Netty的WebSocket协议栈可非常方便的开发出WebSocket客户端和服务器端。</p>
-<p>基于Netty的WebSocket编程主要代码<br></p><pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WebSocketServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WebSocketServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title">Object</span>&gt;</span>{
+<p>基于Netty的WebSocket编程主要代码</p>
+<pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WebSocketServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WebSocketServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title">Object</span>&gt;</span>{
 
     <span class="hljs-keyword">private</span> WebSocketServerHandshaker handshaker;
 
@@ -714,7 +768,8 @@
             f.addListener(ChannelFutureListener.CLOSE);
         }
     }
-}</code></span></span></pre><p></p>
+}</code></span></span></pre>
+
 <h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><p>  本章主要介绍了Http协议的弊端和WebSocket的一些技术背景，随后对WebSocket的优势和基础入门进行了介绍，包括WebSocket的握手请求和相应、连接的建立与关闭、WebSocket的生命周期等内容。</p>
 <h2 id="UDP协议开发"><a href="#UDP协议开发" class="headerlink" title="UDP协议开发"></a>UDP协议开发</h2><p>  UDP是用户数据报协议(User Datagram Protocol, UDP)的简称，其主要作用是将网络数据流量压缩成数据报形式，提供面向事物的简单消息传送服务。与TCP相比，UDP协议直接利用IP协议进行UDP数据报的传输，UDP面向的是无连接、不可靠的数据投递服务。当使用UDP时，用户应用必须负责解决数据报丢失、重复、排序、差错确认等问题。</p>
 <p>  由于UDP具有资源消耗小、处理速度快的优点，所以通常视频、音频等可靠性要求不高的数据传输一般会使用UDP，即便有一定的丢包率，也不会对功能造成严重的影响。</p>
@@ -731,7 +786,7 @@
 <li>UDP对接受到的数据报不发送确认信号，发送端不知道数据是否被正确接受，也不会重发数据</li>
 <li>UDP发送数据比TCP快，系统开销少：UDP简单、灵活。</li>
 </ul>
-<h3 id="UDP服务端开发"><a href="#UDP服务端开发" class="headerlink" title="UDP服务端开发"></a>UDP服务端开发</h3><p><img src="./Netty权威指南读书笔记/002.png" srcset="/img/loading.gif" alt="UDP开发流程"></p>
+<h3 id="UDP服务端开发"><a href="#UDP服务端开发" class="headerlink" title="UDP服务端开发"></a>UDP服务端开发</h3><p><img src="./Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/002.png" srcset="/img/loading.gif" alt="UDP开发流程"></p>
 <h3 id="UDP客户端开发"><a href="#UDP客户端开发" class="headerlink" title="UDP客户端开发"></a>UDP客户端开发</h3><p>  总体而言UDP开发相对简单，客户端开发可参考服务器端开发代码。</p>
 <h3 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h3><p>  由于UDP相比于TCP的应用领域窄一些，所以本章不做详细论述。</p>
 <h2 id="文件传输"><a href="#文件传输" class="headerlink" title="文件传输"></a>文件传输</h2><p>  文件是最常见的数据源之一，在程序中经常需要将数据存储到文件中。在NIO的类库之前，Java所有的文件操作分为两类</p>
@@ -754,7 +809,8 @@
 <li>文件服务器接受到请求消息后进行合法性判断，如果文件存在，则将文件发送给CDM控制台</li>
 <li>CMD控制台打印文件名和文件内存</li>
 </ol>
-<p>  主要处理类<br></p><pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FileSererHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FileSererHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title">String</span>&gt;</span>{
+<p>  主要处理类</p>
+<pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FileSererHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FileSererHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SimpleChannelInBoundHandler</span>&lt;<span class="hljs-title">String</span>&gt;</span>{
 
     <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String CR = System.getProperty(<span class="hljs-string">"line.separator"</span>);
 
@@ -778,7 +834,9 @@
         ctx.writeAndFlush(CR);
         raf.close();
     }
-}</code></span></span></pre><p></p>
+}</code></span></span></pre>
+
+
 <h2 id="私有协议栈开发"><a href="#私有协议栈开发" class="headerlink" title="私有协议栈开发"></a>私有协议栈开发</h2><p>  通信协议从广义上区分，可以分为共有协议和私有协议。由于私有协议的灵活性，它往往会在某个公司或组织内部使用，按需定制。绝大数私有协议传输层都是基于TCP/IP，所以利用Netty的NIO TCP协议栈可以非常方便的进行私有协议的定制和开发。</p>
 <h3 id="私有协议介绍"><a href="#私有协议介绍" class="headerlink" title="私有协议介绍"></a>私有协议介绍</h3><p>  传统中的Java应用中，通常使用以下四种方式进行跨界点调用</p>
 <ul>

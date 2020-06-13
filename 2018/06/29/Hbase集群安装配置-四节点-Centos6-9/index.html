@@ -194,14 +194,14 @@
             <article class="markdown-body">
               <p>  最近在研究Hadoop相关组件的安装，本篇主要研究Hbase的安装。Hbase作为Hadoop家族中重要的数据库解决方案，对以后的Hive等数据库都有非常大的帮助。</p>
 <a id="more"></a>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>  本节主要阐述Hbase集群的环境。</p>
-<pre><code>1. 系统环境：Linux6.9；
-2. JAVA：JDK1.8.0_111；
-3. Hadoop：2.6.0；
-4. Zookeeper：3.4.9（3节点：slave1/slave2/slave3）。
-</code></pre><h2 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h2><p>  一般Apache的项目，可以从官网上选择相应的镜像作为下载站点，版主以清华大学的<a href="http://www.apache.org/dyn/closer.cgi/hbase/" target="_blank" rel="noopener">镜像</a>作为下载站点，速度比较快。下载完成以后，直接解压即可：<br></p><pre class=" language-hljs css"><span class="hljs-selector-tag">tar</span> <span class="hljs-selector-tag">-xf</span> <span class="hljs-selector-tag">hbase-1</span><span class="hljs-selector-class">.2</span><span class="hljs-selector-class">.4-bin</span><span class="hljs-selector-class">.tar</span><span class="hljs-selector-class"><code class="language-hljs css"><span class="hljs-selector-tag">tar</span> <span class="hljs-selector-tag">-xf</span> <span class="hljs-selector-tag">hbase-1</span><span class="hljs-selector-class">.2</span><span class="hljs-selector-class">.4-bin</span><span class="hljs-selector-class">.tar</span><span class="hljs-selector-class">.gz</span></code></span></pre><br>直接解压到当前路径下。<p></p>
+
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>  本节主要阐述Hbase集群的环境。<br>    1. 系统环境：Linux6.9；<br>    2. JAVA：JDK1.8.0_111；<br>    3. Hadoop：2.6.0；<br>    4. Zookeeper：3.4.9（3节点：slave1/slave2/slave3）。</p>
+<h2 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h2><p>  一般Apache的项目，可以从官网上选择相应的镜像作为下载站点，版主以清华大学的<a href="http://www.apache.org/dyn/closer.cgi/hbase/" target="_blank" rel="noopener">镜像</a>作为下载站点，速度比较快。下载完成以后，直接解压即可：</p>
+<pre class=" language-hljs css"><span class="hljs-selector-tag">tar</span> <span class="hljs-selector-tag">-xf</span> <span class="hljs-selector-tag">hbase-1</span><span class="hljs-selector-class">.2</span><span class="hljs-selector-class">.4-bin</span><span class="hljs-selector-class">.tar</span><span class="hljs-selector-class"><code class="language-hljs css"><span class="hljs-selector-tag">tar</span> <span class="hljs-selector-tag">-xf</span> <span class="hljs-selector-tag">hbase-1</span><span class="hljs-selector-class">.2</span><span class="hljs-selector-class">.4-bin</span><span class="hljs-selector-class">.tar</span><span class="hljs-selector-class">.gz</span></code></span></pre>
+<p>直接解压到当前路径下。</p>
 <h2 id="配置启动"><a href="#配置启动" class="headerlink" title="配置启动"></a>配置启动</h2><p>  Hbase的配置，主要是对于Hbase-env.sh/Hbase-site.sh的配置。</p>
-<p>Hbase环境配置Hbase-env.sh：<br></p><pre class=" language-hljs routeros"><span class="hljs-comment"><code class="language-hljs routeros"><span class="hljs-comment">## 配置主要HOME</span>
+<p>Hbase环境配置Hbase-env.sh：</p>
+<pre class=" language-hljs routeros"><span class="hljs-comment"><code class="language-hljs routeros"><span class="hljs-comment">## 配置主要HOME</span>
 <span class="hljs-builtin-name">export</span> <span class="hljs-attribute">JAVA_HOME</span>=/home/appuser/jdk
 <span class="hljs-builtin-name">export</span> <span class="hljs-attribute">HADOOP_HOME</span>=/home/appuser/hadoop
 <span class="hljs-builtin-name">export</span> <span class="hljs-attribute">HBASE_HOME</span>=/home/appuser/hbase
@@ -211,8 +211,10 @@
 
 <span class="hljs-comment"># true:Hbase自己管理Zookeeper</span>
 <span class="hljs-comment"># flase:通过独立Zookeeper管理</span>
-<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">HBASE_MANAGES_ZK</span>=<span class="hljs-literal">false</span></code></span></pre><p></p>
-<p>Hbase主要参数配置Hbase-site.sh：<br></p><pre class=" language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name"><code class="language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">HBASE_MANAGES_ZK</span>=<span class="hljs-literal">false</span></code></span></pre>
+
+<p>Hbase主要参数配置Hbase-site.sh：</p>
+<pre class=" language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name"><code class="language-hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>hbase.rootdir<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;</code></span><code class="language-hljs xml">
     <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>hdfs://master:9000/user/hbase<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;</code></span><code class="language-hljs xml">
 <span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;
@@ -235,15 +237,23 @@
 <span class="hljs-tag">&lt;<span class="hljs-name">property</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>hbase.zookeeper.property.clientport<span class="hljs-tag"><!--<span class="hljs-name"-->name</span>&gt;
     <span class="hljs-tag">&lt;<span class="hljs-name">value</span>&gt;</span>2181<span class="hljs-tag"><!--<span class="hljs-name"-->value</span>&gt;
-<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</code></pre><p></p>
-<p>Hbase的regionservers配置：<br></p><pre class=" language-hljs"><code class="language-hljs">slave1
+<span class="hljs-tag"><!--<span class="hljs-name"-->property</span>&gt;</code></pre>
+
+<p>Hbase的regionservers配置：</p>
+<pre class=" language-hljs"><code class="language-hljs">slave1
 slave2
-slave3</code></pre><p></p>
-<p>基于以上配置之后，可以在Master节点启动Hbase ：<br></p><pre class=" language-hljs crmsh">~/hbase/bin/<span class="hljs-literal">start</span>-hbase.sh <span class="hljs-literal"><code class="language-hljs crmsh">~/hbase/bin/<span class="hljs-literal">start</span>-hbase.sh <span class="hljs-literal">start</span></code></span></pre><p></p>
-<p>如果出现以下类似信息，说明只在Master节点启动，RegionServer没有启动：<br></p><pre class=" language-hljs routeros">starting regionserver,<span class="hljs-built_in"> logging </span><span class="hljs-keyword"><code class="language-hljs routeros">starting regionserver,<span class="hljs-built_in"> logging </span><span class="hljs-keyword">to</span> /home/appuser/hbase/logs/hbase-appuser-regionserver-hs-slave1.out
+slave3</code></pre>
+
+<p>基于以上配置之后，可以在Master节点启动Hbase ：</p>
+<pre class=" language-hljs crmsh">~/hbase/bin/<span class="hljs-literal">start</span>-hbase.sh <span class="hljs-literal"><code class="language-hljs crmsh">~/hbase/bin/<span class="hljs-literal">start</span>-hbase.sh <span class="hljs-literal">start</span></code></span></pre>
+
+<p>如果出现以下类似信息，说明只在Master节点启动，RegionServer没有启动：</p>
+<pre class=" language-hljs routeros">starting regionserver,<span class="hljs-built_in"> logging </span><span class="hljs-keyword"><code class="language-hljs routeros">starting regionserver,<span class="hljs-built_in"> logging </span><span class="hljs-keyword">to</span> /home/appuser/hbase/logs/hbase-appuser-regionserver-hs-slave1.out
 Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">PermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0
-Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">MaxPermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0</code></span></pre><p></p>
-<p>如果启动成功，会出现下面的类似信息：<br></p><pre class=" language-hljs routeros">starting master,<span class="hljs-built_in"> logging </span><span class="hljs-keyword"><code class="language-hljs routeros">starting master,<span class="hljs-built_in"> logging </span><span class="hljs-keyword">to</span> /home/appuser/hbase/logs/hbase-appuser-master-master.out
+Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">MaxPermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0</code></span></pre>
+
+<p>如果启动成功，会出现下面的类似信息：</p>
+<pre class=" language-hljs routeros">starting master,<span class="hljs-built_in"> logging </span><span class="hljs-keyword"><code class="language-hljs routeros">starting master,<span class="hljs-built_in"> logging </span><span class="hljs-keyword">to</span> /home/appuser/hbase/logs/hbase-appuser-master-master.out
 Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">PermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0
 Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">MaxPermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0
 slave3: starting regionserver,<span class="hljs-built_in"> logging </span><span class="hljs-keyword">to</span> /home/appuser/hbase/logs/hbase-appuser-regionserver-slave3.out
@@ -254,7 +264,8 @@ slave3: Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM war
 slave2: Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">PermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0
 slave2: Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">MaxPermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0
 slave1: Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">PermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0
-slave1: Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">MaxPermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0</code></span></pre><p></p>
+slave1: Java HotSpot(TM) 64-Bit<span class="hljs-built_in"> Server </span>VM warning: ignoring option <span class="hljs-attribute">MaxPermSize</span>=128m; support was removed <span class="hljs-keyword">in</span> 8.0</code></span></pre>
+
 <h2 id="测试Hbase"><a href="#测试Hbase" class="headerlink" title="测试Hbase"></a>测试Hbase</h2><p><em>首先</em>可以启动Hbase测试是否正确安装Hbase，如果启动过程没有报错信息，那么安装成功：<br><img src="001.png" srcset="/img/loading.gif" alt="1"></p>
 <p><em>其次</em>可以创建表，写入内容，查看是否正常，如果正常说明安装成功：<br><img src="002.png" srcset="/img/loading.gif" alt="2"></p>
 <p>通过以上操作以后，可以查看Hadoop相应路径上是否存在数据：<br><img src="003.png" srcset="/img/loading.gif" alt="3"></p>

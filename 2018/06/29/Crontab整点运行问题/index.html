@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      667 字
+      657 字
     </span>
   
 
@@ -194,13 +194,21 @@
             <article class="markdown-body">
               <p>  无论是使用Linux自带crontab程序，还是使用cron-utils的crontab语法解析，都存在整点运行问题。</p>
 <a id="more"></a>
-<h2 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h2><p>使用crontab语法的时候，如果是固定间隔运行，如<br></p><pre class=" language-hljs basic"><span class="hljs-symbol">0 </span> <span class="hljs-number">0</span>/<span class="hljs-number"><code class="language-hljs basic"><span class="hljs-symbol">0 </span> <span class="hljs-number">0</span>/<span class="hljs-number">5</span>  * * * *
-<span class="hljs-symbol">30 </span>*/<span class="hljs-number">30</span> * * * *</code></span></pre><br>其中分钟间隔只能是60的因子，如果不是60的因子，那么存在整点运行问题。如运行计划为<br><pre class=" language-hljs basic"><span class="hljs-symbol">10 </span><span class="hljs-number">0</span>/<span class="hljs-number">29</span> * * * *</pre><br>那么运行时刻可能为<br><pre><code class="hljs angelscript">Mon Oct <span class="hljs-number">09</span> <span class="hljs-number">15</span>:<span class="hljs-number">29</span>:<span class="hljs-number">10</span> CST <span class="hljs-number"><code class="language-hljs basic"><span class="hljs-symbol">10 </span><span class="hljs-number">0</span>/<span class="hljs-number">29</span> * * * *</code></span></code></pre><code class="hljs angelscript"><br>那么运行时刻可能为<br><pre><code class="hljs angelscript">Mon Oct <span class="hljs-number">09</span> <span class="hljs-number">15</span>:<span class="hljs-number">29</span>:<span class="hljs-number">10</span> CST <span class="hljs-number">2017</span>
+
+<h2 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h2><p>使用crontab语法的时候，如果是固定间隔运行，如</p>
+<pre class=" language-hljs basic"><span class="hljs-symbol">0 </span> <span class="hljs-number">0</span>/<span class="hljs-number"><code class="language-hljs basic"><span class="hljs-symbol">0 </span> <span class="hljs-number">0</span>/<span class="hljs-number">5</span>  * * * *
+<span class="hljs-symbol">30 </span>*/<span class="hljs-number">30</span> * * * *</code></span></pre>
+<p>其中分钟间隔只能是60的因子，如果不是60的因子，那么存在整点运行问题。如运行计划为</p>
+<pre class=" language-hljs basic"><span class="hljs-symbol">10 </span><span class="hljs-number">0</span>/<span class="hljs-number"><code class="language-hljs basic"><span class="hljs-symbol">10 </span><span class="hljs-number">0</span>/<span class="hljs-number">29</span> * * * *</code></span></pre>
+<p>那么运行时刻可能为</p>
+<pre class=" language-hljs angelscript">Mon Oct <span class="hljs-number">09</span> <span class="hljs-number">15</span>:<span class="hljs-number">29</span>:<span class="hljs-number">10</span> CST <span class="hljs-number"><code class="language-hljs angelscript">Mon Oct <span class="hljs-number">09</span> <span class="hljs-number">15</span>:<span class="hljs-number">29</span>:<span class="hljs-number">10</span> CST <span class="hljs-number">2017</span>
 Mon Oct <span class="hljs-number">09</span> <span class="hljs-number">15</span>:<span class="hljs-number">58</span>:<span class="hljs-number">10</span> CST <span class="hljs-number">2017</span>
 Mon Oct <span class="hljs-number">09</span> <span class="hljs-number">16</span>:<span class="hljs-number">00</span>:<span class="hljs-number">10</span> CST <span class="hljs-number">2017</span>
-...</code></pre><br>这里的运行计划，多出来一个16:00:10，这是不在我们的运行计划中的。<p></p>
+...</code></span></pre>
+<p>这里的运行计划，多出来一个16:00:10，这是不在我们的运行计划中的。</p>
 <h2 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h2><p>作者使用的是cron-utils，所以可以使用程序控制，实现规避整点运行的问题。</p>
-<h3 id="计算crontab时间间隔"><a href="#计算crontab时间间隔" class="headerlink" title="计算crontab时间间隔"></a>计算crontab时间间隔</h3><p>代码先上：<br></p><pre class=" language-hljs armasm"><span class="hljs-comment"><code class="language-hljs armasm"><span class="hljs-comment">/**</span>
+<h3 id="计算crontab时间间隔"><a href="#计算crontab时间间隔" class="headerlink" title="计算crontab时间间隔"></a>计算crontab时间间隔</h3><p>代码先上：</p>
+<pre class=" language-hljs armasm"><span class="hljs-comment"><code class="language-hljs armasm"><span class="hljs-comment">/**</span>
 <span class="hljs-comment"> * @DESC caluate the max seperates</span>
 <span class="hljs-comment"> */</span>
 <span class="hljs-symbol">public</span> static long calcMaxSep(ExecutionTime executionTime,
@@ -229,7 +237,8 @@ Mon Oct <span class="hljs-number">09</span> <span class="hljs-number">16</span>:
 <span class="hljs-symbol">public</span> static long getMaxByTri(long <span class="hljs-keyword">b1, </span>long <span class="hljs-keyword">b2, </span>long <span class="hljs-keyword">b3) </span>{
 	// return <span class="hljs-keyword">b1 </span>&gt; <span class="hljs-keyword">b2 </span>? (<span class="hljs-keyword">b1 </span>&gt; <span class="hljs-keyword">b3 </span>? <span class="hljs-keyword">b1 </span>: <span class="hljs-keyword">b3) </span>: (<span class="hljs-keyword">b2 </span>&gt; <span class="hljs-keyword">b3 </span>? <span class="hljs-keyword">b2 </span>: <span class="hljs-keyword">b3);</span>
 <span class="hljs-keyword">	</span>return Math.max(<span class="hljs-keyword">b1, </span>Math.max(<span class="hljs-keyword">b2, </span><span class="hljs-keyword">b3));</span>
-<span class="hljs-keyword">}</span></code></span></pre><br>  基本原理：三个运行时刻，不可能都存在整点运行问题，除非设置就是整点运行的。分析三个运行时间之间的时间间隔，如果是正常区间，那三个时间应该是一致的；如果区间内或边界存在整点问题，那么应该可以通过该方法解决。作者通过该方法获取运行时间间隔，没有发现问题。<p></p>
+<span class="hljs-keyword">}</span></code></span></pre>
+<p>  基本原理：三个运行时刻，不可能都存在整点运行问题，除非设置就是整点运行的。分析三个运行时间之间的时间间隔，如果是正常区间，那三个时间应该是一致的；如果区间内或边界存在整点问题，那么应该可以通过该方法解决。作者通过该方法获取运行时间间隔，没有发现问题。</p>
 <h3 id="通过间隔获取下一个运行时刻"><a href="#通过间隔获取下一个运行时刻" class="headerlink" title="通过间隔获取下一个运行时刻"></a>通过间隔获取下一个运行时刻</h3><pre class=" language-hljs reasonml">public static void update<span class="hljs-constructor">Task(SchedulerTask <span class="hljs-params"><code class="language-hljs reasonml">public static void update<span class="hljs-constructor">Task(SchedulerTask <span class="hljs-params">task</span>)</span> {
 	task.set<span class="hljs-constructor">CurrentFiredTime(<span class="hljs-params">task</span>.<span class="hljs-params">getNextFiredTime</span>()</span>);<span class="hljs-comment">// 直接获取计算好的下次执行时间，不再重新计算</span>
 	DateTime updateCurrentFireTime = <span class="hljs-keyword">new</span> <span class="hljs-constructor">DateTime(<span class="hljs-params">task</span>.<span class="hljs-params">getNextFiredTime</span>()</span>);
@@ -261,7 +270,7 @@ public static DateTime next<span class="hljs-constructor">FireTime(DateTime <spa
 <li>本方法不适用于日、星期、月、年等存在区间限制，也即crontab表达式，后面几个都是”*”</li>
 </ol>
 
-            </code></article><code class="hljs angelscript">
+            </article>
             <hr>
             <div>
               <div class="post-metas mb-3">
@@ -314,10 +323,10 @@ public static DateTime next<span class="hljs-constructor">FireTime(DateTime <spa
             </div>
 
             
-          </code></div><code class="hljs angelscript">
-        </code></div><code class="hljs angelscript">
-      </code></div><code class="hljs angelscript">
-    </code></div><code class="hljs angelscript">
+          </div>
+        </div>
+      </div>
+    </div>
     
       <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
         <div id="toc">
@@ -327,14 +336,14 @@ public static DateTime next<span class="hljs-constructor">FireTime(DateTime <spa
 
       </div>
     
-  </code></div><code class="hljs angelscript">
-</code></div><code class="hljs angelscript">
+  </div>
+</div>
 
 <!-- Custom -->
 
 
     
-  </code></main><code class="hljs angelscript">
+  </main>
 
   
     <a id="scroll-top-button" href="#" role="button">
@@ -454,7 +463,7 @@ public static DateTime next<span class="hljs-constructor">FireTime(DateTime <spa
 
 
 
-</code><script src="/bundle.js"></script><script>
+<script src="/bundle.js"></script><script>
     $(document).ready(function () {
       var boardCtn = $('#board-ctn');
       var boardTop = boardCtn.offset().top;

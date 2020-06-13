@@ -194,11 +194,15 @@
             <article class="markdown-body">
               <p>  EasyPR中主要涉及到蓝色底牌与黄色底牌的车牌识别，随着新能源车辆的发展，目前已经出现绿色底牌的车牌，因此有必要增加绿色车牌的识别。</p>
 <a id="more"></a>
+
 <p>  EasyPR中关于车牌的识别已经比较完善，这里主要涉及到三个地方的修改：颜色枚举类、颜色识别逻辑、增加字符限制。</p>
-<h2 id="添加颜色"><a href="#添加颜色" class="headerlink" title="添加颜色"></a>添加颜色</h2><p>在自定义Color的枚举类中，添加 绿色，修改之后为：<br></p><pre class=" language-hljs crystal">public <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title"><code class="language-hljs crystal">public <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">Color</span> {</span>
+<h2 id="添加颜色"><a href="#添加颜色" class="headerlink" title="添加颜色"></a>添加颜色</h2><p>在自定义Color的枚举类中，添加 绿色，修改之后为：</p>
+<pre class=" language-hljs crystal">public <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title"><code class="language-hljs crystal">public <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">Color</span> {</span>
 	UNKNOWN, BLUE, YELLOW, GREEN
-};</code></span></span></pre><p></p>
-<h2 id="添加绿色识别"><a href="#添加绿色识别" class="headerlink" title="添加绿色识别"></a>添加绿色识别</h2><p>  在OpenCV或其他软件中，识别颜色主要通过RGB映射到HSV空间，通过判断H、S、V的相关值来判断颜色的，主要原理可以参考：<a href="http://blog.csdn.net/liuqz2009/article/details/47623399" target="_blank" rel="noopener">OpenCV颜色识别</a>。修改之后的部分代码如下：<br></p><pre class=" language-hljs angelscript"><span class="hljs-keyword">public</span> static Mat colorMatch(<span class="hljs-keyword">final</span> Mat src, <span class="hljs-keyword"><code class="language-hljs angelscript"><span class="hljs-keyword">public</span> static Mat colorMatch(<span class="hljs-keyword">final</span> Mat src, <span class="hljs-keyword">final</span> Color r,
+};</code></span></span></pre>
+
+<h2 id="添加绿色识别"><a href="#添加绿色识别" class="headerlink" title="添加绿色识别"></a>添加绿色识别</h2><p>  在OpenCV或其他软件中，识别颜色主要通过RGB映射到HSV空间，通过判断H、S、V的相关值来判断颜色的，主要原理可以参考：<a href="http://blog.csdn.net/liuqz2009/article/details/47623399" target="_blank" rel="noopener">OpenCV颜色识别</a>。修改之后的部分代码如下：</p>
+<pre class=" language-hljs angelscript"><span class="hljs-keyword">public</span> static Mat colorMatch(<span class="hljs-keyword">final</span> Mat src, <span class="hljs-keyword"><code class="language-hljs angelscript"><span class="hljs-keyword">public</span> static Mat colorMatch(<span class="hljs-keyword">final</span> Mat src, <span class="hljs-keyword">final</span> Color r,
 		<span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span>ean adaptive_minsv) {
 
 	<span class="hljs-keyword">final</span> <span class="hljs-built_in">float</span> max_sv = <span class="hljs-number">255</span>;
@@ -306,8 +310,10 @@
 	Mat src_grey = hsvSplit_done.<span class="hljs-keyword">get</span>(<span class="hljs-number">2</span>);
 
 	<span class="hljs-keyword">return</span> src_grey;
-}</code></span></pre><br>其中RGB与HSV颜色识别对应的关系，可以参考：<a href="http://www.cnblogs.com/wangyblzu/p/5710715.html" target="_blank" rel="noopener">OpenCV中HSV颜色模型及颜色分量范围</a><p></p>
-<h2 id="增加字符限制"><a href="#增加字符限制" class="headerlink" title="增加字符限制"></a>增加字符限制</h2><p>  以前的车牌主要是7位字符，包括省 <strong>[A-Z].[5位字符]</strong> 的方式。但新能源车牌，后面5为字符变为6位字符，因此之前的判断方法不能够获取全部车牌，最好的情况也只能获得前面的7位字符。因此需要修改为：<br></p><pre class=" language-hljs angelscript"><span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> RebuildRect(<span class="hljs-keyword"><code class="language-hljs angelscript"><span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> RebuildRect(<span class="hljs-keyword">final</span> Vector<rect> vecRect, Vector<rect> outRect,
+}</code></span></pre>
+<p>其中RGB与HSV颜色识别对应的关系，可以参考：<a href="http://www.cnblogs.com/wangyblzu/p/5710715.html" target="_blank" rel="noopener">OpenCV中HSV颜色模型及颜色分量范围</a></p>
+<h2 id="增加字符限制"><a href="#增加字符限制" class="headerlink" title="增加字符限制"></a>增加字符限制</h2><p>  以前的车牌主要是7位字符，包括省 <strong>[A-Z].[5位字符]</strong> 的方式。但新能源车牌，后面5为字符变为6位字符，因此之前的判断方法不能够获取全部车牌，最好的情况也只能获得前面的7位字符。因此需要修改为：</p>
+<pre class=" language-hljs angelscript"><span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> RebuildRect(<span class="hljs-keyword"><code class="language-hljs angelscript"><span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> RebuildRect(<span class="hljs-keyword">final</span> Vector<rect> vecRect, Vector<rect> outRect,
 		<span class="hljs-built_in">int</span> specIndex) {
 	<span class="hljs-comment">// 最大只能有7个Rect,减去中文的就只有6个Rect</span>
 	<span class="hljs-built_in">int</span> count = <span class="hljs-number">7</span>;<span class="hljs-comment">// --这里将6修改为7即可--</span>
@@ -322,7 +328,8 @@
 	}
 
 	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-}</rect></rect></code></span></pre><br>至此，可以识别绿色车牌。<p></p>
+}</rect></rect></code></span></pre>
+<p>至此，可以识别绿色车牌。</p>
 
             </article>
             <hr>

@@ -193,10 +193,11 @@
             
             <article class="markdown-body">
               <!-- TOC -->
+
 <ul>
 <li><a href="#1-下载组件">.1. 下载组件</a></li>
 <li><a href="#2-部署安装">.2. 部署安装</a><ul>
-<li><a href="#21-配置文件----configini--cloudera-scm-agent需要">.2.1. 配置文件 — config.ini : cloudera-scm-agent需要</a></li>
+<li><a href="#21-配置文件----configini--cloudera-scm-agent需要">.2.1. 配置文件 – config.ini : cloudera-scm-agent需要</a></li>
 <li><a href="#22-dbproperties--cloudera-scm-server-需要">.2.2. db.properties : cloudera-scm-server 需要</a></li>
 </ul>
 </li>
@@ -208,6 +209,7 @@
 </li>
 </ul>
 <!-- /TOC -->
+
 <h2 id="1-下载组件"><a href="#1-下载组件" class="headerlink" title=".1. 下载组件"></a>.1. 下载组件</h2><pre class=" language-hljs json"><code class="language-hljs json">## 必须下载
 ### Cloudera Manager
 cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
@@ -227,7 +229,8 @@ oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm
 ## 部署MySQL需要
 mysql57-community-release-el7-7.noarch.rpm
 mysql-connector-java.jar</code></pre>
-<h2 id="2-部署安装"><a href="#2-部署安装" class="headerlink" title=".2. 部署安装"></a>.2. 部署安装</h2><h3 id="2-1-配置文件-—-config-ini-cloudera-scm-agent需要"><a href="#2-1-配置文件-—-config-ini-cloudera-scm-agent需要" class="headerlink" title=".2.1. 配置文件 — config.ini : cloudera-scm-agent需要"></a>.2.1. 配置文件 — config.ini : cloudera-scm-agent需要</h3><pre class=" language-hljs XML"><code class="language-hljs XML"># Configuration file for cloudera-scm-agent.
+
+<h2 id="2-部署安装"><a href="#2-部署安装" class="headerlink" title=".2. 部署安装"></a>.2. 部署安装</h2><h3 id="2-1-配置文件-–-config-ini-cloudera-scm-agent需要"><a href="#2-1-配置文件-–-config-ini-cloudera-scm-agent需要" class="headerlink" title=".2.1. 配置文件 – config.ini : cloudera-scm-agent需要"></a>.2.1. 配置文件 – config.ini : cloudera-scm-agent需要</h3><pre class=" language-hljs XML"><code class="language-hljs XML"># Configuration file for cloudera-scm-agent.
 # Please note that this file supports multi-line values.  Multi-line
 # values are indicated by indenting following lines with a space.
 #
@@ -474,6 +477,7 @@ max_cert_depth=9
 #cpuacct_cgroup_path=/
 #blkio_cgroup_path=/
 #memory_cgroup_path=/</code></pre>
+
 <h3 id="2-2-db-properties-cloudera-scm-server-需要"><a href="#2-2-db-properties-cloudera-scm-server-需要" class="headerlink" title=".2.2. db.properties : cloudera-scm-server 需要"></a>.2.2. db.properties : cloudera-scm-server 需要</h3><pre class=" language-hljs XML"><code class="language-hljs XML"># Copyright (c) 2012 Cloudera, Inc. All rights reserved.
 #
 # This file describes the database connection.
@@ -502,134 +506,137 @@ com.cloudera.cmf.db.password={{ root_password }}
 # If scm-server uses Embedded DB then it is set to EMBEDDED
 # If scm-server uses External DB then it is set to EXTERNAL
 com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre>
-<h2 id="3-部署编排"><a href="#3-部署编排" class="headerlink" title=".3. 部署编排"></a>.3. 部署编排</h2><pre class=" language-hljs yml"><span class="hljs-meta"><code class="language-hljs yml"><span class="hljs-meta">---</span>
 
-<span class="hljs-bullet">-</span> <span class="hljs-attr">hosts:</span> <span class="hljs-string">CDM:Common</span>
-  <span class="hljs-attr">tasks:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">hosts</span>
-    <span class="hljs-attr">copy:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/hosts</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/etc/hosts</span>
+<h2 id="3-部署编排"><a href="#3-部署编排" class="headerlink" title=".3. 部署编排"></a>.3. 部署编排</h2><pre class=" language-hljs json"><code class="language-hljs json">---
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">set</span> <span class="hljs-string">hostname</span>
-    <span class="hljs-attr">hostname:</span> <span class="hljs-string">name={{</span> <span class="hljs-string">inventory_hostname</span> <span class="hljs-string">}}</span>
+- hosts: CDM:Common
+  tasks:
+  - name: copy hosts
+    copy:
+        src: confs/hosts
+        dest: /etc/hosts
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">oracle-jdk1.8</span>
-    <span class="hljs-attr">copy:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm</span> 
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/tmp/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm</span> 
+  - name: set hostname
+    hostname: name={{ inventory_hostname }}
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">oracle-jdk1.8</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">rpm</span> <span class="hljs-string">-Uvh</span> <span class="hljs-string">--replacepkgs</span>  <span class="hljs-string">/tmp/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm</span> 
+  - name: copy oracle-jdk1.8
+    copy:
+        src: confs/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm 
+        dest: /tmp/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm 
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">rpcbind</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">yum</span> <span class="hljs-string">install</span> <span class="hljs-string">-y</span> <span class="hljs-string">rpcbind</span>
-    <span class="hljs-attr">ignore_errors:</span> <span class="hljs-literal">true</span>
+  - name: install oracle-jdk1.8
+    shell: rpm -Uvh --replacepkgs  /tmp/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm 
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">set</span> <span class="hljs-string">java_home</span>
-    <span class="hljs-attr">lineinfile:</span>
-        <span class="hljs-attr">path:</span> <span class="hljs-string">/etc/profile</span>
-        <span class="hljs-attr">line:</span> <span class="hljs-string">export</span> <span class="hljs-string">JAVA_HOME=/usr/lib/jvm/java</span>
-        <span class="hljs-attr">state:</span> <span class="hljs-string">absent</span>
+  - name: install rpcbind
+    shell: yum install -y rpcbind
+    ignore_errors: true
+
+  - name: set java_home
+    lineinfile:
+        path: /etc/profile
+        line: export JAVA_HOME=/usr/lib/jvm/java
+        state: absent
  
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">needed</span> <span class="hljs-string">packages</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">yum</span> <span class="hljs-string">install</span> <span class="hljs-string">cyrus-sasl-gssapi</span> <span class="hljs-string">fuse</span> <span class="hljs-string">fuse-libs</span> <span class="hljs-string">httpd</span> <span class="hljs-string">mod_ssl</span> <span class="hljs-string">openssl-devel</span> <span class="hljs-string">python-psycopg2</span> <span class="hljs-string">MySQL-python</span> <span class="hljs-string">-y</span>
+  - name: install needed packages
+    shell: yum install cyrus-sasl-gssapi fuse fuse-libs httpd mod_ssl openssl-devel python-psycopg2 MySQL-python -y
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">configure</span> <span class="hljs-string">each-cred</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">echo</span> <span class="hljs-string">-e</span> <span class="hljs-string">"y\ny\n"</span> <span class="hljs-string">|</span> <span class="hljs-string">ssh-keygen</span> <span class="hljs-string">-q</span> <span class="hljs-string">-t</span> <span class="hljs-string">rsa</span> <span class="hljs-string">-f</span> <span class="hljs-string">/root/.ssh/id_rsa</span> <span class="hljs-string">-C</span> <span class="hljs-string">""</span> <span class="hljs-string">-N</span> <span class="hljs-string">""</span>
+  - name: configure each-cred
+    shell: echo -e "y\ny\n" | ssh-keygen -q -t rsa -f /root/.ssh/id_rsa -C "" -N ""
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">cat</span> <span class="hljs-string">ssh-key</span> <span class="hljs-string">auths</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">cat</span> <span class="hljs-string">/root/.ssh/id_rsa.pub</span>
-    <span class="hljs-attr">register:</span> <span class="hljs-string">id_rsa</span>
+  - name: cat ssh-key auths
+    shell: cat /root/.ssh/id_rsa.pub
+    register: id_rsa
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">touch</span> <span class="hljs-string">authorized_keys</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">|</span>
-        <span class="hljs-string">echo</span> <span class="hljs-string">"ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArk0cjBbDgdke86pN9962BjcsyxUNhvtW8rkzmykqCPu2QlQxwCg5OikQxmcJUakCkkGhww88U9gx+gPgoJZ9UtClRqHbJKbyqu5XXYFfxjjjRa4N60d5wXXgga2UB6RVIgA+snPxBKi6oFlvH5jV7h3lHxRo3JRQt51/NmcbkyZyUIF7bOJztB9C85jw7dk4dXG52M9bN+FtVlGiVCVKZRWHHoEUVt7y1ZUaao5Ceqw0nAL9JZfQK1zQhrq7YI8pN3ssI35ZKL7EkVKy+qs9GplJFfTBvXO5Q0btFMtM6cY1fMEv9PIt3n0uZF1kGjAHyrAPYnQPcb3H6sDCLQJQ+Q== tp_cloud_hadoop@qiyi.com"</span> <span class="hljs-string">&gt;</span> <span class="hljs-string">/root/.ssh/authorized_keys</span>
-        <span class="hljs-string">chmod</span> <span class="hljs-number">600</span> <span class="hljs-string">/root/.ssh/authorized_keys</span>
+  - name: touch authorized_keys
+    shell: |
+        echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArk0cjBbDgdke86pN9962BjcsyxUNhvtW8rkzmykqCPu2QlQxwCg5OikQxmcJUakCkkGhww88U9gx+gPgoJZ9UtClRqHbJKbyqu5XXYFfxjjjRa4N60d5wXXgga2UB6RVIgA+snPxBKi6oFlvH5jV7h3lHxRo3JRQt51/NmcbkyZyUIF7bOJztB9C85jw7dk4dXG52M9bN+FtVlGiVCVKZRWHHoEUVt7y1ZUaao5Ceqw0nAL9JZfQK1zQhrq7YI8pN3ssI35ZKL7EkVKy+qs9GplJFfTBvXO5Q0btFMtM6cY1fMEv9PIt3n0uZF1kGjAHyrAPYnQPcb3H6sDCLQJQ+Q== tp_cloud_hadoop@qiyi.com" &gt; /root/.ssh/authorized_keys
+        chmod 600 /root/.ssh/authorized_keys
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">set</span> <span class="hljs-string">public-keys</span> <span class="hljs-string">to</span> <span class="hljs-string">each</span> <span class="hljs-string">nodes</span>
-    <span class="hljs-attr">lineinfile:</span>
-        <span class="hljs-attr">path:</span> <span class="hljs-string">/root/.ssh/authorized_keys</span>
-        <span class="hljs-attr">line:</span> <span class="hljs-string">"<span class="hljs-template-variable">{{ hostvars[item].id_rsa.stdout }}</span>"</span>
-        <span class="hljs-attr">state:</span> <span class="hljs-string">present</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">"<span class="hljs-template-variable">{{ groups['Common'] | union(groups['CDM']) | unique }}</span>"</span>
+  - name: set public-keys to each nodes
+    lineinfile:
+        path: /root/.ssh/authorized_keys
+        line: "{{ hostvars[item].id_rsa.stdout }}"
+        state: present
+    with_items:
+        - "{{ groups['Common'] | union(groups['CDM']) | unique }}"
 
-<span class="hljs-bullet">-</span> <span class="hljs-attr">hosts:</span> <span class="hljs-string">CDM</span>
-  <span class="hljs-attr">tasks:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">make</span> <span class="hljs-string">sure</span> <span class="hljs-string">mysql-connector</span> <span class="hljs-string">exists</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">mkdir</span> <span class="hljs-string">-p</span> <span class="hljs-string">/usr/share/java</span>
+- hosts: CDM
+  tasks:
+  - name: make sure mysql-connector exists
+    shell: mkdir -p /usr/share/java
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">mysql-connector</span>
-    <span class="hljs-attr">copy:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/mysql-connector-java.jar</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/usr/share/java/mysql-connector-java.jar</span>
+  - name: copy mysql-connector
+    copy:
+        src: confs/mysql-connector-java.jar
+        dest: /usr/share/java/mysql-connector-java.jar
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">files</span>
-    <span class="hljs-attr">copy:</span> 
-        <span class="hljs-attr">src:</span> <span class="hljs-string">"confs/<span class="hljs-template-variable">{{ item }}</span>"</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">"/tmp/<span class="hljs-template-variable">{{ item }}</span>"</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm</span>
+  - name: copy files
+    copy: 
+        src: "confs/{{ item }}"
+        dest: "/tmp/{{ item }}"
+    with_items:
+        - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">rpm</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">rpm</span> <span class="hljs-string">-Uvh</span> <span class="hljs-string">--replacepkgs</span> <span class="hljs-string">/tmp/{{</span> <span class="hljs-string">item</span> <span class="hljs-string">}}</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm</span>
+  - name: install rpm
+    shell: rpm -Uvh --replacepkgs /tmp/{{ item }}
+    with_items:
+        - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">create</span> <span class="hljs-string">target</span> <span class="hljs-string">directory</span>
-    <span class="hljs-attr">file:</span>
-        <span class="hljs-attr">path:</span> <span class="hljs-string">/opt/cloudera/parcels</span>
-        <span class="hljs-attr">state:</span> <span class="hljs-string">directory</span>
-        <span class="hljs-attr">owner:</span> <span class="hljs-string">cloudera-scm</span>
+  - name: create target directory
+    file:
+        path: /opt/cloudera/parcels
+        state: directory
+        owner: cloudera-scm
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">parcells</span> <span class="hljs-string">file</span>
-    <span class="hljs-attr">copy:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">"confs/cdh/<span class="hljs-template-variable">{{ item }}</span>"</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">"/opt/cloudera/parcels/<span class="hljs-template-variable">{{ item }}</span>"</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha256</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">manifest.json</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel</span>
+  - name: copy parcells file
+    copy:
+        src: "confs/cdh/{{ item }}"
+        dest: "/opt/cloudera/parcels/{{ item }}"
+    with_items:
+        - CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha
+        - CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha256
+        - manifest.json
+        - CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">template</span> <span class="hljs-string">files</span>
-    <span class="hljs-attr">template:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/db.properties</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/etc/cloudera-scm-server/db.properties</span>
+  - name: copy template files
+    template:
+        src: confs/db.properties
+        dest: /etc/cloudera-scm-server/db.properties
 
-<span class="hljs-bullet">-</span> <span class="hljs-attr">hosts:</span> <span class="hljs-string">Common</span>
-  <span class="hljs-attr">tasks:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">files</span>
-    <span class="hljs-attr">copy:</span> 
-        <span class="hljs-attr">src:</span> <span class="hljs-string">"confs/<span class="hljs-template-variable">{{ item }}</span>"</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">"/tmp/<span class="hljs-template-variable">{{ item }}</span>"</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm</span>
+- hosts: Common
+  tasks:
+  - name: copy files
+    copy: 
+        src: "confs/{{ item }}"
+        dest: "/tmp/{{ item }}"
+    with_items:
+        - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">rpm</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">rpm</span> <span class="hljs-string">-Uvh</span> <span class="hljs-string">--replacepkgs</span> <span class="hljs-string">/tmp/{{</span> <span class="hljs-string">item</span> <span class="hljs-string">}}</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm</span>
+  - name: install rpm
+    shell: rpm -Uvh --replacepkgs /tmp/{{ item }}
+    with_items:
+        - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 
-<span class="hljs-bullet">-</span> <span class="hljs-attr">hosts:</span> <span class="hljs-string">CDM:Common</span>
-  <span class="hljs-attr">tasks:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">configure</span> <span class="hljs-string">client</span> <span class="hljs-string">conf</span>
-    <span class="hljs-attr">template:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/config.ini</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/etc/cloudera-scm-agent/config.ini</span>
+- hosts: CDM:Common
+  tasks:
+  - name: configure client conf
+    template:
+        src: confs/config.ini
+        dest: /etc/cloudera-scm-agent/config.ini
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">configure</span> <span class="hljs-string">ntpd</span> <span class="hljs-string">service</span>
-    <span class="hljs-attr">include:</span> <span class="hljs-string">ntpd.yml</span> <span class="hljs-comment">## 公网或公司服务</span></code></span></pre>
+  - name: configure ntpd service
+    include: ntpd.yml ## 公网或公司服务</code></pre>
+
 <h2 id="4-其他补充"><a href="#4-其他补充" class="headerlink" title=".4. 其他补充"></a>.4. 其他补充</h2><h3 id="4-1-创建MySQL数据库"><a href="#4-1-创建MySQL数据库" class="headerlink" title=".4.1. 创建MySQL数据库"></a>.4.1. 创建MySQL数据库</h3><pre class=" language-hljs json"><code class="language-hljs json">CREATE DATABASE mydatabase CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;</code></pre>
+
 <h3 id="4-2-初始化SCM数据库"><a href="#4-2-初始化SCM数据库" class="headerlink" title=".4.2. 初始化SCM数据库"></a>.4.2. 初始化SCM数据库</h3><pre class=" language-hljs json"><code class="language-hljs json">/opt/cloudera/cm/schema/scm_prepare_database.sh -h[MySQL Host/IP ] -P 3306 -u [Admin User Name] -p[Admin User Password]  mysql scm scm "Scm@123456"  -f</code></pre>
             </article>
             <hr>

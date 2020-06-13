@@ -194,6 +194,8 @@
             <article class="markdown-body">
               <h1 id="分布式Java应用"><a href="#分布式Java应用" class="headerlink" title="分布式Java应用"></a>分布式Java应用</h1><p><img src="001.png" srcset="/img/loading.gif" alt="分布式Java应用"></p>
 <a id="more"></a>
+
+
 <h2 id="基于消息方式实现系统间的通信"><a href="#基于消息方式实现系统间的通信" class="headerlink" title="基于消息方式实现系统间的通信"></a>基于消息方式实现系统间的通信</h2><p>  当系统之间要通信时，就向外发送消息，消息可以是字节流、字节数组，甚至是Java对象，其他系统接收到消息后进行相应的业务处理。消息方式的系统间通信，通常是基于网络协议实现，常用的实现系统间通信的协议有:TCP/IP和UDP/IP。</p>
 <p>  TCP/IP和UDP/IP可用于完成数据的传输，但要完成系统间的通信，还需要对数据进行处理。从程序角度而言，BIO就是发起IO的读或写操作时，均为阻塞方式，只有当程序读到了流或将流写入操作系统后，才会释放资源。</p>
 <p>  NIO是基于事件驱动思想的，实现上通常采用Reactor模式，从程序角度而言，当发起IO的读或写操作时，是阻塞的；当socket有流可读或可写入socket时，操作熊会相应的通知到应用程序进行处理。对网络IO而言，主要有链接建立、流读取或流写入三种事件，Linux2.6以后的版本采用了epoll方式来实现NIO。</p>

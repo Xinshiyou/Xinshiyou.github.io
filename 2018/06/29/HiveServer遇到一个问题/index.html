@@ -194,6 +194,7 @@
             <article class="markdown-body">
               <p>  基于给开发同学使用与BI用户使用的需求，打算开启HiveServer2服务，集群上面的Hive任务执行、调度，都走HiveServer2方式。之前只有调度任务与开发同学使用，所以使用的是Hive CLI方式，开发同学没有添加权限控制。</p>
 <a id="more"></a>
+
 <p>  使用一段时间之后，发现HiveServer2存在各种问题。突出的问题就是不稳定、运行日志很难获取、任务ID需要解析等，最近遇到一个概率性出现的问题。</p>
 <pre class=" language-hljs applescript">INFO  : Cleaning up <span class="hljs-keyword">the</span> staging area <span class="hljs-built_in"><code class="language-hljs applescript">INFO  : Cleaning up <span class="hljs-keyword">the</span> staging area <span class="hljs-built_in">file</span>:/tmp/hadoop-hive/mapred/staging/hive1294900272/.staging/job_local1294900272_0933
 ERROR : Job Submission failed <span class="hljs-keyword">with</span> exception 'java.io.IOException(java.util.concurrent.ExecutionException: java.io.IOException: Unable <span class="hljs-keyword">to</span> rename <span class="hljs-built_in">file</span>: [/tmp/hadoop-hive/mapred/<span class="hljs-keyword">local</span>/<span class="hljs-number">1526009</span>
