@@ -193,7 +193,6 @@
             
             <article class="markdown-body">
               <!-- TOC -->
-
 <ul>
 <li><a href="#1-部署调研">1. 部署调研</a><ul>
 <li><a href="#11-环境准备">1.1. 环境准备</a><ul>
@@ -243,8 +242,6 @@
 <li><a href="#4-参考文献">4. 参考文献</a></li>
 </ul>
 <!-- /TOC -->
-
-
 <h1 id="1-部署调研"><a href="#1-部署调研" class="headerlink" title="1. 部署调研"></a>1. 部署调研</h1><h2 id="1-1-环境准备"><a href="#1-1-环境准备" class="headerlink" title="1.1. 环境准备"></a>1.1. 环境准备</h2><p>环境准备，主要是指环境配置、资源包下载/安装部署等内容。</p>
 <h3 id="1-1-1-资源下载"><a href="#1-1-1-资源下载" class="headerlink" title="1.1.1. 资源下载"></a>1.1.1. 资源下载</h3><pre class=" language-hljs json"><code class="language-hljs json">### Minio下载：RELEASE.2020-06-01T17-28-03Z  
 wget https://dl.min.io/server/minio/release/linux-amd64/minio  
@@ -255,25 +252,19 @@ wget https://dl.min.io/client/mc/release/linux-amd64/mc</code></pre>
 <h3 id="1-1-2-添加执行权限"><a href="#1-1-2-添加执行权限" class="headerlink" title="1.1.2. 添加执行权限"></a>1.1.2. 添加执行权限</h3><pre class=" language-hljs json"><code class="language-hljs json">### 最好存放在统一的位置，比如：/opt/soft/minio/ 等  
 chmod +x mc  
 chmod +x minio</code></pre>
-
 <h2 id="1-2-部署模式"><a href="#1-2-部署模式" class="headerlink" title="1.2. 部署模式"></a>1.2. 部署模式</h2><p>这里主要介绍实战部署：参考官方文档，进行部署搭建。</p>
 <h3 id="1-2-1-单机部署"><a href="#1-2-1-单机部署" class="headerlink" title="1.2.1. 单机部署"></a>1.2.1. 单机部署</h3><p>单机部署主要包括两种模式：单机单租户、单机多租户。</p>
-<h4 id="1-2-1-1-单机单租户"><a href="#1-2-1-1-单机单租户" class="headerlink" title="1.2.1.1. 单机单租户"></a>1.2.1.1. 单机单租户</h4><p>单机部署非常简单</p>
-<pre class=" language-hljs json"><code class="language-hljs json">1. 启动服务：./minio server /data1 /data2 ...  
-2. 查看服务：http://host1:9000/</code></pre>
-<p>主要架构如下所示：<br><img src="one_ten_one_host.png" srcset="/img/loading.gif" alt="单租户非EC模式"></p>
+<h4 id="1-2-1-1-单机单租户"><a href="#1-2-1-1-单机单租户" class="headerlink" title="1.2.1.1. 单机单租户"></a>1.2.1.1. 单机单租户</h4><p>单机部署非常简单<br></p><pre class=" language-hljs json"><code class="language-hljs json">1. 启动服务：./minio server /data1 /data2 ...  
+2. 查看服务：http://host1:9000/</code></pre><br>主要架构如下所示：<br><img src="one_ten_one_host.png" srcset="/img/loading.gif" alt="单租户非EC模式"><p></p>
 <h4 id="1-2-1-2-单机多租户"><a href="#1-2-1-2-单机多租户" class="headerlink" title="1.2.1.2. 单机多租户"></a>1.2.1.2. 单机多租户</h4><p>单机多租户，可以配置为多租户多次盘、多租户单磁盘等模式。</p>
 <p><img src="multi_ten_one_host.jpg" srcset="/img/loading.gif" alt="单机多租户"></p>
 <h3 id="1-2-2-分布式部署"><a href="#1-2-2-分布式部署" class="headerlink" title="1.2.2. 分布式部署"></a>1.2.2. 分布式部署</h3><p>分布式部署可以部署为单租户多机、多租户多机等情形，主要架构如下所示<br><img src="multi_ten_multi_host.jpg" srcset="/img/loading.gif" alt="分布式部署"></p>
-<p>部署测试</p>
-<pre class=" language-hljs json"><code class="language-hljs json">## host1 ~ host4 : 配置启动  
+<p>部署测试<br></p><pre class=" language-hljs json"><code class="language-hljs json">## host1 ~ host4 : 配置启动  
 echo "" &gt; nohup.out  
 export MINIO_ACCESS_KEY=minioadmin  
 export MINIO_SECRET_KEY=minioadmin  
-nohup /root/minio server --address :9002 http://host1/data5 http://host2/data5 http://host3/data5 http://host4/data5   &amp;</code></pre>
-
-<p>使用s3-benchmark压测结果</p>
-<pre class=" language-hljs json"><code class="language-hljs json">## 压测命令  
+nohup /root/minio server --address :9002 http://host1/data5 http://host2/data5 http://host3/data5 http://host4/data5   &amp;</code></pre><p></p>
+<p>使用s3-benchmark压测结果<br></p><pre class=" language-hljs json"><code class="language-hljs json">## 压测命令  
 ./s3-benchmark -a minioadmin -s minioadmin -b test -t 10 -u http://host1:9002 -l 5 -z "1MB"  
 
 ## 压测结果  
@@ -293,17 +284,13 @@ Fri, 05 Jun 2020 20:08:25 GMT Loop 4: DELETE time 0.8 secs, 277.8 operations/sec
 Fri, 05 Jun 2020 20:09:27 GMT Loop 5: PUT time 61.6 secs, objects = 206, speed = 3.3MB/sec, 3.3 operations/sec.
 Fri, 05 Jun 2020 20:10:28 GMT Loop 5: GET time 60.9 secs, objects = 395, speed = 6.5MB/sec, 6.5 operations/sec.
 Fri, 05 Jun 2020 20:10:29 GMT Loop 5: DELETE time 0.8 secs, 260.4 operations/sec.
-Benchmark completed.</code></pre>
-
+Benchmark completed.</code></pre><p></p>
 <p><strong>注:</strong><br>如果使用本机多磁盘，意味着开启了Erase Code模式。在测试情境下，开启了EC模式，性能下降明显。</p>
 <h2 id="1-3-特性调研"><a href="#1-3-特性调研" class="headerlink" title="1.3. 特性调研"></a>1.3. 特性调研</h2><p>主要调研了Minio的擦除码、缓存、压缩等特性。以下特性调研，使用<strong>单机单租户单磁盘模式，且磁盘为HDD硬盘</strong>。</p>
 <h3 id="1-3-1-使用Erase-Code"><a href="#1-3-1-使用Erase-Code" class="headerlink" title="1.3.1. 使用Erase Code"></a>1.3.1. 使用Erase Code</h3><p>当前Minio在体验方面还不是非常友好，默认情况下的EC是Data跟parity是1:1分布的。如果需要修改配比，那么需要使用环境变量或使用MC进行设置。</p>
-<p>下面简单调研一下Minio如何配置EC，以及配置EC的效果。主要配置项为</p>
-<pre class=" language-hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute"><code class="language-hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute">MINIO_STORAGE_CLASS_STANDARD</span>=EC:3  
-<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">MINIO_STORAGE_CLASS_RRS</span>=EC:2</code></span></pre>
-
-<p>通过命令操作单机实例</p>
-<pre class=" language-hljs json"><code class="language-hljs json">## 启动之前：随便设置(可以不设置)  
+<p>下面简单调研一下Minio如何配置EC，以及配置EC的效果。主要配置项为<br></p><pre class=" language-hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute"><code class="language-hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute">MINIO_STORAGE_CLASS_STANDARD</span>=EC:3  
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">MINIO_STORAGE_CLASS_RRS</span>=EC:2</code></span></pre><p></p>
+<p>通过命令操作单机实例<br></p><pre class=" language-hljs json"><code class="language-hljs json">## 启动之前：随便设置(可以不设置)  
 export MINIO_STORAGE_CLASS_STANDARD=EC:3  
 export MINIO_STORAGE_CLASS_RRS=EC:2  
 
@@ -314,10 +301,8 @@ mc admin config get myminio storage_class
 mc admin config set myminio storage_class "standard=EC:2 rrs="     
 
 ## 重启生效  
-mc admin service restart myminio</code></pre>
-
-<p>在配置了EC之后，查看目录文件夹中的数据，可以看到存在part.[num]块以及元数据描述信息</p>
-<pre class=" language-hljs json"><code class="language-hljs json">{
+mc admin service restart myminio</code></pre><p></p>
+<p>在配置了EC之后，查看目录文件夹中的数据，可以看到存在part.[num]块以及元数据描述信息<br></p><pre class=" language-hljs json"><code class="language-hljs json">{
     <span class="hljs-attr">"version"</span>: <span class="hljs-string">"1.0.1"</span>,
     <span class="hljs-attr">"format"</span>: <span class="hljs-string">"xl"</span>,
     <span class="hljs-attr">"stat"</span>: {
@@ -362,10 +347,8 @@ mc admin service restart myminio</code></pre>
             <span class="hljs-attr">"actualSize"</span>: <span class="hljs-number">1048576</span>
         }
     ]
-}</code></pre>
-
-<p>配置EC为 <strong>Standard(storage_class standard=EC:2 rrs= )</strong> 之后，压测如下</p>
-<pre class=" language-hljs json"><code class="language-hljs json">Parameters: url=http://host1:9001, bucket=test, duration=60, threads=10, loops=5, size=1M
+}</code></pre><p></p>
+<p>配置EC为 <strong>Standard(storage_class standard=EC:2 rrs= )</strong> 之后，压测如下<br></p><pre class=" language-hljs json"><code class="language-hljs json">Parameters: url=http://host1:9001, bucket=test, duration=60, threads=10, loops=5, size=1M
 Thu, 04 Jun 2020 13:48:12 GMT Loop 1: PUT time 62.5 secs, objects = 159, speed = 2.5MB/sec, 2.5 operations/sec.
 Thu, 04 Jun 2020 13:49:13 GMT Loop 1: GET time 61.0 secs, objects = 365, speed = 6MB/sec, 6.0 operations/sec.
 Thu, 04 Jun 2020 13:49:14 GMT Loop 1: DELETE time 0.6 secs, 277.4 operations/sec.
@@ -380,8 +363,7 @@ Thu, 04 Jun 2020 13:55:23 GMT Loop 4: GET time 61.1 secs, objects = 356, speed =
 Thu, 04 Jun 2020 13:55:24 GMT Loop 4: DELETE time 0.6 secs, 302.4 operations/sec.
 Thu, 04 Jun 2020 13:56:27 GMT Loop 5: PUT time 62.8 secs, objects = 163, speed = 2.6MB/sec, 2.6 operations/sec.
 Thu, 04 Jun 2020 13:57:28 GMT Loop 5: GET time 61.1 secs, objects = 318, speed = 5.2MB/sec, 5.2 operations/sec.
-Thu, 04 Jun 2020 13:57:28 GMT Loop 5: DELETE time 0.7 secs, 246.7 operations/sec.</code></pre>
-
+Thu, 04 Jun 2020 13:57:28 GMT Loop 5: DELETE time 0.7 secs, 246.7 operations/sec.</code></pre><p></p>
 <p>具体EC的说明可以参考：<a href="https://github.com/minio/minio/tree/master/docs/erasure/storage-class" target="_blank" rel="noopener" title="6">MinIO Storage Class Quickstart Guide</a>。</p>
 <h3 id="1-3-2-压缩-compression"><a href="#1-3-2-压缩-compression" class="headerlink" title="1.3.2. 压缩(compression)"></a>1.3.2. 压缩(compression)</h3><pre class=" language-hljs json"><code class="language-hljs json">## 查看压缩配置
 mc admin config get myminio compression
@@ -391,18 +373,14 @@ mc admin config set myminio compression
 
 ## 设置压缩格式
 mc admin config set myminio compression extensions=".pdf" mime_types="application/pdf"</code></pre>
-
-<p>启用压缩之后，可以看到大小不一致</p>
-<pre class=" language-hljs json"><code class="language-hljs json">"parts": [
+<p>启用压缩之后，可以看到大小不一致<br></p><pre class=" language-hljs json"><code class="language-hljs json">"parts": [
     {
         <span class="hljs-attr">"number"</span>: <span class="hljs-number">1</span>,
         <span class="hljs-attr">"size"</span>: <span class="hljs-number">5505321</span>,
         <span class="hljs-attr">"actualSize"</span>: <span class="hljs-number">7464298</span>
     }
-]</code></pre>
-
-<p>启用压缩之后的压测结果</p>
-<pre class=" language-hljs json"><code class="language-hljs json">Parameters: url=http://host1:9001, bucket=test, duration=60, threads=10, loops=5, size=1M
+]</code></pre><p></p>
+<p>启用压缩之后的压测结果<br></p><pre class=" language-hljs json"><code class="language-hljs json">Parameters: url=http://host1:9001, bucket=test, duration=60, threads=10, loops=5, size=1M
 Thu, 04 Jun 2020 14:21:14 GMT Loop 1: PUT time 62.8 secs, objects = 157, speed = 2.5MB/sec, 2.5 operations/sec.
 Thu, 04 Jun 2020 14:22:16 GMT Loop 1: GET time 61.2 secs, objects = 334, speed = 5.5MB/sec, 5.5 operations/sec.
 Thu, 04 Jun 2020 14:22:16 GMT Loop 1: DELETE time 0.6 secs, 281.2 operations/sec.
@@ -418,8 +396,7 @@ Thu, 04 Jun 2020 14:28:27 GMT Loop 4: DELETE time 0.7 secs, 266.4 operations/sec
 Thu, 04 Jun 2020 14:29:29 GMT Loop 5: PUT time 61.9 secs, objects = 180, speed = 2.9MB/sec, 2.9 operations/sec.
 Thu, 04 Jun 2020 14:30:30 GMT Loop 5: GET time 61.4 secs, objects = 275, speed = 4.5MB/sec, 4.5 operations/sec.
 Thu, 04 Jun 2020 14:30:31 GMT Loop 5: DELETE time 0.6 secs, 297.0 operations/sec.
-Benchmark completed.</code></pre>
-
+Benchmark completed.</code></pre><p></p>
 <p>具体Compression的说明可以参考：<a href="https://github.com/minio/minio/tree/master/docs/compression" target="_blank" rel="noopener" title="7">Compression Guide</a>。</p>
 <h3 id="1-3-3-缓存-cache"><a href="#1-3-3-缓存-cache" class="headerlink" title="1.3.3. 缓存(cache)"></a>1.3.3. 缓存(cache)</h3><pre class=" language-hljs json"><code class="language-hljs json">## 设置缓存
 mc admin config set myminio cache drives=/data4/cache,/data5/cache,/data6/cache,/data7/cache,/data8/cache
@@ -445,10 +422,8 @@ mc config host add s3_bj s3.[region].amazonaws.com "[access key id]" "[ secret k
 mc ls s3_bj/test-bj/tmp
 mc stat s3_bj/test-bj/tmp
 mc du s3_bj/test-bj/tmp</code></pre>
-
 <h3 id="1-5-2-配置与操作Minio"><a href="#1-5-2-配置与操作Minio" class="headerlink" title="1.5.2. 配置与操作Minio"></a>1.5.2. 配置与操作Minio</h3><pre class=" language-hljs json"><code class="language-hljs json">## 添加配置
 mc config host add local_single_minio  http://host1:9001 minioadmin minioadmin</code></pre>
-
 <h2 id="1-6-压测"><a href="#1-6-压测" class="headerlink" title="1.6. 压测"></a>1.6. 压测</h2><h3 id="1-6-1-压测命令"><a href="#1-6-1-压测命令" class="headerlink" title="1.6.1. 压测命令"></a>1.6.1. 压测命令</h3><pre class=" language-hljs json"><code class="language-hljs json"># 单机单磁盘
 ## 压测命令
 ./s3-benchmark -a minioadmin -s minioadmin -b test -t 10 -u http://host1:9001
@@ -459,7 +434,6 @@ for threads in 10 20 30 40 50;
     ./s3-benchmark -a minioadmin -s minioadmin -b test -t "${threads}" -u http://host1:9001 -l 5 -z "${size}" &gt; logs_${threads}_${size}
   done;
 done;</code></pre>
-
 <h3 id="1-6-2-压测结果"><a href="#1-6-2-压测结果" class="headerlink" title="1.6.2. 压测结果"></a>1.6.2. 压测结果</h3><p>(待整理：画图)</p>
 <h1 id="2-Minio架构"><a href="#2-Minio架构" class="headerlink" title="2. Minio架构"></a>2. Minio架构</h1><p>  Minio的架构部署非常简单，主要可以分为两类：简单部署、Federation部署。简单部署如上所示，可以分为单机/多机、单磁盘/多次盘(EC)部署模式。Federation部署，这里主要是指DNS域名自动发现、存储桶存放在不同的Minio集群上面，依赖coredns、etcd等组件。本小结主要介绍与部署测试一下Federation模式的Minio集群。</p>
 <h2 id="2-1-部署"><a href="#2-1-部署" class="headerlink" title="2.1. 部署"></a>2.1. 部署</h2><p>  首先需要准备一下基础条件：搭建安全的ETCD集群。可以参考：<a href="/2020/06/12/ETCD%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" title="ETCD集群部署">ETCD集群部署</a>。这里我们已经搭建部署了安全的ETCD集群(3个节点)。</p>
@@ -498,7 +472,6 @@ export MINIO_PUBLIC_IPS={{ minio_ips | sort | join(',') }}
 	--certs-dir /usr/local/minio/config/ \
 	--address :{{ port }} \
 	{{ data_paths | join(' ') }}</code></pre>
-
 <h3 id="2-1-2-部署集群"><a href="#2-1-2-部署集群" class="headerlink" title="2.1.2. 部署集群"></a>2.1.2. 部署集群</h3><pre class=" language-hljs json"><code class="language-hljs json">### ansible主机文件：hosts
 [all:vars]
 port=9002
@@ -512,9 +485,7 @@ host1 paths="data{7...12}" ansible_host=host1_ip
 host2 paths="data{7...12}" ansible_host=host2_ip
 host3 paths="data{7...12}" ansible_host=host3_ip
 host4 paths="data{7...12}" ansible_host=host4_ip</code></pre>
-
-<h2 id="2-2-客户端配置"><a href="#2-2-客户端配置" class="headerlink" title="2.2. 客户端配置"></a>2.2. 客户端配置</h2><p>  这里的客户端，主要是指mc工具(minio client)。在客户端侧，主要的配置文件目录如下所示</p>
-<pre class=" language-hljs json"><code class="language-hljs json">.mc
+<h2 id="2-2-客户端配置"><a href="#2-2-客户端配置" class="headerlink" title="2.2. 客户端配置"></a>2.2. 客户端配置</h2><p>  这里的客户端，主要是指mc工具(minio client)。在客户端侧，主要的配置文件目录如下所示<br></p><pre class=" language-hljs json"><code class="language-hljs json">.mc
 ├── certs
 │&nbsp;&nbsp; ├── CAs
 │&nbsp;&nbsp; │&nbsp;&nbsp; └── ca.pem
@@ -525,7 +496,7 @@ host4 paths="data{7...12}" ansible_host=host4_ip</code></pre>
 ├── session
 └── share
     ├── downloads.json
-    └── uploads.json</code></pre>
+    └── uploads.json</code></pre><p></p>
 <ol>
 <li>使用客户端工具扩展配置时，主要是写入到：/config.json配置文件中</li>
 <li>如果存在HTTPS的相关配置，不止需要输入用户名\密码等信息，还要配置认证信息。即：/certs/private.key、/certs/public.crt、/certs/CAs/ca.pem。</li>

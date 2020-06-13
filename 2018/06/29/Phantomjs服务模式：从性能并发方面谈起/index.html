@@ -194,11 +194,8 @@
             <article class="markdown-body">
               <p>  作为比较好的动态网页爬虫手段，phantomjs在许多方面令人比较满意。调用Phantomjs的方式，一般有如下几种情况。</p>
 <a id="more"></a>
-
-<h2 id="1-命令行模式"><a href="#1-命令行模式" class="headerlink" title="1. 命令行模式"></a>1. 命令行模式</h2><p>  在CMD或Shell中，直接输入phantomjs回车，进入命令行模式，能够完成各种操作。但一般情况是通过命令用调用phantomjs来完成爬虫或模拟工作，具体的代码放在JS中。如</p>
-<pre class=" language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string"><code class="language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./server.js</span> 8910
-<span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./hello.js</span></code></span></pre>
-<p>其中phantomjs参数直接放在phantomjs后面，脚本作为参数放在其次，最后添加脚本的参数列表。</p>
+<h2 id="1-命令行模式"><a href="#1-命令行模式" class="headerlink" title="1. 命令行模式"></a>1. 命令行模式</h2><p>  在CMD或Shell中，直接输入phantomjs回车，进入命令行模式，能够完成各种操作。但一般情况是通过命令用调用phantomjs来完成爬虫或模拟工作，具体的代码放在JS中。如<br></p><pre class=" language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string"><code class="language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./server.js</span> 8910
+<span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./hello.js</span></code></span></pre><br>其中phantomjs参数直接放在phantomjs后面，脚本作为参数放在其次，最后添加脚本的参数列表。<p></p>
 <h2 id="2-selenium调用"><a href="#2-selenium调用" class="headerlink" title="2. selenium调用"></a>2. selenium调用</h2><p>  selenium是一套完整的测试爬虫工具，能够调用IE、Chrome、Firefox等浏览器内核API完成相应的功能，也可以调用如Phantomjs、HtmlUnitDriver等模拟浏览器作为调用接口。</p>
 <p>  调用浏览器内核与不调用浏览器内核的浏览器[这里指的是HtmlUnitDriver]，浏览器内核的API，可以完成截图功能及其他浏览器功能，但HtmlunitDriver采用的是JS模拟浏览器的策略，因此不具备截图等浏览器功能。</p>
 <h3 id="2-1-Java-selenium-Phantomjs调用"><a href="#2-1-Java-selenium-Phantomjs调用" class="headerlink" title="2.1. Java+selenium+Phantomjs调用"></a>2.1. Java+selenium+Phantomjs调用</h3><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS,</span></span>
@@ -237,7 +234,6 @@
 
 	<span class="hljs-keyword">return</span> driver;
 }</string></code></span></span></pre>
-
 <h3 id="2-2-Java-selenium-HtmlunitDriver调用"><a href="#2-2-Java-selenium-HtmlunitDriver调用" class="headerlink" title="2.2. Java+selenium+HtmlunitDriver调用"></a>2.2. Java+selenium+HtmlunitDriver调用</h3><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params">(String userAgent,</span></span>
 <span class="hljs-function"><span class="hljs-params">		<span class="hljs-keyword">boolean</span> jsEnabled, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> proxyEnabled,</span></span>
 <span class="hljs-function"><span class="hljs-params">		String... proxys)</span> </span>{
@@ -284,10 +280,8 @@
 
 	<span class="hljs-keyword">return</span> driver;
 }</code></span></span></pre>
-
 <h2 id="3-服务器模式"><a href="#3-服务器模式" class="headerlink" title="3. 服务器模式"></a>3. 服务器模式</h2><p>  phantomjs服务器模式，需要在服务端开启服务，然后在客户端发起Http请求然后返回想要的内容，就是一个C/S模式的服务。</p>
-<h3 id="3-1-服务端"><a href="#3-1-服务端" class="headerlink" title="3.1. 服务端"></a>3.1. 服务端</h3><p>server.js内容如下所示</p>
-<pre class=" language-hljs shell"><code class="language-hljs shell">var webserver = require('webserver').create();
+<h3 id="3-1-服务端"><a href="#3-1-服务端" class="headerlink" title="3.1. 服务端"></a>3.1. 服务端</h3><p>server.js内容如下所示<br></p><pre class=" language-hljs shell"><code class="language-hljs shell">var webserver = require('webserver').create();
 var page = require('webpage').create();
 var system = require('system');
 var port = system.args[1];
@@ -300,13 +294,9 @@ webserver.listen(system.args[1], function(request, response) {
         response.write(title);
         response.close();
     });
-});</code></pre>
-
-<p>命令行启动</p>
-<pre class=" language-hljs shell"><code class="language-hljs shell">bin/phantomjs example/server.js 8910</code></pre>
-
-<h3 id="3-2-客户端"><a href="#3-2-客户端" class="headerlink" title="3.2. 客户端"></a>3.2. 客户端</h3><p>  在客户端发起http请求，无论是get，还是post只要能够获取到Headers里面的目标URL，就可以返回pageSource。当然，这里最好使用异步加载网页内容。</p>
-<pre class=" language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword"><code class="language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword">new</span> HashMap<string, string="">();
+});</code></pre><p></p>
+<p>命令行启动<br></p><pre class=" language-hljs shell"><code class="language-hljs shell">bin/phantomjs example/server.js 8910</code></pre><p></p>
+<h3 id="3-2-客户端"><a href="#3-2-客户端" class="headerlink" title="3.2. 客户端"></a>3.2. 客户端</h3><p>  在客户端发起http请求，无论是get，还是post只要能够获取到Headers里面的目标URL，就可以返回pageSource。当然，这里最好使用异步加载网页内容。<br></p><pre class=" language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword"><code class="language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword">new</span> HashMap<string, string="">();
 params.put(<span class="hljs-string">"url"</span>, targetURL);
 
 <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title">HttpPost</span><span class="hljs-params">(String url, String postDataStr)</span></span>
@@ -330,32 +320,35 @@ params.put(<span class="hljs-string">"url"</span>, targetURL);
 		sb.append(line);
 		
 	<span class="hljs-keyword">return</span> sb.toString();
-}</string,></code></span></pre>
-
-<h2 id="4-比较"><a href="#4-比较" class="headerlink" title="4. 比较"></a>4. 比较</h2><table>
+}</string,></code></span></pre><p></p>
+<h2 id="4-比较"><a href="#4-比较" class="headerlink" title="4. 比较"></a>4. 比较</h2><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="center">方式</th>
-<th align="left">优点</th>
-<th align="left">缺点</th>
+<th style="text-align:center">方式</th>
+<th style="text-align:left">优点</th>
+<th style="text-align:left">缺点</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">命令行模式</td>
-<td align="left">1、调用简单</td>
-<td align="left">1、需要配合JS<br>2、无法大规模并发控制</td>
+<tbody>
+<tr>
+<td style="text-align:center">命令行模式</td>
+<td style="text-align:left">1、调用简单</td>
+<td style="text-align:left">1、需要配合JS<br>2、无法大规模并发控制</td>
 </tr>
 <tr>
-<td align="center">服务器模式</td>
-<td align="left">1、减少内存<br>2、客户端方便</td>
-<td align="left">1、存在并发限制，最多10个线程<br>2、试验产品，可能存在安全隐患</td>
+<td style="text-align:center">服务器模式</td>
+<td style="text-align:left">1、减少内存<br>2、客户端方便</td>
+<td style="text-align:left">1、存在并发限制，最多10个线程<br>2、试验产品，可能存在安全隐患</td>
 </tr>
 <tr>
-<td align="center">selenium调用</td>
-<td align="left">1、客户端精准控制<br>2、调用比较方面，无需写JS<br>3、可大规模并发</td>
-<td align="left">1、“吃”内存：内存随线程数增加较快<br>2、需手动释放内存，确保phantomjs释放</td>
+<td style="text-align:center">selenium调用</td>
+<td style="text-align:left">1、客户端精准控制<br>2、调用比较方面，无需写JS<br>3、可大规模并发</td>
+<td style="text-align:left">1、“吃”内存：内存随线程数增加较快<br>2、需手动释放内存，确保phantomjs释放</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h2 id="5-注"><a href="#5-注" class="headerlink" title="5. 注"></a>5. 注</h2><ol>
 <li>由于目前phantomjs已停止更新维护，所以可以选择其他带有webkit内核的模拟浏览器，如Headless Chrome等作为测试/爬虫的首选。</li>
 <li>phantomjs使用代理，最好使用无密码代理。</li>
@@ -396,9 +389,9 @@ params.put(<span class="hljs-string">"url"</span>, targetURL);
                   <div class="post-prev col-6">
                     
                     
-                      <a href="/2018/06/29/RSA-%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%A4%87%E5%BF%98/">
+                      <a href="/2018/06/29/Weibo%E5%8D%95%E8%8A%82%E7%82%B9%E7%88%AC%E8%99%AB%E8%AE%BE%E8%AE%A1/">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">RSA-加密算法备忘</span>
+                        <span class="hidden-mobile">Weibo单节点爬虫设计</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
