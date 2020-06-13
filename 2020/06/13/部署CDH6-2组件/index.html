@@ -548,7 +548,7 @@ com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre></div>
 
   - name: touch authorized_keys
     shell: |
-        <span class="hljs-built_in">echo</span> <span class="hljs-string">"ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArk0cjBbDgdke86pN9962BjcsyxUNhvtW8rkzmykqCPu2QlQxwCg5OikQxmcJUakCkkGhww88U9gx+gPgoJZ9UtClRqHbJKbyqu5XXYFfxjjjRa4N60d5wXXgga2UB6RVIgA+snPxBKi6oFlvH5jV7h3lHxRo3JRQt51/NmcbkyZyUIF7bOJztB9C85jw7dk4dXG52M9bN+FtVlGiVCVKZRWHHoEUVt7y1ZUaao5Ceqw0nAL9JZfQK1zQhrq7YI8pN3ssI35ZKL7EkVKy+qs9GplJFfTBvXO5Q0btFMtM6cY1fMEv9PIt3n0uZF1kGjAHyrAPYnQPcb3H6sDCLQJQ+Q== tp_cloud_hadoop@qiyi.com"</span> &gt; /root/.ssh/authorized_keys
+        <span class="hljs-built_in">echo</span> <span class="hljs-string">""</span> &gt; /root/.ssh/authorized_keys
         chmod 600 /root/.ssh/authorized_keys
 
   - name: <span class="hljs-built_in">set</span> public-keys to each nodes
