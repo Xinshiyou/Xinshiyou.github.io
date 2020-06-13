@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      653 字
+      416 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      9
+      5
        分钟
     </span>
   
@@ -194,10 +194,64 @@
             <article class="markdown-body">
               <p>  在日常工作中，经常遇到一下日期时间格式转化。例如时间比较、时间格式化、从字符串转化为日期等操作，本文将日常要的这些操作进行汇总备忘。</p>
 <h2 id="一、时间日期"><a href="#一、时间日期" class="headerlink" title="一、时间日期"></a>一、时间日期</h2><p>想要时间格式比较，需要转化为统一的数据类型，例如转化为统一的Date类型，或Time类型，或DateTime类型。</p>
-<h3 id="1-1-Date操作"><a href="#1-1-Date操作" class="headerlink" title="1.1 Date操作"></a>1.1 Date操作</h3><figure class="highlight applescript"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs applescript"><span class="hljs-comment">#!/bin/python</span><br><span class="hljs-comment"># -*- coding: UTF-8 -*-</span><br><br>import <span class="hljs-built_in">time</span><br>import datetime<br><br><span class="hljs-comment">## 获取当前的日期</span><br>today = <span class="hljs-built_in">date</span>.today()<br><br><span class="hljs-comment">## 获取当前的时间戳</span><br>now = <span class="hljs-built_in">time</span>.<span class="hljs-built_in">time</span>()<br><br><span class="hljs-comment">## 时间戳日期相互转化</span><br><span class="hljs-built_in">date</span> = <span class="hljs-built_in">date</span>.fromtimestamp(<span class="hljs-number">1585138687</span>)<br><span class="hljs-built_in">time</span> = <span class="hljs-built_in">time</span>.mktime(<span class="hljs-built_in">date</span>.timetuple())<br><br><span class="hljs-comment">## 判断操作</span><br>生成昨天的日期：<br>yestoday = <span class="hljs-built_in">date</span>.today() - datetime.timedelta(<span class="hljs-number">1</span>)<br><br>生成明天的日期：<br>tom = <span class="hljs-built_in">date</span>.today() _ datetime.timedelta(<span class="hljs-number"><code class="language-hljs applescript"><span class="hljs-comment">#!/bin/python</span><br><span class="hljs-comment"># -*- coding: UTF-8 -*-</span><br><br>import <span class="hljs-built_in">time</span><br>import datetime<br><br><span class="hljs-comment">## 获取当前的日期</span><br>today = <span class="hljs-built_in">date</span>.today()<br><br><span class="hljs-comment">## 获取当前的时间戳</span><br>now = <span class="hljs-built_in">time</span>.<span class="hljs-built_in">time</span>()<br><br><span class="hljs-comment">## 时间戳日期相互转化</span><br><span class="hljs-built_in">date</span> = <span class="hljs-built_in">date</span>.fromtimestamp(<span class="hljs-number">1585138687</span>)<br><span class="hljs-built_in">time</span> = <span class="hljs-built_in">time</span>.mktime(<span class="hljs-built_in">date</span>.timetuple())<br><br><span class="hljs-comment">## 判断操作</span><br>生成昨天的日期：<br>yestoday = <span class="hljs-built_in">date</span>.today() - datetime.timedelta(<span class="hljs-number">1</span>)<br><br>生成明天的日期：<br>tom = <span class="hljs-built_in">date</span>.today() _ datetime.timedelta(<span class="hljs-number">1</span>)<br></code></span></pre></div></td></tr></tbody></table></figure>
+<h3 id="1-1-Date操作"><a href="#1-1-Date操作" class="headerlink" title="1.1 Date操作"></a>1.1 Date操作</h3><div class="hljs"><pre class=" language-hljs applescript"><span class="hljs-comment"><code class="language-hljs applescript"><span class="hljs-comment">#!/bin/python</span>
+<span class="hljs-comment"># -*- coding: UTF-8 -*-</span>
+
+import <span class="hljs-built_in">time</span>
+import datetime
+
+<span class="hljs-comment">## 获取当前的日期</span>
+today = <span class="hljs-built_in">date</span>.today()
+
+<span class="hljs-comment">## 获取当前的时间戳</span>
+now = <span class="hljs-built_in">time</span>.<span class="hljs-built_in">time</span>()
+
+<span class="hljs-comment">## 时间戳日期相互转化</span>
+<span class="hljs-built_in">date</span> = <span class="hljs-built_in">date</span>.fromtimestamp(<span class="hljs-number">1585138687</span>)
+<span class="hljs-built_in">time</span> = <span class="hljs-built_in">time</span>.mktime(<span class="hljs-built_in">date</span>.timetuple())
+
+<span class="hljs-comment">## 判断操作</span>
+生成昨天的日期：
+yestoday = <span class="hljs-built_in">date</span>.today() - datetime.timedelta(<span class="hljs-number">1</span>)
+
+生成明天的日期：
+tom = <span class="hljs-built_in">date</span>.today() _ datetime.timedelta(<span class="hljs-number">1</span>)</code></span></pre></div>
 
 <h2 id="二、时间格式化"><a href="#二、时间格式化" class="headerlink" title="二、时间格式化"></a>二、时间格式化</h2><p>工具包有强大的格式化输出功能，例如isoformat、strftime等输出方法。主要总结一下常见的日期格式输出</p>
-<figure class="highlight clean"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs clean">#!/bin/python<br># -*- coding: UTF<span class="hljs-number">-8</span> -*-<br><br><span class="hljs-keyword">from</span> dateutil <span class="hljs-keyword">import</span> parser<br><span class="hljs-keyword">import</span> datetime<br><span class="hljs-keyword">import</span> pytz<br><br>## 普通格式化<br>### 生成时间对象<br>dt = datetime.datetime([year],[month],[day])<br>dt = datetime.strptime(<span class="hljs-string">'2020/03/25'</span>,<span class="hljs-string">"%Y/%m/%d"</span>)<br><br>### 格式化输出<br>dt_str = dt.strftime(<span class="hljs-string">"%Y/%m/%d"</span>)<br>dt_stt = dt.strftime(<span class="hljs-string">"%Y-%m-%d"</span>)<br><br>## 带有时间格式化<br>### 生成时间日期对象<br>dt = datetime.datetime([year],[month],[day],[hour],[minute],[seconds])<br>dt = dattime.datetime.strptime(<span class="hljs-string">'2020-03-25 10:10:10'</span>,<span class="hljs-string">'%Y-%m-%d %H:%M:%S'</span>)<br><br>### 格式化输出<br>dt_str = dt.strftime(<span class="hljs-string">'%Y-%m-%d %H:%M:%S'</span>)<br>dt_str = dt..isoformat() ## <span class="hljs-number">2020</span><span class="hljs-number">-03</span><span class="hljs-number">-25</span>T10:<span class="hljs-number">10</span>:<span class="hljs-number">10</span><br><br>## 包含毫秒<br>format_string: %Y-%m-%d %H:%M:%S.%f<br><br>## 带有时区格式化<br>### 格式化<br>datetime.datetime.now(pytz.timezone(<span class="hljs-string">'Asia/Shanghai'</span>)).strftime(<span class="hljs-string">'%Y-%m-%dT%H:%M:%S.%f%z'</span>)<br><br>### 从字符串转化为datetime<br>datetime = parser.parser(<span class="hljs-string"><code class="language-hljs clean">#!/bin/python<br># -*- coding: UTF<span class="hljs-number">-8</span> -*-<br><br><span class="hljs-keyword">from</span> dateutil <span class="hljs-keyword">import</span> parser<br><span class="hljs-keyword">import</span> datetime<br><span class="hljs-keyword">import</span> pytz<br><br>## 普通格式化<br>### 生成时间对象<br>dt = datetime.datetime([year],[month],[day])<br>dt = datetime.strptime(<span class="hljs-string">'2020/03/25'</span>,<span class="hljs-string">"%Y/%m/%d"</span>)<br><br>### 格式化输出<br>dt_str = dt.strftime(<span class="hljs-string">"%Y/%m/%d"</span>)<br>dt_stt = dt.strftime(<span class="hljs-string">"%Y-%m-%d"</span>)<br><br>## 带有时间格式化<br>### 生成时间日期对象<br>dt = datetime.datetime([year],[month],[day],[hour],[minute],[seconds])<br>dt = dattime.datetime.strptime(<span class="hljs-string">'2020-03-25 10:10:10'</span>,<span class="hljs-string">'%Y-%m-%d %H:%M:%S'</span>)<br><br>### 格式化输出<br>dt_str = dt.strftime(<span class="hljs-string">'%Y-%m-%d %H:%M:%S'</span>)<br>dt_str = dt..isoformat() ## <span class="hljs-number">2020</span><span class="hljs-number">-03</span><span class="hljs-number">-25</span>T10:<span class="hljs-number">10</span>:<span class="hljs-number">10</span><br><br>## 包含毫秒<br>format_string: %Y-%m-%d %H:%M:%S.%f<br><br>## 带有时区格式化<br>### 格式化<br>datetime.datetime.now(pytz.timezone(<span class="hljs-string">'Asia/Shanghai'</span>)).strftime(<span class="hljs-string">'%Y-%m-%dT%H:%M:%S.%f%z'</span>)<br><br>### 从字符串转化为datetime<br>datetime = parser.parser(<span class="hljs-string">'2020-03-25T20:46:24.511426+0800'</span>)<br></code></span></pre></div></td></tr></tbody></table></figure>
+<div class="hljs"><pre class=" language-hljs clean"><code class="language-hljs clean">#!/bin/python
+# -*- coding: UTF<span class="hljs-number">-8</span> -*-
+
+<span class="hljs-keyword">from</span> dateutil <span class="hljs-keyword">import</span> parser
+<span class="hljs-keyword">import</span> datetime
+<span class="hljs-keyword">import</span> pytz
+
+## 普通格式化
+### 生成时间对象
+dt = datetime.datetime([year],[month],[day])
+dt = datetime.strptime(<span class="hljs-string">'2020/03/25'</span>,<span class="hljs-string">"%Y/%m/%d"</span>)
+
+### 格式化输出
+dt_str = dt.strftime(<span class="hljs-string">"%Y/%m/%d"</span>)
+dt_stt = dt.strftime(<span class="hljs-string">"%Y-%m-%d"</span>)
+
+## 带有时间格式化
+### 生成时间日期对象
+dt = datetime.datetime([year],[month],[day],[hour],[minute],[seconds])
+dt = dattime.datetime.strptime(<span class="hljs-string">'2020-03-25 10:10:10'</span>,<span class="hljs-string">'%Y-%m-%d %H:%M:%S'</span>)
+
+### 格式化输出
+dt_str = dt.strftime(<span class="hljs-string">'%Y-%m-%d %H:%M:%S'</span>)
+dt_str = dt..isoformat() ## <span class="hljs-number">2020</span><span class="hljs-number">-03</span><span class="hljs-number">-25</span>T10:<span class="hljs-number">10</span>:<span class="hljs-number">10</span>
+
+## 包含毫秒
+format_string: %Y-%m-%d %H:%M:%S.%f
+
+## 带有时区格式化
+### 格式化
+datetime.datetime.now(pytz.timezone(<span class="hljs-string">'Asia/Shanghai'</span>)).strftime(<span class="hljs-string">'%Y-%m-%dT%H:%M:%S.%f%z'</span>)
+
+### 从字符串转化为datetime
+datetime = parser.parser(<span class="hljs-string">'2020-03-25T20:46:24.511426+0800'</span>)</code></pre></div>
 
 
 <h2 id="三、引文"><a href="#三、引文" class="headerlink" title="三、引文"></a>三、引文</h2><ol>

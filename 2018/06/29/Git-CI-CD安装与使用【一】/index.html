@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      287 字
+      238 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      4
+      3
        分钟
     </span>
   
@@ -196,13 +196,28 @@
 <a id="more"></a>
 
 <p>  本小节主要是Git-Runner的安装。</p>
-<h2 id="更新repo"><a href="#更新repo" class="headerlink" title="更新repo"></a>更新repo</h2><figure class="highlight routeros"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs routeros"><span class="hljs-comment">## 打开配置文件</span><br>vim /etc/yum.repos.d/gitlab-ci-multi-runner.repo<br><br><span class="hljs-comment">## 添加配置信息</span><br>[gitlab-ci-multi-runner]<br><span class="hljs-attribute">name</span>=gitlab-ci-multi-runner<br><span class="hljs-attribute">baseurl</span>=https://mirrors.tuna.tsinghua.edu.cn/gitlab-ci-multi-runner/yum/el7<br><span class="hljs-attribute">repo_gpgcheck</span>=0<br><span class="hljs-attribute">gpgcheck</span>=0<br><span class="hljs-attribute">enabled</span>=1<br><span class="hljs-attribute">gpgkey</span>=https://packages.gitlab.com/gpg.key<br><br><span class="hljs-comment"><code class="language-hljs routeros"><span class="hljs-comment">## 打开配置文件</span><br>vim /etc/yum.repos.d/gitlab-ci-multi-runner.repo<br><br><span class="hljs-comment">## 添加配置信息</span><br>[gitlab-ci-multi-runner]<br><span class="hljs-attribute">name</span>=gitlab-ci-multi-runner<br><span class="hljs-attribute">baseurl</span>=https://mirrors.tuna.tsinghua.edu.cn/gitlab-ci-multi-runner/yum/el7<br><span class="hljs-attribute">repo_gpgcheck</span>=0<br><span class="hljs-attribute">gpgcheck</span>=0<br><span class="hljs-attribute">enabled</span>=1<br><span class="hljs-attribute">gpgkey</span>=https://packages.gitlab.com/gpg.key<br><br><span class="hljs-comment">## 刷新repo</span><br>yum makecache<br></code></span></pre></div></td></tr></tbody></table></figure>
+<h2 id="更新repo"><a href="#更新repo" class="headerlink" title="更新repo"></a>更新repo</h2><div class="hljs"><pre class=" language-hljs routeros"><span class="hljs-comment"><code class="language-hljs routeros"><span class="hljs-comment">## 打开配置文件</span>
+vim /etc/yum.repos.d/gitlab-ci-multi-runner.repo
 
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight cmake"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs cmake">yum <span class="hljs-keyword"><code class="language-hljs cmake">yum <span class="hljs-keyword">install</span> -y gitlab-ci-multi-runner<br></code></span></pre></div></td></tr></tbody></table></figure>
+<span class="hljs-comment">## 添加配置信息</span>
+[gitlab-ci-multi-runner]
+<span class="hljs-attribute">name</span>=gitlab-ci-multi-runner
+<span class="hljs-attribute">baseurl</span>=https://mirrors.tuna.tsinghua.edu.cn/gitlab-ci-multi-runner/yum/el7
+<span class="hljs-attribute">repo_gpgcheck</span>=0
+<span class="hljs-attribute">gpgcheck</span>=0
+<span class="hljs-attribute">enabled</span>=1
+<span class="hljs-attribute">gpgkey</span>=https://packages.gitlab.com/gpg.key
 
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight clean"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs clean"><code class="language-hljs clean">## 输入命令，根据提示输入配置信息<br>gitlab-ci-multi-runner register<br></code></pre></div></td></tr></tbody></table></figure>
+<span class="hljs-comment">## 刷新repo</span>
+yum makecache</code></span></pre></div>
+
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><div class="hljs"><pre class=" language-hljs cmake">yum <span class="hljs-keyword"><code class="language-hljs cmake">yum <span class="hljs-keyword">install</span> -y gitlab-ci-multi-runner</code></span></pre></div>
+
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><div class="hljs"><pre class=" language-hljs clean"><code class="language-hljs clean">## 输入命令，根据提示输入配置信息
+gitlab-ci-multi-runner register</code></pre></div>
 <p>注册关键信息，可以找到类似下面的位置获取<br><img src="001.png" srcset="/img/loading.gif" alt="主要信息"></p>
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight crmsh"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs crmsh"><span class="hljs-comment"># start</span><br>gitlab-ci-multi-runner <span class="hljs-literal"><code class="language-hljs crmsh"><span class="hljs-comment"># start</span><br>gitlab-ci-multi-runner <span class="hljs-literal">start</span><br></code></span></pre></div></td></tr></tbody></table></figure>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><div class="hljs"><pre class=" language-hljs crmsh"><span class="hljs-comment"><code class="language-hljs crmsh"><span class="hljs-comment"># start</span>
+gitlab-ci-multi-runner <span class="hljs-literal">start</span></code></span></pre></div>
 
 <p>  至此，配置启动完成，在Git界面可以看到这个Runner了。</p>
 

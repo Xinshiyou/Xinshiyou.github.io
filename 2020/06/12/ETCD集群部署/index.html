@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1.9k 字
+      1.6k 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      30
+      24
        分钟
     </span>
   
@@ -231,24 +231,242 @@
 <h2 id="2-部署ETCD集群"><a href="#2-部署ETCD集群" class="headerlink" title=".2. 部署ETCD集群"></a>.2. 部署ETCD集群</h2><p>  <strong>ETCD</strong>集群的部署，也较为简单。不安全的集群部署，这里不再讨论。这里的部署，主要是指自认证的<strong>ETCD</strong>集群。</p>
 <p>  ETCD集群部署配置，可以参考：<a href="https://www.jianshu.com/p/85803026a9a1" target="_blank" rel="noopener">ETCD集群部署</a>、<a href="https://www.jianshu.com/p/33b5f47ababc" target="_blank" rel="noopener">etcd多台部署:启用https以及ca自签名</a>。参考上述两篇博文的配置、操作步骤，但配置过程中略微存在差异。</p>
 <h3 id="2-1-编译cfssl组件"><a href="#2-1-编译cfssl组件" class="headerlink" title=".2.1. 编译cfssl组件"></a>.2.1. 编译cfssl组件</h3><p>  CFSSL主要是为了实现自认证配置，生成CA证书、公钥、私钥等内容。<br>最新版本cfssl已经不再提供通过官方网站下载，可以直接通过Github下载编译或直接安装</p>
-<figure class="highlight shell"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 直接下载某个版本</span></span><br>wget https://github.com/cloudflare/cfssl/archive/1.3.4.tar.gz<br><br><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 下载Master分支，切换为某个tag的代码</span></span><br>1. Download：https://github.com/cloudflare/cfssl.git<br>2. 安装依赖组件：<br>    go get -u github.com/cloudflare/cfssl/cli \<br>              github.com/go-sql-driver/mysql \<br>              github.com/lib/pq github.com/mattn/go-sqlite3 \<br>              github.com/cloudflare/go-metrics<br>3. 编译安装：make ## 会在bin目录下面创建常用命令<br><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 直接下载某个版本</span></span><br>wget https://github.com/cloudflare/cfssl/archive/1.3.4.tar.gz<br><br><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 下载Master分支，切换为某个tag的代码</span></span><br>1. Download：https://github.com/cloudflare/cfssl.git<br>2. 安装依赖组件：<br>    go get -u github.com/cloudflare/cfssl/cli \<br>              github.com/go-sql-driver/mysql \<br>              github.com/lib/pq github.com/mattn/go-sqlite3 \<br>              github.com/cloudflare/go-metrics<br>3. 编译安装：make ## 会在bin目录下面创建常用命令<br><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 切换分支命令：参考</span></span><br>git checkout tags/v1.0 -b v1.0-branch<br></code></span></span></pre></div></td></tr></tbody></table></figure>
+<div class="hljs"><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 直接下载某个版本</span></span>
+wget https://github.com/cloudflare/cfssl/archive/1.3.4.tar.gz
+
+<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 下载Master分支，切换为某个tag的代码</span></span>
+1. Download：https://github.com/cloudflare/cfssl.git
+2. 安装依赖组件：
+    go get -u github.com/cloudflare/cfssl/cli \
+              github.com/go-sql-driver/mysql \
+              github.com/lib/pq github.com/mattn/go-sqlite3 \
+              github.com/cloudflare/go-metrics
+3. 编译安装：make ## 会在bin目录下面创建常用命令
+<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 切换分支命令：参考</span></span>
+git checkout tags/v1.0 -b v1.0-branch</code></span></span></pre></div>
 
 <h3 id="2-2-创建CA证书"><a href="#2-2-创建CA证书" class="headerlink" title=".2.2. 创建CA证书"></a>.2.2. 创建CA证书</h3><p>  创建CA证书，主要涉及到两个操作步骤。通过CFSSL来创建证书，一般只需要编辑JSON配置文件即可。</p>
-<h4 id="2-2-1-创建CA证书"><a href="#2-2-1-创建CA证书" class="headerlink" title=".2.2.1. 创建CA证书"></a>.2.2.1. 创建CA证书</h4><figure class="highlight"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs json">### 创建CA，配置文件如下<br>#### ca-config.json<br>{<br>    <span class="hljs-attr">"signing"</span>: {<br>        <span class="hljs-attr">"default"</span>: {<br>            <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span><br>        },<br>        <span class="hljs-attr">"profiles"</span>: {<br>            <span class="hljs-attr">"server"</span>: {<br>                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,<br>                <span class="hljs-attr">"usages"</span>: [<br>                    <span class="hljs-string">"signing"</span>,<br>                    <span class="hljs-string">"key encipherment"</span>,<br>                    <span class="hljs-string">"server auth"</span>,<br>                    <span class="hljs-string">"client auth"</span><br>                ]<br>            },<br>            <span class="hljs-attr">"client"</span>: {<br>                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,<br>                <span class="hljs-attr">"usages"</span>: [<br>                    <span class="hljs-string">"signing"</span>,<br>                    <span class="hljs-string">"key encipherment"</span>,<br>                    <span class="hljs-string">"client auth"</span><br>                ]<br>            },<br>            <span class="hljs-attr">"peer"</span>: {<br>                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,<br>                <span class="hljs-attr">"usages"</span>: [<br>                    <span class="hljs-string">"signing"</span>,<br>                    <span class="hljs-string">"key encipherment"</span>,<br>                    <span class="hljs-string">"server auth"</span>,<br>                    <span class="hljs-string"><code class="language-hljs json">### 创建CA，配置文件如下<br>#### ca-config.json<br>{<br>    <span class="hljs-attr">"signing"</span>: {<br>        <span class="hljs-attr">"default"</span>: {<br>            <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span><br>        },<br>        <span class="hljs-attr">"profiles"</span>: {<br>            <span class="hljs-attr">"server"</span>: {<br>                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,<br>                <span class="hljs-attr">"usages"</span>: [<br>                    <span class="hljs-string">"signing"</span>,<br>                    <span class="hljs-string">"key encipherment"</span>,<br>                    <span class="hljs-string">"server auth"</span>,<br>                    <span class="hljs-string">"client auth"</span><br>                ]<br>            },<br>            <span class="hljs-attr">"client"</span>: {<br>                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,<br>                <span class="hljs-attr">"usages"</span>: [<br>                    <span class="hljs-string">"signing"</span>,<br>                    <span class="hljs-string">"key encipherment"</span>,<br>                    <span class="hljs-string">"client auth"</span><br>                ]<br>            },<br>            <span class="hljs-attr">"peer"</span>: {<br>                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,<br>                <span class="hljs-attr">"usages"</span>: [<br>                    <span class="hljs-string">"signing"</span>,<br>                    <span class="hljs-string">"key encipherment"</span>,<br>                    <span class="hljs-string">"server auth"</span>,<br>                    <span class="hljs-string">"client auth"</span><br>                ]<br>            }<br>        }<br>    }<br>}<br><br>#### 创建CA相关文件<br>cfssl gencert -initca ca-csr.json | cfssljson -bare ca<br></code></span></pre></div></td></tr></tbody></table></figure>
+<h4 id="2-2-1-创建CA证书"><a href="#2-2-1-创建CA证书" class="headerlink" title=".2.2.1. 创建CA证书"></a>.2.2.1. 创建CA证书</h4><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 创建CA，配置文件如下
+#### ca-config.json
+{
+    <span class="hljs-attr">"signing"</span>: {
+        <span class="hljs-attr">"default"</span>: {
+            <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>
+        },
+        <span class="hljs-attr">"profiles"</span>: {
+            <span class="hljs-attr">"server"</span>: {
+                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,
+                <span class="hljs-attr">"usages"</span>: [
+                    <span class="hljs-string">"signing"</span>,
+                    <span class="hljs-string">"key encipherment"</span>,
+                    <span class="hljs-string">"server auth"</span>,
+                    <span class="hljs-string">"client auth"</span>
+                ]
+            },
+            <span class="hljs-attr">"client"</span>: {
+                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,
+                <span class="hljs-attr">"usages"</span>: [
+                    <span class="hljs-string">"signing"</span>,
+                    <span class="hljs-string">"key encipherment"</span>,
+                    <span class="hljs-string">"client auth"</span>
+                ]
+            },
+            <span class="hljs-attr">"peer"</span>: {
+                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,
+                <span class="hljs-attr">"usages"</span>: [
+                    <span class="hljs-string">"signing"</span>,
+                    <span class="hljs-string">"key encipherment"</span>,
+                    <span class="hljs-string">"server auth"</span>,
+                    <span class="hljs-string">"client auth"</span>
+                ]
+            }
+        }
+    }
+}
+
+#### 创建CA相关文件
+cfssl gencert -initca ca-csr.json | cfssljson -bare ca</code></pre></div>
 
 
 <h4 id="2-2-2-创建业务Key"><a href="#2-2-2-创建业务Key" class="headerlink" title=".2.2.2. 创建业务Key"></a>.2.2.2. 创建业务Key</h4><p>  创建业务需求的公钥\私钥，需要明确业务是那种情况：server(peer)、client，这里配置了两种不同的适应场景。另外一点，需要定义一下业务的配置JSON文件。</p>
-<figure class="highlight"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs json">### 配置业务JSON文件：etcd-csr.json<br>{<br>    <span class="hljs-attr">"CN"</span>: <span class="hljs-string">"etcd"</span>,<br>    <span class="hljs-attr">"hosts"</span>: [<br>        <span class="hljs-string">"127.0.0.1"</span>,<br>        <span class="hljs-string">"host1_ip"</span>,<br>        <span class="hljs-string">"host2_ip"</span>,<br>        <span class="hljs-string">"host3_ip"</span><br>    ],<br>    <span class="hljs-attr">"key"</span>: {<br>        <span class="hljs-attr">"algo"</span>: <span class="hljs-string">"rsa"</span>,<br>        <span class="hljs-attr">"size"</span>: <span class="hljs-number">2048</span><br>    },<br>    <span class="hljs-attr">"names"</span>: [<br>        {<br>            <span class="hljs-attr">"C"</span>: <span class="hljs-string">"CN"</span>,<br>            <span class="hljs-attr">"ST"</span>: <span class="hljs-string">"Shanghai"</span>,<br>            <span class="hljs-attr">"L"</span>: <span class="hljs-string">"Shanghai"</span>,<br>            <span class="hljs-attr">"O"</span>: <span class="hljs-string">"test.com"</span>,<br>            <span class="hljs-attr">"OU"</span>: <span class="hljs-string"><code class="language-hljs json">### 配置业务JSON文件：etcd-csr.json<br>{<br>    <span class="hljs-attr">"CN"</span>: <span class="hljs-string">"etcd"</span>,<br>    <span class="hljs-attr">"hosts"</span>: [<br>        <span class="hljs-string">"127.0.0.1"</span>,<br>        <span class="hljs-string">"host1_ip"</span>,<br>        <span class="hljs-string">"host2_ip"</span>,<br>        <span class="hljs-string">"host3_ip"</span><br>    ],<br>    <span class="hljs-attr">"key"</span>: {<br>        <span class="hljs-attr">"algo"</span>: <span class="hljs-string">"rsa"</span>,<br>        <span class="hljs-attr">"size"</span>: <span class="hljs-number">2048</span><br>    },<br>    <span class="hljs-attr">"names"</span>: [<br>        {<br>            <span class="hljs-attr">"C"</span>: <span class="hljs-string">"CN"</span>,<br>            <span class="hljs-attr">"ST"</span>: <span class="hljs-string">"Shanghai"</span>,<br>            <span class="hljs-attr">"L"</span>: <span class="hljs-string">"Shanghai"</span>,<br>            <span class="hljs-attr">"O"</span>: <span class="hljs-string">"test.com"</span>,<br>            <span class="hljs-attr">"OU"</span>: <span class="hljs-string">"System"</span><br>        }<br>    ]<br>}<br><br>### 创建业务场景的公钥/私钥<br>cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server etcd-csr.json | cfssljson -bare etcd<br></code></span></pre></div></td></tr></tbody></table></figure>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 配置业务JSON文件：etcd-csr.json
+{
+    <span class="hljs-attr">"CN"</span>: <span class="hljs-string">"etcd"</span>,
+    <span class="hljs-attr">"hosts"</span>: [
+        <span class="hljs-string">"127.0.0.1"</span>,
+        <span class="hljs-string">"host1_ip"</span>,
+        <span class="hljs-string">"host2_ip"</span>,
+        <span class="hljs-string">"host3_ip"</span>
+    ],
+    <span class="hljs-attr">"key"</span>: {
+        <span class="hljs-attr">"algo"</span>: <span class="hljs-string">"rsa"</span>,
+        <span class="hljs-attr">"size"</span>: <span class="hljs-number">2048</span>
+    },
+    <span class="hljs-attr">"names"</span>: [
+        {
+            <span class="hljs-attr">"C"</span>: <span class="hljs-string">"CN"</span>,
+            <span class="hljs-attr">"ST"</span>: <span class="hljs-string">"Shanghai"</span>,
+            <span class="hljs-attr">"L"</span>: <span class="hljs-string">"Shanghai"</span>,
+            <span class="hljs-attr">"O"</span>: <span class="hljs-string">"test.com"</span>,
+            <span class="hljs-attr">"OU"</span>: <span class="hljs-string">"System"</span>
+        }
+    ]
+}
+
+### 创建业务场景的公钥/私钥
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server etcd-csr.json | cfssljson -bare etcd</code></pre></div>
 
 <p>  至此，CA配置以及业务需要的配置的自认证配置已获取到。</p>
 <h3 id="2-3-集群配置部署"><a href="#2-3-集群配置部署" class="headerlink" title=".2.3. 集群配置部署"></a>.2.3. 集群配置部署</h3><p>  这里配置为service的形式，并使用ansible部署集群：主要涉及到配置文件(etcd.conf)、服务配置(etcd.service)，以及ansible部署脚本。</p>
-<h4 id="2-3-1-etcd-service-j2"><a href="#2-3-1-etcd-service-j2" class="headerlink" title=".2.3.1. etcd.service.j2"></a>.2.3.1. etcd.service.j2</h4><figure class="highlight"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs json"><code class="language-hljs json">### 配置路径：/usr/lib/systemd/system/etcd.service<br>{%- set hosts = []  -%}<br>{%- for host in groups['ETCD'] | sort -%}<br> {{ hosts.append( hostvars[host]['etcd_name'] + '=https://' + host + ':' + cluster_port|string ) }}<br>{%- endfor -%}<br>[Unit]<br>Description=Etcd Server<br>After=network.target<br>After=network-online.target<br>Wants=network-online.target<br><br>[Service]<br>Type=notify<br>WorkingDirectory=/var/lib/etcd/<br>EnvironmentFile=-/etc/etcd/etcd.conf<br>User=etcd<br># set GOMAXPROCS to number of processors<br>ExecStart=/usr/bin/etcd \<br>  --name=${ETCD_NAME} \<br>  --cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem \<br>  --key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem \<br>  --peer-cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem \<br>  --peer-key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem \<br>  --trusted-ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem \<br>  --peer-trusted-ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem \<br>  --initial-advertise-peer-urls=${ETCD_INITIAL_ADVERTISE_PEER_URLS} \<br>  --listen-peer-urls=${ETCD_LISTEN_PEER_URLS} \<br>  --listen-client-urls=${ETCD_LISTEN_CLIENT_URLS} \<br>  --advertise-client-urls=${ETCD_ADVERTISE_CLIENT_URLS} \<br>  --initial-cluster-token=${ETCD_INITIAL_CLUSTER_TOKEN} \<br>  --initial-cluster={{ hosts | join(',') }}<br>  --initial-cluster-state=new \<br>  --data-dir=${ETCD_DATA_DIR}<br>Restart=on-failure<br>LimitNOFILE=65536<br><br>[Install]<br>WantedBy=multi-user.target<br></code></pre></div></td></tr></tbody></table></figure>
+<h4 id="2-3-1-etcd-service-j2"><a href="#2-3-1-etcd-service-j2" class="headerlink" title=".2.3.1. etcd.service.j2"></a>.2.3.1. etcd.service.j2</h4><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 配置路径：/usr/lib/systemd/system/etcd.service
+{%- set hosts = []  -%}
+{%- for host in groups['ETCD'] | sort -%}
+ {{ hosts.append( hostvars[host]['etcd_name'] + '=https://' + host + ':' + cluster_port|string ) }}
+{%- endfor -%}
+[Unit]
+Description=Etcd Server
+After=network.target
+After=network-online.target
+Wants=network-online.target
 
-<h4 id="2-3-2-etcd-conf-j2"><a href="#2-3-2-etcd-conf-j2" class="headerlink" title=".2.3.2. etcd.conf.j2"></a>.2.3.2. etcd.conf.j2</h4><figure class="highlight"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs json"><code class="language-hljs json">#### 配置文件路径：/etc/etcd/etcd.conf<br>[member]<br>ETCD_NAME={{ etcd_name }}<br>ETCD_DATA_DIR="/var/lib/etcd"<br>ETCD_LISTEN_PEER_URLS="https://{{ inventory_hostname }}:{{ cluster_port }}"<br>ETCD_LISTEN_CLIENT_URLS="https://{{ inventory_hostname }}:{{ client_port }},https://127.0.0.1:{{ client_port }}"<br><br>[cluster]<br>ETCD_INITIAL_ADVERTISE_PEER_URLS="https://{{ inventory_hostname }}:{{ cluster_port }}"<br>ETCD_INITIAL_CLUSTER_TOKEN="{{ cluster_token }}"<br>ETCD_ADVERTISE_CLIENT_URLS="https://{{ inventory_hostname }}:{{ client_port }}"<br></code></pre></div></td></tr></tbody></table></figure>
+[Service]
+Type=notify
+WorkingDirectory=/var/lib/etcd/
+EnvironmentFile=-/etc/etcd/etcd.conf
+User=etcd
+# set GOMAXPROCS to number of processors
+ExecStart=/usr/bin/etcd \
+  --name=${ETCD_NAME} \
+  --cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem \
+  --key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem \
+  --peer-cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem \
+  --peer-key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem \
+  --trusted-ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem \
+  --initial-advertise-peer-urls=${ETCD_INITIAL_ADVERTISE_PEER_URLS} \
+  --listen-peer-urls=${ETCD_LISTEN_PEER_URLS} \
+  --listen-client-urls=${ETCD_LISTEN_CLIENT_URLS} \
+  --advertise-client-urls=${ETCD_ADVERTISE_CLIENT_URLS} \
+  --initial-cluster-token=${ETCD_INITIAL_CLUSTER_TOKEN} \
+  --initial-cluster={{ hosts | join(',') }}
+  --initial-cluster-state=new \
+  --data-dir=${ETCD_DATA_DIR}
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target</code></pre></div>
+
+<h4 id="2-3-2-etcd-conf-j2"><a href="#2-3-2-etcd-conf-j2" class="headerlink" title=".2.3.2. etcd.conf.j2"></a>.2.3.2. etcd.conf.j2</h4><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">#### 配置文件路径：/etc/etcd/etcd.conf
+[member]
+ETCD_NAME={{ etcd_name }}
+ETCD_DATA_DIR="/var/lib/etcd"
+ETCD_LISTEN_PEER_URLS="https://{{ inventory_hostname }}:{{ cluster_port }}"
+ETCD_LISTEN_CLIENT_URLS="https://{{ inventory_hostname }}:{{ client_port }},https://127.0.0.1:{{ client_port }}"
+
+[cluster]
+ETCD_INITIAL_ADVERTISE_PEER_URLS="https://{{ inventory_hostname }}:{{ cluster_port }}"
+ETCD_INITIAL_CLUSTER_TOKEN="{{ cluster_token }}"
+ETCD_ADVERTISE_CLIENT_URLS="https://{{ inventory_hostname }}:{{ client_port }}"</code></pre></div>
 <p>编译好的脚本，可以在这里下载：<a href="cfssl.tar.gz">cfssl.tar.gz</a></p>
-<h4 id="2-3-3-分发部署Playbook"><a href="#2-3-3-分发部署Playbook" class="headerlink" title=".2.3.3. 分发部署Playbook"></a>.2.3.3. 分发部署Playbook</h4><figure class="highlight"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs json"><code class="language-hljs json">---<br>- hosts: ETCD<br>  tasks:<br>  - name: install etcd<br>    yum:<br>        name: etcd<br>        state: installed<br><br>  - name: mkdir target dir<br>    shell: mkdir -p /etc/etcd/ssl<br><br>  - name: copy ssl files<br>    copy:<br>        src: cfssl.tar.gz<br>        dest: /tmp/cfssl.tar.gz<br><br>  - name: untar ssl files<br>    shell: tar xvf /tmp/cfssl.tar.gz -C /etc/etcd/ssl<br><br>  - name: set privileges for ca files<br>    shell: chmod -R 755 /etc/etcd/ssl<br><br>  - name: copy template configure - conf<br>    template:<br>        src: etcd.service.j2<br>        dest: /usr/lib/systemd/system/etcd.service<br><br>  - name: copy template configure - service<br>    template:<br>        src: etcd.conf.j2<br>        dest: /etc/etcd/etcd.conf<br><br>  - name: systemctl reload before start service<br>    shell: systemctl daemon-reload<br><br>  - name: start etcd service<br>    service:<br>        name: etcd<br>        state: restarted<br><br>  - name: etcdctl with ssl<br>    template:<br>        src: etcdctls.j2<br>        dest: /usr/bin/etcdctls<br>        mode: "0755"<br></code></pre></div></td></tr></tbody></table></figure>
+<h4 id="2-3-3-分发部署Playbook"><a href="#2-3-3-分发部署Playbook" class="headerlink" title=".2.3.3. 分发部署Playbook"></a>.2.3.3. 分发部署Playbook</h4><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">---
+- hosts: ETCD
+  tasks:
+  - name: install etcd
+    yum:
+        name: etcd
+        state: installed
 
-<h2 id="3-集群状态检查及基本使用"><a href="#3-集群状态检查及基本使用" class="headerlink" title=".3. 集群状态检查及基本使用"></a>.3. 集群状态检查及基本使用</h2><figure class="highlight json"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs Json">### 健康状态检查: etcdctl 命令行访问<br>etcdctl   \<br>    --ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem   \<br>    --cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem   \<br>    --key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem   \<br>    --endpoint https://127.0.0.1:2379   \<br>    cluster-health<br><br>#### 输出<br>member c3ca8ce4516450a is healthy: got healthy result from https://host1:2379<br>member 22c833e1835a442d is healthy: got healthy result from https://host2:2379<br>member 3254807a1a7e65ac is healthy: got healthy result from https://host3:2379<br>cluster is healthy<br><br>### 查看集群成员信息: rest api 访问<br>curl -k --cert /etc/etcd/ssl/cfssl/ssl/etcd.pem  --key /etc/etcd/ssl/cfssl/ssl/etcd-key.pem  https://host1:2379/v2/members<br><br>#### 输出<br>{<br>    <span class="hljs-attr">"members"</span>: [<br>        {<br>            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"c3ca8ce4516450a"</span>,<br>            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra01"</span>,<br>            <span class="hljs-attr">"peerURLs"</span>: [<br>                <span class="hljs-string">"https://host1:2380"</span><br>            ],<br>            <span class="hljs-attr">"clientURLs"</span>: [<br>                <span class="hljs-string">"https://host1:2379"</span><br>            ]<br>        },<br>        {<br>            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"22c833e1835a442d"</span>,<br>            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra03"</span>,<br>            <span class="hljs-attr">"peerURLs"</span>: [<br>                <span class="hljs-string">"https://host2:2380"</span><br>            ],<br>            <span class="hljs-attr">"clientURLs"</span>: [<br>                <span class="hljs-string">"https://host2:2379"</span><br>            ]<br>        },<br>        {<br>            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"3254807a1a7e65ac"</span>,<br>            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra02"</span>,<br>            <span class="hljs-attr">"peerURLs"</span>: [<br>                <span class="hljs-string">"https://host3:2380"</span><br>            ],<br>            <span class="hljs-attr">"clientURLs"</span>: [<br>                <span class="hljs-string"><code class="language-hljs Json">### 健康状态检查: etcdctl 命令行访问<br>etcdctl   \<br>    --ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem   \<br>    --cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem   \<br>    --key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem   \<br>    --endpoint https://127.0.0.1:2379   \<br>    cluster-health<br><br>#### 输出<br>member c3ca8ce4516450a is healthy: got healthy result from https://host1:2379<br>member 22c833e1835a442d is healthy: got healthy result from https://host2:2379<br>member 3254807a1a7e65ac is healthy: got healthy result from https://host3:2379<br>cluster is healthy<br><br>### 查看集群成员信息: rest api 访问<br>curl -k --cert /etc/etcd/ssl/cfssl/ssl/etcd.pem  --key /etc/etcd/ssl/cfssl/ssl/etcd-key.pem  https://host1:2379/v2/members<br><br>#### 输出<br>{<br>    <span class="hljs-attr">"members"</span>: [<br>        {<br>            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"c3ca8ce4516450a"</span>,<br>            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra01"</span>,<br>            <span class="hljs-attr">"peerURLs"</span>: [<br>                <span class="hljs-string">"https://host1:2380"</span><br>            ],<br>            <span class="hljs-attr">"clientURLs"</span>: [<br>                <span class="hljs-string">"https://host1:2379"</span><br>            ]<br>        },<br>        {<br>            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"22c833e1835a442d"</span>,<br>            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra03"</span>,<br>            <span class="hljs-attr">"peerURLs"</span>: [<br>                <span class="hljs-string">"https://host2:2380"</span><br>            ],<br>            <span class="hljs-attr">"clientURLs"</span>: [<br>                <span class="hljs-string">"https://host2:2379"</span><br>            ]<br>        },<br>        {<br>            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"3254807a1a7e65ac"</span>,<br>            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra02"</span>,<br>            <span class="hljs-attr">"peerURLs"</span>: [<br>                <span class="hljs-string">"https://host3:2380"</span><br>            ],<br>            <span class="hljs-attr">"clientURLs"</span>: [<br>                <span class="hljs-string">"https://host3:2379"</span><br>            ]<br>        }<br>    ]<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
+  - name: mkdir target dir
+    shell: mkdir -p /etc/etcd/ssl
+
+  - name: copy ssl files
+    copy:
+        src: cfssl.tar.gz
+        dest: /tmp/cfssl.tar.gz
+
+  - name: untar ssl files
+    shell: tar xvf /tmp/cfssl.tar.gz -C /etc/etcd/ssl
+
+  - name: set privileges for ca files
+    shell: chmod -R 755 /etc/etcd/ssl
+
+  - name: copy template configure - conf
+    template:
+        src: etcd.service.j2
+        dest: /usr/lib/systemd/system/etcd.service
+
+  - name: copy template configure - service
+    template:
+        src: etcd.conf.j2
+        dest: /etc/etcd/etcd.conf
+
+  - name: systemctl reload before start service
+    shell: systemctl daemon-reload
+
+  - name: start etcd service
+    service:
+        name: etcd
+        state: restarted
+
+  - name: etcdctl with ssl
+    template:
+        src: etcdctls.j2
+        dest: /usr/bin/etcdctls
+        mode: "0755"</code></pre></div>
+
+<h2 id="3-集群状态检查及基本使用"><a href="#3-集群状态检查及基本使用" class="headerlink" title=".3. 集群状态检查及基本使用"></a>.3. 集群状态检查及基本使用</h2><div class="hljs"><pre class=" language-hljs Json"><code class="language-hljs Json">### 健康状态检查: etcdctl 命令行访问
+etcdctl   \
+    --ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem   \
+    --cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem   \
+    --key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem   \
+    --endpoint https://127.0.0.1:2379   \
+    cluster-health
+
+#### 输出
+member c3ca8ce4516450a is healthy: got healthy result from https://host1:2379
+member 22c833e1835a442d is healthy: got healthy result from https://host2:2379
+member 3254807a1a7e65ac is healthy: got healthy result from https://host3:2379
+cluster is healthy
+
+### 查看集群成员信息: rest api 访问
+curl -k --cert /etc/etcd/ssl/cfssl/ssl/etcd.pem  --key /etc/etcd/ssl/cfssl/ssl/etcd-key.pem  https://host1:2379/v2/members
+
+#### 输出
+{
+    <span class="hljs-attr">"members"</span>: [
+        {
+            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"c3ca8ce4516450a"</span>,
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra01"</span>,
+            <span class="hljs-attr">"peerURLs"</span>: [
+                <span class="hljs-string">"https://host1:2380"</span>
+            ],
+            <span class="hljs-attr">"clientURLs"</span>: [
+                <span class="hljs-string">"https://host1:2379"</span>
+            ]
+        },
+        {
+            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"22c833e1835a442d"</span>,
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra03"</span>,
+            <span class="hljs-attr">"peerURLs"</span>: [
+                <span class="hljs-string">"https://host2:2380"</span>
+            ],
+            <span class="hljs-attr">"clientURLs"</span>: [
+                <span class="hljs-string">"https://host2:2379"</span>
+            ]
+        },
+        {
+            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"3254807a1a7e65ac"</span>,
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra02"</span>,
+            <span class="hljs-attr">"peerURLs"</span>: [
+                <span class="hljs-string">"https://host3:2380"</span>
+            ],
+            <span class="hljs-attr">"clientURLs"</span>: [
+                <span class="hljs-string">"https://host3:2379"</span>
+            ]
+        }
+    ]
+}</code></pre></div>
 <p>如果新搭建的集群可以正常返回，那么基本可以表明搭建了一个健康、可用的<strong>ETCD</strong>集群。</p>
 
             </article>

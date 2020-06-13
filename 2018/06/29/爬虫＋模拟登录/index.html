@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      639 字
+      463 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      9
+      6
        分钟
     </span>
   
@@ -198,10 +198,53 @@
 
 <p>  本文用到的主要技术手段包括Selenium+Phantomjs+Jsoup。</p>
 <h2 id="WebDriver"><a href="#WebDriver" class="headerlink" title="WebDriver"></a>WebDriver</h2><p>  这里我们使用<em>Phantomjs</em>最为浏览器驱动，下面的方式是实现传入<em>Phantomjs</em>路径获取<em>WebDriver</em>的方法。其中随机产生UserAgent、打开JS运行开关，并设置了20S的默认超时时间。</p>
-<figure class="highlight java"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs Java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">* <span class="hljs-doctag">@DESC</span> 获取PhantomJSDriver</span><br><span class="hljs-comment">* <span class="hljs-doctag">@param</span> phantomJS</span><br><span class="hljs-comment">* <span class="hljs-doctag">@return</span> WebDriver</span><br><span class="hljs-comment">*/</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> WebDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS)</span> </span>{<br><br>    System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);<br>	<br>    DesiredCapabilities desiredCapabilities = DesiredCapabilities<br>        .phantomjs();<br>    desiredCapabilities.setJavascriptEnabled(<span class="hljs-keyword">true</span>);<br>    String headers = getHeaders();<span class="hljs-comment">// 生成随机User_Agent</span><br>    desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>,<br>        headers);<br>    desiredCapabilities.setCapability(<br>        <span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, headers);<br>		<br>    PhantomJSDriver driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);<br>    driver.manage().timeouts().implicitlyWait(<span class="hljs-number">20</span>, TimeUnit.SECONDS);<br><br>    <span class="hljs-keyword"><code class="language-hljs Java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">* <span class="hljs-doctag">@DESC</span> 获取PhantomJSDriver</span><br><span class="hljs-comment">* <span class="hljs-doctag">@param</span> phantomJS</span><br><span class="hljs-comment">* <span class="hljs-doctag">@return</span> WebDriver</span><br><span class="hljs-comment">*/</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> WebDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS)</span> </span>{<br><br>    System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);<br>	<br>    DesiredCapabilities desiredCapabilities = DesiredCapabilities<br>        .phantomjs();<br>    desiredCapabilities.setJavascriptEnabled(<span class="hljs-keyword">true</span>);<br>    String headers = getHeaders();<span class="hljs-comment">// 生成随机User_Agent</span><br>    desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>,<br>        headers);<br>    desiredCapabilities.setCapability(<br>        <span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, headers);<br>		<br>    PhantomJSDriver driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);<br>    driver.manage().timeouts().implicitlyWait(<span class="hljs-number">20</span>, TimeUnit.SECONDS);<br><br>    <span class="hljs-keyword">return</span> driver;<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
+<div class="hljs"><pre class=" language-hljs Java"><span class="hljs-comment"><code class="language-hljs Java"><span class="hljs-comment">/**</span>
+<span class="hljs-comment">* <span class="hljs-doctag">@DESC</span> 获取PhantomJSDriver</span>
+<span class="hljs-comment">* <span class="hljs-doctag">@param</span> phantomJS</span>
+<span class="hljs-comment">* <span class="hljs-doctag">@return</span> WebDriver</span>
+<span class="hljs-comment">*/</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> WebDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS)</span> </span>{
+
+    System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);
+	
+    DesiredCapabilities desiredCapabilities = DesiredCapabilities
+        .phantomjs();
+    desiredCapabilities.setJavascriptEnabled(<span class="hljs-keyword">true</span>);
+    String headers = getHeaders();<span class="hljs-comment">// 生成随机User_Agent</span>
+    desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>,
+        headers);
+    desiredCapabilities.setCapability(
+        <span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, headers);
+		
+    PhantomJSDriver driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);
+    driver.manage().timeouts().implicitlyWait(<span class="hljs-number">20</span>, TimeUnit.SECONDS);
+
+    <span class="hljs-keyword">return</span> driver;
+}</code></span></pre></div>
 
 <h2 id="模拟登录"><a href="#模拟登录" class="headerlink" title="模拟登录"></a>模拟登录</h2><p>  这里主要是通过WebDriver访问网页，并在WebDriver上做一些实际的操作，例如查找网页元素、给网页元素赋值、运行相关的JS以及获取cookies等操作。</p>
-<figure class="highlight java"><table><tbody><tr><td class="code"><div class="hljs"><pre class="hljs  language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException </span>{<br><br>    WebDriver wd = getPhantomJs(<span class="hljs-string">"Your Phantomjs Path"</span>);<br>    wd.get(<span class="hljs-string">"Target Website"</span>);<br>    wd.findElement(By.id(<span class="hljs-string">"txtUserName"</span>)).sendKeys(<br>        <span class="hljs-string">"Your Account"</span>);<br>    wd.findElement(By.id(<span class="hljs-string">"txtPassword"</span>)).sendKeys(<span class="hljs-string">"Your Passwd"</span>);<br>    JavascriptExecutor js = (JavascriptExecutor) wd;<br>    js.executeScript(<span class="hljs-string">"网站登录方法［一般会在JS中找到，或触发，或点击］"</span>);<br>    <span class="hljs-keyword">try</span> {<span class="hljs-comment">// 等待登录加载完成</span><br>    	Thread.sleep(PAUSE_TIME);<br>    } <span class="hljs-keyword">catch</span> (InterruptedException e) {<br>    }<br>    Set&lt;Cookie&gt; coks = wd.manage().getCookies();<br>    wd.quit();<br><br>    <span class="hljs-comment">// 保存登录的Cookies</span><br>    Map&lt;String, String&gt; cookies = <span class="hljs-keyword">new</span> HashMap&lt;String, String&gt;();<br>    <span class="hljs-keyword"><code class="language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException </span>{<br><br>    WebDriver wd = getPhantomJs(<span class="hljs-string">"Your Phantomjs Path"</span>);<br>    wd.get(<span class="hljs-string">"Target Website"</span>);<br>    wd.findElement(By.id(<span class="hljs-string">"txtUserName"</span>)).sendKeys(<br>        <span class="hljs-string">"Your Account"</span>);<br>    wd.findElement(By.id(<span class="hljs-string">"txtPassword"</span>)).sendKeys(<span class="hljs-string">"Your Passwd"</span>);<br>    JavascriptExecutor js = (JavascriptExecutor) wd;<br>    js.executeScript(<span class="hljs-string">"网站登录方法［一般会在JS中找到，或触发，或点击］"</span>);<br>    <span class="hljs-keyword">try</span> {<span class="hljs-comment">// 等待登录加载完成</span><br>    	Thread.sleep(PAUSE_TIME);<br>    } <span class="hljs-keyword">catch</span> (InterruptedException e) {<br>    }<br>    Set&lt;Cookie&gt; coks = wd.manage().getCookies();<br>    wd.quit();<br><br>    <span class="hljs-comment">// 保存登录的Cookies</span><br>    Map&lt;String, String&gt; cookies = <span class="hljs-keyword">new</span> HashMap&lt;String, String&gt;();<br>    <span class="hljs-keyword">for</span> (Cookie ck : coks)<br>    	cookies.put(ck.getName(), ck.getValue());<br><br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
+<div class="hljs"><pre class=" language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword"><code class="language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException </span>{
+
+    WebDriver wd = getPhantomJs(<span class="hljs-string">"Your Phantomjs Path"</span>);
+    wd.get(<span class="hljs-string">"Target Website"</span>);
+    wd.findElement(By.id(<span class="hljs-string">"txtUserName"</span>)).sendKeys(
+        <span class="hljs-string">"Your Account"</span>);
+    wd.findElement(By.id(<span class="hljs-string">"txtPassword"</span>)).sendKeys(<span class="hljs-string">"Your Passwd"</span>);
+    JavascriptExecutor js = (JavascriptExecutor) wd;
+    js.executeScript(<span class="hljs-string">"网站登录方法［一般会在JS中找到，或触发，或点击］"</span>);
+    <span class="hljs-keyword">try</span> {<span class="hljs-comment">// 等待登录加载完成</span>
+    	Thread.sleep(PAUSE_TIME);
+    } <span class="hljs-keyword">catch</span> (InterruptedException e) {
+    }
+    Set<cookie> coks = wd.manage().getCookies();
+    wd.quit();
+
+    <span class="hljs-comment">// 保存登录的Cookies</span>
+    Map<string, string=""> cookies = <span class="hljs-keyword">new</span> HashMap<string, string="">();
+    <span class="hljs-keyword">for</span> (Cookie ck : coks)
+    	cookies.put(ck.getName(), ck.getValue());
+
+}</string,></string,></cookie></code></span></span></pre></div>
             </article>
             <hr>
             <div>
