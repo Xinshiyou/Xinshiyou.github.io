@@ -37,6 +37,86 @@ B、server-base&#x2F;src&#x2F;main&#x2F;java&#x2F;org&#x2F;apache&#x2F;kylin&#x2
       </tags>
   </entry>
   <entry>
+    <title>Alibaba-DataX调研使用</title>
+    <url>/2018/06/29/Alibaba-DataX%E8%B0%83%E7%A0%94%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>&emsp;&emsp;接触DataX是基于公司离线数据同步需求，从而开始接触到DataX的使用。前异构数据之间开源同步工具，主要有</p>
+<a id="more"></a>
+
+<h2 id="同步工具调研"><a href="#同步工具调研" class="headerlink" title="同步工具调研"></a>同步工具调研</h2><ol>
+<li><p>Sqoop<br>&emsp;&emsp;Sqoop是一款开源的工具，主要用于Hadoop与传统RDBMS之间的数据同步，可以将RDBMS中的数据同步到HDFS中，也可以进行逆向操作。主要是基于MR任务的进行同步，具有支持并发、增量更新、支持海量数据同步等优点。<br>&emsp;&emsp;<a href="https://github.com/cloudera/sqoop/wiki" target="_blank" rel="noopener">Sqoop Wiki</a><br>&emsp;&emsp;<a href="https://github.com/cloudera/sqoop/wiki" target="_blank" rel="noopener">Sqoop官网</a></p>
+</li>
+<li><p>OGG<br>&emsp;&emsp;Oracle Golden Gate，缩写为OGG，可见其是Oralce“冠名”的同步工具。主要是RDBMS之间的数据同步，常见的关系型数据，例如Oracle/DB2/Sybase/MySQL/MsSQL等均支持。<br>&emsp;&emsp;<a href="http://www.oracle.com/technetwork/cn/middleware/goldengate/overview/index.html" target="_blank" rel="noopener">OGG介绍</a></p>
+</li>
+<li><p>Kettle<br>&emsp;&emsp;Kettle是一款开源的ETL工具，具有集群模式。Kettle主要用来做ETL数据处理，具有方便快捷、可视化等优点，适合于一般中小业务的使用。</p>
+</li>
+<li><p>DataX<br>&emsp;&emsp;DataX是由Alibaba开源的一款异构数据同步工具，可以在常见的各种数据源之间进行同步，并仅依赖Java环境，具有轻量、插件式、方便等优点，可以快速完成同步任务。一般公司的数据同步任务，基本可以满足。</p>
+</li>
+<li><p>canal+otter<br>&emsp;&emsp;canal+otter数据同步方案，同样是Alibaba开源的同步工具。该方案适用于大规模、扩机房、跨区域等重量级数据同步任务，并具有监控、近实时同步等优点。</p>
+</li>
+<li><p>SymmetricDS<br>&emsp;&emsp;同样是一款基于Java开发的分布式开源同步软件，基于复制原理，源于Java的特性，SymmetricDS具有跨平台、多线程、可监控等优点。</p>
+</li>
+</ol>
+<p>&emsp;&emsp;博主公司具有实时同步数据与离线同步数据的需求，因此需要调研数据同步工具。其中实时同步主要是从MySQL同步数据到Hive，这里我们选择的是MySQL Binlog方式进行实时同步；离线同步，主要是从各种数据源–如MySQL、ODPS、HIVE等–之间的数据同步。</p>
+<p>&emsp;&emsp;经过调研发现，DataX具有以下优点</p>
+<ol>
+<li>社区活跃，虽然Alibaba没有开源集群模式，仍有许多用户群体；</li>
+<li>Alibaba出品，有大公司维护；</li>
+<li>使用方便，只需要配置JSON即可使用;无需安装，直接解压即可使用；</li>
+<li>完善的文档，很快可以上手，学习成本近乎于零。</li>
+</ol>
+<h2 id="DataX介绍"><a href="#DataX介绍" class="headerlink" title="DataX介绍"></a>DataX介绍</h2><p>&emsp;&emsp;<em>DataX</em>是Alibaba推出的异构数据通过方案，通过插件式组合，可以完成不同数据源之间的数据同步任务。DataX可以通过的数据包括目前所见的绝大数，包括关系型数据库[MySQL、Oracle、SQLServer、PostgreSQL等]、阿里云数据仓数据存储[ODPS、ADS、OSS、OCS等]、NoSQL数据库[OTS、Hbase、MongoDB、Hive等]、无结构化数据[TextFile、FTP、HDFS、ES等]。另外DataX提供了方便的扩展实现，可以方便的个性化定制自己的数据源，方便扩展。</p>
+<p>&emsp;&emsp;目前开源出来的DataX已经发布了3.0版本，增加了许多新的特性，包括</p>
+<ol>
+<li>可靠地数据质量监控</li>
+<li>丰富的数据转换功能</li>
+<li>精准的速度控制</li>
+<li>强劲的同步性能</li>
+<li>健壮的容错机制</li>
+<li>极简的使用体验</li>
+</ol>
+<p>&emsp;&emsp;更加详细的介绍，可以参考DataX的官方说明：<br>&emsp;&emsp;<a href="https://github.com/alibaba/DataX/blob/master/userGuid.md" target="_blank" rel="noopener">User Guide</a><br>&emsp;&emsp;<a href="https://github.com/alibaba/DataX/blob/master/introduction.md" target="_blank" rel="noopener">DataX-Introduction</a><br>&emsp;&emsp;<a href="https://github.com/alibaba/DataX/blob/master/dataxPluginDev.md" target="_blank" rel="noopener">插件开发宝典</a></p>
+<h2 id="目前使用场景"><a href="#目前使用场景" class="headerlink" title="目前使用场景"></a>目前使用场景</h2><p>&emsp;&emsp;目前我们使用到的场景如下所示<br><img src="001.png" srcset="/img/loading.gif" alt="插件使用场景"><br>&emsp;&emsp;同步的路径为：</p>
+<ol>
+<li>MySQL-&gt;Hive</li>
+<li>Hive-&gt;MySQL</li>
+<li>ODPS-&gt;Hive</li>
+<li>ODPS-&gt;MySQL</li>
+<li>RDS-&gt;Hive<br>&emsp;&emsp;选择DataX还有一个重要的特性就是，DataX是Alibaba提供的数据同步方案，天然的支持阿里云的数据源，不需要我们重新从API开始开发，节省开发成本。</li>
+</ol>
+<h2 id="使用体会"><a href="#使用体会" class="headerlink" title="使用体会"></a>使用体会</h2><p>&emsp;&emsp;在使用DataX的过程中，总体而言遇到的问题较少。目前DataX的主要缺点在于开源出来的DataX，缺少分布式支持，是单机版本，无法充分发挥集群的里面。因此，会存在单机节点存在的各种问题，内存、CPU、网络等问题。</p>
+<p>使用一段时间，有一些思考</p>
+<ol>
+<li>DataX集群模式的实现方式，如何实现？如果集群之后，如何监控？</li>
+<li>DataX单节点状态时，任务运行性能参数的收集。DataX提供了Hook，可以回调打印一些参数，另外可以加入最后打印的数据，例如<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Map<String, Number> preLogStatics &#x3D; communication.getCounter();
+preLogStatics.put("任务启动时刻", startTimeStamp);
+preLogStatics.put("任务结束时刻", endTimeStamp);
+preLogStatics.put("任务总计耗时", totalCosts);
+preLogStatics.put("任务平均流量", byteSpeedPerSecond);
+preLogStatics.put("记录写入速度", recordSpeedPerSecond);
+preLogStatics.put("读出记录总数", CommunicationTool.getTotalReadRecords(communication));
+preLogStatics.put("读写失败总数", CommunicationTool.getTotalErrorRecords(communication));
+		
+HookInvoker invoker &#x3D; new HookInvoker(CoreConstant.DATAX_HOME + "&#x2F;hook", configuration, preLogStatics);</code></pre></div>
+&emsp;&emsp;这样我们收集到更多的运行参数，方便后期对任务的运行作分析，便于改进优化任务的运行参数。</li>
+<li>DataX.py本质上运行的是Java程序，如果直接调用Engine.entry，如何统计任务运行日志？是否存在一种方式，可以按照线程打印单独一个文件的日志？</li>
+</ol>
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><ol>
+<li><a href="https://github.com/alibaba/DataX" target="_blank" rel="noopener">https://github.com/alibaba/DataX</a></li>
+<li><a href="https://blog.csdn.net/gamer_gyt/article/details/55225700" target="_blank" rel="noopener">https://blog.csdn.net/gamer_gyt/article/details/55225700</a></li>
+<li><a href="https://www.cnblogs.com/qiumingcheng/p/5435907.html" target="_blank" rel="noopener">https://www.cnblogs.com/qiumingcheng/p/5435907.html</a></li>
+<li><a href="https://www.cnblogs.com/majinju/p/5739820.html" target="_blank" rel="noopener">https://www.cnblogs.com/majinju/p/5739820.html</a></li>
+<li><a href="http://www.oracle.com/technetwork/cn/middleware/goldengate/overview/index.html" target="_blank" rel="noopener">http://www.oracle.com/technetwork/cn/middleware/goldengate/overview/index.html</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>DataX</tag>
+        <tag>调研</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CDH-Manager开启alert功能</title>
     <url>/2018/06/29/CDH-Manager%E5%BC%80%E5%90%AFalert%E5%8A%9F%E8%83%BD/</url>
     <content><![CDATA[<p>&emsp;&emsp;使用CDH时，需要针对多个项目进行监控，但又不想太麻烦使用专业的监控工具，所以只使用CDH自带的CDH Manager来查看相关的监控参数，并开启邮件告警通知功能。</p>
@@ -129,175 +209,6 @@ end;</code></pre></div>
       <tags>
         <tag>调研</tag>
         <tag>Matlab</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Alibaba-DataX调研使用</title>
-    <url>/2018/06/29/Alibaba-DataX%E8%B0%83%E7%A0%94%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>&emsp;&emsp;接触DataX是基于公司离线数据同步需求，从而开始接触到DataX的使用。前异构数据之间开源同步工具，主要有</p>
-<a id="more"></a>
-
-<h2 id="同步工具调研"><a href="#同步工具调研" class="headerlink" title="同步工具调研"></a>同步工具调研</h2><ol>
-<li><p>Sqoop<br>&emsp;&emsp;Sqoop是一款开源的工具，主要用于Hadoop与传统RDBMS之间的数据同步，可以将RDBMS中的数据同步到HDFS中，也可以进行逆向操作。主要是基于MR任务的进行同步，具有支持并发、增量更新、支持海量数据同步等优点。<br>&emsp;&emsp;<a href="https://github.com/cloudera/sqoop/wiki" target="_blank" rel="noopener">Sqoop Wiki</a><br>&emsp;&emsp;<a href="https://github.com/cloudera/sqoop/wiki" target="_blank" rel="noopener">Sqoop官网</a></p>
-</li>
-<li><p>OGG<br>&emsp;&emsp;Oracle Golden Gate，缩写为OGG，可见其是Oralce“冠名”的同步工具。主要是RDBMS之间的数据同步，常见的关系型数据，例如Oracle/DB2/Sybase/MySQL/MsSQL等均支持。<br>&emsp;&emsp;<a href="http://www.oracle.com/technetwork/cn/middleware/goldengate/overview/index.html" target="_blank" rel="noopener">OGG介绍</a></p>
-</li>
-<li><p>Kettle<br>&emsp;&emsp;Kettle是一款开源的ETL工具，具有集群模式。Kettle主要用来做ETL数据处理，具有方便快捷、可视化等优点，适合于一般中小业务的使用。</p>
-</li>
-<li><p>DataX<br>&emsp;&emsp;DataX是由Alibaba开源的一款异构数据同步工具，可以在常见的各种数据源之间进行同步，并仅依赖Java环境，具有轻量、插件式、方便等优点，可以快速完成同步任务。一般公司的数据同步任务，基本可以满足。</p>
-</li>
-<li><p>canal+otter<br>&emsp;&emsp;canal+otter数据同步方案，同样是Alibaba开源的同步工具。该方案适用于大规模、扩机房、跨区域等重量级数据同步任务，并具有监控、近实时同步等优点。</p>
-</li>
-<li><p>SymmetricDS<br>&emsp;&emsp;同样是一款基于Java开发的分布式开源同步软件，基于复制原理，源于Java的特性，SymmetricDS具有跨平台、多线程、可监控等优点。</p>
-</li>
-</ol>
-<p>&emsp;&emsp;博主公司具有实时同步数据与离线同步数据的需求，因此需要调研数据同步工具。其中实时同步主要是从MySQL同步数据到Hive，这里我们选择的是MySQL Binlog方式进行实时同步；离线同步，主要是从各种数据源–如MySQL、ODPS、HIVE等–之间的数据同步。</p>
-<p>&emsp;&emsp;经过调研发现，DataX具有以下优点</p>
-<ol>
-<li>社区活跃，虽然Alibaba没有开源集群模式，仍有许多用户群体；</li>
-<li>Alibaba出品，有大公司维护；</li>
-<li>使用方便，只需要配置JSON即可使用;无需安装，直接解压即可使用；</li>
-<li>完善的文档，很快可以上手，学习成本近乎于零。</li>
-</ol>
-<h2 id="DataX介绍"><a href="#DataX介绍" class="headerlink" title="DataX介绍"></a>DataX介绍</h2><p>&emsp;&emsp;<em>DataX</em>是Alibaba推出的异构数据通过方案，通过插件式组合，可以完成不同数据源之间的数据同步任务。DataX可以通过的数据包括目前所见的绝大数，包括关系型数据库[MySQL、Oracle、SQLServer、PostgreSQL等]、阿里云数据仓数据存储[ODPS、ADS、OSS、OCS等]、NoSQL数据库[OTS、Hbase、MongoDB、Hive等]、无结构化数据[TextFile、FTP、HDFS、ES等]。另外DataX提供了方便的扩展实现，可以方便的个性化定制自己的数据源，方便扩展。</p>
-<p>&emsp;&emsp;目前开源出来的DataX已经发布了3.0版本，增加了许多新的特性，包括</p>
-<ol>
-<li>可靠地数据质量监控</li>
-<li>丰富的数据转换功能</li>
-<li>精准的速度控制</li>
-<li>强劲的同步性能</li>
-<li>健壮的容错机制</li>
-<li>极简的使用体验</li>
-</ol>
-<p>&emsp;&emsp;更加详细的介绍，可以参考DataX的官方说明：<br>&emsp;&emsp;<a href="https://github.com/alibaba/DataX/blob/master/userGuid.md" target="_blank" rel="noopener">User Guide</a><br>&emsp;&emsp;<a href="https://github.com/alibaba/DataX/blob/master/introduction.md" target="_blank" rel="noopener">DataX-Introduction</a><br>&emsp;&emsp;<a href="https://github.com/alibaba/DataX/blob/master/dataxPluginDev.md" target="_blank" rel="noopener">插件开发宝典</a></p>
-<h2 id="目前使用场景"><a href="#目前使用场景" class="headerlink" title="目前使用场景"></a>目前使用场景</h2><p>&emsp;&emsp;目前我们使用到的场景如下所示<br><img src="001.png" srcset="/img/loading.gif" alt="插件使用场景"><br>&emsp;&emsp;同步的路径为：</p>
-<ol>
-<li>MySQL-&gt;Hive</li>
-<li>Hive-&gt;MySQL</li>
-<li>ODPS-&gt;Hive</li>
-<li>ODPS-&gt;MySQL</li>
-<li>RDS-&gt;Hive<br>&emsp;&emsp;选择DataX还有一个重要的特性就是，DataX是Alibaba提供的数据同步方案，天然的支持阿里云的数据源，不需要我们重新从API开始开发，节省开发成本。</li>
-</ol>
-<h2 id="使用体会"><a href="#使用体会" class="headerlink" title="使用体会"></a>使用体会</h2><p>&emsp;&emsp;在使用DataX的过程中，总体而言遇到的问题较少。目前DataX的主要缺点在于开源出来的DataX，缺少分布式支持，是单机版本，无法充分发挥集群的里面。因此，会存在单机节点存在的各种问题，内存、CPU、网络等问题。</p>
-<p>使用一段时间，有一些思考</p>
-<ol>
-<li>DataX集群模式的实现方式，如何实现？如果集群之后，如何监控？</li>
-<li>DataX单节点状态时，任务运行性能参数的收集。DataX提供了Hook，可以回调打印一些参数，另外可以加入最后打印的数据，例如<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Map<String, Number> preLogStatics &#x3D; communication.getCounter();
-preLogStatics.put("任务启动时刻", startTimeStamp);
-preLogStatics.put("任务结束时刻", endTimeStamp);
-preLogStatics.put("任务总计耗时", totalCosts);
-preLogStatics.put("任务平均流量", byteSpeedPerSecond);
-preLogStatics.put("记录写入速度", recordSpeedPerSecond);
-preLogStatics.put("读出记录总数", CommunicationTool.getTotalReadRecords(communication));
-preLogStatics.put("读写失败总数", CommunicationTool.getTotalErrorRecords(communication));
-		
-HookInvoker invoker &#x3D; new HookInvoker(CoreConstant.DATAX_HOME + "&#x2F;hook", configuration, preLogStatics);</code></pre></div>
-&emsp;&emsp;这样我们收集到更多的运行参数，方便后期对任务的运行作分析，便于改进优化任务的运行参数。</li>
-<li>DataX.py本质上运行的是Java程序，如果直接调用Engine.entry，如何统计任务运行日志？是否存在一种方式，可以按照线程打印单独一个文件的日志？</li>
-</ol>
-<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><ol>
-<li><a href="https://github.com/alibaba/DataX" target="_blank" rel="noopener">https://github.com/alibaba/DataX</a></li>
-<li><a href="https://blog.csdn.net/gamer_gyt/article/details/55225700" target="_blank" rel="noopener">https://blog.csdn.net/gamer_gyt/article/details/55225700</a></li>
-<li><a href="https://www.cnblogs.com/qiumingcheng/p/5435907.html" target="_blank" rel="noopener">https://www.cnblogs.com/qiumingcheng/p/5435907.html</a></li>
-<li><a href="https://www.cnblogs.com/majinju/p/5739820.html" target="_blank" rel="noopener">https://www.cnblogs.com/majinju/p/5739820.html</a></li>
-<li><a href="http://www.oracle.com/technetwork/cn/middleware/goldengate/overview/index.html" target="_blank" rel="noopener">http://www.oracle.com/technetwork/cn/middleware/goldengate/overview/index.html</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>DataX</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Crontab整点运行问题</title>
-    <url>/2018/06/29/Crontab%E6%95%B4%E7%82%B9%E8%BF%90%E8%A1%8C%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>&emsp;&emsp;无论是使用Linux自带crontab程序，还是使用cron-utils的crontab语法解析，都存在整点运行问题。</p>
-<a id="more"></a>
-
-<h2 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h2><p>使用crontab语法的时候，如果是固定间隔运行，如</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">0  0&#x2F;5  * * * *
-30 *&#x2F;30 * * * *</code></pre></div>
-<p>其中分钟间隔只能是60的因子，如果不是60的因子，那么存在整点运行问题。如运行计划为</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">10 0&#x2F;29 * * * *</code></pre></div>
-<p>那么运行时刻可能为</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Mon Oct 09 15:29:10 CST 2017
-Mon Oct 09 15:58:10 CST 2017
-Mon Oct 09 16:00:10 CST 2017
-...</code></pre></div>
-<p>这里的运行计划，多出来一个16:00:10，这是不在我们的运行计划中的。</p>
-<h2 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h2><p>作者使用的是cron-utils，所以可以使用程序控制，实现规避整点运行的问题。</p>
-<h3 id="计算crontab时间间隔"><a href="#计算crontab时间间隔" class="headerlink" title="计算crontab时间间隔"></a>计算crontab时间间隔</h3><p>代码先上：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">&#x2F;**
- * @DESC caluate the max seperates
- *&#x2F;
-public static long calcMaxSep(ExecutionTime executionTime,
-		DateTime updateCurrentFireTime) &#123;
-
-	DateTime nextFireTime &#x3D; executionTime
-			.nextExecution(updateCurrentFireTime);
-	DateTime nextFireTime1 &#x3D; executionTime.nextExecution(nextFireTime);
-
-	long b1 &#x3D; nextFireTime.toDate().getTime()
-			- updateCurrentFireTime.toDate().getTime();
-	long b2 &#x3D; nextFireTime1.toDate().getTime()
-			- updateCurrentFireTime.toDate().getTime();
-	b2 &#x3D; b2 &#x2F; 2;
-
-	long b3 &#x3D; nextFireTime1.toDate().getTime()
-			- nextFireTime.toDate().getTime();
-
-	return getMaxByTri(b1, b2, b3);
-
-&#125;
-
-&#x2F;**
- * @DESC get max of input three numbers
- *&#x2F;
-public static long getMaxByTri(long b1, long b2, long b3) &#123;
-	&#x2F;&#x2F; return b1 > b2 ? (b1 > b3 ? b1 : b3) : (b2 > b3 ? b2 : b3);
-	return Math.max(b1, Math.max(b2, b3));
-&#125;</code></pre></div>
-<p>&emsp;&emsp;基本原理：三个运行时刻，不可能都存在整点运行问题，除非设置就是整点运行的。分析三个运行时间之间的时间间隔，如果是正常区间，那三个时间应该是一致的；如果区间内或边界存在整点问题，那么应该可以通过该方法解决。作者通过该方法获取运行时间间隔，没有发现问题。</p>
-<h3 id="通过间隔获取下一个运行时刻"><a href="#通过间隔获取下一个运行时刻" class="headerlink" title="通过间隔获取下一个运行时刻"></a>通过间隔获取下一个运行时刻</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">public static void updateTask(SchedulerTask task) &#123;
-	task.setCurrentFiredTime(task.getNextFiredTime());&#x2F;&#x2F; 直接获取计算好的下次执行时间，不再重新计算
-	DateTime updateCurrentFireTime &#x3D; new DateTime(task.getNextFiredTime());
-	DateTime nextFireTime &#x3D; nextFireTime(updateCurrentFireTime,Long.parseLong(task.getDescribe()));
-	task.setNextFiredTime(nextFireTime.toDate());
-&#125;
-
-public static int adaptTask(SchedulerTask task, Date time) &#123;
-	
-	&#x2F;&#x2F; 调整任务，需要重新计算
-	Cron quartzCron &#x3D; getCron(task.getCron());
-	ExecutionTime executionTime &#x3D; ExecutionTime.forCron(quartzCron);
-	DateTime updateCurrentFireTime &#x3D; new DateTime(time);
-	updateCurrentFireTime &#x3D; executionTime.nextExecution(new DateTime());
-	task.setCurrentFiredTime(updateCurrentFireTime.toDate());
-	
-	DateTime nextFireTime &#x3D; nextFireTime(updateCurrentFireTime,Long.parseLong(task.getDescribe()));
-	task.setNextFiredTime(nextFireTime.toDate());
-	
-	return isExecutable(task, time);
-&#125;
-
-public static DateTime nextFireTime(DateTime currentFireTime, long added) &#123;
-	return currentFireTime.withDurationAdded(added, 1);
-&#125;</code></pre></div>
-<p>如果正常运行，通过时间间隔获取下一个运行时间点；如果运行异常，重新计算初始运行时间点。</p>
-<h2 id="限制条件"><a href="#限制条件" class="headerlink" title="限制条件"></a>限制条件</h2><ol>
-<li>本方法适用于周期运行的时间点</li>
-<li>本方法不适用于日、星期、月、年等存在区间限制，也即crontab表达式，后面几个都是”*”</li>
-</ol>
-]]></content>
-      <categories>
-        <category>运维</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>问题</tag>
       </tags>
   </entry>
   <entry>
@@ -566,6 +477,95 @@ done;
       </tags>
   </entry>
   <entry>
+    <title>Crontab整点运行问题</title>
+    <url>/2018/06/29/Crontab%E6%95%B4%E7%82%B9%E8%BF%90%E8%A1%8C%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>&emsp;&emsp;无论是使用Linux自带crontab程序，还是使用cron-utils的crontab语法解析，都存在整点运行问题。</p>
+<a id="more"></a>
+
+<h2 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h2><p>使用crontab语法的时候，如果是固定间隔运行，如</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">0  0&#x2F;5  * * * *
+30 *&#x2F;30 * * * *</code></pre></div>
+<p>其中分钟间隔只能是60的因子，如果不是60的因子，那么存在整点运行问题。如运行计划为</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">10 0&#x2F;29 * * * *</code></pre></div>
+<p>那么运行时刻可能为</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Mon Oct 09 15:29:10 CST 2017
+Mon Oct 09 15:58:10 CST 2017
+Mon Oct 09 16:00:10 CST 2017
+...</code></pre></div>
+<p>这里的运行计划，多出来一个16:00:10，这是不在我们的运行计划中的。</p>
+<h2 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h2><p>作者使用的是cron-utils，所以可以使用程序控制，实现规避整点运行的问题。</p>
+<h3 id="计算crontab时间间隔"><a href="#计算crontab时间间隔" class="headerlink" title="计算crontab时间间隔"></a>计算crontab时间间隔</h3><p>代码先上：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">&#x2F;**
+ * @DESC caluate the max seperates
+ *&#x2F;
+public static long calcMaxSep(ExecutionTime executionTime,
+		DateTime updateCurrentFireTime) &#123;
+
+	DateTime nextFireTime &#x3D; executionTime
+			.nextExecution(updateCurrentFireTime);
+	DateTime nextFireTime1 &#x3D; executionTime.nextExecution(nextFireTime);
+
+	long b1 &#x3D; nextFireTime.toDate().getTime()
+			- updateCurrentFireTime.toDate().getTime();
+	long b2 &#x3D; nextFireTime1.toDate().getTime()
+			- updateCurrentFireTime.toDate().getTime();
+	b2 &#x3D; b2 &#x2F; 2;
+
+	long b3 &#x3D; nextFireTime1.toDate().getTime()
+			- nextFireTime.toDate().getTime();
+
+	return getMaxByTri(b1, b2, b3);
+
+&#125;
+
+&#x2F;**
+ * @DESC get max of input three numbers
+ *&#x2F;
+public static long getMaxByTri(long b1, long b2, long b3) &#123;
+	&#x2F;&#x2F; return b1 > b2 ? (b1 > b3 ? b1 : b3) : (b2 > b3 ? b2 : b3);
+	return Math.max(b1, Math.max(b2, b3));
+&#125;</code></pre></div>
+<p>&emsp;&emsp;基本原理：三个运行时刻，不可能都存在整点运行问题，除非设置就是整点运行的。分析三个运行时间之间的时间间隔，如果是正常区间，那三个时间应该是一致的；如果区间内或边界存在整点问题，那么应该可以通过该方法解决。作者通过该方法获取运行时间间隔，没有发现问题。</p>
+<h3 id="通过间隔获取下一个运行时刻"><a href="#通过间隔获取下一个运行时刻" class="headerlink" title="通过间隔获取下一个运行时刻"></a>通过间隔获取下一个运行时刻</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">public static void updateTask(SchedulerTask task) &#123;
+	task.setCurrentFiredTime(task.getNextFiredTime());&#x2F;&#x2F; 直接获取计算好的下次执行时间，不再重新计算
+	DateTime updateCurrentFireTime &#x3D; new DateTime(task.getNextFiredTime());
+	DateTime nextFireTime &#x3D; nextFireTime(updateCurrentFireTime,Long.parseLong(task.getDescribe()));
+	task.setNextFiredTime(nextFireTime.toDate());
+&#125;
+
+public static int adaptTask(SchedulerTask task, Date time) &#123;
+	
+	&#x2F;&#x2F; 调整任务，需要重新计算
+	Cron quartzCron &#x3D; getCron(task.getCron());
+	ExecutionTime executionTime &#x3D; ExecutionTime.forCron(quartzCron);
+	DateTime updateCurrentFireTime &#x3D; new DateTime(time);
+	updateCurrentFireTime &#x3D; executionTime.nextExecution(new DateTime());
+	task.setCurrentFiredTime(updateCurrentFireTime.toDate());
+	
+	DateTime nextFireTime &#x3D; nextFireTime(updateCurrentFireTime,Long.parseLong(task.getDescribe()));
+	task.setNextFiredTime(nextFireTime.toDate());
+	
+	return isExecutable(task, time);
+&#125;
+
+public static DateTime nextFireTime(DateTime currentFireTime, long added) &#123;
+	return currentFireTime.withDurationAdded(added, 1);
+&#125;</code></pre></div>
+<p>如果正常运行，通过时间间隔获取下一个运行时间点；如果运行异常，重新计算初始运行时间点。</p>
+<h2 id="限制条件"><a href="#限制条件" class="headerlink" title="限制条件"></a>限制条件</h2><ol>
+<li>本方法适用于周期运行的时间点</li>
+<li>本方法不适用于日、星期、月、年等存在区间限制，也即crontab表达式，后面几个都是”*”</li>
+</ol>
+]]></content>
+      <categories>
+        <category>运维</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>问题</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>DataX之SplitPK原理</title>
     <url>/2018/07/25/DataX%E4%B9%8BSplitPK%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<p>&emsp;&emsp;DataX的简单介绍，可以参考<a href="https://blog.csdn.net/awdac/article/details/80822233" target="_blank" rel="noopener">Alibaba DataX调研使用</a> ，这里不做详细介绍。在同步数据时，如果数据源是RDBMS，存在配置参数<strong>splitPk</strong>。那么该参数是如何起作用的，如何配置？</p>
@@ -581,8 +581,8 @@ done;
         <category>Java</category>
       </categories>
       <tags>
-        <tag>调研</tag>
         <tag>DataX</tag>
+        <tag>调研</tag>
       </tags>
   </entry>
   <entry>
@@ -1505,74 +1505,6 @@ alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character se
       </tags>
   </entry>
   <entry>
-    <title>HTML全文转化为PDF技术选型研究与流行方法汇总</title>
-    <url>/2018/06/29/HTML%E5%85%A8%E6%96%87%E8%BD%AC%E5%8C%96%E4%B8%BAPDF%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%E7%A0%94%E7%A9%B6%E4%B8%8E%E6%B5%81%E8%A1%8C%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在实际也无需求中，需要用到网页快照功能，并能够查看历史网页快照功能，因此需要实现网页格式的固化保存，保存为图片或PDF文件的形式。</p>
-<a id="more"></a>
-
-<h2 id="1-技术研究"><a href="#1-技术研究" class="headerlink" title="1. 技术研究"></a>1. 技术研究</h2><p>&emsp;&emsp;做这样研究了网上许多技术，大都存在各种各样的缺陷。</p>
-<h3 id="1-1-html2canvas-amp-jsPDF"><a href="#1-1-html2canvas-amp-jsPDF" class="headerlink" title="1.1. html2canvas&amp;jsPDF"></a>1.1. html2canvas&amp;jsPDF</h3><p>&emsp;&emsp;感兴趣的读者，可以参考： <a href="https://github.com/linwalker/render-html-to-pdf" target="_blank" rel="noopener">https://github.com/linwalker/render-html-to-pdf</a><br>&emsp;&emsp;该种方法，主要是通过JS调用实现，无法通过脚本，或者Java API的方法调用来实现转化工作。</p>
-<h3 id="1-2-iTextRender-amp-pdfWriter"><a href="#1-2-iTextRender-amp-pdfWriter" class="headerlink" title="1.2. iTextRender&amp;pdfWriter"></a>1.2. iTextRender&amp;pdfWriter</h3><p>&emsp;&emsp;这种方式能够实现简单的Html2PDF功能，但存在以下缺点</p>
-<ol>
-<li>对网页格式要求较高；</li>
-<li>无法对图片等复杂元素进行处理。<br>主要参考博文：<br><a href="http://swordshadow.iteye.com/blog/1983935" target="_blank" rel="noopener">Itext的PDF生成方案</a><br><a href="http://skyfar666.iteye.com/blog/2001353" target="_blank" rel="noopener">freemarker+ITextRenderer 生成html转pdf</a><br><a href="http://www.cnblogs.com/reese-blogs/p/5546806.html" target="_blank" rel="noopener">iTextRenderer(Flying Saucer) HTML转PDF</a></li>
-</ol>
-<h3 id="1-3-pdf-kit"><a href="#1-3-pdf-kit" class="headerlink" title="1.3. pdf-kit"></a>1.3. pdf-kit</h3><p>&emsp;&emsp;pdf-kit主要通过JS生成PDF文件，在HTML截图方面比较欠缺，作者没有发现能够用于截图功能。<br><a href="http://pdfkit.org/" target="_blank" rel="noopener">PDF-KIT官网</a></p>
-<h3 id="1-4-cssbox"><a href="#1-4-cssbox" class="headerlink" title="1.4. cssbox"></a>1.4. cssbox</h3><p>&emsp;&emsp;cssbox主要用作前段css渲染功能，但没有提供输出为图片或PDF接口。<br><a href="http://cssbox.sourceforge.net/" target="_blank" rel="noopener">CSSBOX源码文件与说明</a></p>
-<h3 id="1-5-Phantomjs"><a href="#1-5-Phantomjs" class="headerlink" title="1.5. Phantomjs"></a>1.5. Phantomjs</h3><p>&emsp;&emsp;爬虫或自动化测试重量级程序，能够实现爬虫功能与自动化测试任务。并能够使用代理服务器，或输出HTML为图片或DPF文件的形式。能够输出单个网页控件的图片或DPF文件，实现精准输出。</p>
-<p>&emsp;&emsp;但Phantomjs存在如下问题：</p>
-<ol>
-<li>相应速度较慢；</li>
-<li>调用繁琐，需要自己写JS脚本。</li>
-</ol>
-<h3 id="1-6-Headless-Chrome-or-other-browser"><a href="#1-6-Headless-Chrome-or-other-browser" class="headerlink" title="1.6. Headless Chrome or other browser"></a>1.6. Headless Chrome or other browser</h3><p>&emsp;&emsp;使用无头浏览器，调用snapshot接口，能够实现截图功能。</p>
-<h3 id="1-7-HtmlUnitDriver调用浏览器API"><a href="#1-7-HtmlUnitDriver调用浏览器API" class="headerlink" title="1.7. HtmlUnitDriver调用浏览器API"></a>1.7. HtmlUnitDriver调用浏览器API</h3><p>使用HtmlUnitDriver调用浏览器API，如Chrome、Firefox、IE等主浏览器，均能实现截图功能。</p>
-<p>缺点：</p>
-<ol>
-<li>需要编写程序，调用API；</li>
-<li>无法直接调用脚本实现截图功能。</li>
-</ol>
-<h2 id="2-wkhtmltopdf"><a href="#2-wkhtmltopdf" class="headerlink" title="2. wkhtmltopdf"></a>2. wkhtmltopdf</h2><p>&emsp;&emsp;该程序能够实现将Html转化为图片，或PDF文件的功能，具体下载地址为：<a href="https://wkhtmltopdf.org/downloads.html" target="_blank" rel="noopener">wkhtmltopdf官网下载</a></p>
-<h3 id="2-1-安装流程"><a href="#2-1-安装流程" class="headerlink" title="2.1. 安装流程"></a>2.1. 安装流程</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## Download from Org website
-wget https:&#x2F;&#x2F;github.com&#x2F;wkhtmltopdf&#x2F;wkhtmltopdf&#x2F;releases&#x2F;download&#x2F;0.12.4&#x2F;wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-
-## uncompress
- tar xvJf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-
-## install font : chinese : 宋体
-## &#x2F;usr&#x2F;share&#x2F;fonts&#x2F;XXX</code></pre></div>
-<p>&emsp;&emsp;安装中文字体，主要是考虑到网页内容为中文会出现中文乱码问题。</p>
-<h3 id="2-2-调用"><a href="#2-2-调用" class="headerlink" title="2.2. 调用"></a>2.2. 调用</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## to pdf
-wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.pdf
-
-## to image
-wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.png</code></pre></div>
-<p>具体详情，可以参考wkhtml2pdf的帮助信息。</p>
-<h3 id="2-3-选择原因"><a href="#2-3-选择原因" class="headerlink" title="2.3. 选择原因"></a>2.3. 选择原因</h3><ol>
-<li>可以通过shell直接调用；</li>
-<li>支持多线程并发操作；</li>
-<li>调用简单、方便。</li>
-</ol>
-<h3 id="2-4-存在缺点"><a href="#2-4-存在缺点" class="headerlink" title="2.4. 存在缺点"></a>2.4. 存在缺点</h3><ol>
-<li>存在TimeoutError；</li>
-<li>偶尔存在加载阻塞，无法正常加载网页内容。这些网页通常是信息量较大、存在高清图片等问题。</li>
-</ol>
-<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h2><ol>
-<li>如果需要HTML全文转化，那么wkHtml2PDF可以作为首要选项；</li>
-<li>如果需要获取HTML中部分元素进行转化为图片、PDF，那么phtomjs是一个很好的选择。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>总结</tag>
-        <tag>Html</tag>
-        <tag>PDF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>工具知识总结</title>
     <url>/2020/06/13/Hadoop%E5%B7%A5%E5%85%B7%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<h1 id="HDFS-大数据"><a href="#HDFS-大数据" class="headerlink" title="HDFS(大数据)"></a>HDFS(大数据)</h1><p>&emsp;&emsp;在大数据生态圈中，针对HDFS服务的各种缺陷或适用场景，发展了许许多多的开源解决方案。我们在这里总结一下，方便后期针对应用场景筛选使用。</p>
@@ -1728,6 +1660,74 @@ scp -r ~&#x2F;jdk1.8.0_111&#x2F; slave3:~&#x2F;</code></pre></div>
       <tags>
         <tag>HDFS</tag>
         <tag>配置</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HTML全文转化为PDF技术选型研究与流行方法汇总</title>
+    <url>/2018/06/29/HTML%E5%85%A8%E6%96%87%E8%BD%AC%E5%8C%96%E4%B8%BAPDF%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%E7%A0%94%E7%A9%B6%E4%B8%8E%E6%B5%81%E8%A1%8C%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在实际也无需求中，需要用到网页快照功能，并能够查看历史网页快照功能，因此需要实现网页格式的固化保存，保存为图片或PDF文件的形式。</p>
+<a id="more"></a>
+
+<h2 id="1-技术研究"><a href="#1-技术研究" class="headerlink" title="1. 技术研究"></a>1. 技术研究</h2><p>&emsp;&emsp;做这样研究了网上许多技术，大都存在各种各样的缺陷。</p>
+<h3 id="1-1-html2canvas-amp-jsPDF"><a href="#1-1-html2canvas-amp-jsPDF" class="headerlink" title="1.1. html2canvas&amp;jsPDF"></a>1.1. html2canvas&amp;jsPDF</h3><p>&emsp;&emsp;感兴趣的读者，可以参考： <a href="https://github.com/linwalker/render-html-to-pdf" target="_blank" rel="noopener">https://github.com/linwalker/render-html-to-pdf</a><br>&emsp;&emsp;该种方法，主要是通过JS调用实现，无法通过脚本，或者Java API的方法调用来实现转化工作。</p>
+<h3 id="1-2-iTextRender-amp-pdfWriter"><a href="#1-2-iTextRender-amp-pdfWriter" class="headerlink" title="1.2. iTextRender&amp;pdfWriter"></a>1.2. iTextRender&amp;pdfWriter</h3><p>&emsp;&emsp;这种方式能够实现简单的Html2PDF功能，但存在以下缺点</p>
+<ol>
+<li>对网页格式要求较高；</li>
+<li>无法对图片等复杂元素进行处理。<br>主要参考博文：<br><a href="http://swordshadow.iteye.com/blog/1983935" target="_blank" rel="noopener">Itext的PDF生成方案</a><br><a href="http://skyfar666.iteye.com/blog/2001353" target="_blank" rel="noopener">freemarker+ITextRenderer 生成html转pdf</a><br><a href="http://www.cnblogs.com/reese-blogs/p/5546806.html" target="_blank" rel="noopener">iTextRenderer(Flying Saucer) HTML转PDF</a></li>
+</ol>
+<h3 id="1-3-pdf-kit"><a href="#1-3-pdf-kit" class="headerlink" title="1.3. pdf-kit"></a>1.3. pdf-kit</h3><p>&emsp;&emsp;pdf-kit主要通过JS生成PDF文件，在HTML截图方面比较欠缺，作者没有发现能够用于截图功能。<br><a href="http://pdfkit.org/" target="_blank" rel="noopener">PDF-KIT官网</a></p>
+<h3 id="1-4-cssbox"><a href="#1-4-cssbox" class="headerlink" title="1.4. cssbox"></a>1.4. cssbox</h3><p>&emsp;&emsp;cssbox主要用作前段css渲染功能，但没有提供输出为图片或PDF接口。<br><a href="http://cssbox.sourceforge.net/" target="_blank" rel="noopener">CSSBOX源码文件与说明</a></p>
+<h3 id="1-5-Phantomjs"><a href="#1-5-Phantomjs" class="headerlink" title="1.5. Phantomjs"></a>1.5. Phantomjs</h3><p>&emsp;&emsp;爬虫或自动化测试重量级程序，能够实现爬虫功能与自动化测试任务。并能够使用代理服务器，或输出HTML为图片或DPF文件的形式。能够输出单个网页控件的图片或DPF文件，实现精准输出。</p>
+<p>&emsp;&emsp;但Phantomjs存在如下问题：</p>
+<ol>
+<li>相应速度较慢；</li>
+<li>调用繁琐，需要自己写JS脚本。</li>
+</ol>
+<h3 id="1-6-Headless-Chrome-or-other-browser"><a href="#1-6-Headless-Chrome-or-other-browser" class="headerlink" title="1.6. Headless Chrome or other browser"></a>1.6. Headless Chrome or other browser</h3><p>&emsp;&emsp;使用无头浏览器，调用snapshot接口，能够实现截图功能。</p>
+<h3 id="1-7-HtmlUnitDriver调用浏览器API"><a href="#1-7-HtmlUnitDriver调用浏览器API" class="headerlink" title="1.7. HtmlUnitDriver调用浏览器API"></a>1.7. HtmlUnitDriver调用浏览器API</h3><p>使用HtmlUnitDriver调用浏览器API，如Chrome、Firefox、IE等主浏览器，均能实现截图功能。</p>
+<p>缺点：</p>
+<ol>
+<li>需要编写程序，调用API；</li>
+<li>无法直接调用脚本实现截图功能。</li>
+</ol>
+<h2 id="2-wkhtmltopdf"><a href="#2-wkhtmltopdf" class="headerlink" title="2. wkhtmltopdf"></a>2. wkhtmltopdf</h2><p>&emsp;&emsp;该程序能够实现将Html转化为图片，或PDF文件的功能，具体下载地址为：<a href="https://wkhtmltopdf.org/downloads.html" target="_blank" rel="noopener">wkhtmltopdf官网下载</a></p>
+<h3 id="2-1-安装流程"><a href="#2-1-安装流程" class="headerlink" title="2.1. 安装流程"></a>2.1. 安装流程</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## Download from Org website
+wget https:&#x2F;&#x2F;github.com&#x2F;wkhtmltopdf&#x2F;wkhtmltopdf&#x2F;releases&#x2F;download&#x2F;0.12.4&#x2F;wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+
+## uncompress
+ tar xvJf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+
+## install font : chinese : 宋体
+## &#x2F;usr&#x2F;share&#x2F;fonts&#x2F;XXX</code></pre></div>
+<p>&emsp;&emsp;安装中文字体，主要是考虑到网页内容为中文会出现中文乱码问题。</p>
+<h3 id="2-2-调用"><a href="#2-2-调用" class="headerlink" title="2.2. 调用"></a>2.2. 调用</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## to pdf
+wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.pdf
+
+## to image
+wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.png</code></pre></div>
+<p>具体详情，可以参考wkhtml2pdf的帮助信息。</p>
+<h3 id="2-3-选择原因"><a href="#2-3-选择原因" class="headerlink" title="2.3. 选择原因"></a>2.3. 选择原因</h3><ol>
+<li>可以通过shell直接调用；</li>
+<li>支持多线程并发操作；</li>
+<li>调用简单、方便。</li>
+</ol>
+<h3 id="2-4-存在缺点"><a href="#2-4-存在缺点" class="headerlink" title="2.4. 存在缺点"></a>2.4. 存在缺点</h3><ol>
+<li>存在TimeoutError；</li>
+<li>偶尔存在加载阻塞，无法正常加载网页内容。这些网页通常是信息量较大、存在高清图片等问题。</li>
+</ol>
+<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h2><ol>
+<li>如果需要HTML全文转化，那么wkHtml2PDF可以作为首要选项；</li>
+<li>如果需要获取HTML中部分元素进行转化为图片、PDF，那么phtomjs是一个很好的选择。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>总结</tag>
+        <tag>Html</tag>
+        <tag>PDF</tag>
       </tags>
   </entry>
   <entry>
@@ -2715,85 +2715,6 @@ println(<span class="hljs-string">"Name: "</span>+cache.cacheName+<span class="h
       </tags>
   </entry>
   <entry>
-    <title>Java-API读取CDH-Hadoop-Parquet文件</title>
-    <url>/2018/06/29/Java-API%E8%AF%BB%E5%8F%96CDH-Hadoop-Parquet%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>&emsp;&emsp;由于工作需要，基于目前公司集群存在较多的服务器且存在大量的内存，因此考虑直接将数据Load进内存进行数据处理，测试是否能够加快处理速度；鉴于以上目的，版主尝试使用Parquet的Java API读入Parquet文件。</p>
-<a id="more"></a>
-
-<p>&emsp;&emsp;目前关于使用Java API访问HDFS的文章较多，但是没有相关的配置比较容易出错；同时Java API读写Parquet虽然文章较多，但多数为基于本地文件的读写实例。因此，有必要研究一下Java API读写HDFS上的Parquet文件。 </p>
-<h2 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h2><h3 id="相关程序的运行，需要一个运行环境。本文的运行环境为："><a href="#相关程序的运行，需要一个运行环境。本文的运行环境为：" class="headerlink" title="相关程序的运行，需要一个运行环境。本文的运行环境为："></a>相关程序的运行，需要一个运行环境。本文的运行环境为：</h3><ul>
-<li><strong>Eclipse+Maven</strong></li>
-<li><strong>CDH5.8.0</strong></li>
-<li><strong>JDK1.8.0</strong></li>
-</ul>
-<h3 id="需要的相关JAR"><a href="#需要的相关JAR" class="headerlink" title="需要的相关JAR"></a>需要的相关JAR</h3><ul>
-<li>*<em>Hadoop-Common、Hadoop-Client(Maven) *</em></li>
-<li><strong>parquet-avro-1.5.0-cdh5.8.0</strong></li>
-<li><strong>parquet-format-2.1.0-cdh5.8.0.</strong></li>
-<li><strong>parquet-hadoop-1.5.0-cdh5.8.0</strong></li>
-<li><strong>parquet-column-1.5.0-cdh5.8.0</strong></li>
-<li><strong>htrace-core4-4.0.1-incubating</strong></li>
-</ul>
-<hr>
-<h2 id="相关代码（单节点）"><a href="#相关代码（单节点）" class="headerlink" title="相关代码（单节点）"></a>相关代码（单节点）</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Configuration conf;
-<span class="hljs-keyword">static</span> &#123;
-	conf = <span class="hljs-keyword">new</span> Configuration();
-	conf.set(<span class="hljs-string">"fs.hdfs.impl"</span>, <span class="hljs-string">"org.apache.hadoop.hdfs.DistributedFileSystem"</span>);
-&#125;
-
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IllegalArgumentException,</span>
-<span class="hljs-function">		IOException </span>&#123;
-	<span class="hljs-keyword">long</span> begin = System.currentTimeMillis();
-	
-	<span class="hljs-keyword">if</span> (args.length < <span class="hljs-number">1</span>) &#123;<span class="hljs-comment">// Input arguments</span>
-		System.out.println(<span class="hljs-string">"Less params"</span>);
-		<span class="hljs-keyword">return</span>;
-	&#125;
-	String date = args[<span class="hljs-number">0</span>];<span class="hljs-comment">// Input Date Arguments</span>
-	String hdfsPath = <span class="hljs-string">"hdfs://NameNodeURL:port/user/hive/default/ip24data_parquet_all/pt="</span>
-			+ date;
-	HashMap<String, DATA> map = <span class="hljs-keyword">new</span> HashMap<String, DATA>();
-	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i < <span class="hljs-number">5</span>; i++) &#123;
-		<span class="hljs-meta">@SuppressWarnings</span>(<span class="hljs-string">"deprecation"</span>)
-		AvroParquetReader<GenericRecord> reader = <span class="hljs-keyword">new</span> AvroParquetReader<GenericRecord>(
-				conf, <span class="hljs-keyword">new</span> Path(hdfsPath + <span class="hljs-string">"//00000"</span> + i + <span class="hljs-string">"_0"</span>));
-		GenericRecord record = <span class="hljs-keyword">null</span>;
-		<span class="hljs-keyword">while</span> ((record = reader.read()) != <span class="hljs-keyword">null</span>) &#123;
-			String key = record.get(<span class="hljs-string">"vin"</span>).toString()
-					+ record.get(<span class="hljs-string">"data_date"</span>).toString();
-			DATA cnt = <span class="hljs-keyword">new</span> DATA(record.get(<span class="hljs-string">"vin"</span>), record.get(<span class="hljs-string">"data_date"</span>),
-					record.get(<span class="hljs-string">"latitude"</span>), record.get(<span class="hljs-string">"longitude"</span>),
-					record.get(<span class="hljs-string">"work_model"</span>));
-			map.put(key, cnt);
-		&#125;
-		reader.close();
-	&#125;
-	
-	System.out.println(<span class="hljs-string">"Left APP: "</span>+<span class="hljs-keyword">new</span> Date().toString());
-	System.out.println(<span class="hljs-string">"Total TIme used : ms: "</span>+(System.currentTimeMillis()-begin));
-	System.out.println(<span class="hljs-string">"Only Load Data: size: "</span>+map.size());
-&#125;</code></pre></div>
-
-<h3 id="需要注意的地方："><a href="#需要注意的地方：" class="headerlink" title="需要注意的地方："></a>需要注意的地方：</h3><ol>
-<li><strong>htrace-core4-4.0.1-incubating.jar</strong>，可以在相应的环境中找到，或到Maven/Htrace的官网上去找到；Htrace管网上的一般为源码，需要自行编译。</li>
-<li>关于HDFS识别问题：第一次测试，没有添加任何配置，结果报错：</li>
-</ol>
-<p> <strong>NO FileSystem for scheme: hdfs</strong>，因此添加了<strong>fs.hdfs.impl</strong>的配置信息。关于HDFS其他的配置信息，可以根据hdfs的配置信息设置。</p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ol>
-<li><a href="http://www.programcreek.com/java-api-examples/index.php?api=parquet.hadoop.ParquetWriter" target="_blank" rel="noopener">ParquetWrite Java Code Example</a></li>
-<li><a href="http://www.programcreek.com/java-api-examples/index.php?api=parquet.hadoop.ParquetReader" target="_blank" rel="noopener">ParquetReader Java Coder Example</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>Java</tag>
-        <tag>Parquet</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>JXL简单操作xls表格文件--写入文件</title>
     <url>/2018/06/29/JXL%E7%AE%80%E5%8D%95%E6%93%8D%E4%BD%9Cxls%E8%A1%A8%E6%A0%BC%E6%96%87%E4%BB%B6-%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/</url>
     <content><![CDATA[<p>&emsp;&emsp;工作时用到写入Excel的场景，发现有Apache POI提供的jar包与JXL的jar包。实际操作时，个人感觉poi比较高大上，基本上能够实现excel的大部分功能，包括字体设置、表格设置等内容，但相对门槛较高，操作复杂。相比POI，JXL操作简单，容易入门，相比而言得到的EXCEL文档也是比简单，不需要特殊的格式化。</p>
@@ -2892,6 +2813,85 @@ book.close();</code></pre></div>]]></content>
       <tags>
         <tag>调研</tag>
         <tag>Excel</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java-API读取CDH-Hadoop-Parquet文件</title>
+    <url>/2018/06/29/Java-API%E8%AF%BB%E5%8F%96CDH-Hadoop-Parquet%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>&emsp;&emsp;由于工作需要，基于目前公司集群存在较多的服务器且存在大量的内存，因此考虑直接将数据Load进内存进行数据处理，测试是否能够加快处理速度；鉴于以上目的，版主尝试使用Parquet的Java API读入Parquet文件。</p>
+<a id="more"></a>
+
+<p>&emsp;&emsp;目前关于使用Java API访问HDFS的文章较多，但是没有相关的配置比较容易出错；同时Java API读写Parquet虽然文章较多，但多数为基于本地文件的读写实例。因此，有必要研究一下Java API读写HDFS上的Parquet文件。 </p>
+<h2 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h2><h3 id="相关程序的运行，需要一个运行环境。本文的运行环境为："><a href="#相关程序的运行，需要一个运行环境。本文的运行环境为：" class="headerlink" title="相关程序的运行，需要一个运行环境。本文的运行环境为："></a>相关程序的运行，需要一个运行环境。本文的运行环境为：</h3><ul>
+<li><strong>Eclipse+Maven</strong></li>
+<li><strong>CDH5.8.0</strong></li>
+<li><strong>JDK1.8.0</strong></li>
+</ul>
+<h3 id="需要的相关JAR"><a href="#需要的相关JAR" class="headerlink" title="需要的相关JAR"></a>需要的相关JAR</h3><ul>
+<li>*<em>Hadoop-Common、Hadoop-Client(Maven) *</em></li>
+<li><strong>parquet-avro-1.5.0-cdh5.8.0</strong></li>
+<li><strong>parquet-format-2.1.0-cdh5.8.0.</strong></li>
+<li><strong>parquet-hadoop-1.5.0-cdh5.8.0</strong></li>
+<li><strong>parquet-column-1.5.0-cdh5.8.0</strong></li>
+<li><strong>htrace-core4-4.0.1-incubating</strong></li>
+</ul>
+<hr>
+<h2 id="相关代码（单节点）"><a href="#相关代码（单节点）" class="headerlink" title="相关代码（单节点）"></a>相关代码（单节点）</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Configuration conf;
+<span class="hljs-keyword">static</span> &#123;
+	conf = <span class="hljs-keyword">new</span> Configuration();
+	conf.set(<span class="hljs-string">"fs.hdfs.impl"</span>, <span class="hljs-string">"org.apache.hadoop.hdfs.DistributedFileSystem"</span>);
+&#125;
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IllegalArgumentException,</span>
+<span class="hljs-function">		IOException </span>&#123;
+	<span class="hljs-keyword">long</span> begin = System.currentTimeMillis();
+	
+	<span class="hljs-keyword">if</span> (args.length < <span class="hljs-number">1</span>) &#123;<span class="hljs-comment">// Input arguments</span>
+		System.out.println(<span class="hljs-string">"Less params"</span>);
+		<span class="hljs-keyword">return</span>;
+	&#125;
+	String date = args[<span class="hljs-number">0</span>];<span class="hljs-comment">// Input Date Arguments</span>
+	String hdfsPath = <span class="hljs-string">"hdfs://NameNodeURL:port/user/hive/default/ip24data_parquet_all/pt="</span>
+			+ date;
+	HashMap<String, DATA> map = <span class="hljs-keyword">new</span> HashMap<String, DATA>();
+	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i < <span class="hljs-number">5</span>; i++) &#123;
+		<span class="hljs-meta">@SuppressWarnings</span>(<span class="hljs-string">"deprecation"</span>)
+		AvroParquetReader<GenericRecord> reader = <span class="hljs-keyword">new</span> AvroParquetReader<GenericRecord>(
+				conf, <span class="hljs-keyword">new</span> Path(hdfsPath + <span class="hljs-string">"//00000"</span> + i + <span class="hljs-string">"_0"</span>));
+		GenericRecord record = <span class="hljs-keyword">null</span>;
+		<span class="hljs-keyword">while</span> ((record = reader.read()) != <span class="hljs-keyword">null</span>) &#123;
+			String key = record.get(<span class="hljs-string">"vin"</span>).toString()
+					+ record.get(<span class="hljs-string">"data_date"</span>).toString();
+			DATA cnt = <span class="hljs-keyword">new</span> DATA(record.get(<span class="hljs-string">"vin"</span>), record.get(<span class="hljs-string">"data_date"</span>),
+					record.get(<span class="hljs-string">"latitude"</span>), record.get(<span class="hljs-string">"longitude"</span>),
+					record.get(<span class="hljs-string">"work_model"</span>));
+			map.put(key, cnt);
+		&#125;
+		reader.close();
+	&#125;
+	
+	System.out.println(<span class="hljs-string">"Left APP: "</span>+<span class="hljs-keyword">new</span> Date().toString());
+	System.out.println(<span class="hljs-string">"Total TIme used : ms: "</span>+(System.currentTimeMillis()-begin));
+	System.out.println(<span class="hljs-string">"Only Load Data: size: "</span>+map.size());
+&#125;</code></pre></div>
+
+<h3 id="需要注意的地方："><a href="#需要注意的地方：" class="headerlink" title="需要注意的地方："></a>需要注意的地方：</h3><ol>
+<li><strong>htrace-core4-4.0.1-incubating.jar</strong>，可以在相应的环境中找到，或到Maven/Htrace的官网上去找到；Htrace管网上的一般为源码，需要自行编译。</li>
+<li>关于HDFS识别问题：第一次测试，没有添加任何配置，结果报错：</li>
+</ol>
+<p> <strong>NO FileSystem for scheme: hdfs</strong>，因此添加了<strong>fs.hdfs.impl</strong>的配置信息。关于HDFS其他的配置信息，可以根据hdfs的配置信息设置。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ol>
+<li><a href="http://www.programcreek.com/java-api-examples/index.php?api=parquet.hadoop.ParquetWriter" target="_blank" rel="noopener">ParquetWrite Java Code Example</a></li>
+<li><a href="http://www.programcreek.com/java-api-examples/index.php?api=parquet.hadoop.ParquetReader" target="_blank" rel="noopener">ParquetReader Java Coder Example</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>Java</tag>
+        <tag>Parquet</tag>
       </tags>
   </entry>
   <entry>
@@ -3949,6 +3949,76 @@ Proxy proxy &#x3D; new java.net.Proxy(java.net.Proxy.Type.HTTP,new InetSocketAdd
       </tags>
   </entry>
   <entry>
+    <title>Java单例模式的几种写法</title>
+    <url>/2018/06/29/Java%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95/</url>
+    <content><![CDATA[<p>《Java并发编程 从入门到精通》读书笔记。</p>
+<a id="more"></a>
+
+<h2 id="错误模式"><a href="#错误模式" class="headerlink" title="错误模式"></a>错误模式</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
+
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
+	<span class="hljs-function">privae <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+			instance = <span class="hljs-keyword">new</span> Test();
+		<span class="hljs-keyword">return</span> instance;
+	&#125;
+&#125;</code></pre></div>
+
+<h2 id="低效模式：synchronized"><a href="#低效模式：synchronized" class="headerlink" title="低效模式：synchronized"></a>低效模式：synchronized</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
+
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
+	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">synchronized</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+			instance = <span class="hljs-keyword">new</span> Test();
+		<span class="hljs-keyword">return</span> instance;
+	&#125;
+&#125;</code></pre></div>
+
+<h2 id="常见模式：使用对象锁"><a href="#常见模式：使用对象锁" class="headerlink" title="常见模式：使用对象锁"></a>常见模式：使用对象锁</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] lock = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">0</span>];
+	
+	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+			<span class="hljs-keyword">synchronized</span>(lock)&#123;
+				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+					instance = <span class="hljs-keyword">new</span> Test();
+			&#125;
+		<span class="hljs-keyword">return</span> instance;
+	&#125;
+&#125;</code></pre></div>
+
+<h2 id="常见模式：ReentranLock"><a href="#常见模式：ReentranLock" class="headerlink" title="常见模式：ReentranLock"></a>常见模式：ReentranLock</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> ReentranLock lock = <span class="hljs-keyword">new</span> ReentranLock();
+	
+	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)&#123;
+			lock.lock();
+			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+				instance = <span class="hljs-keyword">new</span> Test();
+			lock.unlock();
+		&#125;
+		<span class="hljs-keyword">return</span> instance;
+	&#125;
+&#125;</code></pre></div>]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>总结</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java同步辅助类总结</title>
     <url>/2018/06/29/Java%E5%90%8C%E6%AD%A5%E8%BE%85%E5%8A%A9%E7%B1%BB%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<p>《Java并发编程 从入门到精通》读书笔记。</p>
@@ -4807,57 +4877,6 @@ Proxy proxy &#x3D; new java.net.Proxy(java.net.Proxy.Type.HTTP,new InetSocketAdd
       </tags>
   </entry>
   <entry>
-    <title>Linux使用命令备忘</title>
-    <url>/2018/06/29/Linux%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在使用Centos或Ubuntu时，遇到各种Linux的命令，用到的时候回去查一下语法、参数、使用等内容，但使用过后基本上就忘记了。后面再使用的话，还的继续查找相关文档。</p>
-<a id="more"></a>
-
-<h2 id="ls命令"><a href="#ls命令" class="headerlink" title="ls命令"></a>ls命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ls
-ls -l
-ls -ltr</code></pre></div>
-
-<h2 id="du-df命令"><a href="#du-df命令" class="headerlink" title="du/df命令"></a>du/df命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">du -h --max-depth&#x3D;1 &#x2F;
-df
-df -lh</code></pre></div>
-
-<h2 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">top
-top -U
-top -p PID</code></pre></div>
-<h2 id="find命令"><a href="#find命令" class="headerlink" title="find命令"></a>find命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">find &#x2F; -name XXX
-find &#x2F; -size [+&#x2F;-]XXX</code></pre></div>
-
-<h2 id="grep命令"><a href="#grep命令" class="headerlink" title="grep命令"></a>grep命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ps -ef | grep agent | grep -v grep | awk '&#123;print $2&#125;' | xargs kill -9 
-ps -ef | grep agent | grep -v grep | awk '&#123;print \$2&#125;' | xargs kill -9</code></pre></div>
-
-<h2 id="cp命令"><a href="#cp命令" class="headerlink" title="cp命令"></a>cp命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 保持权限状态
-cp -p XXX XXX</code></pre></div>
-
-<h2 id="netstat命令"><a href="#netstat命令" class="headerlink" title="netstat命令"></a>netstat命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">netstat -nltp</code></pre></div>
-
-<h2 id="trace命令"><a href="#trace命令" class="headerlink" title="trace命令"></a>trace命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">strace -p PID  -f -e trace&#x3D;network -s 10000</code></pre></div>
-
-<h2 id="tcpdump命令"><a href="#tcpdump命令" class="headerlink" title="tcpdump命令"></a>tcpdump命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">tcpdump host 210.27.48.1 and \ (210.27.48.2 or 210.27.48.3 \) 
-tcpdump -i eth0 src host IPAddress</code></pre></div>
-
-<h2 id="Java命令"><a href="#Java命令" class="headerlink" title="Java命令"></a>Java命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jps
-java
-javac
-javah</code></pre></div>
-
-<h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap -heap [PID]
-jmap -histo [PID]
-jmap -dump:file&#x3D;文件名.dump [pid]</code></pre></div>
-
-<h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap [Dump File]</code></pre></div>]]></content>
-      <categories>
-        <category>运维</category>
-      </categories>
-      <tags>
-        <tag>备忘</tag>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Kafka-&gt;SparkStreaming-&gt;Hbase【二】</title>
     <url>/2018/06/29/Kafka-SparkStreaming-Hbase%E3%80%90%E4%BA%8C%E3%80%91/</url>
     <content><![CDATA[<p>&emsp;&emsp;根据业务需求，将Kafka中数据抽取插入到Hbase中。目前网上可以找到许多相关的文章，这里介绍Github上的一个开源工具。</p>
@@ -5244,6 +5263,57 @@ jmap -dump:file&#x3D;文件名.dump [pid]</code></pre></div>
         <tag>Spark</tag>
         <tag>Kafka</tag>
         <tag>Hbase</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux使用命令备忘</title>
+    <url>/2018/06/29/Linux%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在使用Centos或Ubuntu时，遇到各种Linux的命令，用到的时候回去查一下语法、参数、使用等内容，但使用过后基本上就忘记了。后面再使用的话，还的继续查找相关文档。</p>
+<a id="more"></a>
+
+<h2 id="ls命令"><a href="#ls命令" class="headerlink" title="ls命令"></a>ls命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ls
+ls -l
+ls -ltr</code></pre></div>
+
+<h2 id="du-df命令"><a href="#du-df命令" class="headerlink" title="du/df命令"></a>du/df命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">du -h --max-depth&#x3D;1 &#x2F;
+df
+df -lh</code></pre></div>
+
+<h2 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">top
+top -U
+top -p PID</code></pre></div>
+<h2 id="find命令"><a href="#find命令" class="headerlink" title="find命令"></a>find命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">find &#x2F; -name XXX
+find &#x2F; -size [+&#x2F;-]XXX</code></pre></div>
+
+<h2 id="grep命令"><a href="#grep命令" class="headerlink" title="grep命令"></a>grep命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ps -ef | grep agent | grep -v grep | awk '&#123;print $2&#125;' | xargs kill -9 
+ps -ef | grep agent | grep -v grep | awk '&#123;print \$2&#125;' | xargs kill -9</code></pre></div>
+
+<h2 id="cp命令"><a href="#cp命令" class="headerlink" title="cp命令"></a>cp命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 保持权限状态
+cp -p XXX XXX</code></pre></div>
+
+<h2 id="netstat命令"><a href="#netstat命令" class="headerlink" title="netstat命令"></a>netstat命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">netstat -nltp</code></pre></div>
+
+<h2 id="trace命令"><a href="#trace命令" class="headerlink" title="trace命令"></a>trace命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">strace -p PID  -f -e trace&#x3D;network -s 10000</code></pre></div>
+
+<h2 id="tcpdump命令"><a href="#tcpdump命令" class="headerlink" title="tcpdump命令"></a>tcpdump命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">tcpdump host 210.27.48.1 and \ (210.27.48.2 or 210.27.48.3 \) 
+tcpdump -i eth0 src host IPAddress</code></pre></div>
+
+<h2 id="Java命令"><a href="#Java命令" class="headerlink" title="Java命令"></a>Java命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jps
+java
+javac
+javah</code></pre></div>
+
+<h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap -heap [PID]
+jmap -histo [PID]
+jmap -dump:file&#x3D;文件名.dump [pid]</code></pre></div>
+
+<h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap [Dump File]</code></pre></div>]]></content>
+      <categories>
+        <category>运维</category>
+      </categories>
+      <tags>
+        <tag>备忘</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -6042,83 +6112,6 @@ host4 paths="data&#123;7...12&#125;" ansible_host=host4_ip</code></pre></div>
       </tags>
   </entry>
   <entry>
-    <title>Oracle JDBC为什么不能在Maven中直接配置？</title>
-    <url>/2018/09/12/ODBC%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在实际项目中，我们通常使用这样的方式：首先，下载ODBC的Jar到本地；然后，通过Maven安装在本地库中。这样在项目中就可以使用ODBC的Jar包了，而大部分的jar是可以通过Maven中直接引用的。这是为什么呢？</p>
-<h2 id="项目报错"><a href="#项目报错" class="headerlink" title="项目报错"></a>项目报错</h2><p>&emsp;&emsp;项目直接编译，报错如下</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Failed to execute goal on project sql2o-oracle: 
-Could not resolve dependencies for project org.sql2o.extensions: sql2o-oracle:jar:1.6.0-RC4-SNAPSHOT: 
-Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https:&#x2F;&#x2F;repo.maven.apache.org&#x2F;maven2)</code></pre></div>
-<p>很明显项目中的引用：com.oracle.jdbc:ojdbc8:jar:12.2.0.1，无法在公共仓库中找到。</p>
-<h2 id="常用做法"><a href="#常用做法" class="headerlink" title="常用做法"></a>常用做法</h2><p>&emsp;&emsp;一般的做法就是下载Jar包，然后存放在本地仓库中，这样就可以直接在项目中引用。但通常这样略显麻烦，也不具有通用性。之前这样做的原因主要是涉及到许可的原因，Oracle不开放ODBC的Jar不会开放到公共仓库中。<br>&emsp;&emsp;关于ODBC方面的讨论可以参考：<a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a> .</p>
-<h2 id="目前实现"><a href="#目前实现" class="headerlink" title="目前实现"></a>目前实现</h2><p>&emsp;&emsp;目前可以通过POM中的配置来直接使用Oracle仓库中的Jar，环境可以参考：<a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a> .</p>
-<p>&emsp;&emsp;博主主要分为三步实现本地Oracle库的配置：</p>
-<ol>
-<li>注册账号：<a href="https://www.oracle.com/webapps/maven/register/license.html" target="_blank" rel="noopener">https://www.oracle.com/webapps/maven/register/license.html</a> 。如果已经注册过OTN(Oracle Technology Network)的账号，所以直接跳过；</li>
-<li>配置本地Settings.xml<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><server>
-	<id>maven.oracle.com<&#x2F;id>
-	<username>[OTN username]<&#x2F;username>
-	<password>[OTN password]<&#x2F;password>
-	<configuration>
-		<basicAuthScope>
-			<host>ANY<&#x2F;host>
-			<port>ANY<&#x2F;port>
-			<realm>OAM 11g<&#x2F;realm>
-		<&#x2F;basicAuthScope>
-		<httpConfiguration>
-			<all>
-				<params>
-					<property>
-						<name>http.protocol.allow-circular-redirects<&#x2F;name>
-						<value>%b,true<&#x2F;value>
-					<&#x2F;property>
-				<&#x2F;params>
-			<&#x2F;all>
-		<&#x2F;httpConfiguration>
-	<&#x2F;configuration>
-<&#x2F;server></code></pre></div></li>
-<li>Maven中配置<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><repositories>
-	<repository>
-		<id>maven.oracle.com<&#x2F;id>
-		<releases>
-			<enabled>true<&#x2F;enabled>
-		<&#x2F;releases>
-		<snapshots>
-			<enabled>false<&#x2F;enabled>
-		<&#x2F;snapshots>
-		<url>https:&#x2F;&#x2F;maven.oracle.com<&#x2F;url>
-		<layout>default<&#x2F;layout>
-	<&#x2F;repository>
-<&#x2F;repositories>
-<pluginRepositories>
-	<pluginRepository>
-		<id>maven.oracle.com<&#x2F;id>
-		<url>https:&#x2F;&#x2F;maven.oracle.com<&#x2F;url>
-	<&#x2F;pluginRepository>
-<&#x2F;pluginRepositories></code></pre></div>
-
-</li>
-</ol>
-<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><ol>
-<li>虽然通过这种方式，可以直接获取相应的Jar。但实现需要知道Jar的相关信息，例如groupId、artifactId、version等。这些信息在哪里知道？</li>
-<li>通过权限访问这种方式，略显复杂。如果是公司的本地库，可以配置统一的Jar管理，例如artifactory软件等。</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides" target="_blank" rel="noopener">Get Oracle JDBC drivers and UCP from Oracle Maven Repository (without IDEs)</a></li>
-<li><a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository/27943380#27943380" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a></li>
-<li><a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>问题</tag>
-        <tag>JDBC</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Netty权威指南读书笔记</title>
     <url>/2018/07/09/Netty%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<p>&emsp;&emsp;Netty权威指南，是一本广受欢迎的Netty书籍。博主研读的是2014年6月第一版，第二次印刷的书本。</p>
@@ -6859,73 +6852,80 @@ Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https:&#
       </tags>
   </entry>
   <entry>
-    <title>Java单例模式的几种写法</title>
-    <url>/2018/06/29/Java%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95/</url>
-    <content><![CDATA[<p>《Java并发编程 从入门到精通》读书笔记。</p>
-<a id="more"></a>
+    <title>Oracle JDBC为什么不能在Maven中直接配置？</title>
+    <url>/2018/09/12/ODBC%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在实际项目中，我们通常使用这样的方式：首先，下载ODBC的Jar到本地；然后，通过Maven安装在本地库中。这样在项目中就可以使用ODBC的Jar包了，而大部分的jar是可以通过Maven中直接引用的。这是为什么呢？</p>
+<h2 id="项目报错"><a href="#项目报错" class="headerlink" title="项目报错"></a>项目报错</h2><p>&emsp;&emsp;项目直接编译，报错如下</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Failed to execute goal on project sql2o-oracle: 
+Could not resolve dependencies for project org.sql2o.extensions: sql2o-oracle:jar:1.6.0-RC4-SNAPSHOT: 
+Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https:&#x2F;&#x2F;repo.maven.apache.org&#x2F;maven2)</code></pre></div>
+<p>很明显项目中的引用：com.oracle.jdbc:ojdbc8:jar:12.2.0.1，无法在公共仓库中找到。</p>
+<h2 id="常用做法"><a href="#常用做法" class="headerlink" title="常用做法"></a>常用做法</h2><p>&emsp;&emsp;一般的做法就是下载Jar包，然后存放在本地仓库中，这样就可以直接在项目中引用。但通常这样略显麻烦，也不具有通用性。之前这样做的原因主要是涉及到许可的原因，Oracle不开放ODBC的Jar不会开放到公共仓库中。<br>&emsp;&emsp;关于ODBC方面的讨论可以参考：<a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a> .</p>
+<h2 id="目前实现"><a href="#目前实现" class="headerlink" title="目前实现"></a>目前实现</h2><p>&emsp;&emsp;目前可以通过POM中的配置来直接使用Oracle仓库中的Jar，环境可以参考：<a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a> .</p>
+<p>&emsp;&emsp;博主主要分为三步实现本地Oracle库的配置：</p>
+<ol>
+<li>注册账号：<a href="https://www.oracle.com/webapps/maven/register/license.html" target="_blank" rel="noopener">https://www.oracle.com/webapps/maven/register/license.html</a> 。如果已经注册过OTN(Oracle Technology Network)的账号，所以直接跳过；</li>
+<li>配置本地Settings.xml<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><server>
+	<id>maven.oracle.com<&#x2F;id>
+	<username>[OTN username]<&#x2F;username>
+	<password>[OTN password]<&#x2F;password>
+	<configuration>
+		<basicAuthScope>
+			<host>ANY<&#x2F;host>
+			<port>ANY<&#x2F;port>
+			<realm>OAM 11g<&#x2F;realm>
+		<&#x2F;basicAuthScope>
+		<httpConfiguration>
+			<all>
+				<params>
+					<property>
+						<name>http.protocol.allow-circular-redirects<&#x2F;name>
+						<value>%b,true<&#x2F;value>
+					<&#x2F;property>
+				<&#x2F;params>
+			<&#x2F;all>
+		<&#x2F;httpConfiguration>
+	<&#x2F;configuration>
+<&#x2F;server></code></pre></div></li>
+<li>Maven中配置<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><repositories>
+	<repository>
+		<id>maven.oracle.com<&#x2F;id>
+		<releases>
+			<enabled>true<&#x2F;enabled>
+		<&#x2F;releases>
+		<snapshots>
+			<enabled>false<&#x2F;enabled>
+		<&#x2F;snapshots>
+		<url>https:&#x2F;&#x2F;maven.oracle.com<&#x2F;url>
+		<layout>default<&#x2F;layout>
+	<&#x2F;repository>
+<&#x2F;repositories>
+<pluginRepositories>
+	<pluginRepository>
+		<id>maven.oracle.com<&#x2F;id>
+		<url>https:&#x2F;&#x2F;maven.oracle.com<&#x2F;url>
+	<&#x2F;pluginRepository>
+<&#x2F;pluginRepositories></code></pre></div>
 
-<h2 id="错误模式"><a href="#错误模式" class="headerlink" title="错误模式"></a>错误模式</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
-
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-function">privae <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-			instance = <span class="hljs-keyword">new</span> Test();
-		<span class="hljs-keyword">return</span> instance;
-	&#125;
-&#125;</code></pre></div>
-
-<h2 id="低效模式：synchronized"><a href="#低效模式：synchronized" class="headerlink" title="低效模式：synchronized"></a>低效模式：synchronized</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
-
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">synchronized</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-			instance = <span class="hljs-keyword">new</span> Test();
-		<span class="hljs-keyword">return</span> instance;
-	&#125;
-&#125;</code></pre></div>
-
-<h2 id="常见模式：使用对象锁"><a href="#常见模式：使用对象锁" class="headerlink" title="常见模式：使用对象锁"></a>常见模式：使用对象锁</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] lock = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">0</span>];
-	
-	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-			<span class="hljs-keyword">synchronized</span>(lock)&#123;
-				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-					instance = <span class="hljs-keyword">new</span> Test();
-			&#125;
-		<span class="hljs-keyword">return</span> instance;
-	&#125;
-&#125;</code></pre></div>
-
-<h2 id="常见模式：ReentranLock"><a href="#常见模式：ReentranLock" class="headerlink" title="常见模式：ReentranLock"></a>常见模式：ReentranLock</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> ReentranLock lock = <span class="hljs-keyword">new</span> ReentranLock();
-	
-	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)&#123;
-			lock.lock();
-			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-				instance = <span class="hljs-keyword">new</span> Test();
-			lock.unlock();
-		&#125;
-		<span class="hljs-keyword">return</span> instance;
-	&#125;
-&#125;</code></pre></div>]]></content>
+</li>
+</ol>
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><ol>
+<li>虽然通过这种方式，可以直接获取相应的Jar。但实现需要知道Jar的相关信息，例如groupId、artifactId、version等。这些信息在哪里知道？</li>
+<li>通过权限访问这种方式，略显复杂。如果是公司的本地库，可以配置统一的Jar管理，例如artifactory软件等。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides" target="_blank" rel="noopener">Get Oracle JDBC drivers and UCP from Oracle Maven Repository (without IDEs)</a></li>
+<li><a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository/27943380#27943380" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a></li>
+<li><a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a></li>
+</ol>
+]]></content>
       <categories>
         <category>Java</category>
       </categories>
       <tags>
         <tag>调研</tag>
-        <tag>总结</tag>
+        <tag>问题</tag>
+        <tag>JDBC</tag>
       </tags>
   </entry>
   <entry>
@@ -7368,6 +7368,56 @@ datetime &#x3D; parser.parser('2020-03-25T20:46:24.511426+0800')</code></pre></d
       </tags>
   </entry>
   <entry>
+    <title>Spark集群配置</title>
+    <url>/2018/06/29/Spark%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>&emsp;&emsp;相比Hadoop的配置，Spark配置起来相对简单。本文结合自身的配置经验，写下配置Spark的过程。</p>
+<a id="more"></a>
+
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>&emsp;&emsp;在正式配置之前，需要确定环境是否适合安装Spark集群。</p>
+<ol>
+<li>确保已经安装JDK/JRE；</li>
+<li>安装Hadoop(非必要)；</li>
+<li>确保已经安装SCALA；</li>
+<li>MASTER\SLAVE的IP地址已经配置在/etc/hosts中。</li>
+</ol>
+<h2 id="Spark配置"><a href="#Spark配置" class="headerlink" title="Spark配置"></a>Spark配置</h2><p><em>配置文件</em>:spark-env.sh：</p>
+<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">export JAVA_HOME=/home/appuser/jdk
+export SCALA_HOME=/home/appuser/scala
+export SPARK_HOME=/home/appuser/spark
+export HADOOP_HOME=/home/appuser/hadoop
+export HADOOP_CONF_DIR=/home/appuser/hadoop/etc/hadoop
+export SPARK_MASTER_HOST=master</code></pre></div>
+
+<p>slaves：</p>
+<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">slave1
+slave2
+slave3</code></pre></div>
+
+<p><em>分发到SLAVE节点</em></p>
+<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave1:~/
+scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave2:~/
+scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave3:~/</code></pre></div>
+
+<p> <em>启动Spark集群</em></p>
+<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">~/spark-2.6.0-bin-hadoop2.6/sbin/start-all.sh</code></pre></div>
+
+<h2 id="配置验证"><a href="#配置验证" class="headerlink" title="配置验证"></a>配置验证</h2><p><em>HTTP登陆</em><br>在浏览器中输入：<a href="http://master:50070/" target="_blank" rel="noopener">http://master:50070/</a> ，可以看到HDFS的相关配置信息及DataNode的活跃情况。</p>
+<p><em>Spark-shell启动</em><br>启动Spark-shell，可以检测是否配置准确。当然，也可以使用Spark-submit提交Spark自带的例子，查看结果及运行情况。</p>
+<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
+<li>Work启动，但Http中没有Worker节点：说明Slave节点与Master的通讯出现问题，或Slave节点无法向Master注册，导致虽然Woker启动但不能在Master中找到。这时候需要检查/etc/hosts中的配置是否准确、合理；</li>
+<li>Woker启动失败，这种情况说明配置可能存在问题，需要仔细检查；</li>
+<li>版主多次尝试在spark-env.sh中配置master-port\worker-port，但是都失败，具体原因探索中。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>Spark</tag>
+        <tag>使用</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Spark-RDD/DataFrame-map保存数据的两种方式</title>
     <url>/2018/06/29/Spark-RDD-DataFrame-map%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
     <content><![CDATA[<p>&emsp;&emsp;使用Spark RDD或DataFrame，有时需要在foreachPartition或foreachWith里面保存数据到本地或HDFS。</p>
@@ -7449,56 +7499,6 @@ tarDF.write.parquet<span class="hljs-comment">// 写入Parquet数据源</span></
       </tags>
   </entry>
   <entry>
-    <title>Spark集群配置</title>
-    <url>/2018/06/29/Spark%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>&emsp;&emsp;相比Hadoop的配置，Spark配置起来相对简单。本文结合自身的配置经验，写下配置Spark的过程。</p>
-<a id="more"></a>
-
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>&emsp;&emsp;在正式配置之前，需要确定环境是否适合安装Spark集群。</p>
-<ol>
-<li>确保已经安装JDK/JRE；</li>
-<li>安装Hadoop(非必要)；</li>
-<li>确保已经安装SCALA；</li>
-<li>MASTER\SLAVE的IP地址已经配置在/etc/hosts中。</li>
-</ol>
-<h2 id="Spark配置"><a href="#Spark配置" class="headerlink" title="Spark配置"></a>Spark配置</h2><p><em>配置文件</em>:spark-env.sh：</p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">export JAVA_HOME=/home/appuser/jdk
-export SCALA_HOME=/home/appuser/scala
-export SPARK_HOME=/home/appuser/spark
-export HADOOP_HOME=/home/appuser/hadoop
-export HADOOP_CONF_DIR=/home/appuser/hadoop/etc/hadoop
-export SPARK_MASTER_HOST=master</code></pre></div>
-
-<p>slaves：</p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">slave1
-slave2
-slave3</code></pre></div>
-
-<p><em>分发到SLAVE节点</em></p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave1:~/
-scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave2:~/
-scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave3:~/</code></pre></div>
-
-<p> <em>启动Spark集群</em></p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">~/spark-2.6.0-bin-hadoop2.6/sbin/start-all.sh</code></pre></div>
-
-<h2 id="配置验证"><a href="#配置验证" class="headerlink" title="配置验证"></a>配置验证</h2><p><em>HTTP登陆</em><br>在浏览器中输入：<a href="http://master:50070/" target="_blank" rel="noopener">http://master:50070/</a> ，可以看到HDFS的相关配置信息及DataNode的活跃情况。</p>
-<p><em>Spark-shell启动</em><br>启动Spark-shell，可以检测是否配置准确。当然，也可以使用Spark-submit提交Spark自带的例子，查看结果及运行情况。</p>
-<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
-<li>Work启动，但Http中没有Worker节点：说明Slave节点与Master的通讯出现问题，或Slave节点无法向Master注册，导致虽然Woker启动但不能在Master中找到。这时候需要检查/etc/hosts中的配置是否准确、合理；</li>
-<li>Woker启动失败，这种情况说明配置可能存在问题，需要仔细检查；</li>
-<li>版主多次尝试在spark-env.sh中配置master-port\worker-port，但是都失败，具体原因探索中。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>Spark</tag>
-        <tag>使用</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Springboot报错</title>
     <url>/2018/08/07/SpringBoot%E6%8A%A5%E9%94%99/</url>
     <content><![CDATA[<h2 id="报错一"><a href="#报错一" class="headerlink" title="报错一"></a>报错一</h2><ul>
@@ -7541,6 +7541,19 @@ scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave3:~/</code></pre></div>
       <tags>
         <tag>问题</tag>
         <tag>Springboot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Weibo单节点爬虫设计</title>
+    <url>/2018/06/29/Weibo%E5%8D%95%E8%8A%82%E7%82%B9%E7%88%AC%E8%99%AB%E8%AE%BE%E8%AE%A1/</url>
+    <content><![CDATA[<p><img src="001.png" srcset="/img/loading.gif" alt="weibo_crawler"></p>
+<p>&emsp;&emsp;微博目前开发数据接口，如果用于商业用途最好通过此接口来获取微博数据。作者爬去少量数据，仅用于研究学习。</p>
+]]></content>
+      <categories>
+        <category>爬虫</category>
+      </categories>
+      <tags>
+        <tag>设计</tag>
       </tags>
   </entry>
   <entry>
@@ -7672,19 +7685,6 @@ canalDestinations:
       <tags>
         <tag>调研</tag>
         <tag>NLP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Weibo单节点爬虫设计</title>
-    <url>/2018/06/29/Weibo%E5%8D%95%E8%8A%82%E7%82%B9%E7%88%AC%E8%99%AB%E8%AE%BE%E8%AE%A1/</url>
-    <content><![CDATA[<p><img src="001.png" srcset="/img/loading.gif" alt="weibo_crawler"></p>
-<p>&emsp;&emsp;微博目前开发数据接口，如果用于商业用途最好通过此接口来获取微博数据。作者爬去少量数据，仅用于研究学习。</p>
-]]></content>
-      <categories>
-        <category>爬虫</category>
-      </categories>
-      <tags>
-        <tag>设计</tag>
       </tags>
   </entry>
   <entry>
@@ -8212,6 +8212,43 @@ IKAnalyzer分词器 的分词结果：
       </tags>
   </entry>
   <entry>
+    <title>分布式Java应用读书笔记</title>
+    <url>/2018/07/10/%E5%88%86%E5%B8%83%E5%BC%8FJava%E5%BA%94%E7%94%A8%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h1 id="分布式Java应用"><a href="#分布式Java应用" class="headerlink" title="分布式Java应用"></a>分布式Java应用</h1><p><img src="001.png" srcset="/img/loading.gif" alt="分布式Java应用"></p>
+<a id="more"></a>
+
+
+<h2 id="基于消息方式实现系统间的通信"><a href="#基于消息方式实现系统间的通信" class="headerlink" title="基于消息方式实现系统间的通信"></a>基于消息方式实现系统间的通信</h2><p>&emsp;&emsp;当系统之间要通信时，就向外发送消息，消息可以是字节流、字节数组，甚至是Java对象，其他系统接收到消息后进行相应的业务处理。消息方式的系统间通信，通常是基于网络协议实现，常用的实现系统间通信的协议有:TCP/IP和UDP/IP。</p>
+<p>&emsp;&emsp;TCP/IP和UDP/IP可用于完成数据的传输，但要完成系统间的通信，还需要对数据进行处理。从程序角度而言，BIO就是发起IO的读或写操作时，均为阻塞方式，只有当程序读到了流或将流写入操作系统后，才会释放资源。</p>
+<p>&emsp;&emsp;NIO是基于事件驱动思想的，实现上通常采用Reactor模式，从程序角度而言，当发起IO的读或写操作时，是阻塞的；当socket有流可读或可写入socket时，操作熊会相应的通知到应用程序进行处理。对网络IO而言，主要有链接建立、流读取或流写入三种事件，Linux2.6以后的版本采用了epoll方式来实现NIO。</p>
+<p>&emsp;&emsp;另外一种方式AIO。AIO为异步IO方式，同样基于事件驱动思想，实现上采用了Proactor模式。与NIO相比，AIO具有以下特点</p>
+<ul>
+<li>简化了程序的编写：流的读取与写入都有操作系统来完成</li>
+<li>省去了NIO程序要遍历事件通知队列(selector)的代价</li>
+</ul>
+<h2 id="基于远程调用方式实现系统间的通信"><a href="#基于远程调用方式实现系统间的通信" class="headerlink" title="基于远程调用方式实现系统间的通信"></a>基于远程调用方式实现系统间的通信</h2><h1 id="大型分布式Java应用和SOA"><a href="#大型分布式Java应用和SOA" class="headerlink" title="大型分布式Java应用和SOA"></a>大型分布式Java应用和SOA</h1><h2 id="基于SCA实现SOA平台"><a href="#基于SCA实现SOA平台" class="headerlink" title="基于SCA实现SOA平台"></a>基于SCA实现SOA平台</h2><h2 id="基于ESB实现SOA平台"><a href="#基于ESB实现SOA平台" class="headerlink" title="基于ESB实现SOA平台"></a>基于ESB实现SOA平台</h2><h2 id="基于Tuscany实现SOA平台"><a href="#基于Tuscany实现SOA平台" class="headerlink" title="基于Tuscany实现SOA平台"></a>基于Tuscany实现SOA平台</h2><h2 id="基于Mule实现SOA平台"><a href="#基于Mule实现SOA平台" class="headerlink" title="基于Mule实现SOA平台"></a>基于Mule实现SOA平台</h2><h1 id="深入理解JVM"><a href="#深入理解JVM" class="headerlink" title="深入理解JVM"></a>深入理解JVM</h1><p><img src="003.png" srcset="/img/loading.gif" alt="深入理解JVM"></p>
+<h2 id="Java代码的执行机制"><a href="#Java代码的执行机制" class="headerlink" title="Java代码的执行机制"></a>Java代码的执行机制</h2><h2 id="JVM内存管理"><a href="#JVM内存管理" class="headerlink" title="JVM内存管理"></a>JVM内存管理</h2><p>&emsp;&emsp;Java开发人员不需要显式分配内存和回收内存，而是由JVM来自动管理内存的分配及回收。这对开发人员而言大大降低了编写程序的难度，但副作用可能是在不知不觉中浪费了很多内存，导致JVM花费很多时间进行内存的回收。另外还会带来的副作用是由于不清楚JVM内存的分配和回收机制，造成内存泄漏，最终导致JVM内存不够用。因此对于Java开发人员而言，不能因为JVM自动内存管理就不掌握内存分配和回收的知识了。</p>
+<h3 id="内存空间"><a href="#内存空间" class="headerlink" title="内存空间"></a>内存空间</h3><p>&emsp;&emsp;SunJDK在实现时遵守JVM规范，将内存空间划分为方法区、堆、本地方法栈、PC寄存器及JVM方法栈。</p>
+<h4 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h4><p>&emsp;&emsp;方法区存在了要记在的类的信息、类中的静态变量、类中定义为final类型的常亮、类中的Field信息、类中的方法信息，当开发人员在程序中通过Class对象的getName、isInterface等方法来获取信息时，这些数据都来自于方法区域。方法区域也是全局共享的，在一定条件下他也会被GC，当方法区域要使用的内存超过其允许的大小是，会抛出OutOfMemory的错误信息。</p>
+<p>&emsp;&emsp;在SunJDK中这块区域对应Permanet Generation，又称为持久代，默认最小值为16MB，最大值为64MB，其可以通过-XX:PermSize及-XX:MaxPermSize来制定最小值和最大值。</p>
+<h4 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h4><p>&emsp;&emsp;堆用于存储对象实例和数组值，可以认为java中所有通过new创建的对象的内存都在此分配，Hep中对象所占的内存由GC进行回收，在32位操作系统上最大为2GB。在64位操作系统上没有限制，其大小可以通过-Xmx和-Xms来控制。</p>
+<p>&emsp;&emsp;为了让内存回收更加高效，SunJDK自1.2开始对堆采用了分代管理的方式。</p>
+<ol>
+<li>新生代(New Generation)<br> &emsp;&emsp;大多数情况下，java层序中新建的对象都从新生代中分配内存，新生代由Eden Space和两块相同大小的SurvivorSpace构成，可通过-Xmn参数来制定新生代的大小。</li>
+<li>旧生代(Old Generation或Tenuring Generation))<br> &emsp;&emsp;旧生代用户存放新生代中经过多次垃圾回收仍然存货的对象，例如缓存对象，新建的对象也有可能在就剩代中直接分配内存。主要有两种情况：一种为大对象，另一种为大的数组对象，且数组中无引用外部对象。</li>
+</ol>
+<h4 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h4><p>&emsp;&emsp;本地方法栈用于支持native方法的执行，存储了每个native方法调用的状态，在SunJDK的实现中本地方法栈和JVM方法栈是同一个。</p>
+<h4 id="PC寄存器和JVM方法栈"><a href="#PC寄存器和JVM方法栈" class="headerlink" title="PC寄存器和JVM方法栈"></a>PC寄存器和JVM方法栈</h4><p>&emsp;&emsp;每个线程均会创建PC寄存器和JVM方法栈，PC寄存器占用的可能为CPU寄存器或操作系统内存，JVM方法栈占用的为操作系统内存，JVM方法栈为线程私有，其在内存分配上非常高效。</p>
+<p>&emsp;&emsp;当JVM方法栈空间不足时，会抛出StackOverflowError的错误，在SunJDK中可以通过-Xss来制定其大小。</p>
+<h2 id="JVM线程资源同步与交互机制"><a href="#JVM线程资源同步与交互机制" class="headerlink" title="JVM线程资源同步与交互机制"></a>JVM线程资源同步与交互机制</h2><h1 id="分布式Java应用和Sun-JDK类库"><a href="#分布式Java应用和Sun-JDK类库" class="headerlink" title="分布式Java应用和Sun JDK类库"></a>分布式Java应用和Sun JDK类库</h1><h2 id="集合包"><a href="#集合包" class="headerlink" title="集合包"></a>集合包</h2><h2 id="并发包"><a href="#并发包" class="headerlink" title="并发包"></a>并发包</h2><h2 id="序列化与反序列化"><a href="#序列化与反序列化" class="headerlink" title="序列化与反序列化"></a>序列化与反序列化</h2><h1 id="性能调优"><a href="#性能调优" class="headerlink" title="性能调优"></a>性能调优</h1><h2 id="寻找性能瓶颈"><a href="#寻找性能瓶颈" class="headerlink" title="寻找性能瓶颈"></a>寻找性能瓶颈</h2><h2 id="调优"><a href="#调优" class="headerlink" title="调优"></a>调优</h2><h1 id="构架高可用的系统"><a href="#构架高可用的系统" class="headerlink" title="构架高可用的系统"></a>构架高可用的系统</h1><h2 id="避免系统出现单点"><a href="#避免系统出现单点" class="headerlink" title="避免系统出现单点"></a>避免系统出现单点</h2><h2 id="提高应用自身的可用性"><a href="#提高应用自身的可用性" class="headerlink" title="提高应用自身的可用性"></a>提高应用自身的可用性</h2><h1 id="构建可伸缩的系统"><a href="#构建可伸缩的系统" class="headerlink" title="构建可伸缩的系统"></a>构建可伸缩的系统</h1><h2 id="垂直伸缩"><a href="#垂直伸缩" class="headerlink" title="垂直伸缩"></a>垂直伸缩</h2><h2 id="水平伸缩"><a href="#水平伸缩" class="headerlink" title="水平伸缩"></a>水平伸缩</h2>]]></content>
+      <categories>
+        <category>读书笔记</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>一种可行性Java爬虫框架</title>
     <url>/2018/06/29/%E4%B8%80%E7%A7%8D%E5%8F%AF%E8%A1%8C%E6%80%A7Java%E7%88%AC%E8%99%AB%E6%A1%86%E6%9E%B6/</url>
     <content><![CDATA[<p>&emsp;&emsp;简单的Java爬虫框架流程图，不包括容灾机制、异常处理等内容。</p>
@@ -8336,43 +8373,6 @@ WHERE ranked_clicks.rank&#x3D;1;</code></pre></div>
       </categories>
       <tags>
         <tag>调研</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>分布式Java应用读书笔记</title>
-    <url>/2018/07/10/%E5%88%86%E5%B8%83%E5%BC%8FJava%E5%BA%94%E7%94%A8%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h1 id="分布式Java应用"><a href="#分布式Java应用" class="headerlink" title="分布式Java应用"></a>分布式Java应用</h1><p><img src="001.png" srcset="/img/loading.gif" alt="分布式Java应用"></p>
-<a id="more"></a>
-
-
-<h2 id="基于消息方式实现系统间的通信"><a href="#基于消息方式实现系统间的通信" class="headerlink" title="基于消息方式实现系统间的通信"></a>基于消息方式实现系统间的通信</h2><p>&emsp;&emsp;当系统之间要通信时，就向外发送消息，消息可以是字节流、字节数组，甚至是Java对象，其他系统接收到消息后进行相应的业务处理。消息方式的系统间通信，通常是基于网络协议实现，常用的实现系统间通信的协议有:TCP/IP和UDP/IP。</p>
-<p>&emsp;&emsp;TCP/IP和UDP/IP可用于完成数据的传输，但要完成系统间的通信，还需要对数据进行处理。从程序角度而言，BIO就是发起IO的读或写操作时，均为阻塞方式，只有当程序读到了流或将流写入操作系统后，才会释放资源。</p>
-<p>&emsp;&emsp;NIO是基于事件驱动思想的，实现上通常采用Reactor模式，从程序角度而言，当发起IO的读或写操作时，是阻塞的；当socket有流可读或可写入socket时，操作熊会相应的通知到应用程序进行处理。对网络IO而言，主要有链接建立、流读取或流写入三种事件，Linux2.6以后的版本采用了epoll方式来实现NIO。</p>
-<p>&emsp;&emsp;另外一种方式AIO。AIO为异步IO方式，同样基于事件驱动思想，实现上采用了Proactor模式。与NIO相比，AIO具有以下特点</p>
-<ul>
-<li>简化了程序的编写：流的读取与写入都有操作系统来完成</li>
-<li>省去了NIO程序要遍历事件通知队列(selector)的代价</li>
-</ul>
-<h2 id="基于远程调用方式实现系统间的通信"><a href="#基于远程调用方式实现系统间的通信" class="headerlink" title="基于远程调用方式实现系统间的通信"></a>基于远程调用方式实现系统间的通信</h2><h1 id="大型分布式Java应用和SOA"><a href="#大型分布式Java应用和SOA" class="headerlink" title="大型分布式Java应用和SOA"></a>大型分布式Java应用和SOA</h1><h2 id="基于SCA实现SOA平台"><a href="#基于SCA实现SOA平台" class="headerlink" title="基于SCA实现SOA平台"></a>基于SCA实现SOA平台</h2><h2 id="基于ESB实现SOA平台"><a href="#基于ESB实现SOA平台" class="headerlink" title="基于ESB实现SOA平台"></a>基于ESB实现SOA平台</h2><h2 id="基于Tuscany实现SOA平台"><a href="#基于Tuscany实现SOA平台" class="headerlink" title="基于Tuscany实现SOA平台"></a>基于Tuscany实现SOA平台</h2><h2 id="基于Mule实现SOA平台"><a href="#基于Mule实现SOA平台" class="headerlink" title="基于Mule实现SOA平台"></a>基于Mule实现SOA平台</h2><h1 id="深入理解JVM"><a href="#深入理解JVM" class="headerlink" title="深入理解JVM"></a>深入理解JVM</h1><p><img src="003.png" srcset="/img/loading.gif" alt="深入理解JVM"></p>
-<h2 id="Java代码的执行机制"><a href="#Java代码的执行机制" class="headerlink" title="Java代码的执行机制"></a>Java代码的执行机制</h2><h2 id="JVM内存管理"><a href="#JVM内存管理" class="headerlink" title="JVM内存管理"></a>JVM内存管理</h2><p>&emsp;&emsp;Java开发人员不需要显式分配内存和回收内存，而是由JVM来自动管理内存的分配及回收。这对开发人员而言大大降低了编写程序的难度，但副作用可能是在不知不觉中浪费了很多内存，导致JVM花费很多时间进行内存的回收。另外还会带来的副作用是由于不清楚JVM内存的分配和回收机制，造成内存泄漏，最终导致JVM内存不够用。因此对于Java开发人员而言，不能因为JVM自动内存管理就不掌握内存分配和回收的知识了。</p>
-<h3 id="内存空间"><a href="#内存空间" class="headerlink" title="内存空间"></a>内存空间</h3><p>&emsp;&emsp;SunJDK在实现时遵守JVM规范，将内存空间划分为方法区、堆、本地方法栈、PC寄存器及JVM方法栈。</p>
-<h4 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h4><p>&emsp;&emsp;方法区存在了要记在的类的信息、类中的静态变量、类中定义为final类型的常亮、类中的Field信息、类中的方法信息，当开发人员在程序中通过Class对象的getName、isInterface等方法来获取信息时，这些数据都来自于方法区域。方法区域也是全局共享的，在一定条件下他也会被GC，当方法区域要使用的内存超过其允许的大小是，会抛出OutOfMemory的错误信息。</p>
-<p>&emsp;&emsp;在SunJDK中这块区域对应Permanet Generation，又称为持久代，默认最小值为16MB，最大值为64MB，其可以通过-XX:PermSize及-XX:MaxPermSize来制定最小值和最大值。</p>
-<h4 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h4><p>&emsp;&emsp;堆用于存储对象实例和数组值，可以认为java中所有通过new创建的对象的内存都在此分配，Hep中对象所占的内存由GC进行回收，在32位操作系统上最大为2GB。在64位操作系统上没有限制，其大小可以通过-Xmx和-Xms来控制。</p>
-<p>&emsp;&emsp;为了让内存回收更加高效，SunJDK自1.2开始对堆采用了分代管理的方式。</p>
-<ol>
-<li>新生代(New Generation)<br> &emsp;&emsp;大多数情况下，java层序中新建的对象都从新生代中分配内存，新生代由Eden Space和两块相同大小的SurvivorSpace构成，可通过-Xmn参数来制定新生代的大小。</li>
-<li>旧生代(Old Generation或Tenuring Generation))<br> &emsp;&emsp;旧生代用户存放新生代中经过多次垃圾回收仍然存货的对象，例如缓存对象，新建的对象也有可能在就剩代中直接分配内存。主要有两种情况：一种为大对象，另一种为大的数组对象，且数组中无引用外部对象。</li>
-</ol>
-<h4 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h4><p>&emsp;&emsp;本地方法栈用于支持native方法的执行，存储了每个native方法调用的状态，在SunJDK的实现中本地方法栈和JVM方法栈是同一个。</p>
-<h4 id="PC寄存器和JVM方法栈"><a href="#PC寄存器和JVM方法栈" class="headerlink" title="PC寄存器和JVM方法栈"></a>PC寄存器和JVM方法栈</h4><p>&emsp;&emsp;每个线程均会创建PC寄存器和JVM方法栈，PC寄存器占用的可能为CPU寄存器或操作系统内存，JVM方法栈占用的为操作系统内存，JVM方法栈为线程私有，其在内存分配上非常高效。</p>
-<p>&emsp;&emsp;当JVM方法栈空间不足时，会抛出StackOverflowError的错误，在SunJDK中可以通过-Xss来制定其大小。</p>
-<h2 id="JVM线程资源同步与交互机制"><a href="#JVM线程资源同步与交互机制" class="headerlink" title="JVM线程资源同步与交互机制"></a>JVM线程资源同步与交互机制</h2><h1 id="分布式Java应用和Sun-JDK类库"><a href="#分布式Java应用和Sun-JDK类库" class="headerlink" title="分布式Java应用和Sun JDK类库"></a>分布式Java应用和Sun JDK类库</h1><h2 id="集合包"><a href="#集合包" class="headerlink" title="集合包"></a>集合包</h2><h2 id="并发包"><a href="#并发包" class="headerlink" title="并发包"></a>并发包</h2><h2 id="序列化与反序列化"><a href="#序列化与反序列化" class="headerlink" title="序列化与反序列化"></a>序列化与反序列化</h2><h1 id="性能调优"><a href="#性能调优" class="headerlink" title="性能调优"></a>性能调优</h1><h2 id="寻找性能瓶颈"><a href="#寻找性能瓶颈" class="headerlink" title="寻找性能瓶颈"></a>寻找性能瓶颈</h2><h2 id="调优"><a href="#调优" class="headerlink" title="调优"></a>调优</h2><h1 id="构架高可用的系统"><a href="#构架高可用的系统" class="headerlink" title="构架高可用的系统"></a>构架高可用的系统</h1><h2 id="避免系统出现单点"><a href="#避免系统出现单点" class="headerlink" title="避免系统出现单点"></a>避免系统出现单点</h2><h2 id="提高应用自身的可用性"><a href="#提高应用自身的可用性" class="headerlink" title="提高应用自身的可用性"></a>提高应用自身的可用性</h2><h1 id="构建可伸缩的系统"><a href="#构建可伸缩的系统" class="headerlink" title="构建可伸缩的系统"></a>构建可伸缩的系统</h1><h2 id="垂直伸缩"><a href="#垂直伸缩" class="headerlink" title="垂直伸缩"></a>垂直伸缩</h2><h2 id="水平伸缩"><a href="#水平伸缩" class="headerlink" title="水平伸缩"></a>水平伸缩</h2>]]></content>
-      <categories>
-        <category>读书笔记</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -8607,30 +8607,6 @@ yum install -y libgtk*</code></pre></div>
       </tags>
   </entry>
   <entry>
-    <title>无限制获取GPS对应地址的一种方法</title>
-    <url>/2018/06/29/%E6%97%A0%E9%99%90%E5%88%B6%E8%8E%B7%E5%8F%96GPS%E5%AF%B9%E5%BA%94%E5%9C%B0%E5%9D%80%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>&emsp;&emsp;市面上基本没有免费获取地理位置的方法，特别是对实时性要求比较高的情况下，基本上都是付费服务。</p>
-<p>&emsp;&emsp;本文使用Google地图API，在实时性要求不太高的情况下，能够不断获取GPS对应地址位置信息。</p>
-<a id="more"></a>
-
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>&emsp;&emsp;调用Google地图API</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">http:&#x2F;&#x2F;maps.google.cn&#x2F;maps&#x2F;api&#x2F;geocode&#x2F;json?latlng&#x3D;lat,lng</code></pre></div>
-<p>返回的数据为5条距离该GPS最近的地表信息，第一条一般为距离最近的建筑物信息。我们获取的信息为：formatted_address，即为格式化的地址信息。样例：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">中国浙江省嘉兴市南湖区凤启路98号</code></pre></div>
-<p>可以看出，该地中具有国家、省份、城市、区县、路名、具体位置等信息，完全符合我们的实际需求。</p>
-<h2 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h2><p>&emsp;&emsp;本文作者通过随机生成的30万条GPS数据测试，能够获取最终结果不会存在获取不到的情况。</p>
-<p>&emsp;&emsp;通常情况下该API获取的内容存在状态字段，即：status字段。一般为“OK”，即爬去成功的，其他状态一般是请求出错、并发异常等内容引起的。</p>
-<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><div class="hljs"><pre><code>1. 该API对并发存在一定要求，因此无法大量、频繁并发获取内容；
-2. 比较好的一个方法是，通过高匿代理来获取API信息，每个代理使用几个线程，这样能够达到快速、高频并发的要求。</code></pre></div>]]></content>
-      <categories>
-        <category>爬虫</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>总结</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>文本分类</title>
     <url>/2018/06/29/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB/</url>
     <content><![CDATA[<p>&emsp;&emsp;在文本分析中，其中有一类比较重要的应用就是将文本进行分类。这一类应用非常广泛，比如：情感分析［（正面、负面、中性）评价、（快乐、愤怒、痛苦）情感］、文章分类［汽车、时政、科技］等。</p>
@@ -8662,6 +8638,30 @@ yum install -y libgtk*</code></pre></div>
       </categories>
       <tags>
         <tag>文本分类</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>无限制获取GPS对应地址的一种方法</title>
+    <url>/2018/06/29/%E6%97%A0%E9%99%90%E5%88%B6%E8%8E%B7%E5%8F%96GPS%E5%AF%B9%E5%BA%94%E5%9C%B0%E5%9D%80%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>&emsp;&emsp;市面上基本没有免费获取地理位置的方法，特别是对实时性要求比较高的情况下，基本上都是付费服务。</p>
+<p>&emsp;&emsp;本文使用Google地图API，在实时性要求不太高的情况下，能够不断获取GPS对应地址位置信息。</p>
+<a id="more"></a>
+
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>&emsp;&emsp;调用Google地图API</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">http:&#x2F;&#x2F;maps.google.cn&#x2F;maps&#x2F;api&#x2F;geocode&#x2F;json?latlng&#x3D;lat,lng</code></pre></div>
+<p>返回的数据为5条距离该GPS最近的地表信息，第一条一般为距离最近的建筑物信息。我们获取的信息为：formatted_address，即为格式化的地址信息。样例：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">中国浙江省嘉兴市南湖区凤启路98号</code></pre></div>
+<p>可以看出，该地中具有国家、省份、城市、区县、路名、具体位置等信息，完全符合我们的实际需求。</p>
+<h2 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h2><p>&emsp;&emsp;本文作者通过随机生成的30万条GPS数据测试，能够获取最终结果不会存在获取不到的情况。</p>
+<p>&emsp;&emsp;通常情况下该API获取的内容存在状态字段，即：status字段。一般为“OK”，即爬去成功的，其他状态一般是请求出错、并发异常等内容引起的。</p>
+<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><div class="hljs"><pre><code>1. 该API对并发存在一定要求，因此无法大量、频繁并发获取内容；
+2. 比较好的一个方法是，通过高匿代理来获取API信息，每个代理使用几个线程，这样能够达到快速、高频并发的要求。</code></pre></div>]]></content>
+      <categories>
+        <category>爬虫</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>总结</tag>
       </tags>
   </entry>
   <entry>
@@ -9325,430 +9325,429 @@ Caused by: sbt.compiler.CompileFailed
 </ul>
 <!-- /TOC -->
 
-<h2 id="1-下载组件"><a href="#1-下载组件" class="headerlink" title=".1. 下载组件"></a>.1. 下载组件</h2><div class="hljs"><pre class=" language-hljs bash"><span class="hljs-comment"><code class="language-hljs bash"><span class="hljs-comment">## 必须下载</span>
-<span class="hljs-comment">### Cloudera Manager</span>
+<h2 id="1-下载组件"><a href="#1-下载组件" class="headerlink" title=".1. 下载组件"></a>.1. 下载组件</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 必须下载
+### Cloudera Manager
 cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
 cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm
 cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm
 
-<span class="hljs-comment">### CDH</span>
+### CDH
 manifest.json
 CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel
 CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha
 CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha256
 
-<span class="hljs-comment">## 按需下载</span>
+## 按需下载
 oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm
 
-<span class="hljs-comment">## 部署MySQL需要</span>
+## 部署MySQL需要
 mysql57-community-release-el7-7.noarch.rpm
 mysql-connector-java.jar</code></pre></div>
 
-<h2 id="2-部署安装"><a href="#2-部署安装" class="headerlink" title=".2. 部署安装"></a>.2. 部署安装</h2><h3 id="2-1-配置文件-–-config-ini-cloudera-scm-agent需要"><a href="#2-1-配置文件-–-config-ini-cloudera-scm-agent需要" class="headerlink" title=".2.1. 配置文件 – config.ini : cloudera-scm-agent需要"></a>.2.1. 配置文件 – config.ini : cloudera-scm-agent需要</h3><div class="hljs"><pre class=" language-hljs bash"><span class="hljs-comment"><code class="language-hljs bash"><span class="hljs-comment"># Configuration file for cloudera-scm-agent.</span>
-<span class="hljs-comment"># Please note that this file supports multi-line values.  Multi-line</span>
-<span class="hljs-comment"># values are indicated by indenting following lines with a space.</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># If you have whitespace in front of a parameter name, it will be</span>
-<span class="hljs-comment"># read as a continuation of the previous parameter value.  Please</span>
-<span class="hljs-comment"># be careful not to leave spaces in front of parameter names.</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># To check if this file has spaces in front of parameters names</span>
-<span class="hljs-comment"># you can do a grep like this:</span>
-<span class="hljs-comment">#  grep '^[[:blank:]]' /etc/cloudera-scm-agent/config.ini</span>
+<h2 id="2-部署安装"><a href="#2-部署安装" class="headerlink" title=".2. 部署安装"></a>.2. 部署安装</h2><h3 id="2-1-配置文件-–-config-ini-cloudera-scm-agent需要"><a href="#2-1-配置文件-–-config-ini-cloudera-scm-agent需要" class="headerlink" title=".2.1. 配置文件 – config.ini : cloudera-scm-agent需要"></a>.2.1. 配置文件 – config.ini : cloudera-scm-agent需要</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Configuration file for cloudera-scm-agent.
+# Please note that this file supports multi-line values.  Multi-line
+# values are indicated by indenting following lines with a space.
+#
+# If you have whitespace in front of a parameter name, it will be
+# read as a continuation of the previous parameter value.  Please
+# be careful not to leave spaces in front of parameter names.
+#
+# To check if this file has spaces in front of parameters names
+# you can do a grep like this:
+#  grep '^[[:blank:]]' &#x2F;etc&#x2F;cloudera-scm-agent&#x2F;config.ini
 
 [General]
-<span class="hljs-comment"># Hostname of the CM server.</span>
-server_host=&#123;&#123; groups[<span class="hljs-string">'CDM'</span>][0] &#125;&#125;
+# Hostname of the CM server.
+server_host&#x3D;&#123;&#123; groups['CDM'][0] &#125;&#125;
 
-<span class="hljs-comment"># Port that the CM server is listening on.</span>
-server_port=7182
+# Port that the CM server is listening on.
+server_port&#x3D;7182
 
-<span class="hljs-comment">## It should not normally be necessary to modify these.</span>
-<span class="hljs-comment"># Port that the CM agent should listen on.</span>
-<span class="hljs-comment"># listening_port=9000</span>
+## It should not normally be necessary to modify these.
+# Port that the CM agent should listen on.
+# listening_port&#x3D;9000
 
-<span class="hljs-comment"># IP Address that the CM agent should listen on.</span>
-<span class="hljs-comment"># listening_ip=</span>
+# IP Address that the CM agent should listen on.
+# listening_ip&#x3D;
 
-<span class="hljs-comment"># Hostname that the CM agent reports as its hostname. If unset, will be</span>
-<span class="hljs-comment"># obtained in code through something like this:</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment">#   python -c 'import socket; \</span>
-<span class="hljs-comment">#              print socket.getfqdn(), \</span>
-<span class="hljs-comment">#                    socket.gethostbyname(socket.getfqdn())'</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># listening_hostname=</span>
+# Hostname that the CM agent reports as its hostname. If unset, will be
+# obtained in code through something like this:
+#
+#   python -c 'import socket; \
+#              print socket.getfqdn(), \
+#                    socket.gethostbyname(socket.getfqdn())'
+#
+# listening_hostname&#x3D;
 
-<span class="hljs-comment"># An alternate hostname to report as the hostname for this host in CM.</span>
-<span class="hljs-comment"># Useful when this agent is behind a load balancer or proxy and all</span>
-<span class="hljs-comment"># inbound communication must connect through that proxy.</span>
-<span class="hljs-comment"># reported_hostname=</span>
+# An alternate hostname to report as the hostname for this host in CM.
+# Useful when this agent is behind a load balancer or proxy and all
+# inbound communication must connect through that proxy.
+# reported_hostname&#x3D;
 
-<span class="hljs-comment"># Port that supervisord should listen on.</span>
-<span class="hljs-comment"># NB: This only takes effect if supervisord is restarted.</span>
-<span class="hljs-comment"># supervisord_port=19001</span>
+# Port that supervisord should listen on.
+# NB: This only takes effect if supervisord is restarted.
+# supervisord_port&#x3D;19001
 
-<span class="hljs-comment"># Log file.  The supervisord log file will be placed into</span>
-<span class="hljs-comment"># the same directory.  Note that if the agent is being started via the</span>
-<span class="hljs-comment"># init.d script, /var/log/cloudera-scm-agent/cloudera-scm-agent.out will</span>
-<span class="hljs-comment"># also have a small amount of output (from before logging is initialized).</span>
-<span class="hljs-comment"># log_file=/var/log/cloudera-scm-agent/cloudera-scm-agent.log</span>
+# Log file.  The supervisord log file will be placed into
+# the same directory.  Note that if the agent is being started via the
+# init.d script, &#x2F;var&#x2F;log&#x2F;cloudera-scm-agent&#x2F;cloudera-scm-agent.out will
+# also have a small amount of output (from before logging is initialized).
+# log_file&#x3D;&#x2F;var&#x2F;log&#x2F;cloudera-scm-agent&#x2F;cloudera-scm-agent.log
 
-<span class="hljs-comment"># Persistent state directory.  Directory to store CM agent state that</span>
-<span class="hljs-comment"># persists across instances of the agent process and system reboots.</span>
-<span class="hljs-comment"># Particularly, the agent's UUID is stored here.</span>
-<span class="hljs-comment"># lib_dir=/var/lib/cloudera-scm-agent</span>
+# Persistent state directory.  Directory to store CM agent state that
+# persists across instances of the agent process and system reboots.
+# Particularly, the agent's UUID is stored here.
+# lib_dir&#x3D;&#x2F;var&#x2F;lib&#x2F;cloudera-scm-agent
 
-<span class="hljs-comment"># Parcel directory.  Unpacked parcels will be stored in this directory.</span>
-<span class="hljs-comment"># Downloaded parcels will be stored in <parcel_dir>/../parcel-cache</span>
-<span class="hljs-comment"># parcel_dir=/opt/cloudera/parcels</span>
+# Parcel directory.  Unpacked parcels will be stored in this directory.
+# Downloaded parcels will be stored in <parcel_dir>&#x2F;..&#x2F;parcel-cache
+# parcel_dir&#x3D;&#x2F;opt&#x2F;cloudera&#x2F;parcels
 
-<span class="hljs-comment"># Enable supervisord event monitoring.  Used in eager heartbeating, amongst</span>
-<span class="hljs-comment"># other things.</span>
-<span class="hljs-comment"># enable_supervisord_events=true</span>
+# Enable supervisord event monitoring.  Used in eager heartbeating, amongst
+# other things.
+# enable_supervisord_events&#x3D;true
 
-<span class="hljs-comment"># Maximum time to wait (in seconds) for all metric collectors to finish</span>
-<span class="hljs-comment"># collecting data.</span>
-max_collection_wait_seconds=10.0
+# Maximum time to wait (in seconds) for all metric collectors to finish
+# collecting data.
+max_collection_wait_seconds&#x3D;10.0
 
-<span class="hljs-comment"># Maximum time to wait (in seconds) when connecting to a local role's</span>
-<span class="hljs-comment"># webserver to fetch metrics.</span>
-metrics_url_timeout_seconds=30.0
+# Maximum time to wait (in seconds) when connecting to a local role's
+# webserver to fetch metrics.
+metrics_url_timeout_seconds&#x3D;30.0
 
-<span class="hljs-comment"># Maximum time to wait (in seconds) when connecting to a local TaskTracker</span>
-<span class="hljs-comment"># to fetch task attempt data.</span>
-task_metrics_timeout_seconds=5.0
+# Maximum time to wait (in seconds) when connecting to a local TaskTracker
+# to fetch task attempt data.
+task_metrics_timeout_seconds&#x3D;5.0
 
-<span class="hljs-comment"># The list of non-device (nodev) filesystem types which will be monitored.</span>
-monitored_nodev_filesystem_types=nfs,nfs4,tmpfs
+# The list of non-device (nodev) filesystem types which will be monitored.
+monitored_nodev_filesystem_types&#x3D;nfs,nfs4,tmpfs
 
-<span class="hljs-comment"># The list of filesystem types which are considered local for monitoring purposes.</span>
-<span class="hljs-comment"># These filesystems are combined with the other local filesystem types found in</span>
-<span class="hljs-comment"># /proc/filesystems</span>
-local_filesystem_whitelist=ext2,ext3,ext4,xfs
+# The list of filesystem types which are considered local for monitoring purposes.
+# These filesystems are combined with the other local filesystem types found in
+# &#x2F;proc&#x2F;filesystems
+local_filesystem_whitelist&#x3D;ext2,ext3,ext4,xfs
 
-<span class="hljs-comment"># The largest size impala profile log bundle that this agent will serve to the</span>
-<span class="hljs-comment"># CM server. If the CM server requests more than this amount, the bundle will</span>
-<span class="hljs-comment"># be limited to this size. All instances of this limit being hit are logged to</span>
-<span class="hljs-comment"># the agent log.</span>
-impala_profile_bundle_max_bytes=1073741824
+# The largest size impala profile log bundle that this agent will serve to the
+# CM server. If the CM server requests more than this amount, the bundle will
+# be limited to this size. All instances of this limit being hit are logged to
+# the agent log.
+impala_profile_bundle_max_bytes&#x3D;1073741824
 
-<span class="hljs-comment"># The largest size stacks log bundle that this agent will serve to the CM</span>
-<span class="hljs-comment"># server. If the CM server requests more than this amount, the bundle will be</span>
-<span class="hljs-comment"># limited to this size. All instances of this limit being hit are logged to the</span>
-<span class="hljs-comment"># agent log.</span>
-stacks_log_bundle_max_bytes=1073741824
+# The largest size stacks log bundle that this agent will serve to the CM
+# server. If the CM server requests more than this amount, the bundle will be
+# limited to this size. All instances of this limit being hit are logged to the
+# agent log.
+stacks_log_bundle_max_bytes&#x3D;1073741824
 
-<span class="hljs-comment"># The size to which the uncompressed portion of a stacks log can grow before it</span>
-<span class="hljs-comment"># is rotated. The log will then be compressed during rotation.</span>
-stacks_log_max_uncompressed_file_size_bytes=5242880
+# The size to which the uncompressed portion of a stacks log can grow before it
+# is rotated. The log will then be compressed during rotation.
+stacks_log_max_uncompressed_file_size_bytes&#x3D;5242880
 
-<span class="hljs-comment"># The orphan process directory staleness threshold. If a diretory is more stale</span>
-<span class="hljs-comment"># than this amount of seconds, CM agent will remove it.</span>
-orphan_process_dir_staleness_threshold=5184000
+# The orphan process directory staleness threshold. If a diretory is more stale
+# than this amount of seconds, CM agent will remove it.
+orphan_process_dir_staleness_threshold&#x3D;5184000
 
-<span class="hljs-comment"># The orphan process directory refresh interval. The CM agent will check the</span>
-<span class="hljs-comment"># staleness of the orphan processes config directory every this amount of</span>
-<span class="hljs-comment"># seconds.</span>
-orphan_process_dir_refresh_interval=3600
+# The orphan process directory refresh interval. The CM agent will check the
+# staleness of the orphan processes config directory every this amount of
+# seconds.
+orphan_process_dir_refresh_interval&#x3D;3600
 
-<span class="hljs-comment"># A knob to control the agent logging level. The options are listed as follows:</span>
-<span class="hljs-comment"># 1) DEBUG (set the agent logging level to 'logging.DEBUG')</span>
-<span class="hljs-comment"># 2) INFO (set the agent logging level to 'logging.INFO')</span>
-scm_debug=INFO
+# A knob to control the agent logging level. The options are listed as follows:
+# 1) DEBUG (set the agent logging level to 'logging.DEBUG')
+# 2) INFO (set the agent logging level to 'logging.INFO')
+scm_debug&#x3D;INFO
 
-<span class="hljs-comment"># The DNS resolution collecion interval in seconds. A java base test program</span>
-<span class="hljs-comment"># will be executed with at most this frequency to collect java DNS resolution</span>
-<span class="hljs-comment"># metrics. The test program is only executed if the associated health test,</span>
-<span class="hljs-comment"># Host DNS Resolution, is enabled.</span>
-dns_resolution_collection_interval_seconds=60
+# The DNS resolution collecion interval in seconds. A java base test program
+# will be executed with at most this frequency to collect java DNS resolution
+# metrics. The test program is only executed if the associated health test,
+# Host DNS Resolution, is enabled.
+dns_resolution_collection_interval_seconds&#x3D;60
 
-<span class="hljs-comment"># The maximum time to wait (in seconds) for the java test program to collect</span>
-<span class="hljs-comment"># java DNS resolution metrics.</span>
-dns_resolution_collection_timeout_seconds=30
+# The maximum time to wait (in seconds) for the java test program to collect
+# java DNS resolution metrics.
+dns_resolution_collection_timeout_seconds&#x3D;30
 
-<span class="hljs-comment"># The directory location in which the agent-wide kerberos credential cache</span>
-<span class="hljs-comment"># will be created.</span>
-<span class="hljs-comment"># agent_wide_credential_cache_location=/var/run/cloudera-scm-agent</span>
+# The directory location in which the agent-wide kerberos credential cache
+# will be created.
+# agent_wide_credential_cache_location&#x3D;&#x2F;var&#x2F;run&#x2F;cloudera-scm-agent
 
 [Security]
-<span class="hljs-comment"># Use TLS and certificate validation when connecting to the CM server.</span>
-use_tls=0
+# Use TLS and certificate validation when connecting to the CM server.
+use_tls&#x3D;0
 
-<span class="hljs-comment"># The maximum allowed depth of the certificate chain returned by the peer.</span>
-<span class="hljs-comment"># The default value of 9 matches the default specified in openssl's</span>
-<span class="hljs-comment"># SSL_CTX_set_verify.</span>
-max_cert_depth=9
+# The maximum allowed depth of the certificate chain returned by the peer.
+# The default value of 9 matches the default specified in openssl's
+# SSL_CTX_set_verify.
+max_cert_depth&#x3D;9
 
-<span class="hljs-comment"># A file of CA certificates in PEM format. The file can contain several CA</span>
-<span class="hljs-comment"># certificates identified by</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># -----BEGIN CERTIFICATE-----</span>
-<span class="hljs-comment"># ... (CA certificate in base64 encoding) ...</span>
-<span class="hljs-comment"># -----END CERTIFICATE-----</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># sequences. Before, between, and after the certificates text is allowed which</span>
-<span class="hljs-comment"># can be used e.g. for descriptions of the certificates.</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># The file is loaded once, the first time an HTTPS connection is attempted. A</span>
-<span class="hljs-comment"># restart of the agent is required to pick up changes to the file.</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># Note that if neither verify_cert_file or verify_cert_dir is set, certificate</span>
-<span class="hljs-comment"># verification will not be performed.</span>
-<span class="hljs-comment"># verify_cert_file=</span>
+# A file of CA certificates in PEM format. The file can contain several CA
+# certificates identified by
+#
+# -----BEGIN CERTIFICATE-----
+# ... (CA certificate in base64 encoding) ...
+# -----END CERTIFICATE-----
+#
+# sequences. Before, between, and after the certificates text is allowed which
+# can be used e.g. for descriptions of the certificates.
+#
+# The file is loaded once, the first time an HTTPS connection is attempted. A
+# restart of the agent is required to pick up changes to the file.
+#
+# Note that if neither verify_cert_file or verify_cert_dir is set, certificate
+# verification will not be performed.
+# verify_cert_file&#x3D;
 
-<span class="hljs-comment"># Directory containing CA certificates in PEM format. The files each contain one</span>
-<span class="hljs-comment"># CA certificate. The files are looked up by the CA subject name hash value,</span>
-<span class="hljs-comment"># which must hence be available. If more than one CA certificate with the same</span>
-<span class="hljs-comment"># name hash value exist, the extension must be different (e.g. 9d66eef0.0,</span>
-<span class="hljs-comment"># 9d66eef0.1 etc). The search is performed in the ordering of the extension</span>
-<span class="hljs-comment"># number, regardless of other properties of the certificates. Use the c_rehash</span>
-<span class="hljs-comment"># utility to create the necessary links.</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># The certificates in the directory are only looked up when required, e.g. when</span>
-<span class="hljs-comment"># building the certificate chain or when actually performing the verification</span>
-<span class="hljs-comment"># of a peer certificate. The contents of the directory can thus be changed</span>
-<span class="hljs-comment"># without an agent restart.</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># When looking up CA certificates, the verify_cert_file is first searched, then</span>
-<span class="hljs-comment"># those in the directory. Certificate matching is done based on the subject name,</span>
-<span class="hljs-comment"># the key identifier (if present), and the serial number as taken from the</span>
-<span class="hljs-comment"># certificate to be verified. If these data do not match, the next certificate</span>
-<span class="hljs-comment"># will be tried. If a first certificate matching the parameters is found, the</span>
-<span class="hljs-comment"># verification process will be performed; no other certificates for the same</span>
-<span class="hljs-comment"># parameters will be searched in case of failure.</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># Note that if neither verify_cert_file or verify_cert_dir is set, certificate</span>
-<span class="hljs-comment"># verification will not be performed.</span>
-<span class="hljs-comment"># verify_cert_dir=</span>
+# Directory containing CA certificates in PEM format. The files each contain one
+# CA certificate. The files are looked up by the CA subject name hash value,
+# which must hence be available. If more than one CA certificate with the same
+# name hash value exist, the extension must be different (e.g. 9d66eef0.0,
+# 9d66eef0.1 etc). The search is performed in the ordering of the extension
+# number, regardless of other properties of the certificates. Use the c_rehash
+# utility to create the necessary links.
+#
+# The certificates in the directory are only looked up when required, e.g. when
+# building the certificate chain or when actually performing the verification
+# of a peer certificate. The contents of the directory can thus be changed
+# without an agent restart.
+#
+# When looking up CA certificates, the verify_cert_file is first searched, then
+# those in the directory. Certificate matching is done based on the subject name,
+# the key identifier (if present), and the serial number as taken from the
+# certificate to be verified. If these data do not match, the next certificate
+# will be tried. If a first certificate matching the parameters is found, the
+# verification process will be performed; no other certificates for the same
+# parameters will be searched in case of failure.
+#
+# Note that if neither verify_cert_file or verify_cert_dir is set, certificate
+# verification will not be performed.
+# verify_cert_dir&#x3D;
 
-<span class="hljs-comment"># PEM file containing client private key.</span>
-<span class="hljs-comment"># client_key_file=</span>
+# PEM file containing client private key.
+# client_key_file&#x3D;
 
-<span class="hljs-comment"># A command to run which returns the client private key password on stdout</span>
-<span class="hljs-comment"># client_keypw_cmd=</span>
+# A command to run which returns the client private key password on stdout
+# client_keypw_cmd&#x3D;
 
-<span class="hljs-comment"># If client_keypw_cmd isn't specified, instead a text file containing</span>
-<span class="hljs-comment"># the client private key password can be used.</span>
-<span class="hljs-comment"># client_keypw_file=</span>
+# If client_keypw_cmd isn't specified, instead a text file containing
+# the client private key password can be used.
+# client_keypw_file&#x3D;
 
-<span class="hljs-comment"># PEM file containing client certificate.</span>
-<span class="hljs-comment"># client_cert_file=</span>
+# PEM file containing client certificate.
+# client_cert_file&#x3D;
 
-<span class="hljs-comment">## Location of Hadoop files.  These are the CDH locations when installed by</span>
-<span class="hljs-comment">## packages.  Unused when CDH is installed by parcels.</span>
+## Location of Hadoop files.  These are the CDH locations when installed by
+## packages.  Unused when CDH is installed by parcels.
 [Hadoop]
-<span class="hljs-comment">#cdh_crunch_home=/usr/lib/crunch</span>
-<span class="hljs-comment">#cdh_flume_home=/usr/lib/flume-ng</span>
-<span class="hljs-comment">#cdh_hadoop_bin=/usr/bin/hadoop</span>
-<span class="hljs-comment">#cdh_hadoop_home=/usr/lib/hadoop</span>
-<span class="hljs-comment">#cdh_hbase_home=/usr/lib/hbase</span>
-<span class="hljs-comment">#cdh_hbase_indexer_home=/usr/lib/hbase-solr</span>
-<span class="hljs-comment">#cdh_hcat_home=/usr/lib/hive-hcatalog</span>
-<span class="hljs-comment">#cdh_hdfs_home=/usr/lib/hadoop-hdfs</span>
-<span class="hljs-comment">#cdh_hive_home=/usr/lib/hive</span>
-<span class="hljs-comment">#cdh_httpfs_home=/usr/lib/hadoop-httpfs</span>
-<span class="hljs-comment">#cdh_hue_home=/usr/share/hue</span>
-<span class="hljs-comment">#cdh_hue_plugins_home=/usr/lib/hadoop</span>
-<span class="hljs-comment">#cdh_impala_home=/usr/lib/impala</span>
-<span class="hljs-comment">#cdh_kudu_home=/usr/lib/kudu</span>
-<span class="hljs-comment">#cdh_llama_home=/usr/lib/llama</span>
-<span class="hljs-comment">#cdh_mr1_home=/usr/lib/hadoop-0.20-mapreduce</span>
-<span class="hljs-comment">#cdh_mr2_home=/usr/lib/hadoop-mapreduce</span>
-<span class="hljs-comment">#cdh_oozie_home=/usr/lib/oozie</span>
-<span class="hljs-comment">#cdh_parquet_home=/usr/lib/parquet</span>
-<span class="hljs-comment">#cdh_pig_home=/usr/lib/pig</span>
-<span class="hljs-comment">#cdh_solr_home=/usr/lib/solr</span>
-<span class="hljs-comment">#cdh_spark_home=/usr/lib/spark</span>
-<span class="hljs-comment">#cdh_sqoop_home=/usr/lib/sqoop</span>
-<span class="hljs-comment">#cdh_sqoop2_home=/usr/lib/sqoop2</span>
-<span class="hljs-comment">#cdh_yarn_home=/usr/lib/hadoop-yarn</span>
-<span class="hljs-comment">#cdh_zookeeper_home=/usr/lib/zookeeper</span>
-<span class="hljs-comment">#hive_default_xml=/etc/hive/conf.dist/hive-default.xml</span>
-<span class="hljs-comment">#webhcat_default_xml=/etc/hive-webhcat/conf.dist/webhcat-default.xml</span>
-<span class="hljs-comment">#jsvc_home=/usr/libexec/bigtop-utils</span>
-<span class="hljs-comment">#tomcat_home=/usr/lib/bigtop-tomcat</span>
-<span class="hljs-comment">#oracle_home=/usr/share/oracle/instantclient</span>
+#cdh_crunch_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;crunch
+#cdh_flume_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;flume-ng
+#cdh_hadoop_bin&#x3D;&#x2F;usr&#x2F;bin&#x2F;hadoop
+#cdh_hadoop_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hadoop
+#cdh_hbase_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hbase
+#cdh_hbase_indexer_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hbase-solr
+#cdh_hcat_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hive-hcatalog
+#cdh_hdfs_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hadoop-hdfs
+#cdh_hive_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hive
+#cdh_httpfs_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hadoop-httpfs
+#cdh_hue_home&#x3D;&#x2F;usr&#x2F;share&#x2F;hue
+#cdh_hue_plugins_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hadoop
+#cdh_impala_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;impala
+#cdh_kudu_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;kudu
+#cdh_llama_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;llama
+#cdh_mr1_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hadoop-0.20-mapreduce
+#cdh_mr2_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hadoop-mapreduce
+#cdh_oozie_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;oozie
+#cdh_parquet_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;parquet
+#cdh_pig_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;pig
+#cdh_solr_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;solr
+#cdh_spark_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;spark
+#cdh_sqoop_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;sqoop
+#cdh_sqoop2_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;sqoop2
+#cdh_yarn_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;hadoop-yarn
+#cdh_zookeeper_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;zookeeper
+#hive_default_xml&#x3D;&#x2F;etc&#x2F;hive&#x2F;conf.dist&#x2F;hive-default.xml
+#webhcat_default_xml&#x3D;&#x2F;etc&#x2F;hive-webhcat&#x2F;conf.dist&#x2F;webhcat-default.xml
+#jsvc_home&#x3D;&#x2F;usr&#x2F;libexec&#x2F;bigtop-utils
+#tomcat_home&#x3D;&#x2F;usr&#x2F;lib&#x2F;bigtop-tomcat
+#oracle_home&#x3D;&#x2F;usr&#x2F;share&#x2F;oracle&#x2F;instantclient
 
-<span class="hljs-comment">## Location of Cloudera Management Services files.</span>
+## Location of Cloudera Management Services files.
 [Cloudera]
-<span class="hljs-comment">#mgmt_home=/usr/share/cmf</span>
+#mgmt_home&#x3D;&#x2F;usr&#x2F;share&#x2F;cmf
 
-<span class="hljs-comment">## Location of JDBC Drivers.</span>
+## Location of JDBC Drivers.
 [JDBC]
-<span class="hljs-comment">#cloudera_mysql_connector_jar=/usr/share/java/mysql-connector-java.jar</span>
-<span class="hljs-comment">#cloudera_oracle_connector_jar=/usr/share/java/oracle-connector-java.jar</span>
-<span class="hljs-comment">#By default, postgres jar is found dynamically in $MGMT_HOME/lib</span>
-<span class="hljs-comment">#cloudera_postgresql_jdbc_jar=</span>
+#cloudera_mysql_connector_jar&#x3D;&#x2F;usr&#x2F;share&#x2F;java&#x2F;mysql-connector-java.jar
+#cloudera_oracle_connector_jar&#x3D;&#x2F;usr&#x2F;share&#x2F;java&#x2F;oracle-connector-java.jar
+#By default, postgres jar is found dynamically in $MGMT_HOME&#x2F;lib
+#cloudera_postgresql_jdbc_jar&#x3D;
 
 [Cgroup_Paths]
-<span class="hljs-comment"># This section lists paths that agent will use to figure out resource allocation</span>
-<span class="hljs-comment"># If not specified then agent will use the cgroup that agent process is part of</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># Note: do not add /sys/fs/cgroup in the path. cgroups mounted inside container will</span>
-<span class="hljs-comment"># be used to figure out the subsystems.</span>
-<span class="hljs-comment">#cpu_cgroup_path=/</span>
-<span class="hljs-comment">#cpuacct_cgroup_path=/</span>
-<span class="hljs-comment">#blkio_cgroup_path=/</span>
-<span class="hljs-comment">#memory_cgroup_path=/</span></code></pre></div>
+# This section lists paths that agent will use to figure out resource allocation
+# If not specified then agent will use the cgroup that agent process is part of
+#
+# Note: do not add &#x2F;sys&#x2F;fs&#x2F;cgroup in the path. cgroups mounted inside container will
+# be used to figure out the subsystems.
+#cpu_cgroup_path&#x3D;&#x2F;
+#cpuacct_cgroup_path&#x3D;&#x2F;
+#blkio_cgroup_path&#x3D;&#x2F;
+#memory_cgroup_path&#x3D;&#x2F;</code></pre></div>
 
-<h3 id="2-2-db-properties-cloudera-scm-server-需要"><a href="#2-2-db-properties-cloudera-scm-server-需要" class="headerlink" title=".2.2. db.properties : cloudera-scm-server 需要"></a>.2.2. db.properties : cloudera-scm-server 需要</h3><div class="hljs"><pre class=" language-hljs bash"><span class="hljs-comment"><code class="language-hljs bash"><span class="hljs-comment"># Copyright (c) 2012 Cloudera, Inc. All rights reserved.</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-comment"># This file describes the database connection.</span>
-<span class="hljs-comment">#</span>
+<h3 id="2-2-db-properties-cloudera-scm-server-需要"><a href="#2-2-db-properties-cloudera-scm-server-需要" class="headerlink" title=".2.2. db.properties : cloudera-scm-server 需要"></a>.2.2. db.properties : cloudera-scm-server 需要</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Copyright (c) 2012 Cloudera, Inc. All rights reserved.
+#
+# This file describes the database connection.
+#
 
-<span class="hljs-comment"># The database type</span>
-<span class="hljs-comment"># Currently 'mysql', 'postgresql' and 'oracle' are valid databases.</span>
-com.cloudera.cmf.db.type=mysql
+# The database type
+# Currently 'mysql', 'postgresql' and 'oracle' are valid databases.
+com.cloudera.cmf.db.type&#x3D;mysql
 
-<span class="hljs-comment"># The database host</span>
-<span class="hljs-comment"># If a non standard port is needed, use 'hostname:port'</span>
-com.cloudera.cmf.db.host=&#123;&#123; groups[<span class="hljs-string">'MySQL'</span>][0] &#125;&#125;
+# The database host
+# If a non standard port is needed, use 'hostname:port'
+com.cloudera.cmf.db.host&#x3D;&#123;&#123; groups['MySQL'][0] &#125;&#125;
 
-<span class="hljs-comment"># The database name</span>
-com.cloudera.cmf.db.name=&#123;&#123; cmd_db_name &#125;&#125;
+# The database name
+com.cloudera.cmf.db.name&#x3D;&#123;&#123; cmd_db_name &#125;&#125;
 
-<span class="hljs-comment"># The database user</span>
-com.cloudera.cmf.db.user=&#123;&#123; root_user &#125;&#125;
+# The database user
+com.cloudera.cmf.db.user&#x3D;&#123;&#123; root_user &#125;&#125;
 
-<span class="hljs-comment"># The database user's password</span>
-com.cloudera.cmf.db.password=&#123;&#123; root_password &#125;&#125;
+# The database user's password
+com.cloudera.cmf.db.password&#x3D;&#123;&#123; root_password &#125;&#125;
 
-<span class="hljs-comment"># The db setup type</span>
-<span class="hljs-comment"># After fresh install it is set to INIT</span>
-<span class="hljs-comment"># and will be changed post config.</span>
-<span class="hljs-comment"># If scm-server uses Embedded DB then it is set to EMBEDDED</span>
-<span class="hljs-comment"># If scm-server uses External DB then it is set to EXTERNAL</span>
-com.cloudera.cmf.db.setupType=EXTERNAL <span class="hljs-comment">## external with mysql</span></code></pre></div>
+# The db setup type
+# After fresh install it is set to INIT
+# and will be changed post config.
+# If scm-server uses Embedded DB then it is set to EMBEDDED
+# If scm-server uses External DB then it is set to EXTERNAL
+com.cloudera.cmf.db.setupType&#x3D;EXTERNAL ## external with mysql</code></pre></div>
 
-<h2 id="3-部署编排"><a href="#3-部署编排" class="headerlink" title=".3. 部署编排"></a>.3. 部署编排</h2><div class="hljs"><pre class=" language-hljs YML"><span class="hljs-meta"><code class="language-hljs YML"><span class="hljs-meta">---</span>
+<h2 id="3-部署编排"><a href="#3-部署编排" class="headerlink" title=".3. 部署编排"></a>.3. 部署编排</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">---
+- hosts: CDM:Common
+  tasks:
+  - name: copy hosts
+    copy:
+        src: confs&#x2F;hosts
+        dest: &#x2F;etc&#x2F;hosts
 
-<span class="hljs-bullet">-</span> <span class="hljs-attr">hosts:</span> <span class="hljs-string">CDM:Common</span>
-  <span class="hljs-attr">tasks:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">hosts</span>
-    <span class="hljs-attr">copy:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/hosts</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/etc/hosts</span>
+  - name: set hostname
+    hostname: name&#x3D;&#123;&#123; inventory_hostname &#125;&#125;
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">set</span> <span class="hljs-string">hostname</span>
-    <span class="hljs-attr">hostname:</span> <span class="hljs-string">name=&#123;&#123;</span> <span class="hljs-string">inventory_hostname</span> <span class="hljs-string">&#125;&#125;</span>
+  - name: copy oracle-jdk1.8
+    copy:
+        src: confs&#x2F;oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm 
+        dest: &#x2F;tmp&#x2F;oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm 
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">oracle-jdk1.8</span>
-    <span class="hljs-attr">copy:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm</span> 
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/tmp/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm</span> 
+  - name: install oracle-jdk1.8
+    shell: rpm -Uvh --replacepkgs  &#x2F;tmp&#x2F;oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm 
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">oracle-jdk1.8</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">rpm</span> <span class="hljs-string">-Uvh</span> <span class="hljs-string">--replacepkgs</span>  <span class="hljs-string">/tmp/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm</span> 
+  - name: install rpcbind
+    shell: yum install -y rpcbind
+    ignore_errors: true
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">rpcbind</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">yum</span> <span class="hljs-string">install</span> <span class="hljs-string">-y</span> <span class="hljs-string">rpcbind</span>
-    <span class="hljs-attr">ignore_errors:</span> <span class="hljs-literal">true</span>
-
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">set</span> <span class="hljs-string">java_home</span>
-    <span class="hljs-attr">lineinfile:</span>
-        <span class="hljs-attr">path:</span> <span class="hljs-string">/etc/profile</span>
-        <span class="hljs-attr">line:</span> <span class="hljs-string">export</span> <span class="hljs-string">JAVA_HOME=/usr/lib/jvm/java</span>
-        <span class="hljs-attr">state:</span> <span class="hljs-string">absent</span>
+  - name: set java_home
+    lineinfile:
+        path: &#x2F;etc&#x2F;profile
+        line: export JAVA_HOME&#x3D;&#x2F;usr&#x2F;lib&#x2F;jvm&#x2F;java
+        state: absent
  
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">needed</span> <span class="hljs-string">packages</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">yum</span> <span class="hljs-string">install</span> <span class="hljs-string">cyrus-sasl-gssapi</span> <span class="hljs-string">fuse</span> <span class="hljs-string">fuse-libs</span> <span class="hljs-string">httpd</span> <span class="hljs-string">mod_ssl</span> <span class="hljs-string">openssl-devel</span> <span class="hljs-string">python-psycopg2</span> <span class="hljs-string">MySQL-python</span> <span class="hljs-string">-y</span>
+  - name: install needed packages
+    shell: yum install cyrus-sasl-gssapi fuse fuse-libs httpd mod_ssl openssl-devel python-psycopg2 MySQL-python -y
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">configure</span> <span class="hljs-string">each-cred</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">echo</span> <span class="hljs-string">-e</span> <span class="hljs-string">"y\ny\n"</span> <span class="hljs-string">|</span> <span class="hljs-string">ssh-keygen</span> <span class="hljs-string">-q</span> <span class="hljs-string">-t</span> <span class="hljs-string">rsa</span> <span class="hljs-string">-f</span> <span class="hljs-string">/root/.ssh/id_rsa</span> <span class="hljs-string">-C</span> <span class="hljs-string">""</span> <span class="hljs-string">-N</span> <span class="hljs-string">""</span>
+  - name: configure each-cred
+    shell: echo -e "y\ny\n" | ssh-keygen -q -t rsa -f &#x2F;root&#x2F;.ssh&#x2F;id_rsa -C "" -N ""
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">cat</span> <span class="hljs-string">ssh-key</span> <span class="hljs-string">auths</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">cat</span> <span class="hljs-string">/root/.ssh/id_rsa.pub</span>
-    <span class="hljs-attr">register:</span> <span class="hljs-string">id_rsa</span>
+  - name: cat ssh-key auths
+    shell: cat &#x2F;root&#x2F;.ssh&#x2F;id_rsa.pub
+    register: id_rsa
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">touch</span> <span class="hljs-string">authorized_keys</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">|</span>
-        <span class="hljs-string">echo</span> <span class="hljs-string">"ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArk0cjBbDgdke86pN9962BjcsyxUNhvtW8rkzmykqCPu2QlQxwCg5OikQxmcJUakCkkGhww88U9gx+gPgoJZ9UtClRqHbJKbyqu5XXYFfxjjjRa4N60d5wXXgga2UB6RVIgA+snPxBKi6oFlvH5jV7h3lHxRo3JRQt51/NmcbkyZyUIF7bOJztB9C85jw7dk4dXG52M9bN+FtVlGiVCVKZRWHHoEUVt7y1ZUaao5Ceqw0nAL9JZfQK1zQhrq7YI8pN3ssI35ZKL7EkVKy+qs9GplJFfTBvXO5Q0btFMtM6cY1fMEv9PIt3n0uZF1kGjAHyrAPYnQPcb3H6sDCLQJQ+Q== tp_cloud_hadoop@qiyi.com"</span> <span class="hljs-string">></span> <span class="hljs-string">/root/.ssh/authorized_keys</span>
-        <span class="hljs-string">chmod</span> <span class="hljs-number">600</span> <span class="hljs-string">/root/.ssh/authorized_keys</span>
+  - name: touch authorized_keys
+    shell: |
+        echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArk0cjBbDgdke86pN9962BjcsyxUNhvtW8rkzmykqCPu2QlQxwCg5OikQxmcJUakCkkGhww88U9gx+gPgoJZ9UtClRqHbJKbyqu5XXYFfxjjjRa4N60d5wXXgga2UB6RVIgA+snPxBKi6oFlvH5jV7h3lHxRo3JRQt51&#x2F;NmcbkyZyUIF7bOJztB9C85jw7dk4dXG52M9bN+FtVlGiVCVKZRWHHoEUVt7y1ZUaao5Ceqw0nAL9JZfQK1zQhrq7YI8pN3ssI35ZKL7EkVKy+qs9GplJFfTBvXO5Q0btFMtM6cY1fMEv9PIt3n0uZF1kGjAHyrAPYnQPcb3H6sDCLQJQ+Q&#x3D;&#x3D; tp_cloud_hadoop@qiyi.com" > &#x2F;root&#x2F;.ssh&#x2F;authorized_keys
+        chmod 600 &#x2F;root&#x2F;.ssh&#x2F;authorized_keys
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">set</span> <span class="hljs-string">public-keys</span> <span class="hljs-string">to</span> <span class="hljs-string">each</span> <span class="hljs-string">nodes</span>
-    <span class="hljs-attr">lineinfile:</span>
-        <span class="hljs-attr">path:</span> <span class="hljs-string">/root/.ssh/authorized_keys</span>
-        <span class="hljs-attr">line:</span> <span class="hljs-string">"<span class="hljs-template-variable">&#123;&#123; hostvars[item].id_rsa.stdout &#125;&#125;</span>"</span>
-        <span class="hljs-attr">state:</span> <span class="hljs-string">present</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">"<span class="hljs-template-variable">&#123;&#123; groups['Common'] | union(groups['CDM']) | unique &#125;&#125;</span>"</span>
+  - name: set public-keys to each nodes
+    lineinfile:
+        path: &#x2F;root&#x2F;.ssh&#x2F;authorized_keys
+        line: "&#123;&#123; hostvars[item].id_rsa.stdout &#125;&#125;"
+        state: present
+    with_items:
+        - "&#123;&#123; groups['Common'] | union(groups['CDM']) | unique &#125;&#125;"
 
-<span class="hljs-bullet">-</span> <span class="hljs-attr">hosts:</span> <span class="hljs-string">CDM</span>
-  <span class="hljs-attr">tasks:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">make</span> <span class="hljs-string">sure</span> <span class="hljs-string">mysql-connector</span> <span class="hljs-string">exists</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">mkdir</span> <span class="hljs-string">-p</span> <span class="hljs-string">/usr/share/java</span>
+- hosts: CDM
+  tasks:
+  - name: make sure mysql-connector exists
+    shell: mkdir -p &#x2F;usr&#x2F;share&#x2F;java
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">mysql-connector</span>
-    <span class="hljs-attr">copy:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/mysql-connector-java.jar</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/usr/share/java/mysql-connector-java.jar</span>
+  - name: copy mysql-connector
+    copy:
+        src: confs&#x2F;mysql-connector-java.jar
+        dest: &#x2F;usr&#x2F;share&#x2F;java&#x2F;mysql-connector-java.jar
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">files</span>
-    <span class="hljs-attr">copy:</span> 
-        <span class="hljs-attr">src:</span> <span class="hljs-string">"confs/<span class="hljs-template-variable">&#123;&#123; item &#125;&#125;</span>"</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">"/tmp/<span class="hljs-template-variable">&#123;&#123; item &#125;&#125;</span>"</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm</span>
+  - name: copy files
+    copy: 
+        src: "confs&#x2F;&#123;&#123; item &#125;&#125;"
+        dest: "&#x2F;tmp&#x2F;&#123;&#123; item &#125;&#125;"
+    with_items:
+        - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">rpm</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">rpm</span> <span class="hljs-string">-Uvh</span> <span class="hljs-string">--replacepkgs</span> <span class="hljs-string">/tmp/&#123;&#123;</span> <span class="hljs-string">item</span> <span class="hljs-string">&#125;&#125;</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm</span>
+  - name: install rpm
+    shell: rpm -Uvh --replacepkgs &#x2F;tmp&#x2F;&#123;&#123; item &#125;&#125;
+    with_items:
+        - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">create</span> <span class="hljs-string">target</span> <span class="hljs-string">directory</span>
-    <span class="hljs-attr">file:</span>
-        <span class="hljs-attr">path:</span> <span class="hljs-string">/opt/cloudera/parcels</span>
-        <span class="hljs-attr">state:</span> <span class="hljs-string">directory</span>
-        <span class="hljs-attr">owner:</span> <span class="hljs-string">cloudera-scm</span>
+  - name: create target directory
+    file:
+        path: &#x2F;opt&#x2F;cloudera&#x2F;parcels
+        state: directory
+        owner: cloudera-scm
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">parcells</span> <span class="hljs-string">file</span>
-    <span class="hljs-attr">copy:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">"confs/cdh/<span class="hljs-template-variable">&#123;&#123; item &#125;&#125;</span>"</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">"/opt/cloudera/parcels/<span class="hljs-template-variable">&#123;&#123; item &#125;&#125;</span>"</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha256</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">manifest.json</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel</span>
+  - name: copy parcells file
+    copy:
+        src: "confs&#x2F;cdh&#x2F;&#123;&#123; item &#125;&#125;"
+        dest: "&#x2F;opt&#x2F;cloudera&#x2F;parcels&#x2F;&#123;&#123; item &#125;&#125;"
+    with_items:
+        - CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha
+        - CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha256
+        - manifest.json
+        - CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">template</span> <span class="hljs-string">files</span>
-    <span class="hljs-attr">template:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/db.properties</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/etc/cloudera-scm-server/db.properties</span>
+  - name: copy template files
+    template:
+        src: confs&#x2F;db.properties
+        dest: &#x2F;etc&#x2F;cloudera-scm-server&#x2F;db.properties
 
-<span class="hljs-bullet">-</span> <span class="hljs-attr">hosts:</span> <span class="hljs-string">Common</span>
-  <span class="hljs-attr">tasks:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">copy</span> <span class="hljs-string">files</span>
-    <span class="hljs-attr">copy:</span> 
-        <span class="hljs-attr">src:</span> <span class="hljs-string">"confs/<span class="hljs-template-variable">&#123;&#123; item &#125;&#125;</span>"</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">"/tmp/<span class="hljs-template-variable">&#123;&#123; item &#125;&#125;</span>"</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm</span>
+- hosts: Common
+  tasks:
+  - name: copy files
+    copy: 
+        src: "confs&#x2F;&#123;&#123; item &#125;&#125;"
+        dest: "&#x2F;tmp&#x2F;&#123;&#123; item &#125;&#125;"
+    with_items:
+        - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">install</span> <span class="hljs-string">rpm</span>
-    <span class="hljs-attr">shell:</span> <span class="hljs-string">rpm</span> <span class="hljs-string">-Uvh</span> <span class="hljs-string">--replacepkgs</span> <span class="hljs-string">/tmp/&#123;&#123;</span> <span class="hljs-string">item</span> <span class="hljs-string">&#125;&#125;</span>
-    <span class="hljs-attr">with_items:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm</span>
+  - name: install rpm
+    shell: rpm -Uvh --replacepkgs &#x2F;tmp&#x2F;&#123;&#123; item &#125;&#125;
+    with_items:
+        - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
+        - cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 
-<span class="hljs-bullet">-</span> <span class="hljs-attr">hosts:</span> <span class="hljs-string">CDM:Common</span>
-  <span class="hljs-attr">tasks:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">configure</span> <span class="hljs-string">client</span> <span class="hljs-string">conf</span>
-    <span class="hljs-attr">template:</span>
-        <span class="hljs-attr">src:</span> <span class="hljs-string">confs/config.ini</span>
-        <span class="hljs-attr">dest:</span> <span class="hljs-string">/etc/cloudera-scm-agent/config.ini</span>
+- hosts: CDM:Common
+  tasks:
+  - name: configure client conf
+    template:
+        src: confs&#x2F;config.ini
+        dest: &#x2F;etc&#x2F;cloudera-scm-agent&#x2F;config.ini
 
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">configure</span> <span class="hljs-string">ntpd</span> <span class="hljs-string">service</span>
-    <span class="hljs-attr">include:</span> <span class="hljs-string">ntpd.yml</span> <span class="hljs-comment">## 公网或公司服务</span></code></pre></div>
+  - name: configure ntpd service
+    include: ntpd.yml ## 公网或公司服务</code></pre></div>
 
 <h2 id="4-其他补充"><a href="#4-其他补充" class="headerlink" title=".4. 其他补充"></a>.4. 其他补充</h2><h3 id="4-1-创建MySQL数据库"><a href="#4-1-创建MySQL数据库" class="headerlink" title=".4.1. 创建MySQL数据库"></a>.4.1. 创建MySQL数据库</h3><div class="hljs"><pre class=" language-hljs bash"><code class="language-hljs bash">CREATE DATABASE mydatabase CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;</code></pre></div>
 
