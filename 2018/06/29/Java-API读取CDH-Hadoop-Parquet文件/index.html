@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      543 字
+      732 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      8
+      11
        分钟
     </span>
   
@@ -210,44 +210,7 @@
 <li><strong>htrace-core4-4.0.1-incubating</strong></li>
 </ul>
 <hr>
-<h2 id="相关代码（单节点）"><a href="#相关代码（单节点）" class="headerlink" title="相关代码（单节点）"></a>相关代码（单节点）</h2><pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Configuration conf;
-<span class="hljs-keyword">static</span> {
-	conf = <span class="hljs-keyword">new</span> Configuration();
-	conf.set(<span class="hljs-string">"fs.hdfs.impl"</span>, <span class="hljs-string">"org.apache.hadoop.hdfs.DistributedFileSystem"</span>);
-}
-
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IllegalArgumentException,</span>
-<span class="hljs-function">		IOException </span>{
-	<span class="hljs-keyword">long</span> begin = System.currentTimeMillis();
-	
-	<span class="hljs-keyword">if</span> (args.length &lt; <span class="hljs-number">1</span>) {<span class="hljs-comment">// Input arguments</span>
-		System.out.println(<span class="hljs-string">"Less params"</span>);
-		<span class="hljs-keyword">return</span>;
-	}
-	String date = args[<span class="hljs-number">0</span>];<span class="hljs-comment">// Input Date Arguments</span>
-	String hdfsPath = <span class="hljs-string">"hdfs://NameNodeURL:port/user/hive/default/ip24data_parquet_all/pt="</span>
-			+ date;
-	HashMap<string, data=""> map = <span class="hljs-keyword">new</span> HashMap<string, data="">();
-	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++) {
-		<span class="hljs-meta">@SuppressWarnings</span>(<span class="hljs-string">"deprecation"</span>)
-		AvroParquetReader<genericrecord> reader = <span class="hljs-keyword">new</span> AvroParquetReader<genericrecord>(
-				conf, <span class="hljs-keyword">new</span> Path(hdfsPath + <span class="hljs-string">"//00000"</span> + i + <span class="hljs-string">"_0"</span>));
-		GenericRecord record = <span class="hljs-keyword">null</span>;
-		<span class="hljs-keyword">while</span> ((record = reader.read()) != <span class="hljs-keyword">null</span>) {
-			String key = record.get(<span class="hljs-string">"vin"</span>).toString()
-					+ record.get(<span class="hljs-string">"data_date"</span>).toString();
-			DATA cnt = <span class="hljs-keyword">new</span> DATA(record.get(<span class="hljs-string">"vin"</span>), record.get(<span class="hljs-string">"data_date"</span>),
-					record.get(<span class="hljs-string">"latitude"</span>), record.get(<span class="hljs-string">"longitude"</span>),
-					record.get(<span class="hljs-string">"work_model"</span>));
-			map.put(key, cnt);
-		}
-		reader.close();
-	}
-	
-	System.out.println(<span class="hljs-string">"Left APP: "</span>+<span class="hljs-keyword">new</span> Date().toString());
-	System.out.println(<span class="hljs-string">"Total TIme used : ms: "</span>+(System.currentTimeMillis()-begin));
-	System.out.println(<span class="hljs-string">"Only Load Data: size: "</span>+map.size());
-}</genericrecord></genericrecord></string,></string,></code></span></pre>
+<h2 id="相关代码（单节点）"><a href="#相关代码（单节点）" class="headerlink" title="相关代码（单节点）"></a>相关代码（单节点）</h2><figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Configuration conf;<br><span class="hljs-keyword">static</span> {<br>	conf = <span class="hljs-keyword">new</span> Configuration();<br>	conf.set(<span class="hljs-string">"fs.hdfs.impl"</span>, <span class="hljs-string">"org.apache.hadoop.hdfs.DistributedFileSystem"</span>);<br>}<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IllegalArgumentException,</span><br><span class="hljs-function">		IOException </span>{<br>	<span class="hljs-keyword">long</span> begin = System.currentTimeMillis();<br>	<br>	<span class="hljs-keyword">if</span> (args.length &lt; <span class="hljs-number">1</span>) {<span class="hljs-comment">// Input arguments</span><br>		System.out.println(<span class="hljs-string">"Less params"</span>);<br>		<span class="hljs-keyword">return</span>;<br>	}<br>	String date = args[<span class="hljs-number">0</span>];<span class="hljs-comment">// Input Date Arguments</span><br>	String hdfsPath = <span class="hljs-string">"hdfs://NameNodeURL:port/user/hive/default/ip24data_parquet_all/pt="</span><br>			+ date;<br>	HashMap&lt;String, DATA&gt; map = <span class="hljs-keyword">new</span> HashMap&lt;String, DATA&gt;();<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++) {<br>		<span class="hljs-meta">@SuppressWarnings</span>(<span class="hljs-string">"deprecation"</span>)<br>		AvroParquetReader&lt;GenericRecord&gt; reader = <span class="hljs-keyword">new</span> AvroParquetReader&lt;GenericRecord&gt;(<br>				conf, <span class="hljs-keyword">new</span> Path(hdfsPath + <span class="hljs-string">"//00000"</span> + i + <span class="hljs-string">"_0"</span>));<br>		GenericRecord record = <span class="hljs-keyword">null</span>;<br>		<span class="hljs-keyword">while</span> ((record = reader.read()) != <span class="hljs-keyword">null</span>) {<br>			String key = record.get(<span class="hljs-string">"vin"</span>).toString()<br>					+ record.get(<span class="hljs-string">"data_date"</span>).toString();<br>			DATA cnt = <span class="hljs-keyword">new</span> DATA(record.get(<span class="hljs-string">"vin"</span>), record.get(<span class="hljs-string">"data_date"</span>),<br>					record.get(<span class="hljs-string">"latitude"</span>), record.get(<span class="hljs-string">"longitude"</span>),<br>					record.get(<span class="hljs-string">"work_model"</span>));<br>			map.put(key, cnt);<br>		}<br>		reader.close();<br>	}<br>	<br>	System.out.println(<span class="hljs-string">"Left APP: "</span>+<span class="hljs-keyword">new</span> Date().toString());<br>	System.out.println(<span class="hljs-string">"Total TIme used : ms: "</span>+(System.currentTimeMillis()-begin));<br>	System.out.println(<span class="hljs-string"><code class="language-hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Configuration conf;<br><span class="hljs-keyword">static</span> {<br>	conf = <span class="hljs-keyword">new</span> Configuration();<br>	conf.set(<span class="hljs-string">"fs.hdfs.impl"</span>, <span class="hljs-string">"org.apache.hadoop.hdfs.DistributedFileSystem"</span>);<br>}<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IllegalArgumentException,</span><br><span class="hljs-function">		IOException </span>{<br>	<span class="hljs-keyword">long</span> begin = System.currentTimeMillis();<br>	<br>	<span class="hljs-keyword">if</span> (args.length &lt; <span class="hljs-number">1</span>) {<span class="hljs-comment">// Input arguments</span><br>		System.out.println(<span class="hljs-string">"Less params"</span>);<br>		<span class="hljs-keyword">return</span>;<br>	}<br>	String date = args[<span class="hljs-number">0</span>];<span class="hljs-comment">// Input Date Arguments</span><br>	String hdfsPath = <span class="hljs-string">"hdfs://NameNodeURL:port/user/hive/default/ip24data_parquet_all/pt="</span><br>			+ date;<br>	HashMap&lt;String, DATA&gt; map = <span class="hljs-keyword">new</span> HashMap&lt;String, DATA&gt;();<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++) {<br>		<span class="hljs-meta">@SuppressWarnings</span>(<span class="hljs-string">"deprecation"</span>)<br>		AvroParquetReader&lt;GenericRecord&gt; reader = <span class="hljs-keyword">new</span> AvroParquetReader&lt;GenericRecord&gt;(<br>				conf, <span class="hljs-keyword">new</span> Path(hdfsPath + <span class="hljs-string">"//00000"</span> + i + <span class="hljs-string">"_0"</span>));<br>		GenericRecord record = <span class="hljs-keyword">null</span>;<br>		<span class="hljs-keyword">while</span> ((record = reader.read()) != <span class="hljs-keyword">null</span>) {<br>			String key = record.get(<span class="hljs-string">"vin"</span>).toString()<br>					+ record.get(<span class="hljs-string">"data_date"</span>).toString();<br>			DATA cnt = <span class="hljs-keyword">new</span> DATA(record.get(<span class="hljs-string">"vin"</span>), record.get(<span class="hljs-string">"data_date"</span>),<br>					record.get(<span class="hljs-string">"latitude"</span>), record.get(<span class="hljs-string">"longitude"</span>),<br>					record.get(<span class="hljs-string">"work_model"</span>));<br>			map.put(key, cnt);<br>		}<br>		reader.close();<br>	}<br>	<br>	System.out.println(<span class="hljs-string">"Left APP: "</span>+<span class="hljs-keyword">new</span> Date().toString());<br>	System.out.println(<span class="hljs-string">"Total TIme used : ms: "</span>+(System.currentTimeMillis()-begin));<br>	System.out.println(<span class="hljs-string">"Only Load Data: size: "</span>+map.size());<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 
 <h3 id="需要注意的地方："><a href="#需要注意的地方：" class="headerlink" title="需要注意的地方："></a>需要注意的地方：</h3><ol>
 <li><strong>htrace-core4-4.0.1-incubating.jar</strong>，可以在相应的环境中找到，或到Maven/Htrace的官网上去找到；Htrace管网上的一般为源码，需要自行编译。</li>

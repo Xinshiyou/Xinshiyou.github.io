@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      174 字
+      288 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      3
+      5
        分钟
     </span>
   
@@ -195,62 +195,13 @@
               <p>《Java并发编程 从入门到精通》读书笔记。</p>
 <a id="more"></a>
 
-<h2 id="错误模式"><a href="#错误模式" class="headerlink" title="错误模式"></a>错误模式</h2><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{
+<h2 id="错误模式"><a href="#错误模式" class="headerlink" title="错误模式"></a>错误模式</h2><figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{<br><br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;<br>	<span class="hljs-function">privae <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{<br>		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>			instance = <span class="hljs-keyword">new</span> Test();<br>		<span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{<br><br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;<br>	<span class="hljs-function">privae <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{<br>		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>			instance = <span class="hljs-keyword">new</span> Test();<br>		<span class="hljs-keyword">return</span> instance;<br>	}<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-function">privae <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-			instance = <span class="hljs-keyword">new</span> Test();
-		<span class="hljs-keyword">return</span> instance;
-	}
-}</code></span></span></pre>
+<h2 id="低效模式：synchronized"><a href="#低效模式：synchronized" class="headerlink" title="低效模式：synchronized"></a>低效模式：synchronized</h2><figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{<br><br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;<br>	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">synchronized</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{<br>		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>			instance = <span class="hljs-keyword">new</span> Test();<br>		<span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{<br><br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;<br>	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">synchronized</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{<br>		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>			instance = <span class="hljs-keyword">new</span> Test();<br>		<span class="hljs-keyword">return</span> instance;<br>	}<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 
-<h2 id="低效模式：synchronized"><a href="#低效模式：synchronized" class="headerlink" title="低效模式：synchronized"></a>低效模式：synchronized</h2><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{
+<h2 id="常见模式：使用对象锁"><a href="#常见模式：使用对象锁" class="headerlink" title="常见模式：使用对象锁"></a>常见模式：使用对象锁</h2><figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{<br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;<br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] lock = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">0</span>];<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{<br>		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>			<span class="hljs-keyword">synchronized</span>(lock){<br>				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>					instance = <span class="hljs-keyword">new</span> Test();<br>			}<br>		<span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{<br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;<br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] lock = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">0</span>];<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{<br>		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>			<span class="hljs-keyword">synchronized</span>(lock){<br>				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>					instance = <span class="hljs-keyword">new</span> Test();<br>			}<br>		<span class="hljs-keyword">return</span> instance;<br>	}<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">synchronized</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-			instance = <span class="hljs-keyword">new</span> Test();
-		<span class="hljs-keyword">return</span> instance;
-	}
-}</code></span></span></pre>
-
-<h2 id="常见模式：使用对象锁"><a href="#常见模式：使用对象锁" class="headerlink" title="常见模式：使用对象锁"></a>常见模式：使用对象锁</h2><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] lock = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">0</span>];
-	
-	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-			<span class="hljs-keyword">synchronized</span>(lock){
-				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-					instance = <span class="hljs-keyword">new</span> Test();
-			}
-		<span class="hljs-keyword">return</span> instance;
-	}
-}</code></span></span></pre>
-
-<h2 id="常见模式：ReentranLock"><a href="#常见模式：ReentranLock" class="headerlink" title="常见模式：ReentranLock"></a>常见模式：ReentranLock</h2><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> ReentranLock lock = <span class="hljs-keyword">new</span> ReentranLock();
-	
-	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance){
-			lock.lock();
-			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-				instance = <span class="hljs-keyword">new</span> Test();
-			lock.unlock();
-		}
-		<span class="hljs-keyword">return</span> instance;
-	}
-}</code></span></span></pre>
+<h2 id="常见模式：ReentranLock"><a href="#常见模式：ReentranLock" class="headerlink" title="常见模式：ReentranLock"></a>常见模式：ReentranLock</h2><figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{<br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;<br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> ReentranLock lock = <span class="hljs-keyword">new</span> ReentranLock();<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{<br>		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance){<br>			lock.lock();<br>			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>				instance = <span class="hljs-keyword">new</span> Test();<br>			lock.unlock();<br>		}<br>		<span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>{<br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;<br>	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> ReentranLock lock = <span class="hljs-keyword">new</span> ReentranLock();<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>{}<br>	<br>	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>{<br>		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance){<br>			lock.lock();<br>			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)<br>				instance = <span class="hljs-keyword">new</span> Test();<br>			lock.unlock();<br>		}<br>		<span class="hljs-keyword">return</span> instance;<br>	}<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
             </article>
             <hr>
             <div>

@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      432 字
+      481 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      5
+      6
        分钟
     </span>
   
@@ -203,39 +203,7 @@
 <li>通过ES API可以创建Index。一般可以选择Java/Python的ES接口API，可以实现该功能。</li>
 </ol>
 <h3 id="建立Type"><a href="#建立Type" class="headerlink" title="建立Type"></a>建立Type</h3><p>  虽然ES允许事先不建立Index，就可以直接插入数据。但这种方式存在安全隐患，比如类型转换，类型设置等方面的隐患。最好的方式就是实现创建Index/Type，定义好需要插入数据的类型，方便后期检索。</p>
-<pre class=" language-hljs sml">curl -<span class="hljs-type">XPUT</span> <span class="hljs-symbol">'ES</span> <span class="hljs-type">Server</span> <span class="hljs-type">IP</span>:<span class="hljs-number">9200</span>/<span class="hljs-type">Test</span>?pretty' -<span class="hljs-type">H</span> <span class="hljs-symbol">'Content</span>-<span class="hljs-type"><code class="language-hljs sml">curl -<span class="hljs-type">XPUT</span> <span class="hljs-symbol">'ES</span> <span class="hljs-type">Server</span> <span class="hljs-type">IP</span>:<span class="hljs-number">9200</span>/<span class="hljs-type">Test</span>?pretty' -<span class="hljs-type">H</span> <span class="hljs-symbol">'Content</span>-<span class="hljs-type">Type</span>: application/json' -d'
-{
-	<span class="hljs-string">"settings"</span>: {
-		<span class="hljs-string">"index"</span>: {
-			<span class="hljs-string">"number_of_shards"</span>: <span class="hljs-number">5</span>,
-			<span class="hljs-string">"number_of_replicas"</span>: <span class="hljs-number">2</span>
-		}
-	},
-	<span class="hljs-string">"mappings"</span>: {
-		<span class="hljs-string">"test"</span>: {
-			<span class="hljs-string">"properties"</span>: {
-				<span class="hljs-string">"province"</span>: {
-					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span>
-				},
-				<span class="hljs-string">"city"</span>: {
-					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span>
-				},
-				<span class="hljs-string">"district"</span>: {
-					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span>
-				},
-				<span class="hljs-string">"street"</span>: {
-					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span>
-				},
-				<span class="hljs-string">"name"</span>: {
-					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span>
-				},
-				<span class="hljs-string">"location"</span>: {
-					<span class="hljs-string">"type"</span>: <span class="hljs-string">"geo_point"</span>
-				},
-			}
-		}
-	}
-}</code></span></pre>
+<figure class="highlight sml"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs sml">curl -<span class="hljs-type">XPUT</span> <span class="hljs-symbol">'ES</span> <span class="hljs-type">Server</span> <span class="hljs-type">IP</span>:<span class="hljs-number">9200</span>/<span class="hljs-type">Test</span>?pretty' -<span class="hljs-type">H</span> <span class="hljs-symbol">'Content</span>-<span class="hljs-type">Type</span>: application/json' -d'<br>{<br>	<span class="hljs-string">"settings"</span>: {<br>		<span class="hljs-string">"index"</span>: {<br>			<span class="hljs-string">"number_of_shards"</span>: <span class="hljs-number">5</span>,<br>			<span class="hljs-string">"number_of_replicas"</span>: <span class="hljs-number">2</span><br>		}<br>	},<br>	<span class="hljs-string">"mappings"</span>: {<br>		<span class="hljs-string">"test"</span>: {<br>			<span class="hljs-string">"properties"</span>: {<br>				<span class="hljs-string">"province"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"city"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"district"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"street"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"name"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"location"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string"><code class="language-hljs sml">curl -<span class="hljs-type">XPUT</span> <span class="hljs-symbol">'ES</span> <span class="hljs-type">Server</span> <span class="hljs-type">IP</span>:<span class="hljs-number">9200</span>/<span class="hljs-type">Test</span>?pretty' -<span class="hljs-type">H</span> <span class="hljs-symbol">'Content</span>-<span class="hljs-type">Type</span>: application/json' -d'<br>{<br>	<span class="hljs-string">"settings"</span>: {<br>		<span class="hljs-string">"index"</span>: {<br>			<span class="hljs-string">"number_of_shards"</span>: <span class="hljs-number">5</span>,<br>			<span class="hljs-string">"number_of_replicas"</span>: <span class="hljs-number">2</span><br>		}<br>	},<br>	<span class="hljs-string">"mappings"</span>: {<br>		<span class="hljs-string">"test"</span>: {<br>			<span class="hljs-string">"properties"</span>: {<br>				<span class="hljs-string">"province"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"city"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"district"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"street"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"name"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span><br>				},<br>				<span class="hljs-string">"location"</span>: {<br>					<span class="hljs-string">"type"</span>: <span class="hljs-string">"geo_point"</span><br>				},<br>			}<br>		}<br>	}<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 <h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><p>  这里使用Java API实现将数据插入ES的功能，关于ES Client的使用，可以参考文章：<a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html" target="_blank" rel="noopener">https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html</a></p>
 <h2 id="选择ES的目的"><a href="#选择ES的目的" class="headerlink" title="选择ES的目的"></a>选择ES的目的</h2><ol>
 <li>通过ES，可以实现去重的功能：因为不同位置爬去POI，可能重复；</li>

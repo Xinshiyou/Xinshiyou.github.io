@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1.8k 字
+      2.2k 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      24
+      32
        分钟
     </span>
   
@@ -208,54 +208,11 @@
 <li><p>主要类：<strong>org.apache.hadoop.hive.cli.CliDriver</strong></p>
 </li>
 <li><p>ctrl+c方式断开：<br>CliDriver注册了信号处理：</p>
-<pre class=" language-hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> interruptRequested;
-
-<span class="hljs-meta">@Override</span>
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handle</span><span class="hljs-params">(Signal signal)</span> </span>{
-  <span class="hljs-keyword">boolean</span> initialRequest = !interruptRequested;
-  interruptRequested = <span class="hljs-keyword">true</span>;
-
-  <span class="hljs-comment">// Kill the VM on second ctrl+c</span>
-  <span class="hljs-keyword">if</span> (!initialRequest) {
-    console.printInfo(<span class="hljs-string">"Exiting the JVM"</span>);
-    System.exit(<span class="hljs-number">127</span>);
-  }
-
-  <span class="hljs-comment">// Interrupt the CLI thread to stop the current statement and return to prompt</span>
-  console.printInfo(<span class="hljs-string">"Interrupting... Be patient, this might take some time."</span>);
-  console.printInfo(<span class="hljs-string">"Press Ctrl+C again to kill JVM"</span>);
-
-  <span class="hljs-comment">// First, kill any running MR jobs</span>
-  HadoopJobExecHelper.killRunningJobs();
-  TezJobExecHelper.killRunningJobs();
-  HiveInterruptUtils.interrupt();
-}</code></span></pre>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> interruptRequested;<br><br><span class="hljs-meta">@Override</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handle</span><span class="hljs-params">(Signal signal)</span> </span>{<br>  <span class="hljs-keyword">boolean</span> initialRequest = !interruptRequested;<br>  interruptRequested = <span class="hljs-keyword">true</span>;<br><br>  <span class="hljs-comment">// Kill the VM on second ctrl+c</span><br>  <span class="hljs-keyword">if</span> (!initialRequest) {<br>    console.printInfo(<span class="hljs-string">"Exiting the JVM"</span>);<br>    System.exit(<span class="hljs-number">127</span>);<br>  }<br><br>  <span class="hljs-comment">// Interrupt the CLI thread to stop the current statement and return to prompt</span><br>  console.printInfo(<span class="hljs-string">"Interrupting... Be patient, this might take some time."</span>);<br>  console.printInfo(<span class="hljs-string">"Press Ctrl+C again to kill JVM"</span>);<br><br>  <span class="hljs-comment"><code class="language-hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> interruptRequested;<br><br><span class="hljs-meta">@Override</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handle</span><span class="hljs-params">(Signal signal)</span> </span>{<br>  <span class="hljs-keyword">boolean</span> initialRequest = !interruptRequested;<br>  interruptRequested = <span class="hljs-keyword">true</span>;<br><br>  <span class="hljs-comment">// Kill the VM on second ctrl+c</span><br>  <span class="hljs-keyword">if</span> (!initialRequest) {<br>    console.printInfo(<span class="hljs-string">"Exiting the JVM"</span>);<br>    System.exit(<span class="hljs-number">127</span>);<br>  }<br><br>  <span class="hljs-comment">// Interrupt the CLI thread to stop the current statement and return to prompt</span><br>  console.printInfo(<span class="hljs-string">"Interrupting... Be patient, this might take some time."</span>);<br>  console.printInfo(<span class="hljs-string">"Press Ctrl+C again to kill JVM"</span>);<br><br>  <span class="hljs-comment">// First, kill any running MR jobs</span><br>  HadoopJobExecHelper.killRunningJobs();<br>  TezJobExecHelper.killRunningJobs();<br>  HiveInterruptUtils.interrupt();<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 <p>  通过以上的源码可以看出，如果我们使用 <strong>ctrl+c</strong> 命令会触发Kill操作，依次处理了 <strong>HadoopJob</strong> 、<strong>TezJob</strong> 以及Hive的退出操作；如果前后两次使用 <strong>ctrl+c</strong> 命令，那么直接Kill JVM。</p>
 </li>
 <li><p>直接Kill -9方式退出Hive：针对Yarn MR任务模式，对于LocalMRJob不做讨论。<br>通过阅读源码：</p>
-<pre class=" language-hljs java">} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd_trimmed.startsWith(<span class="hljs-string"><code class="language-hljs java">} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd_trimmed.startsWith(<span class="hljs-string">"!"</span>)) {
-
-String shell_cmd = cmd_trimmed.substring(<span class="hljs-number">1</span>);
-shell_cmd = <span class="hljs-keyword">new</span> VariableSubstitution(<span class="hljs-keyword">new</span> HiveVariableSource() {
-  <span class="hljs-meta">@Override</span>
-  <span class="hljs-function"><span class="hljs-keyword">public</span> Map<string, string=""> <span class="hljs-title">getHiveVariable</span><span class="hljs-params">()</span> </string,></span>{
-    <span class="hljs-keyword">return</span> SessionState.get().getHiveVariables();
-  }
-}).substitute(ss.getConf(), shell_cmd);
-
-<span class="hljs-comment">// shell_cmd = "/bin/bash -c \'" + shell_cmd + "\'";</span>
-<span class="hljs-keyword">try</span> {
-  ShellCmdExecutor executor = <span class="hljs-keyword">new</span> ShellCmdExecutor(shell_cmd, ss.out, ss.err);
-  ret = executor.execute();
-  <span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) {
-    console.printError(<span class="hljs-string">"Command failed with exit code = "</span> + ret);
-  }
-} <span class="hljs-keyword">catch</span> (Exception e) {
-  console.printError(<span class="hljs-string">"Exception raised from Shell command "</span> + e.getLocalizedMessage(),
-    stringifyException(e));
-  ret = <span class="hljs-number">1</span>;
-}
- }  <span class="hljs-keyword">else</span> { <span class="hljs-comment">// local mode</span></code></span></pre>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java">} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd_trimmed.startsWith(<span class="hljs-string">"!"</span>)) {<br><br>String shell_cmd = cmd_trimmed.substring(<span class="hljs-number">1</span>);<br>shell_cmd = <span class="hljs-keyword">new</span> VariableSubstitution(<span class="hljs-keyword">new</span> HiveVariableSource() {<br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-function"><span class="hljs-keyword">public</span> Map&lt;String, String&gt; <span class="hljs-title">getHiveVariable</span><span class="hljs-params">()</span> </span>{<br>    <span class="hljs-keyword">return</span> SessionState.get().getHiveVariables();<br>  }<br>}).substitute(ss.getConf(), shell_cmd);<br><br><span class="hljs-comment">// shell_cmd = "/bin/bash -c \'" + shell_cmd + "\'";</span><br><span class="hljs-keyword">try</span> {<br>  ShellCmdExecutor executor = <span class="hljs-keyword">new</span> ShellCmdExecutor(shell_cmd, ss.out, ss.err);<br>  ret = executor.execute();<br>  <span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) {<br>    console.printError(<span class="hljs-string">"Command failed with exit code = "</span> + ret);<br>  }<br>} <span class="hljs-keyword">catch</span> (Exception e) {<br>  console.printError(<span class="hljs-string">"Exception raised from Shell command "</span> + e.getLocalizedMessage(),<br>    stringifyException(e));<br>  ret = <span class="hljs-number">1</span>;<br>}<br> }  <span class="hljs-keyword">else</span> { <span class="hljs-comment"><code class="language-hljs java">} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd_trimmed.startsWith(<span class="hljs-string">"!"</span>)) {<br><br>String shell_cmd = cmd_trimmed.substring(<span class="hljs-number">1</span>);<br>shell_cmd = <span class="hljs-keyword">new</span> VariableSubstitution(<span class="hljs-keyword">new</span> HiveVariableSource() {<br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-function"><span class="hljs-keyword">public</span> Map&lt;String, String&gt; <span class="hljs-title">getHiveVariable</span><span class="hljs-params">()</span> </span>{<br>    <span class="hljs-keyword">return</span> SessionState.get().getHiveVariables();<br>  }<br>}).substitute(ss.getConf(), shell_cmd);<br><br><span class="hljs-comment">// shell_cmd = "/bin/bash -c \'" + shell_cmd + "\'";</span><br><span class="hljs-keyword">try</span> {<br>  ShellCmdExecutor executor = <span class="hljs-keyword">new</span> ShellCmdExecutor(shell_cmd, ss.out, ss.err);<br>  ret = executor.execute();<br>  <span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) {<br>    console.printError(<span class="hljs-string">"Command failed with exit code = "</span> + ret);<br>  }<br>} <span class="hljs-keyword">catch</span> (Exception e) {<br>  console.printError(<span class="hljs-string">"Exception raised from Shell command "</span> + e.getLocalizedMessage(),<br>    stringifyException(e));<br>  ret = <span class="hljs-number">1</span>;<br>}<br> }  <span class="hljs-keyword">else</span> { <span class="hljs-comment">// local mode</span><br></code></span></pre></div></td></tr></tbody></table></figure>
 <p>  可以看出CliDriver对于命令的处理是通过 <strong>调用外部线程</strong> 进行的。如果直接结束JVM，那么外部线程没有影响继续运行，所以我们看到的表象就是任务继续运行知道运行结束。</p>
 </li>
 </ol>
@@ -263,97 +220,15 @@ shell_cmd = <span class="hljs-keyword">new</span> VariableSubstitution(<span cla
 <li><p>访问主类： <strong>org.apache.hive.beeline.BeeLine</strong></p>
 </li>
 <li><p>通过ctrl+c方式断开：通过ctrl+c方式断开连接，Hive会捕捉到相应的信号，从而进行相关处理。信号处理的handler定义如下</p>
-<pre class=" language-hljs java"><code class="language-hljs java">## Apache Hive： Beeline
-  <span class="hljs-keyword">private</span> Statement stmt = <span class="hljs-keyword">null</span>;
-
-  SunSignalHandler () {
-    <span class="hljs-comment">// Interpret Ctrl+C as a request to cancel the currently</span>
-    <span class="hljs-comment">// executing query.</span>
-    Signal.handle (<span class="hljs-keyword">new</span> Signal (<span class="hljs-string">"INT"</span>), <span class="hljs-keyword">this</span>);
-  }
-
-  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setStatement</span><span class="hljs-params">(Statement stmt)</span> </span>{
-    <span class="hljs-keyword">this</span>.stmt = stmt;
-  }
-
-  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handle</span> <span class="hljs-params">(Signal signal)</span> </span>{
-    <span class="hljs-keyword">try</span> {
-      <span class="hljs-keyword">if</span> (stmt != <span class="hljs-keyword">null</span>) {
-        stmt.cancel();
-      }
-    } <span class="hljs-keyword">catch</span> (SQLException ex) {
-      <span class="hljs-comment">// ignore</span>
-    }
-  }</code></pre>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java">## Apache Hive： Beeline<br>  <span class="hljs-keyword">private</span> Statement stmt = <span class="hljs-keyword">null</span>;<br><br>  SunSignalHandler () {<br>    <span class="hljs-comment">// Interpret Ctrl+C as a request to cancel the currently</span><br>    <span class="hljs-comment">// executing query.</span><br>    Signal.handle (<span class="hljs-keyword">new</span> Signal (<span class="hljs-string">"INT"</span>), <span class="hljs-keyword">this</span>);<br>  }<br><br>  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setStatement</span><span class="hljs-params">(Statement stmt)</span> </span>{<br>    <span class="hljs-keyword">this</span>.stmt = stmt;<br>  }<br><br>  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handle</span> <span class="hljs-params">(Signal signal)</span> </span>{<br>    <span class="hljs-keyword">try</span> {<br>      <span class="hljs-keyword">if</span> (stmt != <span class="hljs-keyword">null</span>) {<br>        stmt.cancel();<br>      }<br>    } <span class="hljs-keyword">catch</span> (SQLException ex) {<br>      <span class="hljs-comment"><code class="language-hljs java">## Apache Hive： Beeline<br>  <span class="hljs-keyword">private</span> Statement stmt = <span class="hljs-keyword">null</span>;<br><br>  SunSignalHandler () {<br>    <span class="hljs-comment">// Interpret Ctrl+C as a request to cancel the currently</span><br>    <span class="hljs-comment">// executing query.</span><br>    Signal.handle (<span class="hljs-keyword">new</span> Signal (<span class="hljs-string">"INT"</span>), <span class="hljs-keyword">this</span>);<br>  }<br><br>  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setStatement</span><span class="hljs-params">(Statement stmt)</span> </span>{<br>    <span class="hljs-keyword">this</span>.stmt = stmt;<br>  }<br><br>  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handle</span> <span class="hljs-params">(Signal signal)</span> </span>{<br>    <span class="hljs-keyword">try</span> {<br>      <span class="hljs-keyword">if</span> (stmt != <span class="hljs-keyword">null</span>) {<br>        stmt.cancel();<br>      }<br>    } <span class="hljs-keyword">catch</span> (SQLException ex) {<br>      <span class="hljs-comment">// ignore</span><br>    }<br>  }<br></code></span></pre></div></td></tr></tbody></table></figure>
 <p>从处理的代码中可以看出，如果出现 <strong>ctrl+c</strong> 信号，Hive会取消目前相关操作。</p>
 </li>
 <li><p>异常断开：包括超时、宕机等异常情况<br>如果是Thrift RPC的连接断开，那么从源码中可以看出</p>
-<pre class=" language-hljs java">HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT(<span class="hljs-string">"hive.server2.close.session.on.disconnect"</span>, <span class="hljs-keyword"><code class="language-hljs java">HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT(<span class="hljs-string">"hive.server2.close.session.on.disconnect"</span>, <span class="hljs-keyword">true</span>,
-      <span class="hljs-string">"Session will be closed when connection is closed. Set this to false to have session outlive its parent connection."</span>)</code></span></pre>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java">HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT(<span class="hljs-string">"hive.server2.close.session.on.disconnect"</span>, <span class="hljs-keyword">true</span>,<br>      <span class="hljs-string"><code class="language-hljs java">HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT(<span class="hljs-string">"hive.server2.close.session.on.disconnect"</span>, <span class="hljs-keyword">true</span>,<br>      <span class="hljs-string">"Session will be closed when connection is closed. Set this to false to have session outlive its parent connection."</span>)<br></code></span></pre></div></td></tr></tbody></table></figure>
 <p>如果connection断开，那么session会立马被关闭，进而HiveServer2关闭session的操作，如下所示</p>
-<pre class=" language-hljs java"><code class="language-hljs java">## ThriftBinaryCLIService
-ThriftCLIServerContext context = (ThriftCLIServerContext) serverContext;
-SessionHandle sessionHandle = context.getSessionHandle();
-<span class="hljs-keyword">if</span> (sessionHandle != <span class="hljs-keyword">null</span>) {
-  LOG.info(<span class="hljs-string">"Session disconnected without closing properly. "</span>);
-  <span class="hljs-keyword">try</span> {
-    <span class="hljs-keyword">boolean</span> close = cliService.getSessionManager().getSession(sessionHandle).getHiveConf()
-      .getBoolVar(ConfVars.HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT);
-    LOG.info((close ? <span class="hljs-string">""</span> : <span class="hljs-string">"Not "</span>) + <span class="hljs-string">"Closing the session: "</span> + sessionHandle);
-    <span class="hljs-keyword">if</span> (close) {
-      cliService.closeSession(sessionHandle);
-    }
-  } <span class="hljs-keyword">catch</span> (HiveSQLException e) {
-    LOG.warn(<span class="hljs-string">"Failed to close session: "</span> + e, e);
-  }
-}</code></pre>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java">## ThriftBinaryCLIService<br>ThriftCLIServerContext context = (ThriftCLIServerContext) serverContext;<br>SessionHandle sessionHandle = context.getSessionHandle();<br><span class="hljs-keyword">if</span> (sessionHandle != <span class="hljs-keyword">null</span>) {<br>  LOG.info(<span class="hljs-string">"Session disconnected without closing properly. "</span>);<br>  <span class="hljs-keyword">try</span> {<br>    <span class="hljs-keyword">boolean</span> close = cliService.getSessionManager().getSession(sessionHandle).getHiveConf()<br>      .getBoolVar(ConfVars.HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT);<br>    LOG.info((close ? <span class="hljs-string">""</span> : <span class="hljs-string">"Not "</span>) + <span class="hljs-string">"Closing the session: "</span> + sessionHandle);<br>    <span class="hljs-keyword">if</span> (close) {<br>      cliService.closeSession(sessionHandle);<br>    }<br>  } <span class="hljs-keyword">catch</span> (HiveSQLException e) {<br>    LOG.warn(<span class="hljs-string"><code class="language-hljs java">## ThriftBinaryCLIService<br>ThriftCLIServerContext context = (ThriftCLIServerContext) serverContext;<br>SessionHandle sessionHandle = context.getSessionHandle();<br><span class="hljs-keyword">if</span> (sessionHandle != <span class="hljs-keyword">null</span>) {<br>  LOG.info(<span class="hljs-string">"Session disconnected without closing properly. "</span>);<br>  <span class="hljs-keyword">try</span> {<br>    <span class="hljs-keyword">boolean</span> close = cliService.getSessionManager().getSession(sessionHandle).getHiveConf()<br>      .getBoolVar(ConfVars.HIVE_SERVER2_CLOSE_SESSION_ON_DISCONNECT);<br>    LOG.info((close ? <span class="hljs-string">""</span> : <span class="hljs-string">"Not "</span>) + <span class="hljs-string">"Closing the session: "</span> + sessionHandle);<br>    <span class="hljs-keyword">if</span> (close) {<br>      cliService.closeSession(sessionHandle);<br>    }<br>  } <span class="hljs-keyword">catch</span> (HiveSQLException e) {<br>    LOG.warn(<span class="hljs-string">"Failed to close session: "</span> + e, e);<br>  }<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 <p>此处cliService的关闭最终会导致 <strong>HiveSessionImpl</strong> 的关闭操作，其中关闭路径为：<strong>CLIService.closeSession–&gt;SessionManager.closeSession–&gt; HiveSession.close</strong></p>
-<pre class=" language-hljs java"><code class="language-hljs java">## HiveSessionImpl
-  <span class="hljs-keyword">try</span> {
-      acquire(<span class="hljs-keyword">true</span>, <span class="hljs-keyword">false</span>);
-      <span class="hljs-comment">// Iterate through the opHandles and close their operations</span>
-      List<operationhandle> ops = <span class="hljs-keyword">null</span>;
-      <span class="hljs-keyword">synchronized</span> (opHandleSet) {
-        ops = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;(opHandleSet);
-        opHandleSet.clear();
-      }
-      <span class="hljs-keyword">for</span> (OperationHandle opHandle : ops) {
-        operationManager.closeOperation(opHandle);
-      }
-      <span class="hljs-comment">// Cleanup session log directory.</span>
-      cleanupSessionLogDir();
-      HiveHistory hiveHist = sessionState.getHiveHistory();
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">null</span> != hiveHist) {
-        hiveHist.closeStream();
-      }
-      <span class="hljs-keyword">try</span> {
-        sessionState.resetThreadName();
-        sessionState.close();
-      } <span class="hljs-keyword">finally</span> {
-        sessionState = <span class="hljs-keyword">null</span>;
-      }
-    } <span class="hljs-keyword">catch</span> (IOException ioe) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> HiveSQLException(<span class="hljs-string">"Failure to close"</span>, ioe);
-    } <span class="hljs-keyword">finally</span> {
-      <span class="hljs-keyword">if</span> (sessionState != <span class="hljs-keyword">null</span>) {
-        <span class="hljs-keyword">try</span> {
-          sessionState.resetThreadName();
-          sessionState.close();
-        } <span class="hljs-keyword">catch</span> (Throwable t) {
-          LOG.warn(<span class="hljs-string">"Error closing session"</span>, t);
-        }
-        sessionState = <span class="hljs-keyword">null</span>;
-      }
-      <span class="hljs-keyword">if</span> (sessionHive != <span class="hljs-keyword">null</span>) {
-        <span class="hljs-keyword">try</span> {
-          Hive.closeCurrent();
-        } <span class="hljs-keyword">catch</span> (Throwable t) {
-          LOG.warn(<span class="hljs-string">"Error closing sessionHive"</span>, t);
-        }
-        sessionHive = <span class="hljs-keyword">null</span>;
-      }
-      release(<span class="hljs-keyword">true</span>, <span class="hljs-keyword">false</span>);
-  }</operationhandle></code></pre>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java">## HiveSessionImpl<br>  <span class="hljs-keyword">try</span> {<br>      acquire(<span class="hljs-keyword">true</span>, <span class="hljs-keyword">false</span>);<br>      <span class="hljs-comment">// Iterate through the opHandles and close their operations</span><br>      List&lt;OperationHandle&gt; ops = <span class="hljs-keyword">null</span>;<br>      <span class="hljs-keyword">synchronized</span> (opHandleSet) {<br>        ops = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;(opHandleSet);<br>        opHandleSet.clear();<br>      }<br>      <span class="hljs-keyword">for</span> (OperationHandle opHandle : ops) {<br>        operationManager.closeOperation(opHandle);<br>      }<br>      <span class="hljs-comment">// Cleanup session log directory.</span><br>      cleanupSessionLogDir();<br>      HiveHistory hiveHist = sessionState.getHiveHistory();<br>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">null</span> != hiveHist) {<br>        hiveHist.closeStream();<br>      }<br>      <span class="hljs-keyword">try</span> {<br>        sessionState.resetThreadName();<br>        sessionState.close();<br>      } <span class="hljs-keyword">finally</span> {<br>        sessionState = <span class="hljs-keyword">null</span>;<br>      }<br>    } <span class="hljs-keyword">catch</span> (IOException ioe) {<br>      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> HiveSQLException(<span class="hljs-string">"Failure to close"</span>, ioe);<br>    } <span class="hljs-keyword">finally</span> {<br>      <span class="hljs-keyword">if</span> (sessionState != <span class="hljs-keyword">null</span>) {<br>        <span class="hljs-keyword">try</span> {<br>          sessionState.resetThreadName();<br>          sessionState.close();<br>        } <span class="hljs-keyword">catch</span> (Throwable t) {<br>          LOG.warn(<span class="hljs-string">"Error closing session"</span>, t);<br>        }<br>        sessionState = <span class="hljs-keyword">null</span>;<br>      }<br>      <span class="hljs-keyword">if</span> (sessionHive != <span class="hljs-keyword">null</span>) {<br>        <span class="hljs-keyword">try</span> {<br>          Hive.closeCurrent();<br>        } <span class="hljs-keyword">catch</span> (Throwable t) {<br>          LOG.warn(<span class="hljs-string">"Error closing sessionHive"</span>, t);<br>        }<br>        sessionHive = <span class="hljs-keyword">null</span>;<br>      }<br>      release(<span class="hljs-keyword">true</span>, <span class="hljs-keyword"><code class="language-hljs java">## HiveSessionImpl<br>  <span class="hljs-keyword">try</span> {<br>      acquire(<span class="hljs-keyword">true</span>, <span class="hljs-keyword">false</span>);<br>      <span class="hljs-comment">// Iterate through the opHandles and close their operations</span><br>      List&lt;OperationHandle&gt; ops = <span class="hljs-keyword">null</span>;<br>      <span class="hljs-keyword">synchronized</span> (opHandleSet) {<br>        ops = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;(opHandleSet);<br>        opHandleSet.clear();<br>      }<br>      <span class="hljs-keyword">for</span> (OperationHandle opHandle : ops) {<br>        operationManager.closeOperation(opHandle);<br>      }<br>      <span class="hljs-comment">// Cleanup session log directory.</span><br>      cleanupSessionLogDir();<br>      HiveHistory hiveHist = sessionState.getHiveHistory();<br>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">null</span> != hiveHist) {<br>        hiveHist.closeStream();<br>      }<br>      <span class="hljs-keyword">try</span> {<br>        sessionState.resetThreadName();<br>        sessionState.close();<br>      } <span class="hljs-keyword">finally</span> {<br>        sessionState = <span class="hljs-keyword">null</span>;<br>      }<br>    } <span class="hljs-keyword">catch</span> (IOException ioe) {<br>      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> HiveSQLException(<span class="hljs-string">"Failure to close"</span>, ioe);<br>    } <span class="hljs-keyword">finally</span> {<br>      <span class="hljs-keyword">if</span> (sessionState != <span class="hljs-keyword">null</span>) {<br>        <span class="hljs-keyword">try</span> {<br>          sessionState.resetThreadName();<br>          sessionState.close();<br>        } <span class="hljs-keyword">catch</span> (Throwable t) {<br>          LOG.warn(<span class="hljs-string">"Error closing session"</span>, t);<br>        }<br>        sessionState = <span class="hljs-keyword">null</span>;<br>      }<br>      <span class="hljs-keyword">if</span> (sessionHive != <span class="hljs-keyword">null</span>) {<br>        <span class="hljs-keyword">try</span> {<br>          Hive.closeCurrent();<br>        } <span class="hljs-keyword">catch</span> (Throwable t) {<br>          LOG.warn(<span class="hljs-string">"Error closing sessionHive"</span>, t);<br>        }<br>        sessionHive = <span class="hljs-keyword">null</span>;<br>      }<br>      release(<span class="hljs-keyword">true</span>, <span class="hljs-keyword">false</span>);<br>  }<br></code></span></pre></div></td></tr></tbody></table></figure>
 <p>从这里可以看到Session通过迭代将所有的操作逐渐关闭，并清除Session相关日志、关闭任务历史日志流。</p>
 </li>
 </ol>

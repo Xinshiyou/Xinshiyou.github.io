@@ -164,7 +164,7 @@
         
         <div>  在实际项目中，我们通常使用这样的方式：首先，下载ODBC的Jar到本地；然后，通过Maven安装在本地库中。这样在项目中就可以使用ODBC的Jar包了，而大部分的jar是可以通过Maven中直接引用的。这是为什么呢？
 项目报错  项目直接编译，报错如下
-Failed toFailed to execute goal on project sql2o-or</div>
+123Failed to execute goal on project sql2o-oracle: </div>
       </a>
 
       <div class="index-btm post-metas">
@@ -480,9 +480,9 @@ JDBC执行流程
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
-            
               <a href="/tags/DataX/">DataX</a>
+            
+              <a href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
             
           </div>
         
@@ -502,18 +502,7 @@ JDBC执行流程
           
         
         <div>Filter  POM中可以配置一些properties，这些属性一般而言实在各种pom中使用，但也可以在一些配置文件中使用，例如
-### pom文件配置
-
-	com.mysql.jdbc.Driver
-	jdbc:mysql://localhost:3306/database?autoReconnect=true
-	
-	myusername
-	mypassword
-
-
-
-	
-</div>
+123456789101112131415161718192021222324252627282930313233343536## pom文件配置&lt;properties&gt;	&lt;database.driver&gt;com.mysql</div>
       </a>
 
       <div class="index-btm post-metas">

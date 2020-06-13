@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1.1k 字
+      1.4k 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      16
+      23
        分钟
     </span>
   
@@ -196,141 +196,23 @@
 <a id="more"></a>
 
 <h2 id="1-命令行模式"><a href="#1-命令行模式" class="headerlink" title="1. 命令行模式"></a>1. 命令行模式</h2><p>  在CMD或Shell中，直接输入phantomjs回车，进入命令行模式，能够完成各种操作。但一般情况是通过命令用调用phantomjs来完成爬虫或模拟工作，具体的代码放在JS中。如</p>
-<pre class=" language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string"><code class="language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./server.js</span> 8910
-<span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./hello.js</span></code></span></pre>
+<figure class="highlight jboss-cli"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./server.js</span> 8910<br><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string"><code class="language-hljs jboss-cli"><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./server.js</span> 8910<br><span class="hljs-string">../bin/phantomjs</span> <span class="hljs-params">--debug=yes</span> <span class="hljs-string">./hello.js</span><br></code></span></pre></div></td></tr></tbody></table></figure>
 <p>其中phantomjs参数直接放在phantomjs后面，脚本作为参数放在其次，最后添加脚本的参数列表。</p>
 <h2 id="2-selenium调用"><a href="#2-selenium调用" class="headerlink" title="2. selenium调用"></a>2. selenium调用</h2><p>  selenium是一套完整的测试爬虫工具，能够调用IE、Chrome、Firefox等浏览器内核API完成相应的功能，也可以调用如Phantomjs、HtmlUnitDriver等模拟浏览器作为调用接口。</p>
 <p>  调用浏览器内核与不调用浏览器内核的浏览器[这里指的是HtmlUnitDriver]，浏览器内核的API，可以完成截图功能及其他浏览器功能，但HtmlunitDriver采用的是JS模拟浏览器的策略，因此不具备截图等浏览器功能。</p>
-<h3 id="2-1-Java-selenium-Phantomjs调用"><a href="#2-1-Java-selenium-Phantomjs调用" class="headerlink" title="2.1. Java+selenium+Phantomjs调用"></a>2.1. Java+selenium+Phantomjs调用</h3><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS,</span></span>
-<span class="hljs-function"><span class="hljs-params">		String userAgent, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> jsEnabled,</span></span>
-<span class="hljs-function"><span class="hljs-params">		String encoding,<span class="hljs-keyword">boolean</span> proxyEnabled,String... proxys)</span> </span>{
+<h3 id="2-1-Java-selenium-Phantomjs调用"><a href="#2-1-Java-selenium-Phantomjs调用" class="headerlink" title="2.1. Java+selenium+Phantomjs调用"></a>2.1. Java+selenium+Phantomjs调用</h3><figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS,</span></span><br><span class="hljs-function"><span class="hljs-params">		String userAgent, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> jsEnabled,</span></span><br><span class="hljs-function"><span class="hljs-params">		String encoding,<span class="hljs-keyword">boolean</span> proxyEnabled,String... proxys)</span> </span>{<br><br>	System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);<br>	DesiredCapabilities desiredCapabilities = DesiredCapabilities<br>			.phantomjs();<br>	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) {<br>		desiredCapabilities.setCapability(<br>				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);<br>		desiredCapabilities.setCapability(<br>				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);<br>	}<br>	desiredCapabilities.setJavascriptEnabled(jsEnabled);<br>	PhantomJSDriver driver = <span class="hljs-keyword">null</span>;<br>	List&lt;String&gt; cli = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();<br>	cli.add(<span class="hljs-string">"--load-images="</span> + loadImages);<br>	cli.add(<span class="hljs-string">"--output-encoding="</span> + encoding);<br>	<br>	<span class="hljs-keyword">if</span> (proxyEnabled) {<br>		String proxy_ip = proxys[<span class="hljs-number">0</span>];<br>		String proxy_port = proxys[<span class="hljs-number">1</span>];<br>		String proxy_user = proxys[<span class="hljs-number">2</span>];<br>		String proxy_pass = proxys[<span class="hljs-number">3</span>];<br>		cli.add(<span class="hljs-string">"--proxy="</span>+proxy_ip+<span class="hljs-string">":"</span>+ proxy_port));<br>		cli.add(<span class="hljs-string">"--proxy-auth="</span> +proxy_user+<span class="hljs-string">":"</span> +proxy_pass);<br>	}<br>	desiredCapabilities.setCapability(<br>			PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cli);<br>	driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);<br>	driver.manage().timeouts()<br>			.implicitlyWait(WAIT_TIME, TimeUnit.MILLISECONDS);<br>	driver.manage().deleteAllCookies();<br><br>	<span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS,</span></span><br><span class="hljs-function"><span class="hljs-params">		String userAgent, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> jsEnabled,</span></span><br><span class="hljs-function"><span class="hljs-params">		String encoding,<span class="hljs-keyword">boolean</span> proxyEnabled,String... proxys)</span> </span>{<br><br>	System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);<br>	DesiredCapabilities desiredCapabilities = DesiredCapabilities<br>			.phantomjs();<br>	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) {<br>		desiredCapabilities.setCapability(<br>				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);<br>		desiredCapabilities.setCapability(<br>				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);<br>	}<br>	desiredCapabilities.setJavascriptEnabled(jsEnabled);<br>	PhantomJSDriver driver = <span class="hljs-keyword">null</span>;<br>	List&lt;String&gt; cli = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();<br>	cli.add(<span class="hljs-string">"--load-images="</span> + loadImages);<br>	cli.add(<span class="hljs-string">"--output-encoding="</span> + encoding);<br>	<br>	<span class="hljs-keyword">if</span> (proxyEnabled) {<br>		String proxy_ip = proxys[<span class="hljs-number">0</span>];<br>		String proxy_port = proxys[<span class="hljs-number">1</span>];<br>		String proxy_user = proxys[<span class="hljs-number">2</span>];<br>		String proxy_pass = proxys[<span class="hljs-number">3</span>];<br>		cli.add(<span class="hljs-string">"--proxy="</span>+proxy_ip+<span class="hljs-string">":"</span>+ proxy_port));<br>		cli.add(<span class="hljs-string">"--proxy-auth="</span> +proxy_user+<span class="hljs-string">":"</span> +proxy_pass);<br>	}<br>	desiredCapabilities.setCapability(<br>			PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cli);<br>	driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);<br>	driver.manage().timeouts()<br>			.implicitlyWait(WAIT_TIME, TimeUnit.MILLISECONDS);<br>	driver.manage().deleteAllCookies();<br><br>	<span class="hljs-keyword">return</span> driver;<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 
-	System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);
-	DesiredCapabilities desiredCapabilities = DesiredCapabilities
-			.phantomjs();
-	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) {
-		desiredCapabilities.setCapability(
-				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);
-		desiredCapabilities.setCapability(
-				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);
-	}
-	desiredCapabilities.setJavascriptEnabled(jsEnabled);
-	PhantomJSDriver driver = <span class="hljs-keyword">null</span>;
-	List<string> cli = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
-	cli.add(<span class="hljs-string">"--load-images="</span> + loadImages);
-	cli.add(<span class="hljs-string">"--output-encoding="</span> + encoding);
-	
-	<span class="hljs-keyword">if</span> (proxyEnabled) {
-		String proxy_ip = proxys[<span class="hljs-number">0</span>];
-		String proxy_port = proxys[<span class="hljs-number">1</span>];
-		String proxy_user = proxys[<span class="hljs-number">2</span>];
-		String proxy_pass = proxys[<span class="hljs-number">3</span>];
-		cli.add(<span class="hljs-string">"--proxy="</span>+proxy_ip+<span class="hljs-string">":"</span>+ proxy_port));
-		cli.add(<span class="hljs-string">"--proxy-auth="</span> +proxy_user+<span class="hljs-string">":"</span> +proxy_pass);
-	}
-	desiredCapabilities.setCapability(
-			PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cli);
-	driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);
-	driver.manage().timeouts()
-			.implicitlyWait(WAIT_TIME, TimeUnit.MILLISECONDS);
-	driver.manage().deleteAllCookies();
-
-	<span class="hljs-keyword">return</span> driver;
-}</string></code></span></span></pre>
-
-<h3 id="2-2-Java-selenium-HtmlunitDriver调用"><a href="#2-2-Java-selenium-HtmlunitDriver调用" class="headerlink" title="2.2. Java+selenium+HtmlunitDriver调用"></a>2.2. Java+selenium+HtmlunitDriver调用</h3><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params">(String userAgent,</span></span>
-<span class="hljs-function"><span class="hljs-params">		<span class="hljs-keyword">boolean</span> jsEnabled, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> proxyEnabled,</span></span>
-<span class="hljs-function"><span class="hljs-params">		String... proxys)</span> </span>{
-
-	DesiredCapabilities desiredCapabilities = DesiredCapabilities
-			.htmlUnit();
-	desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.loadImages"</span>,
-			<span class="hljs-keyword">false</span>);
-	desiredCapabilities.setJavascriptEnabled(jsEnabled);
-	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) {
-		desiredCapabilities.setCapability(
-				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);
-		desiredCapabilities.setCapability(
-				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);
-	}
-	desiredCapabilities.setCapability(
-			PhantomJSDriverService.PHANTOMJS_CLI_ARGS,
-			<span class="hljs-keyword">new</span> String[] { <span class="hljs-string">"--load-images="</span> + loadImages });
-	HtmlUnitDriver driver = <span class="hljs-keyword">null</span>;
-	<span class="hljs-keyword">if</span> (proxyEnabled) {
-
-		String proxy_ip = proxys[<span class="hljs-number">0</span>];
-		String proxy_port = proxys[<span class="hljs-number">1</span>];
-		String proxy_user = proxys[<span class="hljs-number">2</span>];
-		String proxy_pass = proxys[<span class="hljs-number">3</span>];
-
-		Proxy proxy = <span class="hljs-keyword">new</span> Proxy();
-		proxy.setHttpProxy(proxy_ip + <span class="hljs-string">":"</span> + proxy_port);
-		desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);
-		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities) {
-			<span class="hljs-meta">@Override</span>
-			<span class="hljs-function"><span class="hljs-keyword">protected</span> WebClient <span class="hljs-title">modifyWebClient</span><span class="hljs-params">(WebClient client)</span> </span>{
-				DefaultCredentialsProvider creds = <span class="hljs-keyword">new</span> DefaultCredentialsProvider();
-				creds.addCredentials(proxy_user, proxy_pass);
-				client.setCredentialsProvider(creds);
-				<span class="hljs-keyword">return</span> client;
-			}
-		};
-	} <span class="hljs-keyword">else</span>
-		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities);
-	driver.manage().timeouts()
-			.implicitlyWait(<span class="hljs-number">10</span> * <span class="hljs-number">1000</span>, TimeUnit.MILLISECONDS);
-	driver.manage().deleteAllCookies();
-
-	<span class="hljs-keyword">return</span> driver;
-}</code></span></span></pre>
+<h3 id="2-2-Java-selenium-HtmlunitDriver调用"><a href="#2-2-Java-selenium-HtmlunitDriver调用" class="headerlink" title="2.2. Java+selenium+HtmlunitDriver调用"></a>2.2. Java+selenium+HtmlunitDriver调用</h3><figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params">(String userAgent,</span></span><br><span class="hljs-function"><span class="hljs-params">		<span class="hljs-keyword">boolean</span> jsEnabled, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> proxyEnabled,</span></span><br><span class="hljs-function"><span class="hljs-params">		String... proxys)</span> </span>{<br><br>	DesiredCapabilities desiredCapabilities = DesiredCapabilities<br>			.htmlUnit();<br>	desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.loadImages"</span>,<br>			<span class="hljs-keyword">false</span>);<br>	desiredCapabilities.setJavascriptEnabled(jsEnabled);<br>	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) {<br>		desiredCapabilities.setCapability(<br>				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);<br>		desiredCapabilities.setCapability(<br>				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);<br>	}<br>	desiredCapabilities.setCapability(<br>			PhantomJSDriverService.PHANTOMJS_CLI_ARGS,<br>			<span class="hljs-keyword">new</span> String[] { <span class="hljs-string">"--load-images="</span> + loadImages });<br>	HtmlUnitDriver driver = <span class="hljs-keyword">null</span>;<br>	<span class="hljs-keyword">if</span> (proxyEnabled) {<br><br>		String proxy_ip = proxys[<span class="hljs-number">0</span>];<br>		String proxy_port = proxys[<span class="hljs-number">1</span>];<br>		String proxy_user = proxys[<span class="hljs-number">2</span>];<br>		String proxy_pass = proxys[<span class="hljs-number">3</span>];<br><br>		Proxy proxy = <span class="hljs-keyword">new</span> Proxy();<br>		proxy.setHttpProxy(proxy_ip + <span class="hljs-string">":"</span> + proxy_port);<br>		desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);<br>		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities) {<br>			<span class="hljs-meta">@Override</span><br>			<span class="hljs-function"><span class="hljs-keyword">protected</span> WebClient <span class="hljs-title">modifyWebClient</span><span class="hljs-params">(WebClient client)</span> </span>{<br>				DefaultCredentialsProvider creds = <span class="hljs-keyword">new</span> DefaultCredentialsProvider();<br>				creds.addCredentials(proxy_user, proxy_pass);<br>				client.setCredentialsProvider(creds);<br>				<span class="hljs-keyword">return</span> client;<br>			}<br>		};<br>	} <span class="hljs-keyword">else</span><br>		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities);<br>	driver.manage().timeouts()<br>			.implicitlyWait(<span class="hljs-number">10</span> * <span class="hljs-number">1000</span>, TimeUnit.MILLISECONDS);<br>	driver.manage().deleteAllCookies();<br><br>	<span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params">(String userAgent,</span></span><br><span class="hljs-function"><span class="hljs-params">		<span class="hljs-keyword">boolean</span> jsEnabled, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> proxyEnabled,</span></span><br><span class="hljs-function"><span class="hljs-params">		String... proxys)</span> </span>{<br><br>	DesiredCapabilities desiredCapabilities = DesiredCapabilities<br>			.htmlUnit();<br>	desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.loadImages"</span>,<br>			<span class="hljs-keyword">false</span>);<br>	desiredCapabilities.setJavascriptEnabled(jsEnabled);<br>	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) {<br>		desiredCapabilities.setCapability(<br>				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);<br>		desiredCapabilities.setCapability(<br>				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);<br>	}<br>	desiredCapabilities.setCapability(<br>			PhantomJSDriverService.PHANTOMJS_CLI_ARGS,<br>			<span class="hljs-keyword">new</span> String[] { <span class="hljs-string">"--load-images="</span> + loadImages });<br>	HtmlUnitDriver driver = <span class="hljs-keyword">null</span>;<br>	<span class="hljs-keyword">if</span> (proxyEnabled) {<br><br>		String proxy_ip = proxys[<span class="hljs-number">0</span>];<br>		String proxy_port = proxys[<span class="hljs-number">1</span>];<br>		String proxy_user = proxys[<span class="hljs-number">2</span>];<br>		String proxy_pass = proxys[<span class="hljs-number">3</span>];<br><br>		Proxy proxy = <span class="hljs-keyword">new</span> Proxy();<br>		proxy.setHttpProxy(proxy_ip + <span class="hljs-string">":"</span> + proxy_port);<br>		desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);<br>		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities) {<br>			<span class="hljs-meta">@Override</span><br>			<span class="hljs-function"><span class="hljs-keyword">protected</span> WebClient <span class="hljs-title">modifyWebClient</span><span class="hljs-params">(WebClient client)</span> </span>{<br>				DefaultCredentialsProvider creds = <span class="hljs-keyword">new</span> DefaultCredentialsProvider();<br>				creds.addCredentials(proxy_user, proxy_pass);<br>				client.setCredentialsProvider(creds);<br>				<span class="hljs-keyword">return</span> client;<br>			}<br>		};<br>	} <span class="hljs-keyword">else</span><br>		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities);<br>	driver.manage().timeouts()<br>			.implicitlyWait(<span class="hljs-number">10</span> * <span class="hljs-number">1000</span>, TimeUnit.MILLISECONDS);<br>	driver.manage().deleteAllCookies();<br><br>	<span class="hljs-keyword">return</span> driver;<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 
 <h2 id="3-服务器模式"><a href="#3-服务器模式" class="headerlink" title="3. 服务器模式"></a>3. 服务器模式</h2><p>  phantomjs服务器模式，需要在服务端开启服务，然后在客户端发起Http请求然后返回想要的内容，就是一个C/S模式的服务。</p>
 <h3 id="3-1-服务端"><a href="#3-1-服务端" class="headerlink" title="3.1. 服务端"></a>3.1. 服务端</h3><p>server.js内容如下所示</p>
-<pre class=" language-hljs shell"><code class="language-hljs shell">var webserver = require('webserver').create();
-var page = require('webpage').create();
-var system = require('system');
-var port = system.args[1];
-webserver.listen(system.args[1], function(request, response) {
-    var url = request.headers.url;// conf target url in headers
-    page.open(url, function(status) {
-        var title = page.evaluate(function() {
-            return $(":root").html();// return pageSource
-        });
-        response.write(title);
-        response.close();
-    });
-});</code></pre>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">var webserver = require('webserver').create();<br>var page = require('webpage').create();<br>var system = require('system');<br>var port = system.args[1];<br>webserver.listen(system.args[1], function(request, response) {<br>    var url = request.headers.url;// conf target url in headers<br>    page.open(url, function(status) {<br>        var title = page.evaluate(function() {<br>            return $(":root").html();// return pageSource<br>        });<br>        response.write(title);<br>        response.close();<br>    });<br>});<br></code></pre></div></td></tr></tbody></table></figure>
 
 <p>命令行启动</p>
-<pre class=" language-hljs shell"><code class="language-hljs shell">bin/phantomjs example/server.js 8910</code></pre>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">bin/phantomjs example/server.js 8910<br></code></pre></div></td></tr></tbody></table></figure>
 
 <h3 id="3-2-客户端"><a href="#3-2-客户端" class="headerlink" title="3.2. 客户端"></a>3.2. 客户端</h3><p>  在客户端发起http请求，无论是get，还是post只要能够获取到Headers里面的目标URL，就可以返回pageSource。当然，这里最好使用异步加载网页内容。</p>
-<pre class=" language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword"><code class="language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword">new</span> HashMap<string, string="">();
-params.put(<span class="hljs-string">"url"</span>, targetURL);
-
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title">HttpPost</span><span class="hljs-params">(String url, String postDataStr)</span></span>
-<span class="hljs-function">		<span class="hljs-keyword">throws</span> MalformedURLException, IOException </span>{
-		
-	URLConnection conn = <span class="hljs-keyword">new</span> URL(url).openConnection();
-	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);
-	conn.addRequestProperty(<span class="hljs-string">"ContentType"</span>,
-			<span class="hljs-string">"application/x-www-form-urlencoded"</span>);
-	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);
-	conn.addRequestProperty(<span class="hljs-string">"http.socket.timeout"</span>, <span class="hljs-string">"60000"</span>);
-	conn.setDoOutput(<span class="hljs-keyword">true</span>);
-	conn.getOutputStream().write(
-			URLEncoder.encode(postDataStr, <span class="hljs-string">"utf-8"</span>).getBytes());
-			
-	StringBuilder sb = <span class="hljs-keyword">new</span> StringBuilder();
-	BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(
-			conn.getInputStream()));
-	String line = <span class="hljs-keyword">null</span>;
-	<span class="hljs-keyword">while</span> ((line = br.readLine()) != <span class="hljs-keyword">null</span>)
-		sb.append(line);
-		
-	<span class="hljs-keyword">return</span> sb.toString();
-}</string,></code></span></pre>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword">new</span> HashMap&lt;String, String&gt;();<br>params.put(<span class="hljs-string">"url"</span>, targetURL);<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title">HttpPost</span><span class="hljs-params">(String url, String postDataStr)</span></span><br><span class="hljs-function">		<span class="hljs-keyword">throws</span> MalformedURLException, IOException </span>{<br>		<br>	URLConnection conn = <span class="hljs-keyword">new</span> URL(url).openConnection();<br>	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);<br>	conn.addRequestProperty(<span class="hljs-string">"ContentType"</span>,<br>			<span class="hljs-string">"application/x-www-form-urlencoded"</span>);<br>	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);<br>	conn.addRequestProperty(<span class="hljs-string">"http.socket.timeout"</span>, <span class="hljs-string">"60000"</span>);<br>	conn.setDoOutput(<span class="hljs-keyword">true</span>);<br>	conn.getOutputStream().write(<br>			URLEncoder.encode(postDataStr, <span class="hljs-string">"utf-8"</span>).getBytes());<br>			<br>	StringBuilder sb = <span class="hljs-keyword">new</span> StringBuilder();<br>	BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(<br>			conn.getInputStream()));<br>	String line = <span class="hljs-keyword">null</span>;<br>	<span class="hljs-keyword">while</span> ((line = br.readLine()) != <span class="hljs-keyword">null</span>)<br>		sb.append(line);<br>		<br>	<span class="hljs-keyword"><code class="language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword">new</span> HashMap&lt;String, String&gt;();<br>params.put(<span class="hljs-string">"url"</span>, targetURL);<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title">HttpPost</span><span class="hljs-params">(String url, String postDataStr)</span></span><br><span class="hljs-function">		<span class="hljs-keyword">throws</span> MalformedURLException, IOException </span>{<br>		<br>	URLConnection conn = <span class="hljs-keyword">new</span> URL(url).openConnection();<br>	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);<br>	conn.addRequestProperty(<span class="hljs-string">"ContentType"</span>,<br>			<span class="hljs-string">"application/x-www-form-urlencoded"</span>);<br>	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);<br>	conn.addRequestProperty(<span class="hljs-string">"http.socket.timeout"</span>, <span class="hljs-string">"60000"</span>);<br>	conn.setDoOutput(<span class="hljs-keyword">true</span>);<br>	conn.getOutputStream().write(<br>			URLEncoder.encode(postDataStr, <span class="hljs-string">"utf-8"</span>).getBytes());<br>			<br>	StringBuilder sb = <span class="hljs-keyword">new</span> StringBuilder();<br>	BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(<br>			conn.getInputStream()));<br>	String line = <span class="hljs-keyword">null</span>;<br>	<span class="hljs-keyword">while</span> ((line = br.readLine()) != <span class="hljs-keyword">null</span>)<br>		sb.append(line);<br>		<br>	<span class="hljs-keyword">return</span> sb.toString();<br>}<br></code></span></pre></div></td></tr></tbody></table></figure>
 
 <h2 id="4-比较"><a href="#4-比较" class="headerlink" title="4. 比较"></a>4. 比较</h2><table>
 <thead>

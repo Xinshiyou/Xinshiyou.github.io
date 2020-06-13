@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      240 字
+      329 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      4
+      5
        分钟
     </span>
   
@@ -198,23 +198,7 @@
 </ul>
 <h2 id="报错二"><a href="#报错二" class="headerlink" title="报错二"></a>报错二</h2><ul>
 <li><em>错误信息</em>:<br>  Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name ‘httpPutFormContentFilter’ defined in class path resource [org/springframework/boot/autoconfigure/web/servlet/WebMvcAutoConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.boot.web.servlet.filter.OrderedHttpPutFormContentFilter]: Factory method ‘httpPutFormContentFilter’ threw exception; nested exception is java.lang.VerifyError: Cannot inherit from final class</li>
-<li><em>解决方案</em>：<br>  更换Spring-Parent的版本。  <pre class=" language-hljs java">   <span class="hljs-comment"><code class="language-hljs java">   <span class="hljs-comment">//更改之前</span>
-   <dependency>
-	<groupid>org.springframework.boot</groupid>
-	<artifactid>spring-boot-dependencies</artifactid>
-	<version>2.0.2.RELEASE</version>
-	<scope>import</scope>
-	<type>pom</type>
-   </dependency>
-   
-   <span class="hljs-comment">// 更改之后</span>
-    <dependency>
-	<groupid>org.springframework.boot</groupid>
-	<artifactid>spring-boot-dependencies</artifactid>
-	<version>1.5.1.RELEASE</version>
-	<scope>import</scope>
-	<type>pom</type>
-</dependency></code></span></pre>
+<li><em>解决方案</em>：<br>  更换Spring-Parent的版本。  <figure class="highlight"><table><tbody><tr><td class="gutter"><div class="hljs"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><div class="hljs"><pre class=" language-hljs java">   <span class="hljs-comment">//更改之前</span><br>   &lt;dependency&gt;<br>	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br>	&lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;<br>	&lt;version&gt;2.0.2.RELEASE&lt;/version&gt;<br>	&lt;scope&gt;import&lt;/scope&gt;<br>	&lt;type&gt;pom&lt;/type&gt;<br>   &lt;/dependency&gt;<br>   <br>   <span class="hljs-comment"><code class="language-hljs java">   <span class="hljs-comment">//更改之前</span><br>   &lt;dependency&gt;<br>	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br>	&lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;<br>	&lt;version&gt;2.0.2.RELEASE&lt;/version&gt;<br>	&lt;scope&gt;import&lt;/scope&gt;<br>	&lt;type&gt;pom&lt;/type&gt;<br>   &lt;/dependency&gt;<br>   <br>   <span class="hljs-comment">// 更改之后</span><br>    <dependency><br>	<groupid>org.springframework.boot</groupid><br>	<artifactid>spring-boot-dependencies</artifactid><br>	<version>1.5.1.RELEASE</version><br>	<scope>import</scope><br>	<type>pom</type><br></dependency><br></code></span></pre></div></td></tr></tbody></table></figure>
 
 </li>
 </ul>
