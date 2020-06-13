@@ -194,7 +194,6 @@
             <article class="markdown-body">
               <p>  如果是小规模爬虫或模拟效果要求不高的话，使用Selenium HtmlUniDriver基本可以满足需求。但HtmlUnitDriver是基于JS模拟浏览器原理，存在许多浏览器可以做，但它其实无法操作的功能，比如截图等高级功能。</p>
 <a id="more"></a>
-
 <p>  之前爬虫使用Phantomjs，感觉效果还不错，而且使用方便。Phantomjs可以设置远程模式，方便本地调试；方便设置代理，但这里有一个坑，就是<em>代理地址不能是https协议</em>，不然会出问题。但Phantomjs已经目前已经停止更新与维护，而且Google Chrome推出了Headless版本，使用浏览器模式更加符合真是的环境。</p>
 <h2 id="安装采坑"><a href="#安装采坑" class="headerlink" title="安装采坑"></a>安装采坑</h2><p>  Chrome Headless安装没有想象中的简单。刚开始直接通过安装包或添加Chrome源安装均失败，失败的原因是存在各种各样的依赖包。后来找到的Chrome安装的一个脚本，使用这个脚本能够不断地安装缺少的依赖包，从而能够安航成功。</p>
 <h3 id="安装系统"><a href="#安装系统" class="headerlink" title="安装系统"></a>安装系统</h3><p>Centos6.9Final</p>
@@ -225,7 +224,6 @@ sudo dpkg -i google-chrome-stable_current_amd64.deb
 sudo apt-get install -f</code></pre></div>
 <p>跟上面一种方式一样， 存在各种依赖问题，导致无法安装成功。</p>
 <h3 id="使用脚本安装"><a href="#使用脚本安装" class="headerlink" title="使用脚本安装"></a>使用脚本安装</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl https://intoli.com/install-google-chrome.sh | bash</code></pre></div>
-
 <p>  通过上网查阅发现<a href="https://intoli.com这个网站是专门从事headless" target="_blank" rel="noopener">https://intoli.com这个网站是专门从事headless</a> browsers使用简化，提供云服务的一家公司。其中在该公司的博客中，可以看到许多关于Google Chrome的文章。</p>
 <p>  该公司提供的这个脚本，能够自动查找相关依赖，并安装。这样我们就不必担心依赖问题，导致无法安装成功。</p>
 <h2 id="使用进阶"><a href="#使用进阶" class="headerlink" title="使用进阶"></a>使用进阶</h2><p>  安装Chrome Headless之后，就可以直接使用了。不过这里有一个注意的点，那就是需要安装ChromeDriver这个东东。</p>
@@ -237,10 +235,7 @@ tar xvf chromedriver_linux64.zip
 
 ## 权限
 chmod 755 chromedriver</code></pre></div>
-
-
-<h3 id="初级使用"><a href="#初级使用" class="headerlink" title="初级使用"></a>初级使用</h3><p>  初级使用的目标是可以运行起来，不报错，能够完成预期的目标。<br>代码如下：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   /**
+<h3 id="初级使用"><a href="#初级使用" class="headerlink" title="初级使用"></a>初级使用</h3><p>  初级使用的目标是可以运行起来，不报错，能够完成预期的目标。<br>代码如下：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   /**
  * @desc main method
  * @param args
  * @throws IOException
@@ -300,9 +295,7 @@ public static Document getDocument(String url) {
 	}
 
 	return doc;
-}</code></pre></div>
-
-
+}</code></pre></div><p></p>
 <h3 id="中阶使用"><a href="#中阶使用" class="headerlink" title="中阶使用"></a>中阶使用</h3><p>中阶也即提高级，主要区别是开发研究一些重要的功能，比如时候网速、加载速度等内容</p>
 <ol>
 <li>禁止图片加载</li>
@@ -311,8 +304,7 @@ public static Document getDocument(String url) {
 <li>禁止一些选项的加载</li>
 <li>使用Driver执行特定JS等</li>
 </ol>
-<p>代码如下：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   /**
+<p>代码如下：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   /**
  * @desc main method
  * @param args
  * @throws IOException
@@ -388,20 +380,15 @@ public static Document getDocument(String url) {
 	}
 
 	return doc;
-}</string,></string,></code></pre></div>
-
-
+}</string,></string,></code></pre></div><p></p>
 <h3 id="高级使用"><a href="#高级使用" class="headerlink" title="高级使用"></a>高级使用</h3><h4 id="设置代理服务器"><a href="#设置代理服务器" class="headerlink" title="设置代理服务器"></a>设置代理服务器</h4><p>  代理服务器的设置，可以参考Google-chrome的帮助信息，在代码层面很容易实现。</p>
 <p><img src="001.png" srcset="/img/loading.gif" alt="Google-chrome帮助信息"></p>
-<h4 id="Driver生命周期"><a href="#Driver生命周期" class="headerlink" title="Driver生命周期"></a>Driver生命周期</h4><p>  在我们的代码中“new ChromeDriver()”的时候，产生了多个外部进程，如下所示</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">root      8508  8499  1 04:26 ?        00:00:01 /usr/bin/google-chrome-stable --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-gpu --disable-hang-monitor --disable-images --disable-infobars --disable-plugins --disable-popup-blocking --disable-prompt-on-repost --disable-sync --disable-web-resources --enable-automation --enable-logging --enable-strict-powerful-feature-restrictions --force-fieldtrials=SiteIsolationExtensions/Control --headless --ignore-certificate-errors --load-extension=/tmp/.org.chromium.Chromium.7tAd3h/internal --log-level=0 --metrics-recording-only --no-first-run --no-sandbox --password-store=basic --remote-debugging-port=0 --start-maximized --test-type --use-mock-keychain --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --user-data-dir=/tmp/.org.chromium.Chromium.4Sd7ob data:,
+<h4 id="Driver生命周期"><a href="#Driver生命周期" class="headerlink" title="Driver生命周期"></a>Driver生命周期</h4><p>  在我们的代码中“new ChromeDriver()”的时候，产生了多个外部进程，如下所示<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">root      8508  8499  1 04:26 ?        00:00:01 /usr/bin/google-chrome-stable --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-gpu --disable-hang-monitor --disable-images --disable-infobars --disable-plugins --disable-popup-blocking --disable-prompt-on-repost --disable-sync --disable-web-resources --enable-automation --enable-logging --enable-strict-powerful-feature-restrictions --force-fieldtrials=SiteIsolationExtensions/Control --headless --ignore-certificate-errors --load-extension=/tmp/.org.chromium.Chromium.7tAd3h/internal --log-level=0 --metrics-recording-only --no-first-run --no-sandbox --password-store=basic --remote-debugging-port=0 --start-maximized --test-type --use-mock-keychain --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --user-data-dir=/tmp/.org.chromium.Chromium.4Sd7ob data:,
 root      8515  8508  0 04:26 ?        00:00:00 /opt/google/chrome/chrome --type=zygote --no-sandbox --enable-logging --headless --log-level=0 --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter
 root      8539  8508  0 04:26 ?        00:00:00 /opt/google/chrome/chrome --type=gpu-process --enable-logging --headless --log-level=0 --no-sandbox --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --gpu-preferences=KAAAAAAAAACAAACAAQAAAAAAAAAAAGAAEAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA --use-gl=swiftshader-webgl --override-use-software-gl-for-tests --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --enable-logging --log-level=0 --service-request-channel-token=84633B7AB3844DE44C0ADE5922EAFCB4
-root      8551  8515  9 04:26 ?        00:00:12 /opt/google/chrome/chrome --type=renderer --enable-automation --enable-logging --log-level=0 --no-sandbox --test-type --use-gl=swiftshader-webgl --disable-gpu-compositing --service-pipe-token=0D2C2CC1CF67A5903FDFECE210FEB597 --lang=en-US --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --num-raster-threads=1 --service-request-channel-token=0D2C2CC1CF67A5903FDFECE210FEB597 --renderer-client-id=4 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101</code></pre></div>
-<p>可以看出其中只有一个Google-chrome浏览器的进程，其余三个是对应ChromeDriver的进程。这些进程实际上是通过系统层面来管理，我们的程序无法直接去操作进程的状态，比如Kill/Shutdown等，因此需要格外主要这些进程的生命周期。</p>
+root      8551  8515  9 04:26 ?        00:00:12 /opt/google/chrome/chrome --type=renderer --enable-automation --enable-logging --log-level=0 --no-sandbox --test-type --use-gl=swiftshader-webgl --disable-gpu-compositing --service-pipe-token=0D2C2CC1CF67A5903FDFECE210FEB597 --lang=en-US --headless --user-agent=Mozilla/4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident/4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --num-raster-threads=1 --service-request-channel-token=0D2C2CC1CF67A5903FDFECE210FEB597 --renderer-client-id=4 --shared-files=v8_context_snapshot_data:100,v8_natives_data:101</code></pre></div><br>可以看出其中只有一个Google-chrome浏览器的进程，其余三个是对应ChromeDriver的进程。这些进程实际上是通过系统层面来管理，我们的程序无法直接去操作进程的状态，比如Kill/Shutdown等，因此需要格外主要这些进程的生命周期。<p></p>
 <p>  如果我们的程序正常退出或意外推出了，这些进程有可能还存在于系统当中，占有一定资源，一般来说这些进程占有的资源从50MB-300MB之间，甚至更多。保留在系统中的这些进程，最终会成为”僵尸”进程，不退出也不释放资源。</p>
-<p>  一种简单粗暴的做法是，在系统中启动一个crontab任务，定期清理超过一定时间的chrome进程：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 执行脚本：这里设置的阈值为5分钟
+<p>  一种简单粗暴的做法是，在系统中启动一个crontab任务，定期清理超过一定时间的chrome进程：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 执行脚本：这里设置的阈值为5分钟
 #!/bin/bash
 ## check PID's process time
 
@@ -428,10 +415,8 @@ do
 done;
 
 ## crontab命令
-*/1 * * * * sh /root/chrome/check.sh &gt;&gt; /root/chrome/logs.txt</code></pre></div>
-
-<p>  如果是正常退出，或者能够检测到ShutdownHook，可以在ShutdownHook里面全部Kill外部的Chrome进程：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Runtime.getRuntime.addShutdownHook(new Thread(){
+*/1 * * * * sh /root/chrome/check.sh &gt;&gt; /root/chrome/logs.txt</code></pre></div><p></p>
+<p>  如果是正常退出，或者能够检测到ShutdownHook，可以在ShutdownHook里面全部Kill外部的Chrome进程：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Runtime.getRuntime.addShutdownHook(new Thread(){
     public void run(){
         // 执行脚本，获取外部Chrome进程PID
         // 通过PID，KILL进程
@@ -442,8 +427,7 @@ done;
         //&lt;/dependency&gt;
 
     }
-});</artifactid></groupid></dependency></code></pre></div>
-
+});</artifactid></groupid></dependency></code></pre></div><p></p>
 <h4 id="Tab使用"><a href="#Tab使用" class="headerlink" title="Tab使用"></a>Tab使用</h4><p>  这里还有一个优化的点就是，是不是考虑使用tab标签页来完成每个URL，不需要每次都产生一个Chrome对象，减少程序开支。</p>
 
             </article>

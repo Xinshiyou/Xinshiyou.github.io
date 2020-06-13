@@ -194,7 +194,6 @@
             <article class="markdown-body">
               <p>  由于工作需要，基于目前公司集群存在较多的服务器且存在大量的内存，因此考虑直接将数据Load进内存进行数据处理，测试是否能够加快处理速度；鉴于以上目的，版主尝试使用Parquet的Java API读入Parquet文件。</p>
 <a id="more"></a>
-
 <p>  目前关于使用Java API访问HDFS的文章较多，但是没有相关的配置比较容易出错；同时Java API读写Parquet虽然文章较多，但多数为基于本地文件的读写实例。因此，有必要研究一下Java API读写HDFS上的Parquet文件。 </p>
 <h2 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h2><h3 id="相关程序的运行，需要一个运行环境。本文的运行环境为："><a href="#相关程序的运行，需要一个运行环境。本文的运行环境为：" class="headerlink" title="相关程序的运行，需要一个运行环境。本文的运行环境为："></a>相关程序的运行，需要一个运行环境。本文的运行环境为：</h3><ul>
 <li><strong>Eclipse+Maven</strong></li>
@@ -202,7 +201,7 @@
 <li><strong>JDK1.8.0</strong></li>
 </ul>
 <h3 id="需要的相关JAR"><a href="#需要的相关JAR" class="headerlink" title="需要的相关JAR"></a>需要的相关JAR</h3><ul>
-<li>*<em>Hadoop-Common、Hadoop-Client(Maven) *</em></li>
+<li><strong>Hadoop-Common、Hadoop-Client(Maven) </strong></li>
 <li><strong>parquet-avro-1.5.0-cdh5.8.0</strong></li>
 <li><strong>parquet-format-2.1.0-cdh5.8.0.</strong></li>
 <li><strong>parquet-hadoop-1.5.0-cdh5.8.0</strong></li>
@@ -248,12 +247,10 @@
 	System.out.println(<span class="hljs-string">"Total TIme used : ms: "</span>+(System.currentTimeMillis()-begin));
 	System.out.println(<span class="hljs-string">"Only Load Data: size: "</span>+map.size());
 }</genericrecord></genericrecord></string,></string,></code></span></pre></div>
-
 <h3 id="需要注意的地方："><a href="#需要注意的地方：" class="headerlink" title="需要注意的地方："></a>需要注意的地方：</h3><ol>
 <li><strong>htrace-core4-4.0.1-incubating.jar</strong>，可以在相应的环境中找到，或到Maven/Htrace的官网上去找到；Htrace管网上的一般为源码，需要自行编译。</li>
-<li>关于HDFS识别问题：第一次测试，没有添加任何配置，结果报错：</li>
+<li>关于HDFS识别问题：第一次测试，没有添加任何配置，结果报错：<br><strong>NO FileSystem for scheme: hdfs</strong>，因此添加了<strong>fs.hdfs.impl</strong>的配置信息。关于HDFS其他的配置信息，可以根据hdfs的配置信息设置。</li>
 </ol>
-<p> <strong>NO FileSystem for scheme: hdfs</strong>，因此添加了<strong>fs.hdfs.impl</strong>的配置信息。关于HDFS其他的配置信息，可以根据hdfs的配置信息设置。</p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ol>
 <li><a href="http://www.programcreek.com/java-api-examples/index.php?api=parquet.hadoop.ParquetWriter" target="_blank" rel="noopener">ParquetWrite Java Code Example</a></li>
 <li><a href="http://www.programcreek.com/java-api-examples/index.php?api=parquet.hadoop.ParquetReader" target="_blank" rel="noopener">ParquetReader Java Coder Example</a></li>

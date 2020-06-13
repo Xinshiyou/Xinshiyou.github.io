@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      390 字
+      389 字
     </span>
   
 
@@ -194,7 +194,6 @@
             <article class="markdown-body">
               <p>  相比Hadoop的配置，Spark配置起来相对简单。本文结合自身的配置经验，写下配置Spark的过程。</p>
 <a id="more"></a>
-
 <h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>  在正式配置之前，需要确定环境是否适合安装Spark集群。</p>
 <ol>
 <li>确保已经安装JDK/JRE；</li>
@@ -202,27 +201,19 @@
 <li>确保已经安装SCALA；</li>
 <li>MASTER\SLAVE的IP地址已经配置在/etc/hosts中。</li>
 </ol>
-<h2 id="Spark配置"><a href="#Spark配置" class="headerlink" title="Spark配置"></a>Spark配置</h2><p><em>配置文件</em>:spark-env.sh：</p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">export JAVA_HOME=/home/appuser/jdk
+<h2 id="Spark配置"><a href="#Spark配置" class="headerlink" title="Spark配置"></a>Spark配置</h2><p><em>配置文件</em>:spark-env.sh：<br></p><div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">export JAVA_HOME=/home/appuser/jdk
 export SCALA_HOME=/home/appuser/scala
 export SPARK_HOME=/home/appuser/spark
 export HADOOP_HOME=/home/appuser/hadoop
 export HADOOP_CONF_DIR=/home/appuser/hadoop/etc/hadoop
-export SPARK_MASTER_HOST=master</code></pre></div>
-
-<p>slaves：</p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">slave1
+export SPARK_MASTER_HOST=master</code></pre></div><p></p>
+<p>slaves：<br></p><div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">slave1
 slave2
-slave3</code></pre></div>
-
-<p><em>分发到SLAVE节点</em></p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave1:~/
+slave3</code></pre></div><p></p>
+<p><em>分发到SLAVE节点</em><br></p><div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave1:~/
 scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave2:~/
-scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave3:~/</code></pre></div>
-
-<p> <em>启动Spark集群</em></p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">~/spark-2.6.0-bin-hadoop2.6/sbin/start-all.sh</code></pre></div>
-
+scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave3:~/</code></pre></div><p></p>
+<p> <em>启动Spark集群</em><br></p><div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">~/spark-2.6.0-bin-hadoop2.6/sbin/start-all.sh</code></pre></div><p></p>
 <h2 id="配置验证"><a href="#配置验证" class="headerlink" title="配置验证"></a>配置验证</h2><p><em>HTTP登陆</em><br>在浏览器中输入：<a href="http://master:50070/" target="_blank" rel="noopener">http://master:50070/</a> ，可以看到HDFS的相关配置信息及DataNode的活跃情况。</p>
 <p><em>Spark-shell启动</em><br>启动Spark-shell，可以检测是否配置准确。当然，也可以使用Spark-submit提交Spark自带的例子，查看结果及运行情况。</p>
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>

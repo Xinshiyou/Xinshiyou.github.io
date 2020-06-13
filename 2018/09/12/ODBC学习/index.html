@@ -193,11 +193,9 @@
             
             <article class="markdown-body">
               <p>  在实际项目中，我们通常使用这样的方式：首先，下载ODBC的Jar到本地；然后，通过Maven安装在本地库中。这样在项目中就可以使用ODBC的Jar包了，而大部分的jar是可以通过Maven中直接引用的。这是为什么呢？</p>
-<h2 id="项目报错"><a href="#项目报错" class="headerlink" title="项目报错"></a>项目报错</h2><p>  项目直接编译，报错如下</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Failed to execute goal on project sql2o-oracle: 
+<h2 id="项目报错"><a href="#项目报错" class="headerlink" title="项目报错"></a>项目报错</h2><p>  项目直接编译，报错如下<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Failed to execute goal on project sql2o-oracle: 
 Could not resolve dependencies for project org.sql2o.extensions: sql2o-oracle:jar:1.6.0-RC4-SNAPSHOT: 
-Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https://repo.maven.apache.org/maven2)</code></pre></div>
-<p>很明显项目中的引用：com.oracle.jdbc:ojdbc8:jar:12.2.0.1，无法在公共仓库中找到。</p>
+Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https://repo.maven.apache.org/maven2)</code></pre></div><br>很明显项目中的引用：com.oracle.jdbc:ojdbc8:jar:12.2.0.1，无法在公共仓库中找到。<p></p>
 <h2 id="常用做法"><a href="#常用做法" class="headerlink" title="常用做法"></a>常用做法</h2><p>  一般的做法就是下载Jar包，然后存放在本地仓库中，这样就可以直接在项目中引用。但通常这样略显麻烦，也不具有通用性。之前这样做的原因主要是涉及到许可的原因，Oracle不开放ODBC的Jar不会开放到公共仓库中。<br>  关于ODBC方面的讨论可以参考：<a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a> .</p>
 <h2 id="目前实现"><a href="#目前实现" class="headerlink" title="目前实现"></a>目前实现</h2><p>  目前可以通过POM中的配置来直接使用Oracle仓库中的Jar，环境可以参考：<a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a> .</p>
 <p>  博主主要分为三步实现本地Oracle库的配置：</p>
@@ -244,7 +242,6 @@ Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https://
 		<url>https://maven.oracle.com&lt;/url&gt;
 	&lt;/pluginRepository&gt;
 &lt;/pluginRepositories&gt;</url></id></pluginrepository></pluginrepositories></layout></url></enabled></snapshots></enabled></releases></id></repository></repositories></code></pre></div>
-
 </li>
 </ol>
 <h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><ol>

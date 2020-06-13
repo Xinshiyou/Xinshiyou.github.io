@@ -194,7 +194,6 @@
             <article class="markdown-body">
               <p>  判断一个GPS点是否位于某省市/区县内，通常可以调用地图API来解决，通过调用逆地理信息API，可以获得完整的地址信息，因此可以判断该GPS的省市/区县。</p>
 <a id="more"></a>
-
 <p>  本文基于省市/区县的隶属关系，及其形状的几何关系，判断一个GPS点的隶属信息。</p>
 <h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>  如何判断一个点是否位于某几何形状之内呢？<br>  参考文献：<a href="http://blog.csdn.net/bitcarmanlee/article/details/60591192" target="_blank" rel="noopener">判断一个点是否在多边形区域内</a></p>
 <h2 id="判断"><a href="#判断" class="headerlink" title="判断"></a>判断</h2><p>  根据中国各省/直辖市边界，以及省市包含二级行政划分的边界信息，以及三级区县划分的边界信息，可以逐层判断是否包含该GPS。最后，可以获得GPS位于的省市/区县信息。</p>

@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      932 字
+      930 字
     </span>
   
 
@@ -194,10 +194,7 @@
             <article class="markdown-body">
               <h2 id="环境依赖"><a href="#环境依赖" class="headerlink" title="环境依赖"></a>环境依赖</h2><p>  Hive必须运行在Hadoop之上，则需要先安装Hadoop环境。关于Hadoop的安装可以参考我前文的<a href="http://blog.csdn.net/awdac/article/details/53333470" target="_blank" rel="noopener">博客</a>，也可以参考原文作者的<a href="http://my.oschina.net/u/204498/blog/519789" target="_blank" rel="noopener">链接</a>。</p>
 <a id="more"></a>
-
-
-<h2 id="安装Hive"><a href="#安装Hive" class="headerlink" title="安装Hive"></a>安装Hive</h2><p><strong>1.下载Hive</strong><br><a href="http://apache.mirrors.ionfish.org/hive/" target="_blank" rel="noopener">http://apache.mirrors.ionfish.org/hive/</a><br>我安装的是apache-hive-1.2.1-bin.tar.gz</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 ~]$ pwd
+<h2 id="安装Hive"><a href="#安装Hive" class="headerlink" title="安装Hive"></a>安装Hive</h2><p><strong>1.下载Hive</strong><br><a href="http://apache.mirrors.ionfish.org/hive/" target="_blank" rel="noopener">http://apache.mirrors.ionfish.org/hive/</a><br>我安装的是apache-hive-1.2.1-bin.tar.gz<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 ~]$ pwd
 /home/hadoop
 
 [hadoop@hftclclw0001 ~]$ wget http://apache.mirrors.ionfish.org/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
@@ -225,9 +222,7 @@ drwx------ 22 hadoop root      4096 Oct 23 02:08 sqoop-1.99.6-bin-hadoop200
 HADOOP_HOME=/home/hadoop/hadoop-2.7.1 =&gt;配置Hadoop_Home
 
 export HIVE_CONF_DIR=/home/hadoop/apache-hive-1.2.1-bin/conf=&gt;配置HIVE_conf_home
-export HIVE_AUX_JARS_PATH=/home/hadoop/apache-hive-1.2.1-bin/lib/</code></pre></div>
-<p>我使用了mysql作为metastore ，则需要在lib目录下添加mysql的驱动</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 lib]$ pwd
+export HIVE_AUX_JARS_PATH=/home/hadoop/apache-hive-1.2.1-bin/lib/</code></pre></div><br>我使用了mysql作为metastore ，则需要在lib目录下添加mysql的驱动<br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 lib]$ pwd
 /home/hadoop/apache-hive-1.2.1-bin/lib
 
 [hadoop@hftclclw0001 lib]$ ll | grep mysql
@@ -266,37 +261,28 @@ export HIVE_AUX_JARS_PATH=/home/hadoop/apache-hive-1.2.1-bin/lib/</code></pre></
             <value>thrift://{ip}:{port}&lt;/value&gt;                 =&gt;本机ip和端口号，启动metastore服务
 	&lt;/property&gt;
 &lt;/configuration&gt;
-[hadoop@hftclclw0001 conf]$ vi hive-log4j.properties                =&gt; Log4j的配置，可以修改日志目录</value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></configuration></code></pre></div>
-<p><strong>2.启动metastore</strong></p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 bin]$ pwd
+[hadoop@hftclclw0001 conf]$ vi hive-log4j.properties                =&gt; Log4j的配置，可以修改日志目录</value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></configuration></code></pre></div><br><strong>2.启动metastore</strong><br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 bin]$ pwd
 /home/hadoop/apache-hive-1.2.1-bin/bin
 
 [hadoop@hftclclw0001 bin]$ ./hive --service metastore &amp;
 
-[hadoop@hftclclw0001 bin]$ ps ax|grep metastore</code></pre></div>
-<p><strong>3.启动HiveServer2</strong></p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 bin]$ pwd
+[hadoop@hftclclw0001 bin]$ ps ax|grep metastore</code></pre></div><br><strong>3.启动HiveServer2</strong><br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 bin]$ pwd
 /home/hadoop/apache-hive-1.2.1-bin/bin
 
 [hadoop@hftclclw0001 bin]$ ./hive --service hiveserver2 &amp;
 
-[hadoop@hftclclw0001 bin]$ ps ax|grep HiveServer2</code></pre></div>
-<p><strong>4.启动shell 或是 beeline</strong></p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 bin]$ ./hive shell</code></pre></div>
+[hadoop@hftclclw0001 bin]$ ps ax|grep HiveServer2</code></pre></div><br><strong>4.启动shell 或是 beeline</strong><br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[hadoop@hftclclw0001 bin]$ ./hive shell</code></pre></div><p></p>
 <h2 id="metastore"><a href="#metastore" class="headerlink" title="metastore"></a>metastore</h2><p>原文请参考：<a href="http://www.cloudera.com/content/www/en-us/documentation/archive/cdh/4-x/4-2-0/CDH4-Installation-Guide/cdh4ig_topic_18_4.html" target="_blank" rel="noopener">Configuring the Hive Metastore</a>。</p>
 <p>1.内置模式：将数据保存在内置的Derby数据库中，这种方式最简单，但是Derby每次只能访问一个数据文件。<br>Drive ==&gt;  Metastore  ==&gt; Derby</p>
 <p>2.本地模式：将元数据保存在本地的独立数据库(如mysql)等<br>Driver ===&gt; Metastore<br>Driver ===&gt; Metastore       ===&gt; DB<br>Driver ===&gt; Metastore<br>每个server都需要配置metastore，并启动metastore服务</p>
 <p>3.远程模式：使用thrift访问metastore<br>Client1<br>Client2   ===&gt; Metastore ===&gt; DB<br>Client3 </p>
-<p>4.配置：<br>如上述配置，我们已经启动了metastore服务在上述hftclclw0001机器上，<br>我们在另一台server上，如hftclcld0001机器上，安装hive，配置如上述配置一直，仅仅修改hive-site.xml如下：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><!--?xml version&#x3D;"1.0"?-->
+<p>4.配置：<br>如上述配置，我们已经启动了metastore服务在上述hftclclw0001机器上，<br>我们在另一台server上，如hftclcld0001机器上，安装hive，配置如上述配置一直，仅仅修改hive-site.xml如下：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><!--?xml version&#x3D;"1.0"?-->
 <configuration>
     	<property>
 	        <name>hive.metastore.uris&lt;/name&gt;
             <value>thrift://{ip}:{port}&lt;/value&gt;
 	&lt;/property&gt;
-&lt;/configuration&gt;</value></name></property></configuration></code></pre></div>
-<p>即我们通过thrift协议，访问hftclclw0001上面的metastore，并访问hive的元数据</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[root@hftclcld0001 apache-hive-1.2.1-bin]# pwd
+&lt;/configuration&gt;</value></name></property></configuration></code></pre></div><br>即我们通过thrift协议，访问hftclclw0001上面的metastore，并访问hive的元数据<br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[root@hftclcld0001 apache-hive-1.2.1-bin]# pwd
 /home/hadoop/apache-hive-1.2.1-bin
 
 [root@hftclcld0001 apache-hive-1.2.1-bin]# ./bin/hive shell
@@ -307,8 +293,7 @@ OK
 default
 hive      =&gt;能访问到hive的metastore，访问到元数据(我们之前创建的)
 human_resources
-Time taken: 0.388 seconds, Fetched: 3 row(s)</code></pre></div>
-
+Time taken: 0.388 seconds, Fetched: 3 row(s)</code></pre></div><p></p>
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
 <li><a href="http://www.36dsj.com/archives/60604" target="_blank" rel="noopener">Apache Hive2.0的新特性介绍</a></li>
 <li><a href="https://my.oschina.net/leejun2005/blog/272188" target="_blank" rel="noopener">Hive 各版本关键新特性</a></li>
@@ -332,9 +317,9 @@ Time taken: 0.388 seconds, Fetched: 3 row(s)</code></pre></div>
                     
                       <a class="hover-with-bg" href="/tags/%E9%83%A8%E7%BD%B2/">部署</a>
                     
-                      <a class="hover-with-bg" href="/tags/%E5%AE%89%E8%A3%85/">安装</a>
-                    
                       <a class="hover-with-bg" href="/tags/Hive/">Hive</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%AE%89%E8%A3%85/">安装</a>
                     
                   </div>
                 

@@ -194,19 +194,15 @@
             <article class="markdown-body">
               <p>  刚开始安装MySQL时，是直接使用brew安装的。安装之后直接能够使用，无需配置相关参数。使用一段时间之后，由于导出数据的需要，所以进行了相关配置，但出现了/tmp/mysql.sock error的问题。这里分享我解决此问题的方案。</p>
 <a id="more"></a>
-
 <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ol>
 <li>MAC OS；</li>
 <li>MySQL V5.7;</li>
 </ol>
-<h2 id="修改配置信息"><a href="#修改配置信息" class="headerlink" title="修改配置信息"></a>修改配置信息</h2><p>  主要是修改/private/etc/my.cnf文件，如果不存在，将安装文件下面support-files/my-default.conf，重命名并复制到该路径下。</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">［client］
+<h2 id="修改配置信息"><a href="#修改配置信息" class="headerlink" title="修改配置信息"></a>修改配置信息</h2><p>  主要是修改/private/etc/my.cnf文件，如果不存在，将安装文件下面support-files/my-default.conf，重命名并复制到该路径下。<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">［client］
 sock=You path
 
 [mysql]
-sock= You path</code></pre></div>
-<p>其中两个路径必须相同。然后需要重新启动mysql即可：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># [mysql.sh]
+sock= You path</code></pre></div><br>其中两个路径必须相同。然后需要重新启动mysql即可：<br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># [mysql.sh]
   1 #!/bin/bash
   2 
   3 
@@ -226,11 +222,8 @@ sock= You path</code></pre></div>
  17     echo "mysql restart..."
  18 else
  19     echo "please input start|stop|restart "
- 20 fi</code></pre></div>
-<p>启动命令：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">sudo ./mysql.sh stop
-sudo ./mysql.sh start</code></pre></div>
-
+ 20 fi</code></pre></div><br>启动命令：<br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">sudo ./mysql.sh stop
+sudo ./mysql.sh start</code></pre></div><p></p>
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><p>  如果出现其他的错误，请删除/usr/local/var/mysql下面的.err、.pid文件，然后就可以重新启动。</p>
 
             </article>

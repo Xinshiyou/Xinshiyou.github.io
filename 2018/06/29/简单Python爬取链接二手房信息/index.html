@@ -194,10 +194,8 @@
             <article class="markdown-body">
               <h2 id="Python爬虫"><a href="#Python爬虫" class="headerlink" title="Python爬虫"></a>Python爬虫</h2><p>  博主目前学习Python爬虫，主要从简单的代码入手，然后逐步理解爬虫的精髓，逐渐学习复杂的爬虫技术等内容。</p>
 <a id="more"></a>
-
 <p>  本文主要研究使用简单的线程、urllib、bs4.BeautifulSoup等爬取链家网站二手房信息。主要的原理在于链家网站具有比较简单的网页结构，同时也是静态网页；使用的手段，主要是通过网页之间的地址链接，不断获取房子详细页面的内容。</p>
-<h2 id="主要用到的包"><a href="#主要用到的包" class="headerlink" title="主要用到的包"></a>主要用到的包</h2><p>本文主要使用以下package:</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">import Queue
+<h2 id="主要用到的包"><a href="#主要用到的包" class="headerlink" title="主要用到的包"></a>主要用到的包</h2><p>本文主要使用以下package:<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">import Queue
 
 import MysqlDB
 import parserURL
@@ -206,10 +204,8 @@ import threading
 import time
 import urllib
 
-from bs4 import BeautifulSoup</code></pre></div>
-<p>使用的线程信息，但由于存在链家可能存在反扒措施，或对同一IP存在访问数限制，因此这里主要使用单一线程。</p>
-<h2 id="主要代码"><a href="#主要代码" class="headerlink" title="主要代码"></a>主要代码</h2><p>浏览页面网页解析：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 解析网页信息
+from bs4 import BeautifulSoup</code></pre></div><br>使用的线程信息，但由于存在链家可能存在反扒措施，或对同一IP存在访问数限制，因此这里主要使用单一线程。<p></p>
+<h2 id="主要代码"><a href="#主要代码" class="headerlink" title="主要代码"></a>主要代码</h2><p>浏览页面网页解析：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 解析网页信息
 class parserURL(threading.Thread):
     
     counts = 0
@@ -242,9 +238,7 @@ class parserURL(threading.Thread):
         for li in lis:
             detail = li.find('h2').find('a')
             detail_href = detail['href']
-            self.two_html_queue.put("http://sh.lianjia.com" + detail_href)</code></pre></div>
-<p>解析房子详细页面信息，并将爬取内容写入数据库：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">sql = "insert into house_infos(tag,type,total_price,house_type,house_area,house_avg_price,house_floor,house_year,house_desc,house_direction,first_pay,monthly_pay,district,district_address,city) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            self.two_html_queue.put("http://sh.lianjia.com" + detail_href)</code></pre></div><br>解析房子详细页面信息，并将爬取内容写入数据库：<br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">sql = "insert into house_infos(tag,type,total_price,house_type,house_area,house_avg_price,house_floor,house_year,house_desc,house_direction,first_pay,monthly_pay,district,district_address,city) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 ## 解析二手房信息
 class parserErShouFang(threading.Thread):
     
@@ -305,8 +299,7 @@ class parserErShouFang(threading.Thread):
                     print pq[0], pq[1]
         param.append(self.city)
         
-        self.db.execute(sql, param)</code></pre></div>
-
+        self.db.execute(sql, param)</code></pre></div><p></p>
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><p>  博主采用的手段比较低级，主要通过网页中的标签来获取相应的数据，后期可能通过xpath、正则表达式等方式来获取相应的内容。</p>
 
             </article>

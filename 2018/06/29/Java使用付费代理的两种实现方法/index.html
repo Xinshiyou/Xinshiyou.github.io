@@ -195,17 +195,12 @@
               <p>&nbsp;&nbsp;免费代理，如西刺代理、快代理等代理网站公布的代理地址，常常存在几个问题：<br>        &nbsp;&nbsp;1. 存在反扒措施，如限制爬虫频率、存在并发数限制、封IP等；<br>        &nbsp;&nbsp;2. 免费代理存在时效性，无法长时间使用。</p>
 <p>  目前获得稳定性能的最佳途径就是购买代理服务资源，通过代理服务商给出的IP:Port，UserName:Password来访问代理服务器，从而获得良好的代理体验。</p>
 <a id="more"></a>
-
 <p>  本文简单介绍，使用代理服务器的几种方式。</p>
-<h2 id="CURL访问"><a href="#CURL访问" class="headerlink" title="CURL访问"></a>CURL访问</h2><p>使用curl访问代理资源的方法如下所示。</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl -x username:passwd@agentIP:agentPort URL</code></pre></div>
-<p>这样可以通过代理服务器访问到相应的网络资源。注：通常，-X标识请求方法。</p>
-<h2 id="Java设置系统变量方法"><a href="#Java设置系统变量方法" class="headerlink" title="Java设置系统变量方法"></a>Java设置系统变量方法</h2><p>使用Java通过代理服务器来访问资源，通常可以如下设置：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">System.setProperty("http.proxyHost","Proxy Server");
+<h2 id="CURL访问"><a href="#CURL访问" class="headerlink" title="CURL访问"></a>CURL访问</h2><p>使用curl访问代理资源的方法如下所示。<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl -x username:passwd@agentIP:agentPort URL</code></pre></div><br>这样可以通过代理服务器访问到相应的网络资源。注：通常，-X标识请求方法。<p></p>
+<h2 id="Java设置系统变量方法"><a href="#Java设置系统变量方法" class="headerlink" title="Java设置系统变量方法"></a>Java设置系统变量方法</h2><p>使用Java通过代理服务器来访问资源，通常可以如下设置：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">System.setProperty("http.proxyHost","Proxy Server");
 System.setProperty("http.proxyPort","Proxy port");
 System.setProperty("http.proxyUser","User");
-System.setProperty("http.proxyPassword","password");</code></pre></div>
-<p>通过设置系统变量的方法来设置代理服务器的地址、端口，以及用户名、密码等变量。</p>
+System.setProperty("http.proxyPassword","password");</code></pre></div><br>通过设置系统变量的方法来设置代理服务器的地址、端口，以及用户名、密码等变量。<p></p>
 <h2 id="Java使用授权方式"><a href="#Java使用授权方式" class="headerlink" title="Java使用授权方式"></a>Java使用授权方式</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">// 授权密码
 Authenticator.setDefault(new BasicAuthenticator(proxy_user,proxy_pass));
 Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.HTTP,new InetSocketAddress(proxy_ip,proxy_port));</code></pre></div>

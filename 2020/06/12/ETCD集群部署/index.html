@@ -193,7 +193,6 @@
             
             <article class="markdown-body">
               <!-- TOC -->
-
 <ul>
 <li><a href="#1-etcd介绍">.1. ETCD介绍</a></li>
 <li><a href="#2-部署etcd集群">.2. 部署ETCD集群</a><ul>
@@ -214,7 +213,6 @@
 <li><a href="#3-集群状态检查及基本使用">.3. 集群状态检查及基本使用</a></li>
 </ul>
 <!-- /TOC -->
-
 <h2 id="1-ETCD介绍"><a href="#1-ETCD介绍" class="headerlink" title=".1. ETCD介绍"></a>.1. ETCD介绍</h2><p>  ETCD是一个K-V分布式数据存储库，为分布式系统提供关键数据的存储服务。主要特点</p>
 <ol>
 <li>简单：设计简单、部署简单，API简单</li>
@@ -230,8 +228,7 @@
 <p>因此，Raft设计之初就是为了易与理解而设计。在上述参考文献中，详细介绍了Raft算的机制/原理等内容。</p>
 <h2 id="2-部署ETCD集群"><a href="#2-部署ETCD集群" class="headerlink" title=".2. 部署ETCD集群"></a>.2. 部署ETCD集群</h2><p>  <strong>ETCD</strong>集群的部署，也较为简单。不安全的集群部署，这里不再讨论。这里的部署，主要是指自认证的<strong>ETCD</strong>集群。</p>
 <p>  ETCD集群部署配置，可以参考：<a href="https://www.jianshu.com/p/85803026a9a1" target="_blank" rel="noopener">ETCD集群部署</a>、<a href="https://www.jianshu.com/p/33b5f47ababc" target="_blank" rel="noopener">etcd多台部署:启用https以及ca自签名</a>。参考上述两篇博文的配置、操作步骤，但配置过程中略微存在差异。</p>
-<h3 id="2-1-编译cfssl组件"><a href="#2-1-编译cfssl组件" class="headerlink" title=".2.1. 编译cfssl组件"></a>.2.1. 编译cfssl组件</h3><p>  CFSSL主要是为了实现自认证配置，生成CA证书、公钥、私钥等内容。<br>最新版本cfssl已经不再提供通过官方网站下载，可以直接通过Github下载编译或直接安装</p>
-<div class="hljs"><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 直接下载某个版本</span></span>
+<h3 id="2-1-编译cfssl组件"><a href="#2-1-编译cfssl组件" class="headerlink" title=".2.1. 编译cfssl组件"></a>.2.1. 编译cfssl组件</h3><p>  CFSSL主要是为了实现自认证配置，生成CA证书、公钥、私钥等内容。<br>最新版本cfssl已经不再提供通过官方网站下载，可以直接通过Github下载编译或直接安装<br></p><div class="hljs"><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 直接下载某个版本</span></span>
 wget https://github.com/cloudflare/cfssl/archive/1.3.4.tar.gz
 
 <span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 下载Master分支，切换为某个tag的代码</span></span>
@@ -243,8 +240,7 @@ wget https://github.com/cloudflare/cfssl/archive/1.3.4.tar.gz
               github.com/cloudflare/go-metrics
 3. 编译安装：make ## 会在bin目录下面创建常用命令
 <span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 切换分支命令：参考</span></span>
-git checkout tags/v1.0 -b v1.0-branch</code></span></span></pre></div>
-
+git checkout tags/v1.0 -b v1.0-branch</code></span></span></pre></div><p></p>
 <h3 id="2-2-创建CA证书"><a href="#2-2-创建CA证书" class="headerlink" title=".2.2. 创建CA证书"></a>.2.2. 创建CA证书</h3><p>  创建CA证书，主要涉及到两个操作步骤。通过CFSSL来创建证书，一般只需要编辑JSON配置文件即可。</p>
 <h4 id="2-2-1-创建CA证书"><a href="#2-2-1-创建CA证书" class="headerlink" title=".2.2.1. 创建CA证书"></a>.2.2.1. 创建CA证书</h4><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 创建CA，配置文件如下
 #### ca-config.json
@@ -286,10 +282,7 @@ git checkout tags/v1.0 -b v1.0-branch</code></span></span></pre></div>
 
 #### 创建CA相关文件
 cfssl gencert -initca ca-csr.json | cfssljson -bare ca</code></pre></div>
-
-
-<h4 id="2-2-2-创建业务Key"><a href="#2-2-2-创建业务Key" class="headerlink" title=".2.2.2. 创建业务Key"></a>.2.2.2. 创建业务Key</h4><p>  创建业务需求的公钥\私钥，需要明确业务是那种情况：server(peer)、client，这里配置了两种不同的适应场景。另外一点，需要定义一下业务的配置JSON文件。</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 配置业务JSON文件：etcd-csr.json
+<h4 id="2-2-2-创建业务Key"><a href="#2-2-2-创建业务Key" class="headerlink" title=".2.2.2. 创建业务Key"></a>.2.2.2. 创建业务Key</h4><p>  创建业务需求的公钥\私钥，需要明确业务是那种情况：server(peer)、client，这里配置了两种不同的适应场景。另外一点，需要定义一下业务的配置JSON文件。<br></p><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 配置业务JSON文件：etcd-csr.json
 {
     <span class="hljs-attr">"CN"</span>: <span class="hljs-string">"etcd"</span>,
     <span class="hljs-attr">"hosts"</span>: [
@@ -314,8 +307,7 @@ cfssl gencert -initca ca-csr.json | cfssljson -bare ca</code></pre></div>
 }
 
 ### 创建业务场景的公钥/私钥
-cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server etcd-csr.json | cfssljson -bare etcd</code></pre></div>
-
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server etcd-csr.json | cfssljson -bare etcd</code></pre></div><p></p>
 <p>  至此，CA配置以及业务需要的配置的自认证配置已获取到。</p>
 <h3 id="2-3-集群配置部署"><a href="#2-3-集群配置部署" class="headerlink" title=".2.3. 集群配置部署"></a>.2.3. 集群配置部署</h3><p>  这里配置为service的形式，并使用ansible部署集群：主要涉及到配置文件(etcd.conf)、服务配置(etcd.service)，以及ansible部署脚本。</p>
 <h4 id="2-3-1-etcd-service-j2"><a href="#2-3-1-etcd-service-j2" class="headerlink" title=".2.3.1. etcd.service.j2"></a>.2.3.1. etcd.service.j2</h4><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 配置路径：/usr/lib/systemd/system/etcd.service
@@ -356,7 +348,6 @@ LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target</code></pre></div>
-
 <h4 id="2-3-2-etcd-conf-j2"><a href="#2-3-2-etcd-conf-j2" class="headerlink" title=".2.3.2. etcd.conf.j2"></a>.2.3.2. etcd.conf.j2</h4><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">#### 配置文件路径：/etc/etcd/etcd.conf
 [member]
 ETCD_NAME={{ etcd_name }}
@@ -414,7 +405,6 @@ ETCD_ADVERTISE_CLIENT_URLS="https://{{ inventory_hostname }}:{{ client_port }}"<
         src: etcdctls.j2
         dest: /usr/bin/etcdctls
         mode: "0755"</code></pre></div>
-
 <h2 id="3-集群状态检查及基本使用"><a href="#3-集群状态检查及基本使用" class="headerlink" title=".3. 集群状态检查及基本使用"></a>.3. 集群状态检查及基本使用</h2><div class="hljs"><pre class=" language-hljs Json"><code class="language-hljs Json">### 健康状态检查: etcdctl 命令行访问
 etcdctl   \
     --ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem   \

@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      2.7k 字
+      2.6k 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      53
+      51
        分钟
     </span>
   
@@ -193,11 +193,10 @@
             
             <article class="markdown-body">
               <!-- TOC -->
-
 <ul>
 <li><a href="#1-下载组件">.1. 下载组件</a></li>
 <li><a href="#2-部署安装">.2. 部署安装</a><ul>
-<li><a href="#21-配置文件----configini--cloudera-scm-agent需要">.2.1. 配置文件 – config.ini : cloudera-scm-agent需要</a></li>
+<li><a href="#21-配置文件----configini--cloudera-scm-agent需要">.2.1. 配置文件 — config.ini : cloudera-scm-agent需要</a></li>
 <li><a href="#22-dbproperties--cloudera-scm-server-需要">.2.2. db.properties : cloudera-scm-server 需要</a></li>
 </ul>
 </li>
@@ -209,7 +208,6 @@
 </li>
 </ul>
 <!-- /TOC -->
-
 <h2 id="1-下载组件"><a href="#1-下载组件" class="headerlink" title=".1. 下载组件"></a>.1. 下载组件</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 必须下载
 ### Cloudera Manager
 cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
@@ -229,8 +227,7 @@ oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm
 ## 部署MySQL需要
 mysql57-community-release-el7-7.noarch.rpm
 mysql-connector-java.jar</code></pre></div>
-
-<h2 id="2-部署安装"><a href="#2-部署安装" class="headerlink" title=".2. 部署安装"></a>.2. 部署安装</h2><h3 id="2-1-配置文件-–-config-ini-cloudera-scm-agent需要"><a href="#2-1-配置文件-–-config-ini-cloudera-scm-agent需要" class="headerlink" title=".2.1. 配置文件 – config.ini : cloudera-scm-agent需要"></a>.2.1. 配置文件 – config.ini : cloudera-scm-agent需要</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Configuration file for cloudera-scm-agent.
+<h2 id="2-部署安装"><a href="#2-部署安装" class="headerlink" title=".2. 部署安装"></a>.2. 部署安装</h2><h3 id="2-1-配置文件-—-config-ini-cloudera-scm-agent需要"><a href="#2-1-配置文件-—-config-ini-cloudera-scm-agent需要" class="headerlink" title=".2.1. 配置文件 — config.ini : cloudera-scm-agent需要"></a>.2.1. 配置文件 — config.ini : cloudera-scm-agent需要</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Configuration file for cloudera-scm-agent.
 # Please note that this file supports multi-line values.  Multi-line
 # values are indicated by indenting following lines with a space.
 #
@@ -477,7 +474,6 @@ max_cert_depth=9
 #cpuacct_cgroup_path=/
 #blkio_cgroup_path=/
 #memory_cgroup_path=/</parcel_dir></code></pre></div>
-
 <h3 id="2-2-db-properties-cloudera-scm-server-需要"><a href="#2-2-db-properties-cloudera-scm-server-需要" class="headerlink" title=".2.2. db.properties : cloudera-scm-server 需要"></a>.2.2. db.properties : cloudera-scm-server 需要</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Copyright (c) 2012 Cloudera, Inc. All rights reserved.
 #
 # This file describes the database connection.
@@ -506,8 +502,7 @@ com.cloudera.cmf.db.password={{ root_password }}
 # If scm-server uses Embedded DB then it is set to EMBEDDED
 # If scm-server uses External DB then it is set to EXTERNAL
 com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre></div>
-
-<h2 id="3-部署编排"><a href="#3-部署编排" class="headerlink" title=".3. 部署编排"></a>.3. 部署编排</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">---
+<h2 id="3-部署编排"><a href="#3-部署编排" class="headerlink" title=".3. 部署编排"></a>.3. 部署编排</h2><div class="hljs"><pre class=" language-hljs bash"><code class="language-hljs bash">---
 - hosts: CDM:Common
   tasks:
   - name: copy hosts
@@ -515,7 +510,7 @@ com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre></div>
         src: confs/hosts
         dest: /etc/hosts
 
-  - name: set hostname
+  - name: <span class="hljs-built_in">set</span> hostname
     hostname: name={{ inventory_hostname }}
 
   - name: copy oracle-jdk1.8
@@ -528,19 +523,19 @@ com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre></div>
 
   - name: install rpcbind
     shell: yum install -y rpcbind
-    ignore_errors: true
+    ignore_errors: <span class="hljs-literal">true</span>
 
-  - name: set java_home
+  - name: <span class="hljs-built_in">set</span> java_home
     lineinfile:
         path: /etc/profile
-        line: export JAVA_HOME=/usr/lib/jvm/java
+        line: <span class="hljs-built_in">export</span> JAVA_HOME=/usr/lib/jvm/java
         state: absent
  
   - name: install needed packages
     shell: yum install cyrus-sasl-gssapi fuse fuse-libs httpd mod_ssl openssl-devel python-psycopg2 MySQL-python -y
 
   - name: configure each-cred
-    shell: echo -e "y\ny\n" | ssh-keygen -q -t rsa -f /root/.ssh/id_rsa -C "" -N ""
+    shell: <span class="hljs-built_in">echo</span> -e <span class="hljs-string">"y\ny\n"</span> | ssh-keygen -q -t rsa -f /root/.ssh/id_rsa -C <span class="hljs-string">""</span> -N <span class="hljs-string">""</span>
 
   - name: cat ssh-key auths
     shell: cat /root/.ssh/id_rsa.pub
@@ -548,16 +543,16 @@ com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre></div>
 
   - name: touch authorized_keys
     shell: |
-        echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArk0cjBbDgdke86pN9962BjcsyxUNhvtW8rkzmykqCPu2QlQxwCg5OikQxmcJUakCkkGhww88U9gx+gPgoJZ9UtClRqHbJKbyqu5XXYFfxjjjRa4N60d5wXXgga2UB6RVIgA+snPxBKi6oFlvH5jV7h3lHxRo3JRQt51/NmcbkyZyUIF7bOJztB9C85jw7dk4dXG52M9bN+FtVlGiVCVKZRWHHoEUVt7y1ZUaao5Ceqw0nAL9JZfQK1zQhrq7YI8pN3ssI35ZKL7EkVKy+qs9GplJFfTBvXO5Q0btFMtM6cY1fMEv9PIt3n0uZF1kGjAHyrAPYnQPcb3H6sDCLQJQ+Q== tp_cloud_hadoop@qiyi.com" &gt; /root/.ssh/authorized_keys
+        <span class="hljs-built_in">echo</span> <span class="hljs-string">"ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArk0cjBbDgdke86pN9962BjcsyxUNhvtW8rkzmykqCPu2QlQxwCg5OikQxmcJUakCkkGhww88U9gx+gPgoJZ9UtClRqHbJKbyqu5XXYFfxjjjRa4N60d5wXXgga2UB6RVIgA+snPxBKi6oFlvH5jV7h3lHxRo3JRQt51/NmcbkyZyUIF7bOJztB9C85jw7dk4dXG52M9bN+FtVlGiVCVKZRWHHoEUVt7y1ZUaao5Ceqw0nAL9JZfQK1zQhrq7YI8pN3ssI35ZKL7EkVKy+qs9GplJFfTBvXO5Q0btFMtM6cY1fMEv9PIt3n0uZF1kGjAHyrAPYnQPcb3H6sDCLQJQ+Q== tp_cloud_hadoop@qiyi.com"</span> &gt; /root/.ssh/authorized_keys
         chmod 600 /root/.ssh/authorized_keys
 
-  - name: set public-keys to each nodes
+  - name: <span class="hljs-built_in">set</span> public-keys to each nodes
     lineinfile:
         path: /root/.ssh/authorized_keys
-        line: "{{ hostvars[item].id_rsa.stdout }}"
+        line: <span class="hljs-string">"{{ hostvars[item].id_rsa.stdout }}"</span>
         state: present
     with_items:
-        - "{{ groups['Common'] | union(groups['CDM']) | unique }}"
+        - <span class="hljs-string">"{{ groups['Common'] | union(groups['CDM']) | unique }}"</span>
 
 - hosts: CDM
   tasks:
@@ -571,8 +566,8 @@ com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre></div>
 
   - name: copy files
     copy: 
-        src: "confs/{{ item }}"
-        dest: "/tmp/{{ item }}"
+        src: <span class="hljs-string">"confs/{{ item }}"</span>
+        dest: <span class="hljs-string">"/tmp/{{ item }}"</span>
     with_items:
         - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
         - cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm
@@ -595,8 +590,8 @@ com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre></div>
 
   - name: copy parcells file
     copy:
-        src: "confs/cdh/{{ item }}"
-        dest: "/opt/cloudera/parcels/{{ item }}"
+        src: <span class="hljs-string">"confs/cdh/{{ item }}"</span>
+        dest: <span class="hljs-string">"/opt/cloudera/parcels/{{ item }}"</span>
     with_items:
         - CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha
         - CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha256
@@ -612,8 +607,8 @@ com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre></div>
   tasks:
   - name: copy files
     copy: 
-        src: "confs/{{ item }}"
-        dest: "/tmp/{{ item }}"
+        src: <span class="hljs-string">"confs/{{ item }}"</span>
+        dest: <span class="hljs-string">"/tmp/{{ item }}"</span>
     with_items:
         - cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
         - cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
@@ -632,10 +627,8 @@ com.cloudera.cmf.db.setupType=EXTERNAL ## external with mysql</code></pre></div>
         dest: /etc/cloudera-scm-agent/config.ini
 
   - name: configure ntpd service
-    include: ntpd.yml ## 公网或公司服务</code></pre></div>
-
+    include: ntpd.yml <span class="hljs-comment">## 公网或公司服务</span></code></pre></div>
 <h2 id="4-其他补充"><a href="#4-其他补充" class="headerlink" title=".4. 其他补充"></a>.4. 其他补充</h2><h3 id="4-1-创建MySQL数据库"><a href="#4-1-创建MySQL数据库" class="headerlink" title=".4.1. 创建MySQL数据库"></a>.4.1. 创建MySQL数据库</h3><div class="hljs"><pre class=" language-hljs bash"><code class="language-hljs bash">CREATE DATABASE mydatabase CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;</code></pre></div>
-
 <h3 id="4-2-初始化SCM数据库"><a href="#4-2-初始化SCM数据库" class="headerlink" title=".4.2. 初始化SCM数据库"></a>.4.2. 初始化SCM数据库</h3><div class="hljs"><pre class=" language-hljs bash">/opt/cloudera/cm/schema/scm_prepare_database.sh -h[MySQL Host/IP ] -P 3306 -u [Admin User Name] -p[Admin User Password]  mysql scm scm <span class="hljs-string"><code class="language-hljs bash">/opt/cloudera/cm/schema/scm_prepare_database.sh -h[MySQL Host/IP ] -P 3306 -u [Admin User Name] -p[Admin User Password]  mysql scm scm <span class="hljs-string">"Scm@123456"</span>  -f</code></span></pre></div>
             </article>
             <hr>

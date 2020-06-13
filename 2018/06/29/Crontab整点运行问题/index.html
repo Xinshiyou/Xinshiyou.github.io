@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      668 字
+      681 字
     </span>
   
 
@@ -194,21 +194,13 @@
             <article class="markdown-body">
               <p>  无论是使用Linux自带crontab程序，还是使用cron-utils的crontab语法解析，都存在整点运行问题。</p>
 <a id="more"></a>
-
-<h2 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h2><p>使用crontab语法的时候，如果是固定间隔运行，如</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">0  0/5  * * * *
-30 */30 * * * *</code></pre></div>
-<p>其中分钟间隔只能是60的因子，如果不是60的因子，那么存在整点运行问题。如运行计划为</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">10 0/29 * * * *</code></pre></div>
-<p>那么运行时刻可能为</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Mon Oct 09 15:29:10 CST 2017
+<h2 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h2><p>使用crontab语法的时候，如果是固定间隔运行，如<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">0  0/5  * * * *
+30 */30 * * * *</code></pre></div><br>其中分钟间隔只能是60的因子，如果不是60的因子，那么存在整点运行问题。如运行计划为<br><div class="hljs"><pre class=" language-hljs plain">10 0/29 * * * *</pre></div><br>那么运行时刻可能为<br><div class="hljs"><pre><code class="hljs plain"><code class="language-hljs plain">10 0/29 * * * *</code></code></pre></div><code class="hljs plain"><br>那么运行时刻可能为<br><div class="hljs"><pre><code class="hljs plain">Mon Oct 09 15:29:10 CST 2017
 Mon Oct 09 15:58:10 CST 2017
 Mon Oct 09 16:00:10 CST 2017
-...</code></pre></div>
-<p>这里的运行计划，多出来一个16:00:10，这是不在我们的运行计划中的。</p>
+...</code></pre></div><br>这里的运行计划，多出来一个16:00:10，这是不在我们的运行计划中的。<p></p>
 <h2 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h2><p>作者使用的是cron-utils，所以可以使用程序控制，实现规避整点运行的问题。</p>
-<h3 id="计算crontab时间间隔"><a href="#计算crontab时间间隔" class="headerlink" title="计算crontab时间间隔"></a>计算crontab时间间隔</h3><p>代码先上：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">/**
+<h3 id="计算crontab时间间隔"><a href="#计算crontab时间间隔" class="headerlink" title="计算crontab时间间隔"></a>计算crontab时间间隔</h3><p>代码先上：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">/**
  * @DESC caluate the max seperates
  */
 public static long calcMaxSep(ExecutionTime executionTime,
@@ -237,8 +229,7 @@ public static long calcMaxSep(ExecutionTime executionTime,
 public static long getMaxByTri(long b1, long b2, long b3) {
 	// return b1 &gt; b2 ? (b1 &gt; b3 ? b1 : b3) : (b2 &gt; b3 ? b2 : b3);
 	return Math.max(b1, Math.max(b2, b3));
-}</code></pre></div>
-<p>  基本原理：三个运行时刻，不可能都存在整点运行问题，除非设置就是整点运行的。分析三个运行时间之间的时间间隔，如果是正常区间，那三个时间应该是一致的；如果区间内或边界存在整点问题，那么应该可以通过该方法解决。作者通过该方法获取运行时间间隔，没有发现问题。</p>
+}</code></pre></div><br>  基本原理：三个运行时刻，不可能都存在整点运行问题，除非设置就是整点运行的。分析三个运行时间之间的时间间隔，如果是正常区间，那三个时间应该是一致的；如果区间内或边界存在整点问题，那么应该可以通过该方法解决。作者通过该方法获取运行时间间隔，没有发现问题。<p></p>
 <h3 id="通过间隔获取下一个运行时刻"><a href="#通过间隔获取下一个运行时刻" class="headerlink" title="通过间隔获取下一个运行时刻"></a>通过间隔获取下一个运行时刻</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">public static void updateTask(SchedulerTask task) {
 	task.setCurrentFiredTime(task.getNextFiredTime());// 直接获取计算好的下次执行时间，不再重新计算
 	DateTime updateCurrentFireTime = new DateTime(task.getNextFiredTime());
@@ -270,7 +261,7 @@ public static DateTime nextFireTime(DateTime currentFireTime, long added) {
 <li>本方法不适用于日、星期、月、年等存在区间限制，也即crontab表达式，后面几个都是”*”</li>
 </ol>
 
-            </article>
+            </code></article><code class="hljs plain">
             <hr>
             <div>
               <div class="post-metas mb-3">
@@ -323,10 +314,10 @@ public static DateTime nextFireTime(DateTime currentFireTime, long added) {
             </div>
 
             
-          </div>
-        </div>
-      </div>
-    </div>
+          </code></div><code class="hljs plain">
+        </code></div><code class="hljs plain">
+      </code></div><code class="hljs plain">
+    </code></div><code class="hljs plain">
     
       <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
         <div id="toc">
@@ -336,14 +327,14 @@ public static DateTime nextFireTime(DateTime currentFireTime, long added) {
 
       </div>
     
-  </div>
-</div>
+  </code></div><code class="hljs plain">
+</code></div><code class="hljs plain">
 
 <!-- Custom -->
 
 
     
-  </main>
+  </code></main><code class="hljs plain">
 
   
     <a id="scroll-top-button" href="#" role="button">
@@ -460,7 +451,7 @@ public static DateTime nextFireTime(DateTime currentFireTime, long added) {
 
 
 
-<script src="/bundle.js"></script><script>
+</code><script src="/bundle.js"></script><script>
     $(document).ready(function () {
       var boardCtn = $('#board-ctn');
       var boardTop = boardCtn.offset().top;

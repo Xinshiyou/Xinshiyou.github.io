@@ -192,8 +192,7 @@
           <div class="post-content mx-auto" id="post">
             
             <article class="markdown-body">
-              <h2 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h2><p>  POM中可以配置一些<em>properties</em>，这些属性一般而言实在各种pom中使用，但也可以在一些配置文件中使用，例如</p>
-<div class="hljs"><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># pom文件配置</span></span>
+              <h2 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h2><p>  POM中可以配置一些<em>properties</em>，这些属性一般而言实在各种pom中使用，但也可以在一些配置文件中使用，例如<br></p><div class="hljs"><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># pom文件配置</span></span>
 <properties>
 	<database.driver>com.mysql.jdbc.Driver</database.driver>
 	<database.url>jdbc:mysql://localhost:3306/database?autoReconnect=true
@@ -228,12 +227,8 @@
 driverClassName=${database.driver}
 url=${database.url}
 username=${database.username}
-password=${database.password}</code></span></span></pre></div>
-<p>  通过如上配置，默认情况下直接使用外层的<em>properties</em>属性，但也可以通过制定来更改为我们需要的配置</p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">mvn clean install -Pqa/-Pproduction</code></pre></div>
-<p>通过编译之后，可以看到我们设置的变量替换为pom文件中的变量。</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2><h2 id="各种plugin"><a href="#各种plugin" class="headerlink" title="各种plugin"></a>各种plugin</h2><h3 id="maven-antrun-plugin"><a href="#maven-antrun-plugin" class="headerlink" title="maven-antrun-plugin"></a>maven-antrun-plugin</h3><p><strong>maven-antrun-plugin</strong>，主要是用来从Maven内运行Ant任务的功能，甚至可以将Ant脚本嵌入到POM。这个插件不是提供污染POM的手段意图，因此它鼓励所有Ant任务移动到build.xml文件并使用Ant的POM调用它。这个插件的主要目的之一是方便从Ant基础项目迁移到Maven。</p>
-<div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
+password=${database.password}</code></span></span></pre></div><br>  通过如上配置，默认情况下直接使用外层的<em>properties</em>属性，但也可以通过制定来更改为我们需要的配置<br><div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">mvn clean install -Pqa/-Pproduction</code></pre></div><br>通过编译之后，可以看到我们设置的变量替换为pom文件中的变量。<p></p>
+<h2 id=""><a href="#" class="headerlink" title=" "></a> </h2><h2 id="各种plugin"><a href="#各种plugin" class="headerlink" title="各种plugin"></a>各种plugin</h2><h3 id="maven-antrun-plugin"><a href="#maven-antrun-plugin" class="headerlink" title="maven-antrun-plugin"></a>maven-antrun-plugin</h3><p><strong>maven-antrun-plugin</strong>，主要是用来从Maven内运行Ant任务的功能，甚至可以将Ant脚本嵌入到POM。这个插件不是提供污染POM的手段意图，因此它鼓励所有Ant任务移动到build.xml文件并使用Ant的POM调用它。这个插件的主要目的之一是方便从Ant基础项目迁移到Maven。<br></p><div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
 	<artifactid>maven-antrun-plugin</artifactid>
 	<executions>
 		<execution>
@@ -250,13 +245,11 @@ password=${database.password}</code></span></span></pre></div>
 			</configuration>
 		</execution>
 	</executions>
-</plugin></code></pre></div>
-
+</plugin></code></pre></div><p></p>
 <h3 id="maven-clean-plugin"><a href="#maven-clean-plugin" class="headerlink" title="maven-clean-plugin"></a>maven-clean-plugin</h3><p><strong>maven-clean-plugin</strong>最常用的maven插件，主要用于清理target文件等内容。</p>
 <h3 id="maven-resources-plugin"><a href="#maven-resources-plugin" class="headerlink" title="maven-resources-plugin"></a>maven-resources-plugin</h3><p><strong>maven-resources-plugin</strong>用于替换资源文件中的占位符。</p>
 <h3 id="maven-install-plugin"><a href="#maven-install-plugin" class="headerlink" title="maven-install-plugin"></a>maven-install-plugin</h3><p><strong>maven-install-plugin</strong>用于安装jar包，将生成的jar文件复制到maven的本地仓库中。</p>
-<h3 id="maven-compiler-plugin"><a href="#maven-compiler-plugin" class="headerlink" title="maven-compiler-plugin"></a>maven-compiler-plugin</h3><p><strong>maven-compiler-plugin</strong>编译Java源码，一般只需要设置编译的JDK版本即可。</p>
-<div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
+<h3 id="maven-compiler-plugin"><a href="#maven-compiler-plugin" class="headerlink" title="maven-compiler-plugin"></a>maven-compiler-plugin</h3><p><strong>maven-compiler-plugin</strong>编译Java源码，一般只需要设置编译的JDK版本即可。<br></p><div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
     <groupid>org.apache.maven.plugins</groupid>
     <artifactid>maven-compiler-plugin</artifactid>
     <version>3.6.0</version>
@@ -264,10 +257,8 @@ password=${database.password}</code></span></span></pre></div>
         <source>1.8
         <target>1.8</target>
     </configuration>
-</plugin></code></pre></div>
-
-<h3 id="maven-dependency-plugin"><a href="#maven-dependency-plugin" class="headerlink" title="maven-dependency-plugin"></a>maven-dependency-plugin</h3><p><strong>maven-dependency-plugin</strong>用于将依赖的jar包复制到指定的文件夹里去。</p>
-<div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
+</plugin></code></pre></div><p></p>
+<h3 id="maven-dependency-plugin"><a href="#maven-dependency-plugin" class="headerlink" title="maven-dependency-plugin"></a>maven-dependency-plugin</h3><p><strong>maven-dependency-plugin</strong>用于将依赖的jar包复制到指定的文件夹里去。<br></p><div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
     <groupid>org.apache.maven.plugins</groupid>
     <artifactid>maven-dependency-plugin</artifactid>
     <version>2.10</version>
@@ -283,10 +274,8 @@ password=${database.password}</code></span></span></pre></div>
             </configuration>
         </execution>
     </executions>
-</plugin></code></pre></div>
-
-<h3 id="maven-jar-plugin"><a href="#maven-jar-plugin" class="headerlink" title="maven-jar-plugin"></a>maven-jar-plugin</h3><p><strong>maven-jar-plugin</strong>的主要作用是打包成可运行的jar，打包时制定manifest参数。</p>
-<div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
+</plugin></code></pre></div><p></p>
+<h3 id="maven-jar-plugin"><a href="#maven-jar-plugin" class="headerlink" title="maven-jar-plugin"></a>maven-jar-plugin</h3><p><strong>maven-jar-plugin</strong>的主要作用是打包成可运行的jar，打包时制定manifest参数。<br></p><div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
     <groupid>org.apache.maven.plugins</groupid>
     <artifactid>maven-jar-plugin</artifactid>
     <version>2.4</version>
@@ -299,10 +288,8 @@ password=${database.password}</code></span></span></pre></div>
             </manifest>
         </archive>
     </configuration>
-</plugin></code></pre></div>
-
-<h3 id="maven-shade-plugin"><a href="#maven-shade-plugin" class="headerlink" title="maven-shade-plugin"></a>maven-shade-plugin</h3><p><strong>maven-shade-plugin</strong><br>用于把多个jar包，打成1个jar包。一般Java项目都会依赖其他第三方jar包，最终打包时，希望把其他jar包包含在一个jar包里</p>
-<div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
+</plugin></code></pre></div><p></p>
+<h3 id="maven-shade-plugin"><a href="#maven-shade-plugin" class="headerlink" title="maven-shade-plugin"></a>maven-shade-plugin</h3><p><strong>maven-shade-plugin</strong><br>用于把多个jar包，打成1个jar包。一般Java项目都会依赖其他第三方jar包，最终打包时，希望把其他jar包包含在一个jar包里<br></p><div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>
     <groupid>org.apache.maven.plugins</groupid>
     <artifactid>maven-shade-plugin</artifactid>
     <version>2.4.3</version>
@@ -325,10 +312,8 @@ password=${database.password}</code></span></span></pre></div>
             </configuration>
         </execution>
     </executions>
-</plugin></code></pre></div>
-
-<h3 id="maven-surefire-plugin"><a href="#maven-surefire-plugin" class="headerlink" title="maven-surefire-plugin"></a>maven-surefire-plugin</h3><p><strong>maven-surefire-plugin</strong>主要使用来测试Maven项目的源码，能够兼容Junit3、Junit4以及TestNG等框架。默认情况下，maven-surefire-plugin的Test目标会自动测试源码路径下所有符合一组命名模式的测试类。</p>
-<div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>  
+</plugin></code></pre></div><p></p>
+<h3 id="maven-surefire-plugin"><a href="#maven-surefire-plugin" class="headerlink" title="maven-surefire-plugin"></a>maven-surefire-plugin</h3><p><strong>maven-surefire-plugin</strong>主要使用来测试Maven项目的源码，能够兼容Junit3、Junit4以及TestNG等框架。默认情况下，maven-surefire-plugin的Test目标会自动测试源码路径下所有符合一组命名模式的测试类。<br></p><div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java"><plugin>  
     <groupid>org.apache.maven.plugins</groupid>  
     <artifactid>maven-surefire-plugin</artifactid>  
     <version>2.5</version>  
@@ -341,8 +326,7 @@ password=${database.password}</code></span></span></pre></div>
             <exclude>**/TempDaoTest.java</exclude>  
           
     </configuration>  
-</plugin></code></pre></div>
-
+</plugin></code></pre></div><p></p>
 <h3 id="groovy-maven-plugin"><a href="#groovy-maven-plugin" class="headerlink" title="groovy-maven-plugin"></a>groovy-maven-plugin</h3><p><strong>groovy-maven-plugin</strong>主要是用于Maven编译Groovy源代码。</p>
 <h3 id="jruby-maven-plugin"><a href="#jruby-maven-plugin" class="headerlink" title="jruby-maven-plugin"></a>jruby-maven-plugin</h3><p><strong>jruby-maven-plugin</strong>主要用于ruby的源代码编译。</p>
 
