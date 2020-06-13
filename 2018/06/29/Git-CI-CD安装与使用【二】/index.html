@@ -196,7 +196,7 @@
 <a id="more"></a>
 
 <p>  本小节主要是Git-CI/CD配置。</p>
-<h2 id="样例配置"><a href="#样例配置" class="headerlink" title="样例配置"></a>样例配置</h2><figure class="highlight less"><table><tbody><tr><td class="code"><div class="hljs"><pre class=" language-hljs less"><span class="hljs-attribute">stages</span>:<br>  - build<br><br><span class="hljs-attribute">build_staging</span>:<br>  <span class="hljs-attribute">stage</span>: build<br>  <span class="hljs-attribute">environment</span>:<br>    <span class="hljs-attribute">name</span>: staging<br>  <span class="hljs-attribute">image</span>: rastasheep/<span class="hljs-attribute">ubuntu-sshd</span>:<span class="hljs-number">16</span><br>  <span class="hljs-attribute">script</span>:<br>    - bin/build.sh<br>  <span class="hljs-attribute"><code class="language-hljs less"><span class="hljs-attribute">stages</span>:<br>  - build<br><br><span class="hljs-attribute">build_staging</span>:<br>  <span class="hljs-attribute">stage</span>: build<br>  <span class="hljs-attribute">environment</span>:<br>    <span class="hljs-attribute">name</span>: staging<br>  <span class="hljs-attribute">image</span>: rastasheep/<span class="hljs-attribute">ubuntu-sshd</span>:<span class="hljs-number">16</span><br>  <span class="hljs-attribute">script</span>:<br>    - bin/build.sh<br>  <span class="hljs-attribute">only</span>:<br>    - master<br></code></span></pre></div></td></tr></tbody></table></figure>
+<h2 id="样例配置"><a href="#样例配置" class="headerlink" title="样例配置"></a>样例配置</h2><figure class="highlight less"><table><tbody><tr><td class="code"><pre class=" language-hljs less"><span class="hljs-attribute">stages</span>:<br>  - build<br><br><span class="hljs-attribute">build_staging</span>:<br>  <span class="hljs-attribute">stage</span>: build<br>  <span class="hljs-attribute">environment</span>:<br>    <span class="hljs-attribute">name</span>: staging<br>  <span class="hljs-attribute">image</span>: rastasheep/<span class="hljs-attribute">ubuntu-sshd</span>:<span class="hljs-number">16</span><br>  <span class="hljs-attribute">script</span>:<br>    - bin/build.sh<br>  <span class="hljs-attribute"><code class="language-hljs less"><span class="hljs-attribute">stages</span>:<br>  - build<br><br><span class="hljs-attribute">build_staging</span>:<br>  <span class="hljs-attribute">stage</span>: build<br>  <span class="hljs-attribute">environment</span>:<br>    <span class="hljs-attribute">name</span>: staging<br>  <span class="hljs-attribute">image</span>: rastasheep/<span class="hljs-attribute">ubuntu-sshd</span>:<span class="hljs-number">16</span><br>  <span class="hljs-attribute">script</span>:<br>    - bin/build.sh<br>  <span class="hljs-attribute">only</span>:<br>    - master<br></code></span></pre></td></tr></tbody></table></figure>
 
 <h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
 <li><a href="https://www.jianshu.com/p/c840632cef38" target="_blank" rel="noopener">https://www.jianshu.com/p/c840632cef38</a></li>
@@ -340,9 +340,6 @@
   
 
 
-
-  <script defer="" src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
-  
 
 
 
