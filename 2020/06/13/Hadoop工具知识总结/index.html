@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="xinshiyou">
   <meta name="keywords" content="">
-  <title>Ozone调研 - 星空捞月：找寻心中的安宁</title>
+  <title>工具知识总结 - 星空捞月：找寻心中的安宁</title>
 
   
 
@@ -140,8 +140,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-06-07 15:21">
-      2020年6月7日 下午
+    <time datetime="2020-06-13 09:17">
+      2020年6月13日 上午
     </time>
   </div>
 
@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1k 字
+      300 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      12
+      4
        分钟
     </span>
   
@@ -192,84 +192,24 @@
           <div class="post-content mx-auto" id="post">
             
             <article class="markdown-body">
-              <p>主要研究目标：</p>
-<ol>
-<li>独立Ozone集群部署：特性、功能、安全</li>
-<li>Ozone with HDFS部署：特性、功能、安全</li>
+              <h1 id="HDFS-大数据"><a href="#HDFS-大数据" class="headerlink" title="HDFS(大数据)"></a>HDFS(大数据)</h1><p>  在大数据生态圈中，针对HDFS服务的各种缺陷或适用场景，发展了许许多多的开源解决方案。我们在这里总结一下，方便后期针对应用场景筛选使用。</p>
+<h2 id="NameNode性能测试"><a href="#NameNode性能测试" class="headerlink" title="NameNode性能测试"></a>NameNode性能测试</h2><ol>
+<li><a href="https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/SLGUserGuide.html" target="_blank" rel="noopener">Synthetic Load Generator Guide</a>: The synthetic load generator (SLG) is a tool for testing NameNode behavior under different client loads. The user can generate different mixes of read, write, and list requests by specifying the probabilities of read and write. The user controls the intensity of the load by adjusting parameters for the number of worker threads and the delay between operations. While load generators are running, the user can profile and monitor the running of the NameNode. When a load generator exits, it prints some NameNode statistics like the average execution time of each kind of operation and the NameNode throughput.</li>
+<li><a href="https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/Benchmarking.html" target="_blank" rel="noopener">Hadoop Benchmarking</a>: NNThroughputBenchmark</li>
 </ol>
-<!-- TOC -->
-
-<ul>
-<li><a href="#1-ozone架构">1. Ozone架构</a><ul>
-<li><a href="#11-架构图">1.1. 架构图</a><ul>
-<li><a href="#111-block管理角度">1.1.1. Block管理角度</a></li>
-<li><a href="#112-功能分级角度">1.1.2. 功能分级角度</a></li>
-<li><a href="#113-基本概念">1.1.3. 基本概念</a></li>
-</ul>
-</li>
-<li><a href="#12-亮点特性">1.2. 亮点特性</a><ul>
-<li><a href="#121-安全机制">1.2.1. 安全机制</a></li>
-<li><a href="#122-单独的">1.2.2. 单独的</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#2-部署测试">2. 部署测试</a><ul>
-<li><a href="#21-源码编译">2.1. 源码编译</a><ul>
-<li><a href="#211-下载源码">2.1.1. 下载源码</a></li>
-<li><a href="#212-编译问题">2.1.2. 编译问题</a></li>
-</ul>
-</li>
-<li><a href="#22-部署ozone独立集群">2.2. 部署Ozone独立集群</a></li>
-</ul>
-</li>
-<li><a href="#3-总结">3. 总结</a></li>
-<li><a href="#4-参考文献">4. 参考文献</a></li>
-</ul>
-<!-- /TOC -->
-
-<p>  当前各种开源的对象存储组件，基本上是对标<strong>Amazon</strong>的<strong>S3</strong>。在特性、功能上面，基本上都支持<strong>S3服务</strong>的访问。毕竟当前<strong>Amazon</strong>的<strong>S3</strong>在对象存储领域，具有广泛的影响力。各类公司在上云时，也会基于<strong>S3</strong>进行基准测试，对比各家云厂商的对象存储服务能力，从而考虑上云的性价比。</p>
-<p>  上云时需要考虑的一个点是本地机房与云商对象存储的一体化访问能力。而<strong>Apache Ozone</strong>具有原生优势</p>
-<ol>
-<li><strong>Hadoop</strong>项目中分离而来：为解决<strong>HDFS</strong>自身缺陷而生</li>
-<li>原生支持<strong>HDFS</strong>协议，以及安全机制(Kerberos+Token)</li>
-<li>支持<strong>S3</strong>协议。大部分对象存储服务都兼容<strong>S3</strong>协议</li>
-<li>原生支持云服务：<strong>Yarn</strong>、<strong>Kubernetes</strong></li>
-<li>可伸缩、可扩展、强一致性</li>
+<h2 id="NameNode性能模拟"><a href="#NameNode性能模拟" class="headerlink" title="NameNode性能模拟"></a>NameNode性能模拟</h2><ol>
+<li><a href="https://github.com/linkedin/dynamometer" target="_blank" rel="noopener">Dynamometer</a>: A tool for scale and performance testing of HDFS with a specific focus on the NameNode.</li>
 </ol>
-<p>  当前<strong>Apache Ozone</strong>具有的不足之处，可能有几点</p>
-<ol>
-<li>尚未完全成熟：虽然已从Apache毕业，成为顶级项目，但尚未发型稳定版。当前各种主流的版本，都处理alpha、beta版，且版本号基本上处于0.X版</li>
-<li>存在性能与稳定性瓶颈：当前<strong>Apache Ozone</strong>的已知版本中，在稳定性、性能访问还存在一定的瓶颈。特别是随着Ozone规模增长到一定程度之后，写入方面会存在较为严重的瓶颈。</li>
+<h2 id="HDFS文件分析"><a href="#HDFS文件分析" class="headerlink" title="HDFS文件分析"></a>HDFS文件分析</h2><ol>
+<li><a href="https://github.com/paypal/NNAnalytics" target="_blank" rel="noopener">NNAnalytics</a>: NameNodeAnalytics is a self-help utility for scouting and maintaining the namespace of an HDFS instance.</li>
 </ol>
-<p>  虽然<strong>Apache Ozone</strong>尚未经过大规模集群的验证，但这并不妨碍我们进行调研测试，毕竟未来云原生的对象存储可能会成为趋势。</p>
-<h1 id="1-Ozone架构"><a href="#1-Ozone架构" class="headerlink" title="1. Ozone架构"></a>1. Ozone架构</h1><p>  本小结我们先引入Ozone的架构图，然后分别介绍各个组件的功能，以及Ozone的基本概念。</p>
-<h2 id="1-1-架构图"><a href="#1-1-架构图" class="headerlink" title="1.1. 架构图"></a>1.1. 架构图</h2><p>  这里的架构图主要是引用hadoop-ozone官方文档介绍的结构图，主要有两个：Block管理角度、功能分层角度。</p>
-<h3 id="1-1-1-Block管理角度"><a href="#1-1-1-Block管理角度" class="headerlink" title="1.1.1. Block管理角度"></a>1.1.1. Block管理角度</h3><p><img src="ozoneBlockDiagram.png" srcset="/img/loading.gif" alt="Block管理角度"><br>Block角度主要包括几大组件</p>
-<ol>
-<li>Ozone Manager(OM)：om在hadoop-ozone中具有命名空间管理的职能。</li>
-<li>Storage Container Manager(SCM)：管理物理数据与数据层</li>
-<li>Recon：接口管理</li>
+<h2 id="HDFS冷热管理"><a href="#HDFS冷热管理" class="headerlink" title="HDFS冷热管理"></a>HDFS冷热管理</h2><ol>
+<li><a href="https://github.com/Intel-bigdata/SSM" target="_blank" rel="noopener">SSM</a>: Smart Storage Management for Big Data, a comprehensive hot/cold data optimized solution</li>
 </ol>
-<p>  在Ozone的Road Map中介绍，当前已经实现了针对SCM的HA架构，后期版本中逐渐实现对OM的HA架构，从而实现整体的HA架构部署。</p>
-<h3 id="1-1-2-功能分级角度"><a href="#1-1-2-功能分级角度" class="headerlink" title="1.1.2. 功能分级角度"></a>1.1.2. 功能分级角度</h3><p><img src="FunctionalOzone.png" srcset="/img/loading.gif" alt="Ozone功能分层角度"><br>从功能上来看，hadoop-ozone主要分为</p>
-<ol>
-<li>Data Layer：数据存储层</li>
-<li>Metadata Layer：元数据管理层</li>
-<li>Repication Lay：数据复制与一致性管理</li>
-<li>Protocol Bus：数据扩展访问</li>
-<li>Recon Server：与Ozone的所有组件通信，提供统一的API</li>
-</ol>
-<h3 id="1-1-3-基本概念"><a href="#1-1-3-基本概念" class="headerlink" title="1.1.3. 基本概念"></a>1.1.3. 基本概念</h3><p>  初识Apache Ozone的架构之后，我们需要了解涉及到的几个关键概念。主要涉及到对象存储相关的基本概念：卷、桶、Key。</p>
-<ol>
-<li>卷：Volume。卷的概念类似账户，只有管理员工可以创建删除</li>
-<li>桶：Bucket。桶的概念类似目录，桶可以包含任意数量的Key，但不能不含其它桶</li>
-<li>Key：Key类似与文件的概念。</li>
-</ol>
-<p>感觉官方文档的概念介绍，基本可以理解为：<img src="./Hadoop%E5%B7%A5%E5%85%B7%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93/ozone_cengji.png" srcset="/img/loading.gif" alt="Hadoop-Ozone层级介绍"><br>其中粗粒度、细粒度可以理解为权限访问。且在对象存储模型中，没有目录的概念只有Key的概念，Key指向的就是具体的存储对象。</p>
-<h2 id="1-2-亮点特性"><a href="#1-2-亮点特性" class="headerlink" title="1.2. 亮点特性"></a>1.2. 亮点特性</h2><h3 id="1-2-1-安全机制"><a href="#1-2-1-安全机制" class="headerlink" title="1.2.1. 安全机制"></a>1.2.1. 安全机制</h3><p>认证体系</p>
-<h3 id="1-2-2-单独的"><a href="#1-2-2-单独的" class="headerlink" title="1.2.2. 单独的"></a>1.2.2. 单独的</h3><h1 id="2-部署测试"><a href="#2-部署测试" class="headerlink" title="2. 部署测试"></a>2. 部署测试</h1><h2 id="2-1-源码编译"><a href="#2-1-源码编译" class="headerlink" title="2.1. 源码编译"></a>2.1. 源码编译</h2><h3 id="2-1-1-下载源码"><a href="#2-1-1-下载源码" class="headerlink" title="2.1.1. 下载源码"></a>2.1.1. 下载源码</h3><h3 id="2-1-2-编译问题"><a href="#2-1-2-编译问题" class="headerlink" title="2.1.2. 编译问题"></a>2.1.2. 编译问题</h3><h2 id="2-2-部署Ozone独立集群"><a href="#2-2-部署Ozone独立集群" class="headerlink" title="2.2. 部署Ozone独立集群"></a>2.2. 部署Ozone独立集群</h2><h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4. 参考文献"></a>4. 参考文献</h1><ol>
-<li><a href="https://cwiki.apache.org/confluence/display/HADOOP/Ozone+Road+Map" target="_blank" rel="noopener">Ozone Road Map</a></li>
+<h1 id="Java通用"><a href="#Java通用" class="headerlink" title="Java通用"></a>Java通用</h1><h2 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h2><ol>
+<li>JVM: Jstack：jstack通常用来定位Java进程的异常线程，或异常代码</li>
+<li>CPU: 火焰图: perf 命令。关于火焰图解读，可以参考文献：<a href="https://www.ruanyifeng.com/blog/2017/09/flame-graph.html" target="_blank" rel="noopener">如何读懂火焰图？</a></li>
+<li>磁盘问题排查：<img src="%E7%9F%A5%E8%AF%86%E6%A0%88.png" srcset="/img/loading.gif" alt="磁盘问题排查"></li>
 </ol>
 
             </article>
@@ -282,17 +222,15 @@
                     
                       <a class="hover-with-bg" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
                     
-                      <a class="hover-with-bg" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
-                    
                   </div>
                 
                 
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
+                      <a class="hover-with-bg" href="/tags/%E6%80%BB%E7%BB%93/">总结</a>
                     
-                      <a class="hover-with-bg" href="/tags/Ozone/">Ozone</a>
+                      <a class="hover-with-bg" href="/tags/HDFS/">HDFS</a>
                     
                   </div>
                 
@@ -305,18 +243,12 @@
                   <div class="post-prev col-6">
                     
                     
-                      <a href="/2020/06/08/Python2%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Python2日期时间操作</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </div>
                   <div class="post-next col-6">
                     
                     
-                      <a href="/2020/06/01/Minio%E5%88%9D%E6%8E%A2/">
-                        <span class="hidden-mobile">Minio初探</span>
+                      <a href="/2020/06/12/ETCD%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/">
+                        <span class="hidden-mobile">ETCD集群部署</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -494,7 +426,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "Ozone调研&nbsp;",
+        "工具知识总结&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
