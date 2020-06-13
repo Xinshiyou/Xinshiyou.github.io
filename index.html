@@ -155,6 +155,73 @@
     
     
     <div class="col-12 col-md-12 mx-auto index-info">
+      <a class="index-header" href="/2020/06/12/ETCD%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/">ETCD集群部署</a>
+
+      <a href="/2020/06/12/ETCD%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" class="index-excerpt">
+        
+        
+          
+        
+        <div>
+
+
+.1. ETCD介绍
+.2. 部署ETCD集群
+.2.1. 编译cfssl组件
+.2.2. 创建CA证书
+.2.2.1. 创建CA证书
+.2.2.2. 创建业务Key
+
+
+.2.3. 集群配置部署
+.2.3.1. etcd.service.j2
+.2.3.2. etcd.conf.j2
+.2.3.3. 分发部署Playbook
+
+
+
+
+.3. 集群状态检查及基本使用
+
+
+
+.1. ETCD介</div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>&nbsp;2020-06-12
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+            
+              <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
+            
+              <a href="/tags/ETCD/">ETCD</a>
+            
+          </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <div class="col-12 col-md-12 mx-auto index-info">
       <a class="index-header" href="/2020/06/08/Python2%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C/">Python2日期时间操作</a>
 
       <a href="/2020/06/08/Python2%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C/" class="index-excerpt">
@@ -209,8 +276,35 @@ import t</div>
         
           
         
-        <div>  当前各种开源的对象存储组件，基本上是对标Amazon的S3。在特性、功能上面，基本上都支持S3的访问。毕竟当前Amazon的S3在对象存储领域，具有广泛的影响力。各类公司在上云时，也会基于S3进行基准测试，对比各家云厂商的对象存储服务能力，从而考虑上云的性价比。
-  上云时需要考虑的一个点是本地机房与云商对象存储的一体化访问能力。而Apache Ozon</div>
+        <div>主要研究目标：
+
+独立Ozone集群部署：特性、功能、安全
+Ozone with HDFS部署：特性、功能、安全
+
+
+
+
+1. Ozone架构
+1.1. 架构图
+1.2. 基本概念
+1.3. 亮点特性
+
+
+2. 部署测试
+2.1. 源码编译
+2.1.1. 下载源码
+2.1.2. 编译问题
+
+
+2.2. 部署Ozone独立集群
+
+
+3. 总结
+4. 参考文献
+
+
+
+  当前各种开</div>
       </a>
 
       <div class="index-btm post-metas">
@@ -224,6 +318,8 @@ import t</div>
             <i class="iconfont icon-category"></i>
             
               <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+            
+              <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
             
           </div>
         
@@ -252,11 +348,32 @@ import t</div>
         
           
         
-        <div>部署调研环境准备环境准备，主要是指环境配置、资源包下载/安装部署等内容。
-资源下载### Minio下载：RELEASE.2020-06-01T17-28### Minio下载：RELEASE.2020-06-01T17-28-03Z  
-wget https://dl.min.io/server/minio/release/linux-amd64/minio  
-  
-### MC下载: REL</div>
+        <div>
+
+
+1. 部署调研
+1.1. 环境准备
+1.1.1. 资源下载
+1.1.2. 添加执行权限
+
+
+1.2. 部署模式
+1.2.1. 单机部署
+1.2.1.1. 单机单租户
+1.2.1.2. 单机多租户
+
+
+1.2.2. 分布式部署
+
+
+1.3. 特性调研
+1.3.1. 使用Erase Code
+1.3.2. 压缩(compression)
+1.3.3. 缓存(cache)
+
+
+1.4. 界面功能
+</div>
       </a>
 
       <div class="index-btm post-metas">
@@ -270,6 +387,8 @@ wget https://dl.min.io/server/minio/release/linux-amd64/minio
             <i class="iconfont icon-category"></i>
             
               <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+            
+              <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
             
           </div>
         
@@ -548,51 +667,6 @@ Failed toFailed to execute goal on project sql2o-or</div>
               <a href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
             
               <a href="/tags/Hive/">Hive</a>
-            
-          </div>
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <div class="col-12 col-md-12 mx-auto index-info">
-      <a class="index-header" href="/2018/08/07/SpringBoot%E6%8A%A5%E9%94%99/">Springboot报错</a>
-
-      <a href="/2018/08/07/SpringBoot%E6%8A%A5%E9%94%99/" class="index-excerpt">
-        
-        
-          
-        
-        <div>报错一
-错误信息:  Cannot determine embedded database driver class for database type NONE
-解决方案：启动类中加入注解：@SpringBootApplication(exclude={DataSourceAutoConfiguration.class,HibernateJpaAutoConfiguration.class})
-</div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>&nbsp;2018-08-07
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Java/">Java</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E9%97%AE%E9%A2%98/">问题</a>
-            
-              <a href="/tags/Springboot/">Springboot</a>
             
           </div>
         

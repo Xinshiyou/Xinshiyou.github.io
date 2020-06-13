@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      618 字
+      753 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      6
+      8
        分钟
     </span>
   
@@ -192,7 +192,35 @@
           <div class="post-content mx-auto" id="post">
             
             <article class="markdown-body">
-              <p>  当前各种开源的对象存储组件，基本上是对标<strong>Amazon</strong>的<strong>S3</strong>。在特性、功能上面，基本上都支持<strong>S3</strong>的访问。毕竟当前<strong>Amazon</strong>的<strong>S3</strong>在对象存储领域，具有广泛的影响力。各类公司在上云时，也会基于<strong>S3</strong>进行基准测试，对比各家云厂商的对象存储服务能力，从而考虑上云的性价比。</p>
+              <p>主要研究目标：</p>
+<ol>
+<li>独立Ozone集群部署：特性、功能、安全</li>
+<li>Ozone with HDFS部署：特性、功能、安全</li>
+</ol>
+<!-- TOC -->
+
+<ul>
+<li><a href="#1-ozone架构">1. Ozone架构</a><ul>
+<li><a href="#11-架构图">1.1. 架构图</a></li>
+<li><a href="#12-基本概念">1.2. 基本概念</a></li>
+<li><a href="#13-亮点特性">1.3. 亮点特性</a></li>
+</ul>
+</li>
+<li><a href="#2-部署测试">2. 部署测试</a><ul>
+<li><a href="#21-源码编译">2.1. 源码编译</a><ul>
+<li><a href="#211-下载源码">2.1.1. 下载源码</a></li>
+<li><a href="#212-编译问题">2.1.2. 编译问题</a></li>
+</ul>
+</li>
+<li><a href="#22-部署ozone独立集群">2.2. 部署Ozone独立集群</a></li>
+</ul>
+</li>
+<li><a href="#3-总结">3. 总结</a></li>
+<li><a href="#4-参考文献">4. 参考文献</a></li>
+</ul>
+<!-- /TOC -->
+
+<p>  当前各种开源的对象存储组件，基本上是对标<strong>Amazon</strong>的<strong>S3</strong>。在特性、功能上面，基本上都支持<strong>S3</strong>的访问。毕竟当前<strong>Amazon</strong>的<strong>S3</strong>在对象存储领域，具有广泛的影响力。各类公司在上云时，也会基于<strong>S3</strong>进行基准测试，对比各家云厂商的对象存储服务能力，从而考虑上云的性价比。</p>
 <p>  上云时需要考虑的一个点是本地机房与云商对象存储的一体化访问能力。而<strong>Apache Ozone</strong>具有原生优势</p>
 <ol>
 <li><strong>Hadoop</strong>项目中分离而来：为解决<strong>HDFS</strong>自身缺陷而生</li>
@@ -207,8 +235,8 @@
 <li>存在性能与稳定性瓶颈：当前<strong>Apache Ozone</strong>的已知版本中，在稳定性、性能访问还存在一定的瓶颈。特别是随着Ozone规模增长到一定程度之后，写入方面会存在较为严重的瓶颈。</li>
 </ol>
 <p>  虽然<strong>Apache Ozone</strong>尚未经过大规模集群的验证，但这并不妨碍我们进行调研测试，毕竟未来云原生的对象存储可能会成为趋势。</p>
-<h1 id="Ozone架构"><a href="#Ozone架构" class="headerlink" title="Ozone架构"></a>Ozone架构</h1><p>  本小结我们先引入Ozone的结构图，然后分别介绍Ozone的基本概念，以及各个组建的功能。</p>
-<h2 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h2><p>这里的架构图主要是引用hadoop-ozone官方文档介绍的结构图，主要有两个：Block管理角度、功能分层角度。<br><img src="ozoneBlockDiagram.png" srcset="/img/loading.gif" alt="Block管理角度"><br>Block角度主要包括几大组件</p>
+<h1 id="1-Ozone架构"><a href="#1-Ozone架构" class="headerlink" title="1. Ozone架构"></a>1. Ozone架构</h1><p>  本小结我们先引入Ozone的结构图，然后分别介绍Ozone的基本概念，以及各个组建的功能。</p>
+<h2 id="1-1-架构图"><a href="#1-1-架构图" class="headerlink" title="1.1. 架构图"></a>1.1. 架构图</h2><p>这里的架构图主要是引用hadoop-ozone官方文档介绍的结构图，主要有两个：Block管理角度、功能分层角度。<br><img src="ozoneBlockDiagram.png" srcset="/img/loading.gif" alt="Block管理角度"><br>Block角度主要包括几大组件</p>
 <ol>
 <li>Ozone Manager(OM)：om在hadoop-ozone中具有命名空间管理的职能</li>
 <li>Storage Container Manager(SCM)：管理物理数据与数据层</li>
@@ -222,7 +250,7 @@
 <li>Protocol Bus：数据扩展访问</li>
 <li>Recon Server：与Ozone的所有组件通信，提供统一的API</li>
 </ol>
-<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><h1 id="部署测试"><a href="#部署测试" class="headerlink" title="部署测试"></a>部署测试</h1><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1>
+<h2 id="1-2-基本概念"><a href="#1-2-基本概念" class="headerlink" title="1.2. 基本概念"></a>1.2. 基本概念</h2><h2 id="1-3-亮点特性"><a href="#1-3-亮点特性" class="headerlink" title="1.3. 亮点特性"></a>1.3. 亮点特性</h2><h1 id="2-部署测试"><a href="#2-部署测试" class="headerlink" title="2. 部署测试"></a>2. 部署测试</h1><h2 id="2-1-源码编译"><a href="#2-1-源码编译" class="headerlink" title="2.1. 源码编译"></a>2.1. 源码编译</h2><h3 id="2-1-1-下载源码"><a href="#2-1-1-下载源码" class="headerlink" title="2.1.1. 下载源码"></a>2.1.1. 下载源码</h3><h3 id="2-1-2-编译问题"><a href="#2-1-2-编译问题" class="headerlink" title="2.1.2. 编译问题"></a>2.1.2. 编译问题</h3><h2 id="2-2-部署Ozone独立集群"><a href="#2-2-部署Ozone独立集群" class="headerlink" title="2.2. 部署Ozone独立集群"></a>2.2. 部署Ozone独立集群</h2><h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4. 参考文献"></a>4. 参考文献</h1>
             </article>
             <hr>
             <div>
@@ -232,6 +260,8 @@
                     <i class="iconfont icon-category"></i>
                     
                       <a class="hover-with-bg" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
                     
                   </div>
                 

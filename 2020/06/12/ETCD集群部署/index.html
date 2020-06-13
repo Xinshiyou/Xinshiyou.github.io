@@ -1,0 +1,730 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="xinshiyou">
+  <meta name="keywords" content="">
+  <title>ETCD集群部署 - 星空捞月：找寻心中的安宁</title>
+
+  
+
+
+  
+  
+
+  
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+
+
+
+
+
+
+
+
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="星空捞月：找寻心中的安宁" type="application/atom+xml">
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css');loadCss('https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css');loadCss('https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css');loadCss('//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css');loadCss('//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css');loadCss('https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css"><link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"></noscript></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">&nbsp;<strong>星空捞月：找寻心中的安宁</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax="true" style="background: url('/img/top.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-06-12 15:13">
+      2020年6月12日 下午
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.6k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      24
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <!-- TOC -->
+
+<ul>
+<li><a href="#1-etcd介绍">.1. ETCD介绍</a></li>
+<li><a href="#2-部署etcd集群">.2. 部署ETCD集群</a><ul>
+<li><a href="#21-编译cfssl组件">.2.1. 编译cfssl组件</a></li>
+<li><a href="#22-创建ca证书">.2.2. 创建CA证书</a><ul>
+<li><a href="#221-创建ca证书">.2.2.1. 创建CA证书</a></li>
+<li><a href="#222-创建业务key">.2.2.2. 创建业务Key</a></li>
+</ul>
+</li>
+<li><a href="#23-集群配置部署">.2.3. 集群配置部署</a><ul>
+<li><a href="#231-etcdservicej2">.2.3.1. etcd.service.j2</a></li>
+<li><a href="#232-etcdconfj2">.2.3.2. etcd.conf.j2</a></li>
+<li><a href="#233-分发部署playbook">.2.3.3. 分发部署Playbook</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-集群状态检查及基本使用">.3. 集群状态检查及基本使用</a></li>
+</ul>
+<!-- /TOC -->
+
+<h2 id="1-ETCD介绍"><a href="#1-ETCD介绍" class="headerlink" title=".1. ETCD介绍"></a>.1. ETCD介绍</h2><p>  ETCD是一个K-V分布式数据存储库，为分布式系统提供关键数据的存储服务。主要特点</p>
+<ol>
+<li>简单：设计简单、部署简单，API简单</li>
+<li>安全：可部署为自认证系统</li>
+<li>快速：写入性能测试达到了10k/s</li>
+<li>可靠：基于Raft算法</li>
+</ol>
+<p>  Raft算法的介绍，可以参考：<a href="https://raft.github.io/" target="_blank" rel="noopener">The Raft Consensus Algorithm</a>。Raft的提出，主要是为了解决Paxos算法的如下短板</p>
+<ol>
+<li>晦涩难懂</li>
+<li>落地困难</li>
+</ol>
+<p>因此，Raft设计之初就是为了易与理解而设计。在上述参考文献中，详细介绍了Raft算的机制/原理等内容。</p>
+<h2 id="2-部署ETCD集群"><a href="#2-部署ETCD集群" class="headerlink" title=".2. 部署ETCD集群"></a>.2. 部署ETCD集群</h2><p>  <strong>ETCD</strong>集群的部署，也较为简单。不安全的集群部署，这里不再讨论。这里的部署，主要是指自认证的<strong>ETCD</strong>集群。</p>
+<p>  ETCD集群部署配置，可以参考：<a href="https://www.jianshu.com/p/85803026a9a1" target="_blank" rel="noopener">ETCD集群部署</a>、<a href="https://www.jianshu.com/p/33b5f47ababc" target="_blank" rel="noopener">etcd多台部署:启用https以及ca自签名</a>。参考上述两篇博文的配置、操作步骤，但配置过程中略微存在差异。</p>
+<h3 id="2-1-编译cfssl组件"><a href="#2-1-编译cfssl组件" class="headerlink" title=".2.1. 编译cfssl组件"></a>.2.1. 编译cfssl组件</h3><p>  CFSSL主要是为了实现自认证配置，生成CA证书、公钥、私钥等内容。<br>最新版本cfssl已经不再提供通过官方网站下载，可以直接通过Github下载编译或直接安装</p>
+<pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 直接下载某个版本</span></span>
+wget https://github.com/cloudflare/cfssl/archive/1.3.4.tar.gz
+
+<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 下载Master分支，切换为某个tag的代码</span></span>
+1. Download：https://github.com/cloudflare/cfssl.git
+2. 安装依赖组件：
+    go get -u github.com/cloudflare/cfssl/cli \
+              github.com/go-sql-driver/mysql \
+              github.com/lib/pq github.com/mattn/go-sqlite3 \
+              github.com/cloudflare/go-metrics
+3. 编译安装：make ## 会在bin目录下面创建常用命令
+<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 切换分支命令：参考</span></span>
+git checkout tags/v1.0 -b v1.0-branch</code></span></span></pre>
+
+<h3 id="2-2-创建CA证书"><a href="#2-2-创建CA证书" class="headerlink" title=".2.2. 创建CA证书"></a>.2.2. 创建CA证书</h3><p>  创建CA证书，主要涉及到两个操作步骤。通过CFSSL来创建证书，一般只需要编辑JSON配置文件即可。</p>
+<h4 id="2-2-1-创建CA证书"><a href="#2-2-1-创建CA证书" class="headerlink" title=".2.2.1. 创建CA证书"></a>.2.2.1. 创建CA证书</h4><pre class=" language-hljs json"><code class="language-hljs json">### 创建CA，配置文件如下
+#### ca-config.json
+{
+    <span class="hljs-attr">"signing"</span>: {
+        <span class="hljs-attr">"default"</span>: {
+            <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>
+        },
+        <span class="hljs-attr">"profiles"</span>: {
+            <span class="hljs-attr">"server"</span>: {
+                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,
+                <span class="hljs-attr">"usages"</span>: [
+                    <span class="hljs-string">"signing"</span>,
+                    <span class="hljs-string">"key encipherment"</span>,
+                    <span class="hljs-string">"server auth"</span>,
+                    <span class="hljs-string">"client auth"</span>
+                ]
+            },
+            <span class="hljs-attr">"client"</span>: {
+                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,
+                <span class="hljs-attr">"usages"</span>: [
+                    <span class="hljs-string">"signing"</span>,
+                    <span class="hljs-string">"key encipherment"</span>,
+                    <span class="hljs-string">"client auth"</span>
+                ]
+            },
+            <span class="hljs-attr">"peer"</span>: {
+                <span class="hljs-attr">"expiry"</span>: <span class="hljs-string">"86400h"</span>,
+                <span class="hljs-attr">"usages"</span>: [
+                    <span class="hljs-string">"signing"</span>,
+                    <span class="hljs-string">"key encipherment"</span>,
+                    <span class="hljs-string">"server auth"</span>,
+                    <span class="hljs-string">"client auth"</span>
+                ]
+            }
+        }
+    }
+}
+
+#### 创建CA相关文件
+cfssl gencert -initca ca-csr.json | cfssljson -bare ca</code></pre>
+
+
+<h4 id="2-2-2-创建业务Key"><a href="#2-2-2-创建业务Key" class="headerlink" title=".2.2.2. 创建业务Key"></a>.2.2.2. 创建业务Key</h4><p>  创建业务需求的公钥\私钥，需要明确业务是那种情况：server(peer)、client，这里配置了两种不同的适应场景。另外一点，需要定义一下业务的配置JSON文件。</p>
+<pre class=" language-hljs json"><code class="language-hljs json">### 配置业务JSON文件：etcd-csr.json
+{
+    <span class="hljs-attr">"CN"</span>: <span class="hljs-string">"etcd"</span>,
+    <span class="hljs-attr">"hosts"</span>: [
+        <span class="hljs-string">"127.0.0.1"</span>,
+        <span class="hljs-string">"host1_ip"</span>,
+        <span class="hljs-string">"host2_ip"</span>,
+        <span class="hljs-string">"host3_ip"</span>
+    ],
+    <span class="hljs-attr">"key"</span>: {
+        <span class="hljs-attr">"algo"</span>: <span class="hljs-string">"rsa"</span>,
+        <span class="hljs-attr">"size"</span>: <span class="hljs-number">2048</span>
+    },
+    <span class="hljs-attr">"names"</span>: [
+        {
+            <span class="hljs-attr">"C"</span>: <span class="hljs-string">"CN"</span>,
+            <span class="hljs-attr">"ST"</span>: <span class="hljs-string">"Shanghai"</span>,
+            <span class="hljs-attr">"L"</span>: <span class="hljs-string">"Shanghai"</span>,
+            <span class="hljs-attr">"O"</span>: <span class="hljs-string">"test.com"</span>,
+            <span class="hljs-attr">"OU"</span>: <span class="hljs-string">"System"</span>
+        }
+    ]
+}
+
+### 创建业务场景的公钥/私钥
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server etcd-csr.json | cfssljson -bare etcd</code></pre>
+
+<p>  至此，CA配置以及业务需要的配置的自认证配置已获取到。</p>
+<h3 id="2-3-集群配置部署"><a href="#2-3-集群配置部署" class="headerlink" title=".2.3. 集群配置部署"></a>.2.3. 集群配置部署</h3><p>  这里配置为service的形式，并使用ansible部署集群：主要涉及到配置文件(etcd.conf)、服务配置(etcd.service)，以及ansible部署脚本。</p>
+<h4 id="2-3-1-etcd-service-j2"><a href="#2-3-1-etcd-service-j2" class="headerlink" title=".2.3.1. etcd.service.j2"></a>.2.3.1. etcd.service.j2</h4><pre class=" language-hljs json"><code class="language-hljs json">### 配置路径：/usr/lib/systemd/system/etcd.service
+{%- set hosts = []  -%}
+{%- for host in groups['ETCD'] | sort -%}
+ {{ hosts.append( hostvars[host]['etcd_name'] + '=https://' + host + ':' + cluster_port|string ) }}
+{%- endfor -%}
+[Unit]
+Description=Etcd Server
+After=network.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+WorkingDirectory=/var/lib/etcd/
+EnvironmentFile=-/etc/etcd/etcd.conf
+User=etcd
+# set GOMAXPROCS to number of processors
+ExecStart=/usr/bin/etcd \
+  --name=${ETCD_NAME} \
+  --cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem \
+  --key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem \
+  --peer-cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem \
+  --peer-key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem \
+  --trusted-ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem \
+  --initial-advertise-peer-urls=${ETCD_INITIAL_ADVERTISE_PEER_URLS} \
+  --listen-peer-urls=${ETCD_LISTEN_PEER_URLS} \
+  --listen-client-urls=${ETCD_LISTEN_CLIENT_URLS} \
+  --advertise-client-urls=${ETCD_ADVERTISE_CLIENT_URLS} \
+  --initial-cluster-token=${ETCD_INITIAL_CLUSTER_TOKEN} \
+  --initial-cluster={{ hosts | join(',') }}
+  --initial-cluster-state=new \
+  --data-dir=${ETCD_DATA_DIR}
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+<h4 id="2-3-2-etcd-conf-j2"><a href="#2-3-2-etcd-conf-j2" class="headerlink" title=".2.3.2. etcd.conf.j2"></a>.2.3.2. etcd.conf.j2</h4><pre class=" language-hljs json"><code class="language-hljs json">#### 配置文件路径：/etc/etcd/etcd.conf
+[member]
+ETCD_NAME={{ etcd_name }}
+ETCD_DATA_DIR="/var/lib/etcd"
+ETCD_LISTEN_PEER_URLS="https://{{ inventory_hostname }}:{{ cluster_port }}"
+ETCD_LISTEN_CLIENT_URLS="https://{{ inventory_hostname }}:{{ client_port }},https://127.0.0.1:{{ client_port }}"
+
+[cluster]
+ETCD_INITIAL_ADVERTISE_PEER_URLS="https://{{ inventory_hostname }}:{{ cluster_port }}"
+ETCD_INITIAL_CLUSTER_TOKEN="{{ cluster_token }}"
+ETCD_ADVERTISE_CLIENT_URLS="https://{{ inventory_hostname }}:{{ client_port }}"</code></pre>
+<p>编译好的脚本，可以在这里下载：<a href="cfssl.tar.gz">cfssl.tar.gz</a></p>
+<h4 id="2-3-3-分发部署Playbook"><a href="#2-3-3-分发部署Playbook" class="headerlink" title=".2.3.3. 分发部署Playbook"></a>.2.3.3. 分发部署Playbook</h4><pre class=" language-hljs json"><code class="language-hljs json">---
+- hosts: ETCD
+  tasks:
+  - name: install etcd
+    yum:
+        name: etcd
+        state: installed
+
+  - name: mkdir target dir
+    shell: mkdir -p /etc/etcd/ssl
+
+  - name: copy ssl files
+    copy:
+        src: cfssl.tar.gz
+        dest: /tmp/cfssl.tar.gz
+
+  - name: untar ssl files
+    shell: tar xvf /tmp/cfssl.tar.gz -C /etc/etcd/ssl
+
+  - name: set privileges for ca files
+    shell: chmod -R 755 /etc/etcd/ssl
+
+  - name: copy template configure - conf
+    template:
+        src: etcd.service.j2
+        dest: /usr/lib/systemd/system/etcd.service
+
+  - name: copy template configure - service
+    template:
+        src: etcd.conf.j2
+        dest: /etc/etcd/etcd.conf
+
+  - name: systemctl reload before start service
+    shell: systemctl daemon-reload
+
+  - name: start etcd service
+    service:
+        name: etcd
+        state: restarted
+
+  - name: etcdctl with ssl
+    template:
+        src: etcdctls.j2
+        dest: /usr/bin/etcdctls
+        mode: "0755"</code></pre>
+
+<h2 id="3-集群状态检查及基本使用"><a href="#3-集群状态检查及基本使用" class="headerlink" title=".3. 集群状态检查及基本使用"></a>.3. 集群状态检查及基本使用</h2><pre class=" language-hljs Json"><code class="language-hljs Json">### 健康状态检查: etcdctl 命令行访问
+etcdctl   \
+    --ca-file=/etc/etcd/ssl/cfssl/ssl/ca.pem   \
+    --cert-file=/etc/etcd/ssl/cfssl/ssl/etcd.pem   \
+    --key-file=/etc/etcd/ssl/cfssl/ssl/etcd-key.pem   \
+    --endpoint https://127.0.0.1:2379   \
+    cluster-health
+
+#### 输出
+member c3ca8ce4516450a is healthy: got healthy result from https://host1:2379
+member 22c833e1835a442d is healthy: got healthy result from https://host2:2379
+member 3254807a1a7e65ac is healthy: got healthy result from https://host3:2379
+cluster is healthy
+
+### 查看集群成员信息: rest api 访问
+curl -k --cert /etc/etcd/ssl/cfssl/ssl/etcd.pem  --key /etc/etcd/ssl/cfssl/ssl/etcd-key.pem  https://host1:2379/v2/members
+
+#### 输出
+{
+    <span class="hljs-attr">"members"</span>: [
+        {
+            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"c3ca8ce4516450a"</span>,
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra01"</span>,
+            <span class="hljs-attr">"peerURLs"</span>: [
+                <span class="hljs-string">"https://host1:2380"</span>
+            ],
+            <span class="hljs-attr">"clientURLs"</span>: [
+                <span class="hljs-string">"https://host1:2379"</span>
+            ]
+        },
+        {
+            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"22c833e1835a442d"</span>,
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra03"</span>,
+            <span class="hljs-attr">"peerURLs"</span>: [
+                <span class="hljs-string">"https://host2:2380"</span>
+            ],
+            <span class="hljs-attr">"clientURLs"</span>: [
+                <span class="hljs-string">"https://host2:2379"</span>
+            ]
+        },
+        {
+            <span class="hljs-attr">"id"</span>: <span class="hljs-string">"3254807a1a7e65ac"</span>,
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"infra02"</span>,
+            <span class="hljs-attr">"peerURLs"</span>: [
+                <span class="hljs-string">"https://host3:2380"</span>
+            ],
+            <span class="hljs-attr">"clientURLs"</span>: [
+                <span class="hljs-string">"https://host3:2379"</span>
+            ]
+        }
+    ]
+}</code></pre>
+<p>如果新搭建的集群可以正常返回，那么基本可以表明搭建了一个健康、可用的<strong>ETCD</strong>集群。</p>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E8%B0%83%E7%A0%94/">调研</a>
+                    
+                      <a class="hover-with-bg" href="/tags/ETCD/">ETCD</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/08/Python2%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C/">
+                        <span class="hidden-mobile">Python2日期时间操作</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+
+
+<!-- Plugins -->
+
+
+  
+    
+  
+
+
+
+  <script defer="" src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
+  
+
+
+
+
+
+
+
+  <script src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script>
+  
+
+
+
+  <script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script>
+  
+
+
+
+  
+  
+
+
+
+  <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/bundle.js"></script><script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  ;
+
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "ETCD集群部署&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  ;
+
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  ;
+
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  ;
+
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script></body></html>
