@@ -875,6 +875,68 @@ curl -k --cert /etc/etcd/ssl/cfssl/ssl/etcd.pem  --key /etc/etcd/ssl/cfssl/ssl/e
       </tags>
   </entry>
   <entry>
+    <title>Elasticsearch-存放地理信息数据+百度POI分析</title>
+    <url>/2018/06/29/Elasticsearch-%E5%AD%98%E6%94%BE%E5%9C%B0%E7%90%86%E4%BF%A1%E6%81%AF%E6%95%B0%E6%8D%AE-%E7%99%BE%E5%BA%A6POI%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<p>&emsp;&emsp;ES是一个全文搜索引擎，同时也是一个NoSQL数据库，其存放数据方便与检索数据性能优越，受到普遍欢迎。</p>
+<a id="more"></a>
+
+<h2 id="ES架构"><a href="#ES架构" class="headerlink" title="ES架构"></a>ES架构</h2><p>参考文章：<a href="http://www.cnblogs.com/tgzhu/p/6098339.html" target="_blank" rel="noopener">架构及原理</a></p>
+<h2 id="ES地理数据操作"><a href="#ES地理数据操作" class="headerlink" title="ES地理数据操作"></a>ES地理数据操作</h2><p>&emsp;&emsp;参考文章：<a href="http://blog.csdn.net/u012332735/article/details/54971638" target="_blank" rel="noopener">Elasticsearch地理位置总结</a></p>
+<h2 id="ES实际操作"><a href="#ES实际操作" class="headerlink" title="ES实际操作"></a>ES实际操作</h2><h3 id="建立Index"><a href="#建立Index" class="headerlink" title="建立Index"></a>建立Index</h3><p>&emsp;&emsp;一般有两种方式</p>
+<ol>
+<li>ES Head通过界面化操作，直接可以建立Index:<br><img src="001.png" srcset="/img/loading.gif" alt="create es idex"><br><img src="002.png" srcset="/img/loading.gif" alt="detail page"></li>
+<li>通过ES API可以创建Index。一般可以选择Java/Python的ES接口API，可以实现该功能。</li>
+</ol>
+<h3 id="建立Type"><a href="#建立Type" class="headerlink" title="建立Type"></a>建立Type</h3><p>&emsp;&emsp;虽然ES允许事先不建立Index，就可以直接插入数据。但这种方式存在安全隐患，比如类型转换，类型设置等方面的隐患。最好的方式就是实现创建Index/Type，定义好需要插入数据的类型，方便后期检索。</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl -XPUT 'ES Server IP:9200&#x2F;Test?pretty' -H 'Content-Type: application&#x2F;json' -d'
+&#123;
+	"settings": &#123;
+		"index": &#123;
+			"number_of_shards": 5,
+			"number_of_replicas": 2
+		&#125;
+	&#125;,
+	"mappings": &#123;
+		"test": &#123;
+			"properties": &#123;
+				"province": &#123;
+					"type": "keyword"
+				&#125;,
+				"city": &#123;
+					"type": "keyword"
+				&#125;,
+				"district": &#123;
+					"type": "keyword"
+				&#125;,
+				"street": &#123;
+					"type": "keyword"
+				&#125;,
+				"name": &#123;
+					"type": "keyword"
+				&#125;,
+				"location": &#123;
+					"type": "geo_point"
+				&#125;,
+			&#125;
+		&#125;
+	&#125;
+&#125;</code></pre></div>
+<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><p>&emsp;&emsp;这里使用Java API实现将数据插入ES的功能，关于ES Client的使用，可以参考文章：<a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html" target="_blank" rel="noopener">https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html</a></p>
+<h2 id="选择ES的目的"><a href="#选择ES的目的" class="headerlink" title="选择ES的目的"></a>选择ES的目的</h2><ol>
+<li>通过ES，可以实现去重的功能：因为不同位置爬去POI，可能重复；</li>
+<li>通过ES的地理位置，可以方便的获取某个GPS坐标点附近的POI信息，也可以计算距离信息等；</li>
+<li>ES查询性能优越，数据压缩存储，相比MongoDB数据库占用更少的空间。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>ES</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>EasyPR-Java新能源车牌识别</title>
     <url>/2018/06/29/EasyPR-Java%E6%96%B0%E8%83%BD%E6%BA%90%E8%BD%A6%E7%89%8C%E8%AF%86%E5%88%AB/</url>
     <content><![CDATA[<p>&emsp;&emsp;EasyPR中主要涉及到蓝色底牌与黄色底牌的车牌识别，随着新能源车辆的发展，目前已经出现绿色底牌的车牌，因此有必要增加绿色车牌的识别。</p>
@@ -1022,68 +1084,6 @@ curl -k --cert /etc/etcd/ssl/cfssl/ssl/etcd.pem  --key /etc/etcd/ssl/cfssl/ssl/e
       <tags>
         <tag>调研</tag>
         <tag>EasyPR</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Elasticsearch-存放地理信息数据+百度POI分析</title>
-    <url>/2018/06/29/Elasticsearch-%E5%AD%98%E6%94%BE%E5%9C%B0%E7%90%86%E4%BF%A1%E6%81%AF%E6%95%B0%E6%8D%AE-%E7%99%BE%E5%BA%A6POI%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<p>&emsp;&emsp;ES是一个全文搜索引擎，同时也是一个NoSQL数据库，其存放数据方便与检索数据性能优越，受到普遍欢迎。</p>
-<a id="more"></a>
-
-<h2 id="ES架构"><a href="#ES架构" class="headerlink" title="ES架构"></a>ES架构</h2><p>参考文章：<a href="http://www.cnblogs.com/tgzhu/p/6098339.html" target="_blank" rel="noopener">架构及原理</a></p>
-<h2 id="ES地理数据操作"><a href="#ES地理数据操作" class="headerlink" title="ES地理数据操作"></a>ES地理数据操作</h2><p>&emsp;&emsp;参考文章：<a href="http://blog.csdn.net/u012332735/article/details/54971638" target="_blank" rel="noopener">Elasticsearch地理位置总结</a></p>
-<h2 id="ES实际操作"><a href="#ES实际操作" class="headerlink" title="ES实际操作"></a>ES实际操作</h2><h3 id="建立Index"><a href="#建立Index" class="headerlink" title="建立Index"></a>建立Index</h3><p>&emsp;&emsp;一般有两种方式</p>
-<ol>
-<li>ES Head通过界面化操作，直接可以建立Index:<br><img src="001.png" srcset="/img/loading.gif" alt="create es idex"><br><img src="002.png" srcset="/img/loading.gif" alt="detail page"></li>
-<li>通过ES API可以创建Index。一般可以选择Java/Python的ES接口API，可以实现该功能。</li>
-</ol>
-<h3 id="建立Type"><a href="#建立Type" class="headerlink" title="建立Type"></a>建立Type</h3><p>&emsp;&emsp;虽然ES允许事先不建立Index，就可以直接插入数据。但这种方式存在安全隐患，比如类型转换，类型设置等方面的隐患。最好的方式就是实现创建Index/Type，定义好需要插入数据的类型，方便后期检索。</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl -XPUT 'ES Server IP:9200&#x2F;Test?pretty' -H 'Content-Type: application&#x2F;json' -d'
-&#123;
-	"settings": &#123;
-		"index": &#123;
-			"number_of_shards": 5,
-			"number_of_replicas": 2
-		&#125;
-	&#125;,
-	"mappings": &#123;
-		"test": &#123;
-			"properties": &#123;
-				"province": &#123;
-					"type": "keyword"
-				&#125;,
-				"city": &#123;
-					"type": "keyword"
-				&#125;,
-				"district": &#123;
-					"type": "keyword"
-				&#125;,
-				"street": &#123;
-					"type": "keyword"
-				&#125;,
-				"name": &#123;
-					"type": "keyword"
-				&#125;,
-				"location": &#123;
-					"type": "geo_point"
-				&#125;,
-			&#125;
-		&#125;
-	&#125;
-&#125;</code></pre></div>
-<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><p>&emsp;&emsp;这里使用Java API实现将数据插入ES的功能，关于ES Client的使用，可以参考文章：<a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html" target="_blank" rel="noopener">https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html</a></p>
-<h2 id="选择ES的目的"><a href="#选择ES的目的" class="headerlink" title="选择ES的目的"></a>选择ES的目的</h2><ol>
-<li>通过ES，可以实现去重的功能：因为不同位置爬去POI，可能重复；</li>
-<li>通过ES的地理位置，可以方便的获取某个GPS坐标点附近的POI信息，也可以计算距离信息等；</li>
-<li>ES查询性能优越，数据压缩存储，相比MongoDB数据库占用更少的空间。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>ES</tag>
       </tags>
   </entry>
   <entry>
@@ -1419,59 +1419,6 @@ gitlab-ci-multi-runner start</code></pre></div>
       </tags>
   </entry>
   <entry>
-    <title>HDFS之我遇到的各种问题</title>
-    <url>/2018/06/29/HDFS%E4%B9%8B%E6%88%91%E9%81%87%E5%88%B0%E7%9A%84%E5%90%84%E7%A7%8D%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h2 id="Hostname问题"><a href="#Hostname问题" class="headerlink" title="Hostname问题"></a>Hostname问题</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Datanode denied communication with namenode because hostname cannot be resolved (ip&#x3D;xx.xx.xx.xx, hostname&#x3D;xx.xx.xx.xx)
-    at org.apache.hadoop.hdfs.server.blockmanagement.DatanodeManager.registerDatanode(DatanodeManager.java:876)
-    at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.registerDatanode(FSNamesystem.java:5269)
-    at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.registerDatanode(NameNodeRpcServer.java:1178)
-    at org.apache.hadoop.hdfs.protocolPB.DatanodeProtocolServerSideTranslatorPB.registerDatanode(DatanodeProtocolServerSideTranslatorPB.java:100)
-    at org.apache.hadoop.hdfs.protocol.proto.DatanodeProtocolProtos$DatanodeProtocolService$2.callBlockingMethod(DatanodeProtocolProtos.java:29184)
-    at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:617)
-    at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1073)
-    at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:2281)
-    at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:2277)
-    at java.security.AccessController.doPrivileged(Native Method)
-    at javax.security.auth.Subject.doAs(Subject.java:422)
-    at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1920)
-    at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2275)</code></pre></div>
-
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>A. 在/etc/hosts中添加映射关系</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">IP	hostname
-IP	hostname
-...</code></pre></div>
-<p>B. 设置取消hostname检查</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">dfs.namenode.datanode.registratin.io-hostname-check: false</code></pre></div>
-
-<h2 id="安装问题"><a href="#安装问题" class="headerlink" title="安装问题"></a>安装问题</h2><h3 id="deltarpm"><a href="#deltarpm" class="headerlink" title="deltarpm"></a>deltarpm</h3><p>A. 问题描述</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Delta RPMs disabled because &#x2F;usr&#x2F;bin&#x2F;applydeltarpm not installed</code></pre></div>
-<p>B. 解决方案</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum install deltarpm</code></pre></div>
-
-<h3 id="SASL"><a href="#SASL" class="headerlink" title="SASL"></a>SASL</h3><p>A. 问题描述</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found (code THRIFTTRANSPORT): TTransportException('Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found',)</code></pre></div>
-<p>B. 解决方案</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum -y install cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi</code></pre></div>
-
-<h3 id="libxslt-so"><a href="#libxslt-so" class="headerlink" title="libxslt.so"></a>libxslt.so</h3><p>A. 问题描述</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"> Couldn't import snappy. Support for snappy compression disabled.
-File "&#x2F;opt&#x2F;cloudera&#x2F;parcels&#x2F;CDH-5.12.1-1.cdh5.12.1.p0.3&#x2F;lib&#x2F;hue&#x2F;build&#x2F;env&#x2F;lib&#x2F;python2.7&#x2F;site-packages&#x2F;lxml-3.3.6-py2.7-linux-x86_64.egg&#x2F;lxml&#x2F;html&#x2F;__init__.py", line 42, in <module> from lxml import etree
-ImportError: libxslt.so.1: cannot open shared object file: No such file or directory</code></pre></div>
-<p>B. 解决方案</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum install httpd -y</code></pre></div>
-
-<h2 id="Hive"><a href="#Hive" class="headerlink" title="Hive"></a>Hive</h2><h3 id="注释中文乱码问题"><a href="#注释中文乱码问题" class="headerlink" title="注释中文乱码问题"></a>注释中文乱码问题</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">alter table COLUMNS_V2 modify column COMMENT varchar(256) character set utf8; 
-alter table TABLE_PARAMS modify column PARAM_VALUE varchar(4000) character set utf8; 
-alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character set utf8; （分区表）</code></pre></div>]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>总结</tag>
-        <tag>HDFS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Git-CI/CD安装与使用【二】</title>
     <url>/2018/06/29/Git-CI-CD%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8%E3%80%90%E4%BA%8C%E3%80%91/</url>
     <content><![CDATA[<p>&emsp;&emsp;在使用Gitlab的公司，使用Gitlab提供的各项功能，实现公司代码的管理、自动化编译同步等，具有非常明显的优势。通Jenkins相比，使用CI/CD可以个性化定制自己的编译内容，并触发执行，无需实现设置crontab配置。</p>
@@ -1595,6 +1542,59 @@ wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.png</code></pre></div>
 <li>磁盘问题排查：<img src="%E7%9F%A5%E8%AF%86%E6%A0%88.png" srcset="/img/loading.gif" alt="磁盘问题排查"></li>
 </ol>
 ]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>总结</tag>
+        <tag>HDFS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HDFS之我遇到的各种问题</title>
+    <url>/2018/06/29/HDFS%E4%B9%8B%E6%88%91%E9%81%87%E5%88%B0%E7%9A%84%E5%90%84%E7%A7%8D%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h2 id="Hostname问题"><a href="#Hostname问题" class="headerlink" title="Hostname问题"></a>Hostname问题</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Datanode denied communication with namenode because hostname cannot be resolved (ip&#x3D;xx.xx.xx.xx, hostname&#x3D;xx.xx.xx.xx)
+    at org.apache.hadoop.hdfs.server.blockmanagement.DatanodeManager.registerDatanode(DatanodeManager.java:876)
+    at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.registerDatanode(FSNamesystem.java:5269)
+    at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.registerDatanode(NameNodeRpcServer.java:1178)
+    at org.apache.hadoop.hdfs.protocolPB.DatanodeProtocolServerSideTranslatorPB.registerDatanode(DatanodeProtocolServerSideTranslatorPB.java:100)
+    at org.apache.hadoop.hdfs.protocol.proto.DatanodeProtocolProtos$DatanodeProtocolService$2.callBlockingMethod(DatanodeProtocolProtos.java:29184)
+    at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:617)
+    at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1073)
+    at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:2281)
+    at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:2277)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at javax.security.auth.Subject.doAs(Subject.java:422)
+    at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1920)
+    at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2275)</code></pre></div>
+
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>A. 在/etc/hosts中添加映射关系</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">IP	hostname
+IP	hostname
+...</code></pre></div>
+<p>B. 设置取消hostname检查</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">dfs.namenode.datanode.registratin.io-hostname-check: false</code></pre></div>
+
+<h2 id="安装问题"><a href="#安装问题" class="headerlink" title="安装问题"></a>安装问题</h2><h3 id="deltarpm"><a href="#deltarpm" class="headerlink" title="deltarpm"></a>deltarpm</h3><p>A. 问题描述</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Delta RPMs disabled because &#x2F;usr&#x2F;bin&#x2F;applydeltarpm not installed</code></pre></div>
+<p>B. 解决方案</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum install deltarpm</code></pre></div>
+
+<h3 id="SASL"><a href="#SASL" class="headerlink" title="SASL"></a>SASL</h3><p>A. 问题描述</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found (code THRIFTTRANSPORT): TTransportException('Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found',)</code></pre></div>
+<p>B. 解决方案</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum -y install cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi</code></pre></div>
+
+<h3 id="libxslt-so"><a href="#libxslt-so" class="headerlink" title="libxslt.so"></a>libxslt.so</h3><p>A. 问题描述</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"> Couldn't import snappy. Support for snappy compression disabled.
+File "&#x2F;opt&#x2F;cloudera&#x2F;parcels&#x2F;CDH-5.12.1-1.cdh5.12.1.p0.3&#x2F;lib&#x2F;hue&#x2F;build&#x2F;env&#x2F;lib&#x2F;python2.7&#x2F;site-packages&#x2F;lxml-3.3.6-py2.7-linux-x86_64.egg&#x2F;lxml&#x2F;html&#x2F;__init__.py", line 42, in <module> from lxml import etree
+ImportError: libxslt.so.1: cannot open shared object file: No such file or directory</code></pre></div>
+<p>B. 解决方案</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum install httpd -y</code></pre></div>
+
+<h2 id="Hive"><a href="#Hive" class="headerlink" title="Hive"></a>Hive</h2><h3 id="注释中文乱码问题"><a href="#注释中文乱码问题" class="headerlink" title="注释中文乱码问题"></a>注释中文乱码问题</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">alter table COLUMNS_V2 modify column COMMENT varchar(256) character set utf8; 
+alter table TABLE_PARAMS modify column PARAM_VALUE varchar(4000) character set utf8; 
+alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character set utf8; （分区表）</code></pre></div>]]></content>
       <categories>
         <category>大数据</category>
       </categories>
@@ -1731,6 +1731,27 @@ scp -r ~&#x2F;jdk1.8.0_111&#x2F; slave3:~&#x2F;</code></pre></div>
       </tags>
   </entry>
   <entry>
+    <title>Hive JDBC任务执行流程</title>
+    <url>/2018/08/04/Hive-JDBC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[<p>&emsp;&emsp;Hive提供了多种访问方式，其中JDBC是一种。通常通过JDBC访问，可以规避用户对HDFS、Metastore的直接访问。本文研究研究一下HiveJDBC执行任务的流程。</p>
+<h2 id="JDBC执行流程"><a href="#JDBC执行流程" class="headerlink" title="JDBC执行流程"></a>JDBC执行流程</h2><p><img src="004.png" srcset="/img/loading.gif" alt="Hive客户端与服务端的交互"></p>
+<p>&emsp;&emsp;主要流程分为三条线：</p>
+<ol>
+<li>执行任务，无返回<br> 执行完成，获取执行结果[boolean/int]，直接结束</li>
+<li>执行任务，返回数据<br> 执行完成，通过接口获取数据，用户执行其他相关操作</li>
+<li>执行任务，查询日志<br> 执行任务的同时，可以获取执行日志。通过单独的接口，可以分别获取日志与数据。</li>
+</ol>
+<p>&emsp;&emsp;使用JDBC查询日志，存在锁竞争的问题，因而表现出来的现象就是通过JDBC获取日志比较慢。具体可以参考：<a href="https://www.cnblogs.com/oldtrafford/p/8818756.html" target="_blank" rel="noopener">hive-jdbc获取查询日志慢的问题发现与解决</a>。</p>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>Hive</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hbase集群安装配置-四节点-Centos6.9</title>
     <url>/2018/06/29/Hbase%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-%E5%9B%9B%E8%8A%82%E7%82%B9-Centos6-9/</url>
     <content><![CDATA[<p>&emsp;&emsp;最近在研究Hadoop相关组件的安装，本篇主要研究Hbase的安装。Hbase作为Hadoop家族中重要的数据库解决方案，对以后的Hive等数据库都有非常大的帮助。</p>
@@ -1824,27 +1845,6 @@ slave1: Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize&#
       <tags>
         <tag>部署</tag>
         <tag>Hbase</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hive JDBC任务执行流程</title>
-    <url>/2018/08/04/Hive-JDBC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/</url>
-    <content><![CDATA[<p>&emsp;&emsp;Hive提供了多种访问方式，其中JDBC是一种。通常通过JDBC访问，可以规避用户对HDFS、Metastore的直接访问。本文研究研究一下HiveJDBC执行任务的流程。</p>
-<h2 id="JDBC执行流程"><a href="#JDBC执行流程" class="headerlink" title="JDBC执行流程"></a>JDBC执行流程</h2><p><img src="004.png" srcset="/img/loading.gif" alt="Hive客户端与服务端的交互"></p>
-<p>&emsp;&emsp;主要流程分为三条线：</p>
-<ol>
-<li>执行任务，无返回<br> 执行完成，获取执行结果[boolean/int]，直接结束</li>
-<li>执行任务，返回数据<br> 执行完成，通过接口获取数据，用户执行其他相关操作</li>
-<li>执行任务，查询日志<br> 执行任务的同时，可以获取执行日志。通过单独的接口，可以分别获取日志与数据。</li>
-</ol>
-<p>&emsp;&emsp;使用JDBC查询日志，存在锁竞争的问题，因而表现出来的现象就是通过JDBC获取日志比较慢。具体可以参考：<a href="https://www.cnblogs.com/oldtrafford/p/8818756.html" target="_blank" rel="noopener">hive-jdbc获取查询日志慢的问题发现与解决</a>。</p>
-]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>Hive</tag>
       </tags>
   </entry>
   <entry>
@@ -1982,6 +1982,122 @@ Time taken: 0.388 seconds, Fetched: 3 row(s)</code></pre></div>
       </tags>
   </entry>
   <entry>
+    <title>HiveServer遇到一个问题</title>
+    <url>/2018/06/29/HiveServer%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>&emsp;&emsp;基于给开发同学使用与BI用户使用的需求，打算开启HiveServer2服务，集群上面的Hive任务执行、调度，都走HiveServer2方式。之前只有调度任务与开发同学使用，所以使用的是Hive CLI方式，开发同学没有添加权限控制。</p>
+<a id="more"></a>
+
+<p>&emsp;&emsp;使用一段时间之后，发现HiveServer2存在各种问题。突出的问题就是不稳定、运行日志很难获取、任务ID需要解析等，最近遇到一个概率性出现的问题。</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">INFO  : Cleaning up the staging area file:&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;staging&#x2F;hive1294900272&#x2F;.staging&#x2F;job_local1294900272_0933
+ERROR : Job Submission failed with exception 'java.io.IOException(java.util.concurrent.ExecutionException: java.io.IOException: Unable to rename file: [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009
+296491_tmp&#x2F;tmp_hive-exec-1.1.0-cdh5.12.1-core.jar] to [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;hive-exec-1.1.0-cdh5.12.1-core.jar])'
+java.io.IOException: java.util.concurrent.ExecutionException: java.io.IOException: Unable to rename file: [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;tmp_hive-exec-1.1.0-cdh5.12.1-core
+.jar] to [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;hive-exec-1.1.0-cdh5.12.1-core.jar]
+        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:143)
+        at org.apache.hadoop.mapred.LocalJobRunner$Job.<init>(LocalJobRunner.java:171)
+        at org.apache.hadoop.mapred.LocalJobRunner.submitJob(LocalJobRunner.java:758)
+        at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:244)
+        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1307)
+        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1304)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at javax.security.auth.Subject.doAs(Subject.java:422)
+        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)
+        at org.apache.hadoop.mapreduce.Job.submit(Job.java:1304)
+        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:578)
+        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:573)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at javax.security.auth.Subject.doAs(Subject.java:422)
+        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)
+        at org.apache.hadoop.mapred.JobClient.submitJobInternal(JobClient.java:573)
+        at org.apache.hadoop.mapred.JobClient.submitJob(JobClient.java:564)
+        at org.apache.hadoop.hive.ql.exec.mr.ExecDriver.execute(ExecDriver.java:436)
+        at org.apache.hadoop.hive.ql.exec.mr.MapRedTask.execute(MapRedTask.java:142)
+        at org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:214)
+        at org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:99)
+        at org.apache.hadoop.hive.ql.exec.TaskRunner.run(TaskRunner.java:79)
+Caused by: java.util.concurrent.ExecutionException: java.io.IOException: Unable to rename file: [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;tmp_hive-exec-1.1.0-cdh5.12.1-core.jar] to [
+&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;hive-exec-1.1.0-cdh5.12.1-core.jar]
+        at java.util.concurrent.FutureTask.report(FutureTask.java:122)
+        at java.util.concurrent.FutureTask.get(FutureTask.java:192)
+        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:139)
+        ... 21 more
+Caused by: java.io.IOException: Unable to rename file: [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;tmp_hive-exec-1.1.0-cdh5.12.1-core.jar] to [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;15260092964
+91_tmp&#x2F;hive-exec-1.1.0-cdh5.12.1-core.jar]
+        at org.apache.hadoop.yarn.util.FSDownload.unpack(FSDownload.java:327)
+        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:362)
+        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:60)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+        at java.lang.Thread.run(Thread.java:748)
+ 
+ 
+INFO  : Cleaning up the staging area file:&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;staging&#x2F;hive1101623315&#x2F;.staging&#x2F;job_local1101623315_0934
+ERROR : Job Submission failed with exception 'java.io.IOException(java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File &#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tm
+p does not exist)'
+java.io.IOException: java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File &#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp does not exist
+        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:143)
+        at org.apache.hadoop.mapred.LocalJobRunner$Job.<init>(LocalJobRunner.java:171)
+        at org.apache.hadoop.mapred.LocalJobRunner.submitJob(LocalJobRunner.java:758)
+        at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:244)
+        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1307)
+        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1304)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at javax.security.auth.Subject.doAs(Subject.java:422)
+        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)
+        at org.apache.hadoop.mapreduce.Job.submit(Job.java:1304)
+        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:578)
+        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:573)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at javax.security.auth.Subject.doAs(Subject.java:422)
+        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)
+        at org.apache.hadoop.mapred.JobClient.submitJobInternal(JobClient.java:573)
+        at org.apache.hadoop.mapred.JobClient.submitJob(JobClient.java:564)
+        at org.apache.hadoop.hive.ql.exec.mr.ExecDriver.execute(ExecDriver.java:436)
+        at org.apache.hadoop.hive.ql.exec.mr.MapRedTask.execute(MapRedTask.java:142)
+        at org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:214)
+        at org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:99)
+        at org.apache.hadoop.hive.ql.exec.TaskRunner.run(TaskRunner.java:79)
+Caused by: java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File &#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp does not exist
+        at java.util.concurrent.FutureTask.report(FutureTask.java:122)
+        at java.util.concurrent.FutureTask.get(FutureTask.java:192)
+        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:139)
+        ... 21 more
+Caused by: java.io.FileNotFoundException: File &#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp does not exist
+        at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileStatus(RawLocalFileSystem.java:598)
+        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:811)
+        at org.apache.hadoop.fs.RawLocalFileSystem.getFileStatus(RawLocalFileSystem.java:588)
+        at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileLinkStatusInternal(RawLocalFileSystem.java:827)
+        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:813)
+        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatus(RawLocalFileSystem.java:784)
+        at org.apache.hadoop.fs.DelegateToFileSystem.getFileLinkStatus(DelegateToFileSystem.java:132)
+        at org.apache.hadoop.fs.AbstractFileSystem.renameInternal(AbstractFileSystem.java:701)
+        at org.apache.hadoop.fs.FilterFs.renameInternal(FilterFs.java:236)
+        at org.apache.hadoop.fs.AbstractFileSystem.rename(AbstractFileSystem.java:674)
+        at org.apache.hadoop.fs.FileContext.rename(FileContext.java:932)
+        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:364)
+        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:60)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+        at java.lang.Thread.run(Thread.java:748)
+ 
+ERROR : FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask
+INFO  : Completed executing command(queryId&#x3D;hive_20180511112828_b253761f-a1ae-40bc-ae7e-650cfa4c7b79); Time taken: 9.506 seconds
+ 
+Error: Error while processing statement: FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask (state&#x3D;08S01,code&#x3D;1)
+Closing: 0:</code></pre></div>
+<p>&emsp;&emsp;想要排查问题，该问题又不会定期出现，在运行几百个JOB中，偶尔出现几个这样的报错信息。<br>&emsp;&emsp;最后还是找到了这样一篇文章：<a href="https://my.oschina.net/u/186712/blog/827949" target="_blank" rel="noopener">一台服务器同时起多个hive跑local mr很大机率会报 FileAlreadyExistsException</a>。根据该文中的报错信息，以及源代码的内容，可以看出我们这里的报错应该也是同类，或同一个出处。至此为我们的问题找打了一个合理的解释，因此可以对症下药解决问题。</p>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>问题</tag>
+        <tag>Hive</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hive复杂类型的导入</title>
     <url>/2018/08/10/Hive%E5%A4%8D%E6%9D%82%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%AF%BC%E5%85%A5/</url>
     <content><![CDATA[<p>&emsp;&emsp;Hive是大数据体系下ETL、数据预处理、数仓等领域比较重要的组件，应用广泛。博主空闲时间研究一下Hive的数据类型。</p>
@@ -2115,122 +2231,6 @@ Cleopatra	11	0.28206065	2018-14-11 17:08:15	&#123;"sname":"阿玛贝尔","sage":
       </categories>
       <tags>
         <tag>调研</tag>
-        <tag>Hive</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>HiveServer遇到一个问题</title>
-    <url>/2018/06/29/HiveServer%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>&emsp;&emsp;基于给开发同学使用与BI用户使用的需求，打算开启HiveServer2服务，集群上面的Hive任务执行、调度，都走HiveServer2方式。之前只有调度任务与开发同学使用，所以使用的是Hive CLI方式，开发同学没有添加权限控制。</p>
-<a id="more"></a>
-
-<p>&emsp;&emsp;使用一段时间之后，发现HiveServer2存在各种问题。突出的问题就是不稳定、运行日志很难获取、任务ID需要解析等，最近遇到一个概率性出现的问题。</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">INFO  : Cleaning up the staging area file:&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;staging&#x2F;hive1294900272&#x2F;.staging&#x2F;job_local1294900272_0933
-ERROR : Job Submission failed with exception 'java.io.IOException(java.util.concurrent.ExecutionException: java.io.IOException: Unable to rename file: [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009
-296491_tmp&#x2F;tmp_hive-exec-1.1.0-cdh5.12.1-core.jar] to [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;hive-exec-1.1.0-cdh5.12.1-core.jar])'
-java.io.IOException: java.util.concurrent.ExecutionException: java.io.IOException: Unable to rename file: [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;tmp_hive-exec-1.1.0-cdh5.12.1-core
-.jar] to [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;hive-exec-1.1.0-cdh5.12.1-core.jar]
-        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:143)
-        at org.apache.hadoop.mapred.LocalJobRunner$Job.<init>(LocalJobRunner.java:171)
-        at org.apache.hadoop.mapred.LocalJobRunner.submitJob(LocalJobRunner.java:758)
-        at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:244)
-        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1307)
-        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1304)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)
-        at org.apache.hadoop.mapreduce.Job.submit(Job.java:1304)
-        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:578)
-        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:573)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)
-        at org.apache.hadoop.mapred.JobClient.submitJobInternal(JobClient.java:573)
-        at org.apache.hadoop.mapred.JobClient.submitJob(JobClient.java:564)
-        at org.apache.hadoop.hive.ql.exec.mr.ExecDriver.execute(ExecDriver.java:436)
-        at org.apache.hadoop.hive.ql.exec.mr.MapRedTask.execute(MapRedTask.java:142)
-        at org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:214)
-        at org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:99)
-        at org.apache.hadoop.hive.ql.exec.TaskRunner.run(TaskRunner.java:79)
-Caused by: java.util.concurrent.ExecutionException: java.io.IOException: Unable to rename file: [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;tmp_hive-exec-1.1.0-cdh5.12.1-core.jar] to [
-&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;hive-exec-1.1.0-cdh5.12.1-core.jar]
-        at java.util.concurrent.FutureTask.report(FutureTask.java:122)
-        at java.util.concurrent.FutureTask.get(FutureTask.java:192)
-        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:139)
-        ... 21 more
-Caused by: java.io.IOException: Unable to rename file: [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp&#x2F;tmp_hive-exec-1.1.0-cdh5.12.1-core.jar] to [&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;15260092964
-91_tmp&#x2F;hive-exec-1.1.0-cdh5.12.1-core.jar]
-        at org.apache.hadoop.yarn.util.FSDownload.unpack(FSDownload.java:327)
-        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:362)
-        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:60)
-        at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-        at java.lang.Thread.run(Thread.java:748)
- 
- 
-INFO  : Cleaning up the staging area file:&#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;staging&#x2F;hive1101623315&#x2F;.staging&#x2F;job_local1101623315_0934
-ERROR : Job Submission failed with exception 'java.io.IOException(java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File &#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tm
-p does not exist)'
-java.io.IOException: java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File &#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp does not exist
-        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:143)
-        at org.apache.hadoop.mapred.LocalJobRunner$Job.<init>(LocalJobRunner.java:171)
-        at org.apache.hadoop.mapred.LocalJobRunner.submitJob(LocalJobRunner.java:758)
-        at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:244)
-        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1307)
-        at org.apache.hadoop.mapreduce.Job$10.run(Job.java:1304)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)
-        at org.apache.hadoop.mapreduce.Job.submit(Job.java:1304)
-        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:578)
-        at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:573)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)
-        at org.apache.hadoop.mapred.JobClient.submitJobInternal(JobClient.java:573)
-        at org.apache.hadoop.mapred.JobClient.submitJob(JobClient.java:564)
-        at org.apache.hadoop.hive.ql.exec.mr.ExecDriver.execute(ExecDriver.java:436)
-        at org.apache.hadoop.hive.ql.exec.mr.MapRedTask.execute(MapRedTask.java:142)
-        at org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:214)
-        at org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:99)
-        at org.apache.hadoop.hive.ql.exec.TaskRunner.run(TaskRunner.java:79)
-Caused by: java.util.concurrent.ExecutionException: java.io.FileNotFoundException: File &#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp does not exist
-        at java.util.concurrent.FutureTask.report(FutureTask.java:122)
-        at java.util.concurrent.FutureTask.get(FutureTask.java:192)
-        at org.apache.hadoop.mapred.LocalDistributedCacheManager.setup(LocalDistributedCacheManager.java:139)
-        ... 21 more
-Caused by: java.io.FileNotFoundException: File &#x2F;tmp&#x2F;hadoop-hive&#x2F;mapred&#x2F;local&#x2F;1526009296491_tmp does not exist
-        at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileStatus(RawLocalFileSystem.java:598)
-        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:811)
-        at org.apache.hadoop.fs.RawLocalFileSystem.getFileStatus(RawLocalFileSystem.java:588)
-        at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileLinkStatusInternal(RawLocalFileSystem.java:827)
-        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:813)
-        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatus(RawLocalFileSystem.java:784)
-        at org.apache.hadoop.fs.DelegateToFileSystem.getFileLinkStatus(DelegateToFileSystem.java:132)
-        at org.apache.hadoop.fs.AbstractFileSystem.renameInternal(AbstractFileSystem.java:701)
-        at org.apache.hadoop.fs.FilterFs.renameInternal(FilterFs.java:236)
-        at org.apache.hadoop.fs.AbstractFileSystem.rename(AbstractFileSystem.java:674)
-        at org.apache.hadoop.fs.FileContext.rename(FileContext.java:932)
-        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:364)
-        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:60)
-        at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-        at java.lang.Thread.run(Thread.java:748)
- 
-ERROR : FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask
-INFO  : Completed executing command(queryId&#x3D;hive_20180511112828_b253761f-a1ae-40bc-ae7e-650cfa4c7b79); Time taken: 9.506 seconds
- 
-Error: Error while processing statement: FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask (state&#x3D;08S01,code&#x3D;1)
-Closing: 0:</code></pre></div>
-<p>&emsp;&emsp;想要排查问题，该问题又不会定期出现，在运行几百个JOB中，偶尔出现几个这样的报错信息。<br>&emsp;&emsp;最后还是找到了这样一篇文章：<a href="https://my.oschina.net/u/186712/blog/827949" target="_blank" rel="noopener">一台服务器同时起多个hive跑local mr很大机率会报 FileAlreadyExistsException</a>。根据该文中的报错信息，以及源代码的内容，可以看出我们这里的报错应该也是同类，或同一个出处。至此为我们的问题找打了一个合理的解释，因此可以对症下药解决问题。</p>
-]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>问题</tag>
         <tag>Hive</tag>
       </tags>
   </entry>
@@ -2938,6 +2938,202 @@ Proxy proxy &#x3D; new java.net.Proxy(java.net.Proxy.Type.HTTP,new InetSocketAdd
       </categories>
       <tags>
         <tag>调研</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java单例模式的几种写法</title>
+    <url>/2018/06/29/Java%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95/</url>
+    <content><![CDATA[<p>《Java并发编程 从入门到精通》读书笔记。</p>
+<a id="more"></a>
+
+<h2 id="错误模式"><a href="#错误模式" class="headerlink" title="错误模式"></a>错误模式</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
+
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
+	<span class="hljs-function">privae <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+			instance = <span class="hljs-keyword">new</span> Test();
+		<span class="hljs-keyword">return</span> instance;
+	&#125;
+&#125;</code></pre></div>
+
+<h2 id="低效模式：synchronized"><a href="#低效模式：synchronized" class="headerlink" title="低效模式：synchronized"></a>低效模式：synchronized</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
+
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
+	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">synchronized</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+			instance = <span class="hljs-keyword">new</span> Test();
+		<span class="hljs-keyword">return</span> instance;
+	&#125;
+&#125;</code></pre></div>
+
+<h2 id="常见模式：使用对象锁"><a href="#常见模式：使用对象锁" class="headerlink" title="常见模式：使用对象锁"></a>常见模式：使用对象锁</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] lock = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">0</span>];
+	
+	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+			<span class="hljs-keyword">synchronized</span>(lock)&#123;
+				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+					instance = <span class="hljs-keyword">new</span> Test();
+			&#125;
+		<span class="hljs-keyword">return</span> instance;
+	&#125;
+&#125;</code></pre></div>
+
+<h2 id="常见模式：ReentranLock"><a href="#常见模式：ReentranLock" class="headerlink" title="常见模式：ReentranLock"></a>常见模式：ReentranLock</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> ReentranLock lock = <span class="hljs-keyword">new</span> ReentranLock();
+	
+	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
+	
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)&#123;
+			lock.lock();
+			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
+				instance = <span class="hljs-keyword">new</span> Test();
+			lock.unlock();
+		&#125;
+		<span class="hljs-keyword">return</span> instance;
+	&#125;
+&#125;</code></pre></div>]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java同步辅助类总结</title>
+    <url>/2018/06/29/Java%E5%90%8C%E6%AD%A5%E8%BE%85%E5%8A%A9%E7%B1%BB%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>《Java并发编程 从入门到精通》读书笔记。</p>
+<a id="more"></a>
+
+
+<p><img src="001.png" srcset="/img/loading.gif" alt="同步复制类"></p>
+<p>作图工具processon，注册链接：<a href="https://www.processon.com/i/59b27b8be4b0d3fbea26247c" target="_blank" rel="noopener">https://www.processon.com/i/59b27b8be4b0d3fbea26247c</a></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>总结</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java安全集合类</title>
+    <url>/2018/06/29/Java%E5%AE%89%E5%85%A8%E9%9B%86%E5%90%88%E7%B1%BB/</url>
+    <content><![CDATA[<p>《Java并发编程 从入门到精通》读书笔记。</p>
+<p>Java集合类非常方便，但适用于现成安全场景下的集合类平常使用的比较少一点，主要是ConcurrentHashMap。</p>
+<a id="more"></a>
+
+<p><img src="001.png" srcset="/img/loading.gif" alt="Java集合类，安全集合类"></p>
+<p>作图工具processon，注册链接：<a href="https://www.processon.com/i/59b27b8be4b0d3fbea26247c" target="_blank" rel="noopener">https://www.processon.com/i/59b27b8be4b0d3fbea26247c</a></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>总结</tag>
+        <tag>读书</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java邮件客户端发送邮件＋附件</title>
+    <url>/2018/06/29/Java%E9%82%AE%E4%BB%B6%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%8F%91%E9%80%81%E9%82%AE%E4%BB%B6%EF%BC%8B%E9%99%84%E4%BB%B6/</url>
+    <content><![CDATA[<p>&emsp;&emsp;目前研究一下使用Java发送带有附件的邮件，从网上搜索了一下发现都存在各种各样的问题。在这里总结一下，展示一下基础代码，防止遗忘。</p>
+<a id="more"></a>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><div class="hljs"><pre class=" language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMail</span><span class="hljs-params"><code class="language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMail</span><span class="hljs-params">(String subject, String toMail,</span></span>
+<span class="hljs-function"><span class="hljs-params">			String content, String... files)</span> </span>&#123;
+		<span class="hljs-keyword">boolean</span> isFlag = <span class="hljs-keyword">false</span>;
+		<span class="hljs-keyword">try</span> &#123;
+
+			String smtpFromMail = <span class="hljs-string">"你的QQ号码@qq.com"</span>; <span class="hljs-comment">// 账号</span>
+			String pwd = <span class="hljs-string">"QQ上面申请的授权码"</span>; <span class="hljs-comment">// 密码</span>
+			<span class="hljs-keyword">int</span> port = <span class="hljs-number">465</span>; <span class="hljs-comment">// 端口</span>
+			String host = <span class="hljs-string">"smtp.qq.com"</span>; <span class="hljs-comment">// 端口</span>
+
+			Properties props = <span class="hljs-keyword">new</span> Properties();
+			props.put(<span class="hljs-string">"mail.smtp.host"</span>, host);
+			props.setProperty(<span class="hljs-string">"mail.smtp.socketFactory.class"</span>,
+					<span class="hljs-string">"javax.net.ssl.SSLSocketFactory"</span>);
+			props.put(<span class="hljs-string">"mail.smtp.auth"</span>, <span class="hljs-string">"true"</span>);
+			Session session = Session.getDefaultInstance(props);
+			session.setDebug(<span class="hljs-keyword">false</span>);
+
+			MimeMessage message = <span class="hljs-keyword">new</span> MimeMessage(session);
+			<span class="hljs-keyword">try</span> &#123;
+				message.setFrom(<span class="hljs-keyword">new</span> InternetAddress(smtpFromMail, <span class="hljs-string">"QQ邮件测试"</span>));
+				message.addRecipient(Message.RecipientType.TO,
+						<span class="hljs-keyword">new</span> InternetAddress(toMail));
+				message.setSubject(subject);
+				message.addHeader(<span class="hljs-string">"charset"</span>, <span class="hljs-string">"UTF-8"</span>);
+
+				<span class="hljs-comment">/* 添加正文内容 */</span>
+				Multipart multipart = <span class="hljs-keyword">new</span> MimeMultipart();
+				BodyPart contentPart = <span class="hljs-keyword">new</span> MimeBodyPart();
+				contentPart.setText(content);
+
+				contentPart.setHeader(<span class="hljs-string">"Content-Type"</span>,
+						<span class="hljs-string">"text/html; charset=UTF-8"</span>);
+				multipart.addBodyPart(contentPart);
+
+				<span class="hljs-comment">/* 添加附件 */</span>
+				<span class="hljs-keyword">for</span> (String file : files) &#123;
+					File usFile = <span class="hljs-keyword">new</span> File(file);
+					MimeBodyPart fileBody = <span class="hljs-keyword">new</span> MimeBodyPart();
+					DataSource source = <span class="hljs-keyword">new</span> FileDataSource(file);
+					fileBody.setDataHandler(<span class="hljs-keyword">new</span> DataHandler(source));
+					sun.misc.BASE64Encoder enc = <span class="hljs-keyword">new</span> sun.misc.BASE64Encoder();
+					fileBody.setFileName(<span class="hljs-string">"=?GBK?B?"</span>
+							+ enc.encode(usFile.getName().getBytes()) + <span class="hljs-string">"?="</span>);
+					multipart.addBodyPart(fileBody);
+				&#125;
+
+				message.setContent(multipart);
+				message.setSentDate(<span class="hljs-keyword">new</span> Date());
+				message.saveChanges();
+				Transport transport = session.getTransport(<span class="hljs-string">"smtp"</span>);
+
+				transport.connect(host, port, smtpFromMail, pwd);
+				transport.sendMessage(message, message.getAllRecipients());
+				transport.close();
+				isFlag = <span class="hljs-keyword">true</span>;
+			&#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;
+				isFlag = <span class="hljs-keyword">false</span>;
+				e.printStackTrace();
+			&#125;
+		&#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;
+			e.printStackTrace();
+		&#125;
+		<span class="hljs-keyword">return</span> isFlag;
+	&#125;
+
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;
+		<span class="hljs-keyword">boolean</span> res = Main.sendMail(<span class="hljs-string">"这是一封测试邮件"</span>, <span class="hljs-string">"想要发送的邮件地址"</span>,
+				<span class="hljs-string">"朋友好久不见"</span>, <span class="hljs-string">"附件路径"</span>);
+		System.out.println(<span class="hljs-string">"Resuylt: "</span> + res);
+	&#125;</code></pre></div>
+
+<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
+<li>使用Java客户端配置QQ邮箱发送邮件，需要现在QQ邮箱网页上申请授权码，发送邮件时放在密码的位置；</li>
+<li>特别需要注意发送邮件的标题、正文内容的编码格式问题，不然容易造成乱码现象。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>邮件</tag>
       </tags>
   </entry>
   <entry>
@@ -3949,202 +4145,6 @@ windows:
       </tags>
   </entry>
   <entry>
-    <title>Java单例模式的几种写法</title>
-    <url>/2018/06/29/Java%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95/</url>
-    <content><![CDATA[<p>《Java并发编程 从入门到精通》读书笔记。</p>
-<a id="more"></a>
-
-<h2 id="错误模式"><a href="#错误模式" class="headerlink" title="错误模式"></a>错误模式</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
-
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-function">privae <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-			instance = <span class="hljs-keyword">new</span> Test();
-		<span class="hljs-keyword">return</span> instance;
-	&#125;
-&#125;</code></pre></div>
-
-<h2 id="低效模式：synchronized"><a href="#低效模式：synchronized" class="headerlink" title="低效模式：synchronized"></a>低效模式：synchronized</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
-
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">synchronized</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-			instance = <span class="hljs-keyword">new</span> Test();
-		<span class="hljs-keyword">return</span> instance;
-	&#125;
-&#125;</code></pre></div>
-
-<h2 id="常见模式：使用对象锁"><a href="#常见模式：使用对象锁" class="headerlink" title="常见模式：使用对象锁"></a>常见模式：使用对象锁</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] lock = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">0</span>];
-	
-	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-			<span class="hljs-keyword">synchronized</span>(lock)&#123;
-				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-					instance = <span class="hljs-keyword">new</span> Test();
-			&#125;
-		<span class="hljs-keyword">return</span> instance;
-	&#125;
-&#125;</code></pre></div>
-
-<h2 id="常见模式：ReentranLock"><a href="#常见模式：ReentranLock" class="headerlink" title="常见模式：ReentranLock"></a>常见模式：ReentranLock</h2><div class="hljs"><pre class=" language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title"><code class="language-hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span></span>&#123;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Test instance;
-	<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> ReentranLock lock = <span class="hljs-keyword">new</span> ReentranLock();
-	
-	<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Test</span><span class="hljs-params">()</span></span>&#123;&#125;
-	
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Test <span class="hljs-title">getInstance</span><span class="hljs-params">()</span></span>&#123;
-		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)&#123;
-			lock.lock();
-			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">null</span>==instance)
-				instance = <span class="hljs-keyword">new</span> Test();
-			lock.unlock();
-		&#125;
-		<span class="hljs-keyword">return</span> instance;
-	&#125;
-&#125;</code></pre></div>]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>总结</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java同步辅助类总结</title>
-    <url>/2018/06/29/Java%E5%90%8C%E6%AD%A5%E8%BE%85%E5%8A%A9%E7%B1%BB%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<p>《Java并发编程 从入门到精通》读书笔记。</p>
-<a id="more"></a>
-
-
-<p><img src="001.png" srcset="/img/loading.gif" alt="同步复制类"></p>
-<p>作图工具processon，注册链接：<a href="https://www.processon.com/i/59b27b8be4b0d3fbea26247c" target="_blank" rel="noopener">https://www.processon.com/i/59b27b8be4b0d3fbea26247c</a></p>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>总结</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java安全集合类</title>
-    <url>/2018/06/29/Java%E5%AE%89%E5%85%A8%E9%9B%86%E5%90%88%E7%B1%BB/</url>
-    <content><![CDATA[<p>《Java并发编程 从入门到精通》读书笔记。</p>
-<p>Java集合类非常方便，但适用于现成安全场景下的集合类平常使用的比较少一点，主要是ConcurrentHashMap。</p>
-<a id="more"></a>
-
-<p><img src="001.png" srcset="/img/loading.gif" alt="Java集合类，安全集合类"></p>
-<p>作图工具processon，注册链接：<a href="https://www.processon.com/i/59b27b8be4b0d3fbea26247c" target="_blank" rel="noopener">https://www.processon.com/i/59b27b8be4b0d3fbea26247c</a></p>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>总结</tag>
-        <tag>读书</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java邮件客户端发送邮件＋附件</title>
-    <url>/2018/06/29/Java%E9%82%AE%E4%BB%B6%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%8F%91%E9%80%81%E9%82%AE%E4%BB%B6%EF%BC%8B%E9%99%84%E4%BB%B6/</url>
-    <content><![CDATA[<p>&emsp;&emsp;目前研究一下使用Java发送带有附件的邮件，从网上搜索了一下发现都存在各种各样的问题。在这里总结一下，展示一下基础代码，防止遗忘。</p>
-<a id="more"></a>
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><div class="hljs"><pre class=" language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMail</span><span class="hljs-params"><code class="language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMail</span><span class="hljs-params">(String subject, String toMail,</span></span>
-<span class="hljs-function"><span class="hljs-params">			String content, String... files)</span> </span>&#123;
-		<span class="hljs-keyword">boolean</span> isFlag = <span class="hljs-keyword">false</span>;
-		<span class="hljs-keyword">try</span> &#123;
-
-			String smtpFromMail = <span class="hljs-string">"你的QQ号码@qq.com"</span>; <span class="hljs-comment">// 账号</span>
-			String pwd = <span class="hljs-string">"QQ上面申请的授权码"</span>; <span class="hljs-comment">// 密码</span>
-			<span class="hljs-keyword">int</span> port = <span class="hljs-number">465</span>; <span class="hljs-comment">// 端口</span>
-			String host = <span class="hljs-string">"smtp.qq.com"</span>; <span class="hljs-comment">// 端口</span>
-
-			Properties props = <span class="hljs-keyword">new</span> Properties();
-			props.put(<span class="hljs-string">"mail.smtp.host"</span>, host);
-			props.setProperty(<span class="hljs-string">"mail.smtp.socketFactory.class"</span>,
-					<span class="hljs-string">"javax.net.ssl.SSLSocketFactory"</span>);
-			props.put(<span class="hljs-string">"mail.smtp.auth"</span>, <span class="hljs-string">"true"</span>);
-			Session session = Session.getDefaultInstance(props);
-			session.setDebug(<span class="hljs-keyword">false</span>);
-
-			MimeMessage message = <span class="hljs-keyword">new</span> MimeMessage(session);
-			<span class="hljs-keyword">try</span> &#123;
-				message.setFrom(<span class="hljs-keyword">new</span> InternetAddress(smtpFromMail, <span class="hljs-string">"QQ邮件测试"</span>));
-				message.addRecipient(Message.RecipientType.TO,
-						<span class="hljs-keyword">new</span> InternetAddress(toMail));
-				message.setSubject(subject);
-				message.addHeader(<span class="hljs-string">"charset"</span>, <span class="hljs-string">"UTF-8"</span>);
-
-				<span class="hljs-comment">/* 添加正文内容 */</span>
-				Multipart multipart = <span class="hljs-keyword">new</span> MimeMultipart();
-				BodyPart contentPart = <span class="hljs-keyword">new</span> MimeBodyPart();
-				contentPart.setText(content);
-
-				contentPart.setHeader(<span class="hljs-string">"Content-Type"</span>,
-						<span class="hljs-string">"text/html; charset=UTF-8"</span>);
-				multipart.addBodyPart(contentPart);
-
-				<span class="hljs-comment">/* 添加附件 */</span>
-				<span class="hljs-keyword">for</span> (String file : files) &#123;
-					File usFile = <span class="hljs-keyword">new</span> File(file);
-					MimeBodyPart fileBody = <span class="hljs-keyword">new</span> MimeBodyPart();
-					DataSource source = <span class="hljs-keyword">new</span> FileDataSource(file);
-					fileBody.setDataHandler(<span class="hljs-keyword">new</span> DataHandler(source));
-					sun.misc.BASE64Encoder enc = <span class="hljs-keyword">new</span> sun.misc.BASE64Encoder();
-					fileBody.setFileName(<span class="hljs-string">"=?GBK?B?"</span>
-							+ enc.encode(usFile.getName().getBytes()) + <span class="hljs-string">"?="</span>);
-					multipart.addBodyPart(fileBody);
-				&#125;
-
-				message.setContent(multipart);
-				message.setSentDate(<span class="hljs-keyword">new</span> Date());
-				message.saveChanges();
-				Transport transport = session.getTransport(<span class="hljs-string">"smtp"</span>);
-
-				transport.connect(host, port, smtpFromMail, pwd);
-				transport.sendMessage(message, message.getAllRecipients());
-				transport.close();
-				isFlag = <span class="hljs-keyword">true</span>;
-			&#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;
-				isFlag = <span class="hljs-keyword">false</span>;
-				e.printStackTrace();
-			&#125;
-		&#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;
-			e.printStackTrace();
-		&#125;
-		<span class="hljs-keyword">return</span> isFlag;
-	&#125;
-
-	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;
-		<span class="hljs-keyword">boolean</span> res = Main.sendMail(<span class="hljs-string">"这是一封测试邮件"</span>, <span class="hljs-string">"想要发送的邮件地址"</span>,
-				<span class="hljs-string">"朋友好久不见"</span>, <span class="hljs-string">"附件路径"</span>);
-		System.out.println(<span class="hljs-string">"Resuylt: "</span> + res);
-	&#125;</code></pre></div>
-
-<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
-<li>使用Java客户端配置QQ邮箱发送邮件，需要现在QQ邮箱网页上申请授权码，发送邮件时放在密码的位置；</li>
-<li>特别需要注意发送邮件的标题、正文内容的编码格式问题，不然容易造成乱码现象。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>邮件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Kafka-&gt;SparkStreaming-&gt;Hbase【二】</title>
     <url>/2018/06/29/Kafka-SparkStreaming-Hbase%E3%80%90%E4%BA%8C%E3%80%91/</url>
     <content><![CDATA[<p>&emsp;&emsp;根据业务需求，将Kafka中数据抽取插入到Hbase中。目前网上可以找到许多相关的文章，这里介绍Github上的一个开源工具。</p>
@@ -4531,6 +4531,57 @@ windows:
         <tag>Spark</tag>
         <tag>Kafka</tag>
         <tag>Hbase</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux使用命令备忘</title>
+    <url>/2018/06/29/Linux%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在使用Centos或Ubuntu时，遇到各种Linux的命令，用到的时候回去查一下语法、参数、使用等内容，但使用过后基本上就忘记了。后面再使用的话，还的继续查找相关文档。</p>
+<a id="more"></a>
+
+<h2 id="ls命令"><a href="#ls命令" class="headerlink" title="ls命令"></a>ls命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ls
+ls -l
+ls -ltr</code></pre></div>
+
+<h2 id="du-df命令"><a href="#du-df命令" class="headerlink" title="du/df命令"></a>du/df命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">du -h --max-depth&#x3D;1 &#x2F;
+df
+df -lh</code></pre></div>
+
+<h2 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">top
+top -U
+top -p PID</code></pre></div>
+<h2 id="find命令"><a href="#find命令" class="headerlink" title="find命令"></a>find命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">find &#x2F; -name XXX
+find &#x2F; -size [+&#x2F;-]XXX</code></pre></div>
+
+<h2 id="grep命令"><a href="#grep命令" class="headerlink" title="grep命令"></a>grep命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ps -ef | grep agent | grep -v grep | awk '&#123;print $2&#125;' | xargs kill -9 
+ps -ef | grep agent | grep -v grep | awk '&#123;print \$2&#125;' | xargs kill -9</code></pre></div>
+
+<h2 id="cp命令"><a href="#cp命令" class="headerlink" title="cp命令"></a>cp命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 保持权限状态
+cp -p XXX XXX</code></pre></div>
+
+<h2 id="netstat命令"><a href="#netstat命令" class="headerlink" title="netstat命令"></a>netstat命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">netstat -nltp</code></pre></div>
+
+<h2 id="trace命令"><a href="#trace命令" class="headerlink" title="trace命令"></a>trace命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">strace -p PID  -f -e trace&#x3D;network -s 10000</code></pre></div>
+
+<h2 id="tcpdump命令"><a href="#tcpdump命令" class="headerlink" title="tcpdump命令"></a>tcpdump命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">tcpdump host 210.27.48.1 and \ (210.27.48.2 or 210.27.48.3 \) 
+tcpdump -i eth0 src host IPAddress</code></pre></div>
+
+<h2 id="Java命令"><a href="#Java命令" class="headerlink" title="Java命令"></a>Java命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jps
+java
+javac
+javah</code></pre></div>
+
+<h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap -heap [PID]
+jmap -histo [PID]
+jmap -dump:file&#x3D;文件名.dump [pid]</code></pre></div>
+
+<h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap [Dump File]</code></pre></div>]]></content>
+      <categories>
+        <category>运维</category>
+      </categories>
+      <tags>
+        <tag>备忘</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -5266,57 +5317,6 @@ windows:
       </tags>
   </entry>
   <entry>
-    <title>Linux使用命令备忘</title>
-    <url>/2018/06/29/Linux%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在使用Centos或Ubuntu时，遇到各种Linux的命令，用到的时候回去查一下语法、参数、使用等内容，但使用过后基本上就忘记了。后面再使用的话，还的继续查找相关文档。</p>
-<a id="more"></a>
-
-<h2 id="ls命令"><a href="#ls命令" class="headerlink" title="ls命令"></a>ls命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ls
-ls -l
-ls -ltr</code></pre></div>
-
-<h2 id="du-df命令"><a href="#du-df命令" class="headerlink" title="du/df命令"></a>du/df命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">du -h --max-depth&#x3D;1 &#x2F;
-df
-df -lh</code></pre></div>
-
-<h2 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">top
-top -U
-top -p PID</code></pre></div>
-<h2 id="find命令"><a href="#find命令" class="headerlink" title="find命令"></a>find命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">find &#x2F; -name XXX
-find &#x2F; -size [+&#x2F;-]XXX</code></pre></div>
-
-<h2 id="grep命令"><a href="#grep命令" class="headerlink" title="grep命令"></a>grep命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ps -ef | grep agent | grep -v grep | awk '&#123;print $2&#125;' | xargs kill -9 
-ps -ef | grep agent | grep -v grep | awk '&#123;print \$2&#125;' | xargs kill -9</code></pre></div>
-
-<h2 id="cp命令"><a href="#cp命令" class="headerlink" title="cp命令"></a>cp命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 保持权限状态
-cp -p XXX XXX</code></pre></div>
-
-<h2 id="netstat命令"><a href="#netstat命令" class="headerlink" title="netstat命令"></a>netstat命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">netstat -nltp</code></pre></div>
-
-<h2 id="trace命令"><a href="#trace命令" class="headerlink" title="trace命令"></a>trace命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">strace -p PID  -f -e trace&#x3D;network -s 10000</code></pre></div>
-
-<h2 id="tcpdump命令"><a href="#tcpdump命令" class="headerlink" title="tcpdump命令"></a>tcpdump命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">tcpdump host 210.27.48.1 and \ (210.27.48.2 or 210.27.48.3 \) 
-tcpdump -i eth0 src host IPAddress</code></pre></div>
-
-<h2 id="Java命令"><a href="#Java命令" class="headerlink" title="Java命令"></a>Java命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jps
-java
-javac
-javah</code></pre></div>
-
-<h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap -heap [PID]
-jmap -histo [PID]
-jmap -dump:file&#x3D;文件名.dump [pid]</code></pre></div>
-
-<h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap [Dump File]</code></pre></div>]]></content>
-      <categories>
-        <category>运维</category>
-      </categories>
-      <tags>
-        <tag>备忘</tag>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux安装MySQL</title>
     <url>/2018/06/29/Linux%E5%AE%89%E8%A3%85MySQL/</url>
     <content><![CDATA[<p>&emsp;&emsp;在Windows上安装MySQL比较简单，配置、启动服务，第一次进入不需要输入密码。但是在Centos6上安装MySQL，发现第一次安装会出现密码问题，因此有必要记录下自己的安装、配置过程，以供遗忘。</p>
@@ -5744,6 +5744,724 @@ mvn help:effiective-pom</code></pre></div>]]></content>
         <tag>问题</tag>
         <tag>总结</tag>
         <tag>Maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Minio初探</title>
+    <url>/2020/06/01/Minio%E5%88%9D%E6%8E%A2/</url>
+    <content><![CDATA[<!-- TOC -->
+
+<ul>
+<li><a href="#1-部署调研">1. 部署调研</a><ul>
+<li><a href="#11-环境准备">1.1. 环境准备</a><ul>
+<li><a href="#111-资源下载">1.1.1. 资源下载</a></li>
+<li><a href="#112-添加执行权限">1.1.2. 添加执行权限</a></li>
+</ul>
+</li>
+<li><a href="#12-部署模式">1.2. 部署模式</a><ul>
+<li><a href="#121-单机部署">1.2.1. 单机部署</a><ul>
+<li><a href="#1211-单机单租户">1.2.1.1. 单机单租户</a></li>
+<li><a href="#1212-单机多租户">1.2.1.2. 单机多租户</a></li>
+</ul>
+</li>
+<li><a href="#122-分布式部署">1.2.2. 分布式部署</a></li>
+</ul>
+</li>
+<li><a href="#13-特性调研">1.3. 特性调研</a><ul>
+<li><a href="#131-使用erase-code">1.3.1. 使用Erase Code</a></li>
+<li><a href="#132-压缩compression">1.3.2. 压缩(compression)</a></li>
+<li><a href="#133-缓存cache">1.3.3. 缓存(cache)</a></li>
+</ul>
+</li>
+<li><a href="#14-界面功能">1.4. 界面功能</a></li>
+<li><a href="#15-mc命令行操作">1.5. MC命令行操作</a><ul>
+<li><a href="#151-配置与操作s3">1.5.1. 配置与操作S3</a></li>
+<li><a href="#152-配置与操作minio">1.5.2. 配置与操作Minio</a></li>
+</ul>
+</li>
+<li><a href="#16-压测">1.6. 压测</a><ul>
+<li><a href="#161-压测命令">1.6.1. 压测命令</a></li>
+<li><a href="#162-压测结果">1.6.2. 压测结果</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#2-minio架构">2. Minio架构</a><ul>
+<li><a href="#21-部署">2.1. 部署</a><ul>
+<li><a href="#211-准备配置文件">2.1.1. 准备配置文件</a></li>
+<li><a href="#212-部署集群">2.1.2. 部署集群</a></li>
+</ul>
+</li>
+<li><a href="#22-客户端配置">2.2. 客户端配置</a></li>
+<li><a href="#23-测试">2.3. 测试</a></li>
+</ul>
+</li>
+<li><a href="#3-问题汇总">3. 问题汇总</a></li>
+<li><a href="#4-参考文献">4. 参考文献</a></li>
+</ul>
+<!-- /TOC -->
+
+
+<h1 id="1-部署调研"><a href="#1-部署调研" class="headerlink" title="1. 部署调研"></a>1. 部署调研</h1><h2 id="1-1-环境准备"><a href="#1-1-环境准备" class="headerlink" title="1.1. 环境准备"></a>1.1. 环境准备</h2><p>环境准备，主要是指环境配置、资源包下载/安装部署等内容。</p>
+<h3 id="1-1-1-资源下载"><a href="#1-1-1-资源下载" class="headerlink" title="1.1.1. 资源下载"></a>1.1.1. 资源下载</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### Minio下载：RELEASE.2020-06-01T17-28-03Z  
+wget https://dl.min.io/server/minio/release/linux-amd64/minio  
+
+### MC下载: RELEASE.2020-05-28T23-43-36Z  
+wget https://dl.min.io/client/mc/release/linux-amd64/mc</code></pre></div>
+<p><strong>资源下载(更新于2020-06-02)</strong>：<br><a href="minio" target="_blank">Minio(Server)</a>    &emsp; &emsp; <a href="mc" target="_blank">MC(Client)</a></p>
+<h3 id="1-1-2-添加执行权限"><a href="#1-1-2-添加执行权限" class="headerlink" title="1.1.2. 添加执行权限"></a>1.1.2. 添加执行权限</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 最好存放在统一的位置，比如：/opt/soft/minio/ 等  
+chmod +x mc  
+chmod +x minio</code></pre></div>
+
+<h2 id="1-2-部署模式"><a href="#1-2-部署模式" class="headerlink" title="1.2. 部署模式"></a>1.2. 部署模式</h2><p>这里主要介绍实战部署：参考官方文档，进行部署搭建。</p>
+<h3 id="1-2-1-单机部署"><a href="#1-2-1-单机部署" class="headerlink" title="1.2.1. 单机部署"></a>1.2.1. 单机部署</h3><p>单机部署主要包括两种模式：单机单租户、单机多租户。</p>
+<h4 id="1-2-1-1-单机单租户"><a href="#1-2-1-1-单机单租户" class="headerlink" title="1.2.1.1. 单机单租户"></a>1.2.1.1. 单机单租户</h4><p>单机部署非常简单</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">1. 启动服务：./minio server /data1 /data2 ...  
+2. 查看服务：http://host1:9000/</code></pre></div>
+<p>主要架构如下所示：<br><img src="one_ten_one_host.png" srcset="/img/loading.gif" alt="单租户非EC模式"></p>
+<h4 id="1-2-1-2-单机多租户"><a href="#1-2-1-2-单机多租户" class="headerlink" title="1.2.1.2. 单机多租户"></a>1.2.1.2. 单机多租户</h4><p>单机多租户，可以配置为多租户多次盘、多租户单磁盘等模式。</p>
+<p><img src="multi_ten_one_host.jpg" srcset="/img/loading.gif" alt="单机多租户"></p>
+<h3 id="1-2-2-分布式部署"><a href="#1-2-2-分布式部署" class="headerlink" title="1.2.2. 分布式部署"></a>1.2.2. 分布式部署</h3><p>分布式部署可以部署为单租户多机、多租户多机等情形，主要架构如下所示<br><img src="multi_ten_multi_host.jpg" srcset="/img/loading.gif" alt="分布式部署"></p>
+<p>部署测试</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## host1 ~ host4 : 配置启动  
+echo "" > nohup.out  
+export MINIO_ACCESS_KEY=minioadmin  
+export MINIO_SECRET_KEY=minioadmin  
+nohup /root/minio server --address :9002 http://host1/data5 http://host2/data5 http://host3/data5 http://host4/data5   &</code></pre></div>
+
+<p>使用s3-benchmark压测结果</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 压测命令  
+./s3-benchmark -a minioadmin -s minioadmin -b test -t 10 -u http://host1:9002 -l 5 -z "1MB"  
+
+## 压测结果  
+Parameters: url=http://host1:9002, bucket=test, duration=60, threads=10, loops=5, size=1MB
+Fri, 05 Jun 2020 20:01:13 GMT Loop 1: PUT time 61.6 secs, objects = 213, speed = 3.5MB/sec, 3.5 operations/sec.
+Fri, 05 Jun 2020 20:02:14 GMT Loop 1: GET time 61.0 secs, objects = 395, speed = 6.5MB/sec, 6.5 operations/sec.
+Fri, 05 Jun 2020 20:02:15 GMT Loop 1: DELETE time 0.9 secs, 225.1 operations/sec.
+Fri, 05 Jun 2020 20:03:16 GMT Loop 2: PUT time 61.7 secs, objects = 215, speed = 3.5MB/sec, 3.5 operations/sec.
+Fri, 05 Jun 2020 20:04:17 GMT Loop 2: GET time 60.8 secs, objects = 346, speed = 5.7MB/sec, 5.7 operations/sec.
+Fri, 05 Jun 2020 20:04:18 GMT Loop 2: DELETE time 0.8 secs, 277.0 operations/sec.
+Fri, 05 Jun 2020 20:05:20 GMT Loop 3: PUT time 61.6 secs, objects = 209, speed = 3.4MB/sec, 3.4 operations/sec.
+Fri, 05 Jun 2020 20:06:21 GMT Loop 3: GET time 60.8 secs, objects = 403, speed = 6.6MB/sec, 6.6 operations/sec.
+Fri, 05 Jun 2020 20:06:21 GMT Loop 3: DELETE time 0.8 secs, 270.2 operations/sec.
+Fri, 05 Jun 2020 20:07:24 GMT Loop 4: PUT time 62.6 secs, objects = 214, speed = 3.4MB/sec, 3.4 operations/sec.
+Fri, 05 Jun 2020 20:08:25 GMT Loop 4: GET time 60.8 secs, objects = 399, speed = 6.6MB/sec, 6.6 operations/sec.
+Fri, 05 Jun 2020 20:08:25 GMT Loop 4: DELETE time 0.8 secs, 277.8 operations/sec.
+Fri, 05 Jun 2020 20:09:27 GMT Loop 5: PUT time 61.6 secs, objects = 206, speed = 3.3MB/sec, 3.3 operations/sec.
+Fri, 05 Jun 2020 20:10:28 GMT Loop 5: GET time 60.9 secs, objects = 395, speed = 6.5MB/sec, 6.5 operations/sec.
+Fri, 05 Jun 2020 20:10:29 GMT Loop 5: DELETE time 0.8 secs, 260.4 operations/sec.
+Benchmark completed.</code></pre></div>
+
+<p><strong>注:</strong><br>如果使用本机多磁盘，意味着开启了Erase Code模式。在测试情境下，开启了EC模式，性能下降明显。</p>
+<h2 id="1-3-特性调研"><a href="#1-3-特性调研" class="headerlink" title="1.3. 特性调研"></a>1.3. 特性调研</h2><p>主要调研了Minio的擦除码、缓存、压缩等特性。以下特性调研，使用<strong>单机单租户单磁盘模式，且磁盘为HDD硬盘</strong>。</p>
+<h3 id="1-3-1-使用Erase-Code"><a href="#1-3-1-使用Erase-Code" class="headerlink" title="1.3.1. 使用Erase Code"></a>1.3.1. 使用Erase Code</h3><p>当前Minio在体验方面还不是非常友好，默认情况下的EC是Data跟parity是1:1分布的。如果需要修改配比，那么需要使用环境变量或使用MC进行设置。</p>
+<p>下面简单调研一下Minio如何配置EC，以及配置EC的效果。主要配置项为</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">export MINIO_STORAGE_CLASS_STANDARD&#x3D;EC:3  
+export MINIO_STORAGE_CLASS_RRS&#x3D;EC:2</code></pre></div>
+
+<p>通过命令操作单机实例</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 启动之前：随便设置(可以不设置)  
+export MINIO_STORAGE_CLASS_STANDARD=EC:3  
+export MINIO_STORAGE_CLASS_RRS=EC:2  
+
+## 通过命令查看配置  
+mc admin config get myminio storage_class  
+
+## 通过命令设置配置  
+mc admin config set myminio storage_class "standard=EC:2 rrs="     
+
+## 重启生效  
+mc admin service restart myminio</code></pre></div>
+
+<p>在配置了EC之后，查看目录文件夹中的数据，可以看到存在part.[num]块以及元数据描述信息</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">&#123;
+    <span class="hljs-attr">"version"</span>: <span class="hljs-string">"1.0.1"</span>,
+    <span class="hljs-attr">"format"</span>: <span class="hljs-string">"xl"</span>,
+    <span class="hljs-attr">"stat"</span>: &#123;
+        <span class="hljs-attr">"size"</span>: <span class="hljs-number">1048576</span>,
+        <span class="hljs-attr">"modTime"</span>: <span class="hljs-string">"2020-06-04T05:49:45.838591001Z"</span>
+    &#125;,
+    <span class="hljs-attr">"erasure"</span>: &#123;
+        <span class="hljs-attr">"algorithm"</span>: <span class="hljs-string">"klauspost/reedsolomon/vandermonde"</span>,
+        <span class="hljs-attr">"data"</span>: <span class="hljs-number">6</span>,
+        <span class="hljs-attr">"parity"</span>: <span class="hljs-number">3</span>,
+        <span class="hljs-attr">"blockSize"</span>: <span class="hljs-number">10485760</span>,
+        <span class="hljs-attr">"index"</span>: <span class="hljs-number">4</span>,
+        <span class="hljs-attr">"distribution"</span>: [
+            <span class="hljs-number">3</span>,
+            <span class="hljs-number">4</span>,
+            <span class="hljs-number">5</span>,
+            <span class="hljs-number">6</span>,
+            <span class="hljs-number">7</span>,
+            <span class="hljs-number">8</span>,
+            <span class="hljs-number">9</span>,
+            <span class="hljs-number">1</span>,
+            <span class="hljs-number">2</span>
+        ],
+        <span class="hljs-attr">"checksum"</span>: [
+            &#123;
+                <span class="hljs-attr">"name"</span>: <span class="hljs-string">"part.1"</span>,
+                <span class="hljs-attr">"algorithm"</span>: <span class="hljs-string">"highwayhash256S"</span>
+            &#125;
+        ]
+    &#125;,
+    <span class="hljs-attr">"minio"</span>: &#123;
+        <span class="hljs-attr">"release"</span>: <span class="hljs-string">"RELEASE.2020-06-01T17-28-03Z"</span>
+    &#125;,
+    <span class="hljs-attr">"meta"</span>: &#123;
+        <span class="hljs-attr">"content-type"</span>: <span class="hljs-string">"application/octet-stream"</span>,
+        <span class="hljs-attr">"etag"</span>: <span class="hljs-string">"7ede4e128789a6b6d51b834d77e00c92"</span>
+    &#125;,
+    <span class="hljs-attr">"parts"</span>: [
+        &#123;
+            <span class="hljs-attr">"number"</span>: <span class="hljs-number">1</span>,
+            <span class="hljs-attr">"size"</span>: <span class="hljs-number">1048576</span>,
+            <span class="hljs-attr">"actualSize"</span>: <span class="hljs-number">1048576</span>
+        &#125;
+    ]
+&#125;</code></pre></div>
+
+<p>配置EC为 <strong>Standard(storage_class standard=EC:2 rrs= )</strong> 之后，压测如下</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">Parameters: url=http://host1:9001, bucket=test, duration=60, threads=10, loops=5, size=1M
+Thu, 04 Jun 2020 13:48:12 GMT Loop 1: PUT time 62.5 secs, objects = 159, speed = 2.5MB/sec, 2.5 operations/sec.
+Thu, 04 Jun 2020 13:49:13 GMT Loop 1: GET time 61.0 secs, objects = 365, speed = 6MB/sec, 6.0 operations/sec.
+Thu, 04 Jun 2020 13:49:14 GMT Loop 1: DELETE time 0.6 secs, 277.4 operations/sec.
+Thu, 04 Jun 2020 13:50:15 GMT Loop 2: PUT time 61.5 secs, objects = 182, speed = 3MB/sec, 3.0 operations/sec.
+Thu, 04 Jun 2020 13:51:16 GMT Loop 2: GET time 60.8 secs, objects = 358, speed = 5.9MB/sec, 5.9 operations/sec.
+Thu, 04 Jun 2020 13:51:17 GMT Loop 2: DELETE time 0.6 secs, 288.5 operations/sec.
+Thu, 04 Jun 2020 13:52:19 GMT Loop 3: PUT time 62.2 secs, objects = 177, speed = 2.8MB/sec, 2.8 operations/sec.
+Thu, 04 Jun 2020 13:53:20 GMT Loop 3: GET time 61.0 secs, objects = 349, speed = 5.7MB/sec, 5.7 operations/sec.
+Thu, 04 Jun 2020 13:53:20 GMT Loop 3: DELETE time 0.7 secs, 263.1 operations/sec.
+Thu, 04 Jun 2020 13:54:22 GMT Loop 4: PUT time 61.5 secs, objects = 171, speed = 2.8MB/sec, 2.8 operations/sec.
+Thu, 04 Jun 2020 13:55:23 GMT Loop 4: GET time 61.1 secs, objects = 356, speed = 5.8MB/sec, 5.8 operations/sec.
+Thu, 04 Jun 2020 13:55:24 GMT Loop 4: DELETE time 0.6 secs, 302.4 operations/sec.
+Thu, 04 Jun 2020 13:56:27 GMT Loop 5: PUT time 62.8 secs, objects = 163, speed = 2.6MB/sec, 2.6 operations/sec.
+Thu, 04 Jun 2020 13:57:28 GMT Loop 5: GET time 61.1 secs, objects = 318, speed = 5.2MB/sec, 5.2 operations/sec.
+Thu, 04 Jun 2020 13:57:28 GMT Loop 5: DELETE time 0.7 secs, 246.7 operations/sec.</code></pre></div>
+
+<p>具体EC的说明可以参考：<a href="https://github.com/minio/minio/tree/master/docs/erasure/storage-class" target="_blank" rel="noopener" title="6">MinIO Storage Class Quickstart Guide</a>。</p>
+<h3 id="1-3-2-压缩-compression"><a href="#1-3-2-压缩-compression" class="headerlink" title="1.3.2. 压缩(compression)"></a>1.3.2. 压缩(compression)</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 查看压缩配置
+mc admin config get myminio compression
+
+## 默认压缩是不启用的，启用默认设置
+mc admin config set myminio compression
+
+## 设置压缩格式
+mc admin config set myminio compression extensions=".pdf" mime_types="application/pdf"</code></pre></div>
+
+<p>启用压缩之后，可以看到大小不一致</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">"parts": [
+    &#123;
+        <span class="hljs-attr">"number"</span>: <span class="hljs-number">1</span>,
+        <span class="hljs-attr">"size"</span>: <span class="hljs-number">5505321</span>,
+        <span class="hljs-attr">"actualSize"</span>: <span class="hljs-number">7464298</span>
+    &#125;
+]</code></pre></div>
+
+<p>启用压缩之后的压测结果</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">Parameters: url=http://host1:9001, bucket=test, duration=60, threads=10, loops=5, size=1M
+Thu, 04 Jun 2020 14:21:14 GMT Loop 1: PUT time 62.8 secs, objects = 157, speed = 2.5MB/sec, 2.5 operations/sec.
+Thu, 04 Jun 2020 14:22:16 GMT Loop 1: GET time 61.2 secs, objects = 334, speed = 5.5MB/sec, 5.5 operations/sec.
+Thu, 04 Jun 2020 14:22:16 GMT Loop 1: DELETE time 0.6 secs, 281.2 operations/sec.
+Thu, 04 Jun 2020 14:23:17 GMT Loop 2: PUT time 61.3 secs, objects = 162, speed = 2.6MB/sec, 2.6 operations/sec.
+Thu, 04 Jun 2020 14:24:19 GMT Loop 2: GET time 61.3 secs, objects = 312, speed = 5.1MB/sec, 5.1 operations/sec.
+Thu, 04 Jun 2020 14:24:19 GMT Loop 2: DELETE time 0.7 secs, 243.1 operations/sec.
+Thu, 04 Jun 2020 14:25:21 GMT Loop 3: PUT time 62.0 secs, objects = 180, speed = 2.9MB/sec, 2.9 operations/sec.
+Thu, 04 Jun 2020 14:26:23 GMT Loop 3: GET time 61.4 secs, objects = 335, speed = 5.5MB/sec, 5.5 operations/sec.
+Thu, 04 Jun 2020 14:26:24 GMT Loop 3: DELETE time 0.8 secs, 237.2 operations/sec.
+Thu, 04 Jun 2020 14:27:25 GMT Loop 4: PUT time 61.8 secs, objects = 185, speed = 3MB/sec, 3.0 operations/sec.
+Thu, 04 Jun 2020 14:28:26 GMT Loop 4: GET time 60.6 secs, objects = 300, speed = 4.9MB/sec, 4.9 operations/sec.
+Thu, 04 Jun 2020 14:28:27 GMT Loop 4: DELETE time 0.7 secs, 266.4 operations/sec.
+Thu, 04 Jun 2020 14:29:29 GMT Loop 5: PUT time 61.9 secs, objects = 180, speed = 2.9MB/sec, 2.9 operations/sec.
+Thu, 04 Jun 2020 14:30:30 GMT Loop 5: GET time 61.4 secs, objects = 275, speed = 4.5MB/sec, 4.5 operations/sec.
+Thu, 04 Jun 2020 14:30:31 GMT Loop 5: DELETE time 0.6 secs, 297.0 operations/sec.
+Benchmark completed.</code></pre></div>
+
+<p>具体Compression的说明可以参考：<a href="https://github.com/minio/minio/tree/master/docs/compression" target="_blank" rel="noopener" title="7">Compression Guide</a>。</p>
+<h3 id="1-3-3-缓存-cache"><a href="#1-3-3-缓存-cache" class="headerlink" title="1.3.3. 缓存(cache)"></a>1.3.3. 缓存(cache)</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 设置缓存
+mc admin config set myminio cache drives=/data4/cache,/data5/cache,/data6/cache,/data7/cache,/data8/cache
+
+## 开启atime
+### 异常报错
+Unable to initialize disk caching: Atime support required for disk caching
+
+### 问题根因
+如果需要开启缓存，那么需要磁盘截至启用atime。当前我司为了提升磁盘性能，全面禁止使用atime。主要是挂载磁盘的时候，添加的属性参数。</code></pre></div>
+<p>未单独配置，未进行测试。</p>
+<h2 id="1-4-界面功能"><a href="#1-4-界面功能" class="headerlink" title="1.4. 界面功能"></a>1.4. 界面功能</h2><p>界面可以实现的基本功能：</p>
+<ol>
+<li>创建Bucket：这里的bucket，对应到本地为文件夹的概念</li>
+<li>创建目录：映射到单机本地文件夹的概念：lazy加载。只有目录下面实际存在文件时，才会实际创建</li>
+<li>上传与下载文件：上传文件，直接上传到单机存储目录本地。</li>
+<li>删除目录与删除文件：删除文件，对应到删除本地文件。可以从界面上天删除，也可以直接删除本地文件</li>
+</ol>
+<h2 id="1-5-MC命令行操作"><a href="#1-5-MC命令行操作" class="headerlink" title="1.5. MC命令行操作"></a>1.5. MC命令行操作</h2><h3 id="1-5-1-配置与操作S3"><a href="#1-5-1-配置与操作S3" class="headerlink" title="1.5.1. 配置与操作S3"></a>1.5.1. 配置与操作S3</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 配置：会写入到本地配置文件
+mc config host add s3_bj s3.[region].amazonaws.com "[access key id]" "[ secret key id]"
+
+## 命令行操作(基本操作)
+mc ls s3_bj/test-bj/tmp
+mc stat s3_bj/test-bj/tmp
+mc du s3_bj/test-bj/tmp</code></pre></div>
+
+<h3 id="1-5-2-配置与操作Minio"><a href="#1-5-2-配置与操作Minio" class="headerlink" title="1.5.2. 配置与操作Minio"></a>1.5.2. 配置与操作Minio</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 添加配置
+mc config host add local_single_minio  http://host1:9001 minioadmin minioadmin</code></pre></div>
+
+<h2 id="1-6-压测"><a href="#1-6-压测" class="headerlink" title="1.6. 压测"></a>1.6. 压测</h2><h3 id="1-6-1-压测命令"><a href="#1-6-1-压测命令" class="headerlink" title="1.6.1. 压测命令"></a>1.6.1. 压测命令</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json"># 单机单磁盘
+## 压测命令
+./s3-benchmark -a minioadmin -s minioadmin -b test -t 10 -u http://host1:9001
+
+## 压测结果
+for threads in 10 20 30 40 50;
+  for size in "100K" "200K" "300K" "400K" "500K" "1M" "2M" "3M" "4M" "5M" ;
+    ./s3-benchmark -a minioadmin -s minioadmin -b test -t "$&#123;threads&#125;" -u http://host1:9001 -l 5 -z "$&#123;size&#125;" > logs_$&#123;threads&#125;_$&#123;size&#125;
+  done;
+done;</code></pre></div>
+
+<h3 id="1-6-2-压测结果"><a href="#1-6-2-压测结果" class="headerlink" title="1.6.2. 压测结果"></a>1.6.2. 压测结果</h3><p>(待整理：画图)</p>
+<h1 id="2-Minio架构"><a href="#2-Minio架构" class="headerlink" title="2. Minio架构"></a>2. Minio架构</h1><p>&emsp;&emsp;Minio的架构部署非常简单，主要可以分为两类：简单部署、Federation部署。简单部署如上所示，可以分为单机/多机、单磁盘/多次盘(EC)部署模式。Federation部署，这里主要是指DNS域名自动发现、存储桶存放在不同的Minio集群上面，依赖coredns、etcd等组件。本小结主要介绍与部署测试一下Federation模式的Minio集群。</p>
+<h2 id="2-1-部署"><a href="#2-1-部署" class="headerlink" title="2.1. 部署"></a>2.1. 部署</h2><p>&emsp;&emsp;首先需要准备一下基础条件：搭建安全的ETCD集群。可以参考：<a href="/2020/06/12/ETCD%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" title="ETCD集群部署">ETCD集群部署</a>。这里我们已经搭建部署了安全的ETCD集群(3个节点)。</p>
+<p>&emsp;&emsp;针对Minio而言的Federation集群，主要是指不同的Bucket可以存放在不同的Minio集群中，使用自动化的CoreDNS或其他方式，自动化调度访问路由。我们仅搭建一个集群，来演示配置使用ETCD管理相关配置。</p>
+<h3 id="2-1-1-准备配置文件"><a href="#2-1-1-准备配置文件" class="headerlink" title="2.1.1. 准备配置文件"></a>2.1.1. 准备配置文件</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### minio.service文件
+[Unit]
+Description=Minio service
+Documentation=https://docs.minio.io/
+
+[Service]
+WorkingDirectory=/usr/local/minio/
+ExecStart=/usr/local/minio/bin/run.sh
+Restart=on-failure
+RestartSec=
+
+[Install]
+WantedBy=multi-user.target
+
+### run.sh脚本
+&#123;%- set data_paths = [] -%&#125;
+&#123;%- set minio_ips = [] -%&#125;
+&#123;%- for host in groups['MINIO'] -%&#125;
+ &#123;&#123; data_paths.append( 'https://' + host +':' + port|string + '/' + hostvars[host]['paths'] ) &#125;&#125;
+&#123;%- endfor -%&#125;
+&#123;%- for host in groups['MINIO'] -%&#125;
+ &#123;&#123; minio_ips.append( hostvars[host]['ansible_host'] ) &#125;&#125;
+&#123;%- endfor -%&#125;
+#!/bin/bash
+export MINIO_ACCESS_KEY=&#123;&#123; minio_admin_name &#125;&#125;
+export MINIO_SECRET_KEY=&#123;&#123; minio_admin_pwd &#125;&#125;
+export MINIO_ETCD_ENDPOINTS=&#123;&#123; etcd_endpoints &#125;&#125;
+export MINIO_DOMAIN=&#123;&#123; minio_domain &#125;&#125;
+export MINIO_PUBLIC_IPS=&#123;&#123; minio_ips | sort | join(',') &#125;&#125;
+
+/opt/minio/bin/minio server \
+	--certs-dir /usr/local/minio/config/ \
+	--address :&#123;&#123; port &#125;&#125; \
+	&#123;&#123; data_paths | join(' ') &#125;&#125;</code></pre></div>
+
+<h3 id="2-1-2-部署集群"><a href="#2-1-2-部署集群" class="headerlink" title="2.1.2. 部署集群"></a>2.1.2. 部署集群</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### ansible主机文件：hosts
+[all:vars]
+port=9002
+minio_admin_name=minioadmin
+minio_admin_pwd=minioadmin
+etcd_endpoints=https://host1_ip:2379,https://host2_ip:2379,https://host2_ip:2379
+minio_domain=iqiyi.minio.com
+
+[MINIO]
+host1 paths="data&#123;7...12&#125;" ansible_host=host1_ip
+host2 paths="data&#123;7...12&#125;" ansible_host=host2_ip
+host3 paths="data&#123;7...12&#125;" ansible_host=host3_ip
+host4 paths="data&#123;7...12&#125;" ansible_host=host4_ip</code></pre></div>
+
+<h2 id="2-2-客户端配置"><a href="#2-2-客户端配置" class="headerlink" title="2.2. 客户端配置"></a>2.2. 客户端配置</h2><p>&emsp;&emsp;这里的客户端，主要是指mc工具(minio client)。在客户端侧，主要的配置文件目录如下所示</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">.mc
+├── certs
+│   ├── CAs
+│   │   └── ca.pem
+│   ├── private.key
+│   └── public.crt
+├── config.json
+├── config.json.old
+├── session
+└── share
+    ├── downloads.json
+    └── uploads.json</code></pre></div>
+<ol>
+<li>使用客户端工具扩展配置时，主要是写入到：/config.json配置文件中</li>
+<li>如果存在HTTPS的相关配置，不止需要输入用户名\密码等信息，还要配置认证信息。即：/certs/private.key、/certs/public.crt、/certs/CAs/ca.pem。</li>
+</ol>
+<h2 id="2-3-测试"><a href="#2-3-测试" class="headerlink" title="2.3. 测试"></a>2.3. 测试</h2><p>(这里不再展示)</p>
+<h1 id="3-问题汇总"><a href="#3-问题汇总" class="headerlink" title="3. 问题汇总"></a>3. 问题汇总</h1><ol>
+<li>配置之后，容量不对：界面不显示总的磁盘容量，只显示使用量</li>
+<li>擦除码配置存在缺陷：一个文件只能保存到一台主机，当该主机异常下线时会丢失数据</li>
+</ol>
+<h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4. 参考文献"></a>4. 参考文献</h1><ol>
+<li><a href="https://github.com/minio/minio" target="_blank" rel="noopener">Github: Minio/minio</a></li>
+<li><a href="https://docs.min.io" target="_blank" rel="noopener">Minio QuickStart</a></li>
+<li><a href="https://github.com/minio/s3-benchmark" target="_blank" rel="noopener">S3-benchmark</a></li>
+<li><a href="https://blog.min.io/s3-benchmark-using-hdd/" target="_blank" rel="noopener">S3 Benchmark: MinIO on HDDs</a></li>
+<li><a href="https://docs.min.io/docs/multi-tenant-minio-deployment-guide.html" target="_blank" rel="noopener">MinIO Multi-Tenant Deployment Guide</a></li>
+<li><a href="https://github.com/minio/minio/tree/master/docs/erasure/storage-class" target="_blank" rel="noopener">MinIO Storage Class Quickstart Guide</a></li>
+<li><a href="https://github.com/minio/minio/tree/master/docs/compression" target="_blank" rel="noopener">Compression Guide</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>大数据</category>
+        <category>云原生</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>Minio</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Oracle JDBC为什么不能在Maven中直接配置？</title>
+    <url>/2018/09/12/ODBC%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在实际项目中，我们通常使用这样的方式：首先，下载ODBC的Jar到本地；然后，通过Maven安装在本地库中。这样在项目中就可以使用ODBC的Jar包了，而大部分的jar是可以通过Maven中直接引用的。这是为什么呢？</p>
+<h2 id="项目报错"><a href="#项目报错" class="headerlink" title="项目报错"></a>项目报错</h2><p>&emsp;&emsp;项目直接编译，报错如下</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Failed to execute goal on project sql2o-oracle: 
+Could not resolve dependencies for project org.sql2o.extensions: sql2o-oracle:jar:1.6.0-RC4-SNAPSHOT: 
+Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https:&#x2F;&#x2F;repo.maven.apache.org&#x2F;maven2)</code></pre></div>
+<p>很明显项目中的引用：com.oracle.jdbc:ojdbc8:jar:12.2.0.1，无法在公共仓库中找到。</p>
+<h2 id="常用做法"><a href="#常用做法" class="headerlink" title="常用做法"></a>常用做法</h2><p>&emsp;&emsp;一般的做法就是下载Jar包，然后存放在本地仓库中，这样就可以直接在项目中引用。但通常这样略显麻烦，也不具有通用性。之前这样做的原因主要是涉及到许可的原因，Oracle不开放ODBC的Jar不会开放到公共仓库中。<br>&emsp;&emsp;关于ODBC方面的讨论可以参考：<a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a> .</p>
+<h2 id="目前实现"><a href="#目前实现" class="headerlink" title="目前实现"></a>目前实现</h2><p>&emsp;&emsp;目前可以通过POM中的配置来直接使用Oracle仓库中的Jar，环境可以参考：<a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a> .</p>
+<p>&emsp;&emsp;博主主要分为三步实现本地Oracle库的配置：</p>
+<ol>
+<li>注册账号：<a href="https://www.oracle.com/webapps/maven/register/license.html" target="_blank" rel="noopener">https://www.oracle.com/webapps/maven/register/license.html</a> 。如果已经注册过OTN(Oracle Technology Network)的账号，所以直接跳过；</li>
+<li>配置本地Settings.xml<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><server>
+	<id>maven.oracle.com<&#x2F;id>
+	<username>[OTN username]<&#x2F;username>
+	<password>[OTN password]<&#x2F;password>
+	<configuration>
+		<basicAuthScope>
+			<host>ANY<&#x2F;host>
+			<port>ANY<&#x2F;port>
+			<realm>OAM 11g<&#x2F;realm>
+		<&#x2F;basicAuthScope>
+		<httpConfiguration>
+			<all>
+				<params>
+					<property>
+						<name>http.protocol.allow-circular-redirects<&#x2F;name>
+						<value>%b,true<&#x2F;value>
+					<&#x2F;property>
+				<&#x2F;params>
+			<&#x2F;all>
+		<&#x2F;httpConfiguration>
+	<&#x2F;configuration>
+<&#x2F;server></code></pre></div></li>
+<li>Maven中配置<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><repositories>
+	<repository>
+		<id>maven.oracle.com<&#x2F;id>
+		<releases>
+			<enabled>true<&#x2F;enabled>
+		<&#x2F;releases>
+		<snapshots>
+			<enabled>false<&#x2F;enabled>
+		<&#x2F;snapshots>
+		<url>https:&#x2F;&#x2F;maven.oracle.com<&#x2F;url>
+		<layout>default<&#x2F;layout>
+	<&#x2F;repository>
+<&#x2F;repositories>
+<pluginRepositories>
+	<pluginRepository>
+		<id>maven.oracle.com<&#x2F;id>
+		<url>https:&#x2F;&#x2F;maven.oracle.com<&#x2F;url>
+	<&#x2F;pluginRepository>
+<&#x2F;pluginRepositories></code></pre></div>
+
+</li>
+</ol>
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><ol>
+<li>虽然通过这种方式，可以直接获取相应的Jar。但实现需要知道Jar的相关信息，例如groupId、artifactId、version等。这些信息在哪里知道？</li>
+<li>通过权限访问这种方式，略显复杂。如果是公司的本地库，可以配置统一的Jar管理，例如artifactory软件等。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides" target="_blank" rel="noopener">Get Oracle JDBC drivers and UCP from Oracle Maven Repository (without IDEs)</a></li>
+<li><a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository/27943380#27943380" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a></li>
+<li><a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>问题</tag>
+        <tag>JDBC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ozone调研</title>
+    <url>/2020/06/07/Ozone%E8%B0%83%E7%A0%94/</url>
+    <content><![CDATA[<p>主要研究目标：</p>
+<ol>
+<li>独立Ozone集群部署：特性、功能、安全</li>
+<li>Ozone with HDFS部署：特性、功能、安全</li>
+</ol>
+<!-- TOC -->
+
+<ul>
+<li><a href="#1-ozone架构">1. Ozone架构</a><ul>
+<li><a href="#11-架构图">1.1. 架构图</a><ul>
+<li><a href="#111-block管理角度">1.1.1. Block管理角度</a></li>
+<li><a href="#112-功能分级角度">1.1.2. 功能分级角度</a></li>
+<li><a href="#113-基本概念">1.1.3. 基本概念</a></li>
+</ul>
+</li>
+<li><a href="#12-亮点特性">1.2. 亮点特性</a><ul>
+<li><a href="#121-安全机制">1.2.1. 安全机制</a></li>
+<li><a href="#122-单独的">1.2.2. 单独的</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#2-部署测试">2. 部署测试</a><ul>
+<li><a href="#21-源码编译">2.1. 源码编译</a><ul>
+<li><a href="#211-下载源码">2.1.1. 下载源码</a></li>
+<li><a href="#212-编译问题">2.1.2. 编译问题</a></li>
+</ul>
+</li>
+<li><a href="#22-部署ozone独立集群">2.2. 部署Ozone独立集群</a></li>
+</ul>
+</li>
+<li><a href="#3-总结">3. 总结</a></li>
+<li><a href="#4-参考文献">4. 参考文献</a></li>
+</ul>
+<!-- /TOC -->
+
+<p>&emsp;&emsp;当前各种开源的对象存储组件，基本上是对标<strong>Amazon</strong>的<strong>S3</strong>。在特性、功能上面，基本上都支持<strong>S3服务</strong>的访问。毕竟当前<strong>Amazon</strong>的<strong>S3</strong>在对象存储领域，具有广泛的影响力。各类公司在上云时，也会基于<strong>S3</strong>进行基准测试，对比各家云厂商的对象存储服务能力，从而考虑上云的性价比。</p>
+<p>&emsp;&emsp;上云时需要考虑的一个点是本地机房与云商对象存储的一体化访问能力。而<strong>Apache Ozone</strong>具有原生优势</p>
+<ol>
+<li><strong>Hadoop</strong>项目中分离而来：为解决<strong>HDFS</strong>自身缺陷而生</li>
+<li>原生支持<strong>HDFS</strong>协议，以及安全机制(Kerberos+Token)</li>
+<li>支持<strong>S3</strong>协议。大部分对象存储服务都兼容<strong>S3</strong>协议</li>
+<li>原生支持云服务：<strong>Yarn</strong>、<strong>Kubernetes</strong></li>
+<li>可伸缩、可扩展、强一致性</li>
+</ol>
+<p>&emsp;&emsp;当前<strong>Apache Ozone</strong>具有的不足之处，可能有几点</p>
+<ol>
+<li>尚未完全成熟：虽然已从Apache毕业，成为顶级项目，但尚未发型稳定版。当前各种主流的版本，都处理alpha、beta版，且版本号基本上处于0.X版</li>
+<li>存在性能与稳定性瓶颈：当前<strong>Apache Ozone</strong>的已知版本中，在稳定性、性能访问还存在一定的瓶颈。特别是随着Ozone规模增长到一定程度之后，写入方面会存在较为严重的瓶颈。</li>
+</ol>
+<p>&emsp;&emsp;虽然<strong>Apache Ozone</strong>尚未经过大规模集群的验证，但这并不妨碍我们进行调研测试，毕竟未来云原生的对象存储可能会成为趋势。</p>
+<h1 id="1-Ozone架构"><a href="#1-Ozone架构" class="headerlink" title="1. Ozone架构"></a>1. Ozone架构</h1><p>&emsp;&emsp;本小结我们先引入Ozone的架构图，然后分别介绍各个组件的功能，以及Ozone的基本概念。</p>
+<h2 id="1-1-架构图"><a href="#1-1-架构图" class="headerlink" title="1.1. 架构图"></a>1.1. 架构图</h2><p>&emsp;&emsp;这里的架构图主要是引用hadoop-ozone官方文档介绍的结构图，主要有两个：Block管理角度、功能分层角度。</p>
+<h3 id="1-1-1-Block管理角度"><a href="#1-1-1-Block管理角度" class="headerlink" title="1.1.1. Block管理角度"></a>1.1.1. Block管理角度</h3><p><img src="ozoneBlockDiagram.png" srcset="/img/loading.gif" alt="Block管理角度"><br>Block角度主要包括几大组件</p>
+<ol>
+<li>Ozone Manager(OM)：om在hadoop-ozone中具有命名空间管理的职能。</li>
+<li>Storage Container Manager(SCM)：管理物理数据与数据层</li>
+<li>Recon：接口管理</li>
+</ol>
+<p>&emsp;&emsp;在Ozone的Road Map中介绍，当前已经实现了针对SCM的HA架构，后期版本中逐渐实现对OM的HA架构，从而实现整体的HA架构部署。</p>
+<h3 id="1-1-2-功能分级角度"><a href="#1-1-2-功能分级角度" class="headerlink" title="1.1.2. 功能分级角度"></a>1.1.2. 功能分级角度</h3><p><img src="FunctionalOzone.png" srcset="/img/loading.gif" alt="Ozone功能分层角度"><br>从功能上来看，hadoop-ozone主要分为</p>
+<ol>
+<li>Data Layer：数据存储层</li>
+<li>Metadata Layer：元数据管理层</li>
+<li>Repication Lay：数据复制与一致性管理</li>
+<li>Protocol Bus：数据扩展访问</li>
+<li>Recon Server：与Ozone的所有组件通信，提供统一的API</li>
+</ol>
+<h3 id="1-1-3-基本概念"><a href="#1-1-3-基本概念" class="headerlink" title="1.1.3. 基本概念"></a>1.1.3. 基本概念</h3><p>&emsp;&emsp;初识Apache Ozone的架构之后，我们需要了解涉及到的几个关键概念。主要涉及到对象存储相关的基本概念：卷、桶、Key。</p>
+<ol>
+<li>卷：Volume。卷的概念类似账户，只有管理员工可以创建删除</li>
+<li>桶：Bucket。桶的概念类似目录，桶可以包含任意数量的Key，但不能不含其它桶</li>
+<li>Key：Key类似与文件的概念。</li>
+</ol>
+<p>感觉官方文档的概念介绍，基本可以理解为：<img src="ozone_cengji.png" srcset="/img/loading.gif" alt="Hadoop-Ozone层级介绍"><br>其中粗粒度、细粒度可以理解为权限访问。且在对象存储模型中，没有目录的概念只有Key的概念，Key指向的就是具体的存储对象。</p>
+<h2 id="1-2-亮点特性"><a href="#1-2-亮点特性" class="headerlink" title="1.2. 亮点特性"></a>1.2. 亮点特性</h2><h3 id="1-2-1-安全机制"><a href="#1-2-1-安全机制" class="headerlink" title="1.2.1. 安全机制"></a>1.2.1. 安全机制</h3><p>认证体系</p>
+<h3 id="1-2-2-单独的"><a href="#1-2-2-单独的" class="headerlink" title="1.2.2. 单独的"></a>1.2.2. 单独的</h3><h1 id="2-部署测试"><a href="#2-部署测试" class="headerlink" title="2. 部署测试"></a>2. 部署测试</h1><h2 id="2-1-源码编译"><a href="#2-1-源码编译" class="headerlink" title="2.1. 源码编译"></a>2.1. 源码编译</h2><h3 id="2-1-1-下载源码"><a href="#2-1-1-下载源码" class="headerlink" title="2.1.1. 下载源码"></a>2.1.1. 下载源码</h3><h3 id="2-1-2-编译问题"><a href="#2-1-2-编译问题" class="headerlink" title="2.1.2. 编译问题"></a>2.1.2. 编译问题</h3><h2 id="2-2-部署Ozone独立集群"><a href="#2-2-部署Ozone独立集群" class="headerlink" title="2.2. 部署Ozone独立集群"></a>2.2. 部署Ozone独立集群</h2><h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4. 参考文献"></a>4. 参考文献</h1><ol>
+<li><a href="https://cwiki.apache.org/confluence/display/HADOOP/Ozone+Road+Map" target="_blank" rel="noopener">Ozone Road Map</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>大数据</category>
+        <category>云原生</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>Ozone</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Phantomjs服务模式：从性能并发方面谈起</title>
+    <url>/2018/06/29/Phantomjs%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E4%BB%8E%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E6%96%B9%E9%9D%A2%E8%B0%88%E8%B5%B7/</url>
+    <content><![CDATA[<p>&emsp;&emsp;作为比较好的动态网页爬虫手段，phantomjs在许多方面令人比较满意。调用Phantomjs的方式，一般有如下几种情况。</p>
+<a id="more"></a>
+
+<h2 id="1-命令行模式"><a href="#1-命令行模式" class="headerlink" title="1. 命令行模式"></a>1. 命令行模式</h2><p>&emsp;&emsp;在CMD或Shell中，直接输入phantomjs回车，进入命令行模式，能够完成各种操作。但一般情况是通过命令用调用phantomjs来完成爬虫或模拟工作，具体的代码放在JS中。如</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">..&#x2F;bin&#x2F;phantomjs --debug&#x3D;yes .&#x2F;server.js 8910
+..&#x2F;bin&#x2F;phantomjs --debug&#x3D;yes .&#x2F;hello.js</code></pre></div>
+<p>其中phantomjs参数直接放在phantomjs后面，脚本作为参数放在其次，最后添加脚本的参数列表。</p>
+<h2 id="2-selenium调用"><a href="#2-selenium调用" class="headerlink" title="2. selenium调用"></a>2. selenium调用</h2><p>&emsp;&emsp;selenium是一套完整的测试爬虫工具，能够调用IE、Chrome、Firefox等浏览器内核API完成相应的功能，也可以调用如Phantomjs、HtmlUnitDriver等模拟浏览器作为调用接口。</p>
+<p>&emsp;&emsp;调用浏览器内核与不调用浏览器内核的浏览器[这里指的是HtmlUnitDriver]，浏览器内核的API，可以完成截图功能及其他浏览器功能，但HtmlunitDriver采用的是JS模拟浏览器的策略，因此不具备截图等浏览器功能。</p>
+<h3 id="2-1-Java-selenium-Phantomjs调用"><a href="#2-1-Java-selenium-Phantomjs调用" class="headerlink" title="2.1. Java+selenium+Phantomjs调用"></a>2.1. Java+selenium+Phantomjs调用</h3><div class="hljs"><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS,</span></span>
+<span class="hljs-function"><span class="hljs-params">		String userAgent, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> jsEnabled,</span></span>
+<span class="hljs-function"><span class="hljs-params">		String encoding,<span class="hljs-keyword">boolean</span> proxyEnabled,String... proxys)</span> </span>&#123;
+
+	System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);
+	DesiredCapabilities desiredCapabilities = DesiredCapabilities
+			.phantomjs();
+	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) &#123;
+		desiredCapabilities.setCapability(
+				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);
+		desiredCapabilities.setCapability(
+				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);
+	&#125;
+	desiredCapabilities.setJavascriptEnabled(jsEnabled);
+	PhantomJSDriver driver = <span class="hljs-keyword">null</span>;
+	List<String> cli = <span class="hljs-keyword">new</span> ArrayList<>();
+	cli.add(<span class="hljs-string">"--load-images="</span> + loadImages);
+	cli.add(<span class="hljs-string">"--output-encoding="</span> + encoding);
+	
+	<span class="hljs-keyword">if</span> (proxyEnabled) &#123;
+		String proxy_ip = proxys[<span class="hljs-number">0</span>];
+		String proxy_port = proxys[<span class="hljs-number">1</span>];
+		String proxy_user = proxys[<span class="hljs-number">2</span>];
+		String proxy_pass = proxys[<span class="hljs-number">3</span>];
+		cli.add(<span class="hljs-string">"--proxy="</span>+proxy_ip+<span class="hljs-string">":"</span>+ proxy_port));
+		cli.add(<span class="hljs-string">"--proxy-auth="</span> +proxy_user+<span class="hljs-string">":"</span> +proxy_pass);
+	&#125;
+	desiredCapabilities.setCapability(
+			PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cli);
+	driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);
+	driver.manage().timeouts()
+			.implicitlyWait(WAIT_TIME, TimeUnit.MILLISECONDS);
+	driver.manage().deleteAllCookies();
+
+	<span class="hljs-keyword">return</span> driver;
+&#125;</code></pre></div>
+
+<h3 id="2-2-Java-selenium-HtmlunitDriver调用"><a href="#2-2-Java-selenium-HtmlunitDriver调用" class="headerlink" title="2.2. Java+selenium+HtmlunitDriver调用"></a>2.2. Java+selenium+HtmlunitDriver调用</h3><div class="hljs"><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params">(String userAgent,</span></span>
+<span class="hljs-function"><span class="hljs-params">		<span class="hljs-keyword">boolean</span> jsEnabled, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> proxyEnabled,</span></span>
+<span class="hljs-function"><span class="hljs-params">		String... proxys)</span> </span>&#123;
+
+	DesiredCapabilities desiredCapabilities = DesiredCapabilities
+			.htmlUnit();
+	desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.loadImages"</span>,
+			<span class="hljs-keyword">false</span>);
+	desiredCapabilities.setJavascriptEnabled(jsEnabled);
+	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) &#123;
+		desiredCapabilities.setCapability(
+				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);
+		desiredCapabilities.setCapability(
+				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);
+	&#125;
+	desiredCapabilities.setCapability(
+			PhantomJSDriverService.PHANTOMJS_CLI_ARGS,
+			<span class="hljs-keyword">new</span> String[] &#123; <span class="hljs-string">"--load-images="</span> + loadImages &#125;);
+	HtmlUnitDriver driver = <span class="hljs-keyword">null</span>;
+	<span class="hljs-keyword">if</span> (proxyEnabled) &#123;
+
+		String proxy_ip = proxys[<span class="hljs-number">0</span>];
+		String proxy_port = proxys[<span class="hljs-number">1</span>];
+		String proxy_user = proxys[<span class="hljs-number">2</span>];
+		String proxy_pass = proxys[<span class="hljs-number">3</span>];
+
+		Proxy proxy = <span class="hljs-keyword">new</span> Proxy();
+		proxy.setHttpProxy(proxy_ip + <span class="hljs-string">":"</span> + proxy_port);
+		desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);
+		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities) &#123;
+			<span class="hljs-meta">@Override</span>
+			<span class="hljs-function"><span class="hljs-keyword">protected</span> WebClient <span class="hljs-title">modifyWebClient</span><span class="hljs-params">(WebClient client)</span> </span>&#123;
+				DefaultCredentialsProvider creds = <span class="hljs-keyword">new</span> DefaultCredentialsProvider();
+				creds.addCredentials(proxy_user, proxy_pass);
+				client.setCredentialsProvider(creds);
+				<span class="hljs-keyword">return</span> client;
+			&#125;
+		&#125;;
+	&#125; <span class="hljs-keyword">else</span>
+		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities);
+	driver.manage().timeouts()
+			.implicitlyWait(<span class="hljs-number">10</span> * <span class="hljs-number">1000</span>, TimeUnit.MILLISECONDS);
+	driver.manage().deleteAllCookies();
+
+	<span class="hljs-keyword">return</span> driver;
+&#125;</code></pre></div>
+
+<h2 id="3-服务器模式"><a href="#3-服务器模式" class="headerlink" title="3. 服务器模式"></a>3. 服务器模式</h2><p>&emsp;&emsp;phantomjs服务器模式，需要在服务端开启服务，然后在客户端发起Http请求然后返回想要的内容，就是一个C/S模式的服务。</p>
+<h3 id="3-1-服务端"><a href="#3-1-服务端" class="headerlink" title="3.1. 服务端"></a>3.1. 服务端</h3><p>server.js内容如下所示</p>
+<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">var webserver = require('webserver').create();
+var page = require('webpage').create();
+var system = require('system');
+var port = system.args[1];
+webserver.listen(system.args[1], function(request, response) &#123;
+    var url = request.headers.url;// conf target url in headers
+    page.open(url, function(status) &#123;
+        var title = page.evaluate(function() &#123;
+            return $(":root").html();// return pageSource
+        &#125;);
+        response.write(title);
+        response.close();
+    &#125;);
+&#125;);</code></pre></div>
+
+<p>命令行启动</p>
+<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">bin/phantomjs example/server.js 8910</code></pre></div>
+
+<h3 id="3-2-客户端"><a href="#3-2-客户端" class="headerlink" title="3.2. 客户端"></a>3.2. 客户端</h3><p>&emsp;&emsp;在客户端发起http请求，无论是get，还是post只要能够获取到Headers里面的目标URL，就可以返回pageSource。当然，这里最好使用异步加载网页内容。</p>
+<div class="hljs"><pre class=" language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword"><code class="language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword">new</span> HashMap<String, String>();
+params.put(<span class="hljs-string">"url"</span>, targetURL);
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title">HttpPost</span><span class="hljs-params">(String url, String postDataStr)</span></span>
+<span class="hljs-function">		<span class="hljs-keyword">throws</span> MalformedURLException, IOException </span>&#123;
+		
+	URLConnection conn = <span class="hljs-keyword">new</span> URL(url).openConnection();
+	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);
+	conn.addRequestProperty(<span class="hljs-string">"ContentType"</span>,
+			<span class="hljs-string">"application/x-www-form-urlencoded"</span>);
+	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);
+	conn.addRequestProperty(<span class="hljs-string">"http.socket.timeout"</span>, <span class="hljs-string">"60000"</span>);
+	conn.setDoOutput(<span class="hljs-keyword">true</span>);
+	conn.getOutputStream().write(
+			URLEncoder.encode(postDataStr, <span class="hljs-string">"utf-8"</span>).getBytes());
+			
+	StringBuilder sb = <span class="hljs-keyword">new</span> StringBuilder();
+	BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(
+			conn.getInputStream()));
+	String line = <span class="hljs-keyword">null</span>;
+	<span class="hljs-keyword">while</span> ((line = br.readLine()) != <span class="hljs-keyword">null</span>)
+		sb.append(line);
+		
+	<span class="hljs-keyword">return</span> sb.toString();
+&#125;</code></pre></div>
+
+<h2 id="4-比较"><a href="#4-比较" class="headerlink" title="4. 比较"></a>4. 比较</h2><table>
+<thead>
+<tr>
+<th align="center">方式</th>
+<th align="left">优点</th>
+<th align="left">缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">命令行模式</td>
+<td align="left">1、调用简单</td>
+<td align="left">1、需要配合JS<br>2、无法大规模并发控制</td>
+</tr>
+<tr>
+<td align="center">服务器模式</td>
+<td align="left">1、减少内存<br>2、客户端方便</td>
+<td align="left">1、存在并发限制，最多10个线程<br>2、试验产品，可能存在安全隐患</td>
+</tr>
+<tr>
+<td align="center">selenium调用</td>
+<td align="left">1、客户端精准控制<br>2、调用比较方面，无需写JS<br>3、可大规模并发</td>
+<td align="left">1、“吃”内存：内存随线程数增加较快<br>2、需手动释放内存，确保phantomjs释放</td>
+</tr>
+</tbody></table>
+<h2 id="5-注"><a href="#5-注" class="headerlink" title="5. 注"></a>5. 注</h2><ol>
+<li>由于目前phantomjs已停止更新维护，所以可以选择其他带有webkit内核的模拟浏览器，如Headless Chrome等作为测试/爬虫的首选。</li>
+<li>phantomjs使用代理，最好使用无密码代理。</li>
+</ol>
+<h2 id="6-参考"><a href="#6-参考" class="headerlink" title="6. 参考"></a>6. 参考</h2><ol>
+<li><a href="https://pip.readthedocs.io/en/stable/installing/" target="_blank" rel="noopener">Phantomjs正确打开方式</a></li>
+<li><a href="http://www.cnblogs.com/kavmors/p/4731883.html" target="_blank" rel="noopener">Phantomjs 进程通信方式</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>爬虫</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>Phantomjs</tag>
       </tags>
   </entry>
   <entry>
@@ -6487,724 +7205,6 @@ mvn help:effiective-pom</code></pre></div>]]></content>
       </tags>
   </entry>
   <entry>
-    <title>Minio初探</title>
-    <url>/2020/06/01/Minio%E5%88%9D%E6%8E%A2/</url>
-    <content><![CDATA[<!-- TOC -->
-
-<ul>
-<li><a href="#1-部署调研">1. 部署调研</a><ul>
-<li><a href="#11-环境准备">1.1. 环境准备</a><ul>
-<li><a href="#111-资源下载">1.1.1. 资源下载</a></li>
-<li><a href="#112-添加执行权限">1.1.2. 添加执行权限</a></li>
-</ul>
-</li>
-<li><a href="#12-部署模式">1.2. 部署模式</a><ul>
-<li><a href="#121-单机部署">1.2.1. 单机部署</a><ul>
-<li><a href="#1211-单机单租户">1.2.1.1. 单机单租户</a></li>
-<li><a href="#1212-单机多租户">1.2.1.2. 单机多租户</a></li>
-</ul>
-</li>
-<li><a href="#122-分布式部署">1.2.2. 分布式部署</a></li>
-</ul>
-</li>
-<li><a href="#13-特性调研">1.3. 特性调研</a><ul>
-<li><a href="#131-使用erase-code">1.3.1. 使用Erase Code</a></li>
-<li><a href="#132-压缩compression">1.3.2. 压缩(compression)</a></li>
-<li><a href="#133-缓存cache">1.3.3. 缓存(cache)</a></li>
-</ul>
-</li>
-<li><a href="#14-界面功能">1.4. 界面功能</a></li>
-<li><a href="#15-mc命令行操作">1.5. MC命令行操作</a><ul>
-<li><a href="#151-配置与操作s3">1.5.1. 配置与操作S3</a></li>
-<li><a href="#152-配置与操作minio">1.5.2. 配置与操作Minio</a></li>
-</ul>
-</li>
-<li><a href="#16-压测">1.6. 压测</a><ul>
-<li><a href="#161-压测命令">1.6.1. 压测命令</a></li>
-<li><a href="#162-压测结果">1.6.2. 压测结果</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#2-minio架构">2. Minio架构</a><ul>
-<li><a href="#21-部署">2.1. 部署</a><ul>
-<li><a href="#211-准备配置文件">2.1.1. 准备配置文件</a></li>
-<li><a href="#212-部署集群">2.1.2. 部署集群</a></li>
-</ul>
-</li>
-<li><a href="#22-客户端配置">2.2. 客户端配置</a></li>
-<li><a href="#23-测试">2.3. 测试</a></li>
-</ul>
-</li>
-<li><a href="#3-问题汇总">3. 问题汇总</a></li>
-<li><a href="#4-参考文献">4. 参考文献</a></li>
-</ul>
-<!-- /TOC -->
-
-
-<h1 id="1-部署调研"><a href="#1-部署调研" class="headerlink" title="1. 部署调研"></a>1. 部署调研</h1><h2 id="1-1-环境准备"><a href="#1-1-环境准备" class="headerlink" title="1.1. 环境准备"></a>1.1. 环境准备</h2><p>环境准备，主要是指环境配置、资源包下载/安装部署等内容。</p>
-<h3 id="1-1-1-资源下载"><a href="#1-1-1-资源下载" class="headerlink" title="1.1.1. 资源下载"></a>1.1.1. 资源下载</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### Minio下载：RELEASE.2020-06-01T17-28-03Z  
-wget https://dl.min.io/server/minio/release/linux-amd64/minio  
-
-### MC下载: RELEASE.2020-05-28T23-43-36Z  
-wget https://dl.min.io/client/mc/release/linux-amd64/mc</code></pre></div>
-<p><strong>资源下载(更新于2020-06-02)</strong>：<br><a href="minio" target="_blank">Minio(Server)</a>    &emsp; &emsp; <a href="mc" target="_blank">MC(Client)</a></p>
-<h3 id="1-1-2-添加执行权限"><a href="#1-1-2-添加执行权限" class="headerlink" title="1.1.2. 添加执行权限"></a>1.1.2. 添加执行权限</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 最好存放在统一的位置，比如：/opt/soft/minio/ 等  
-chmod +x mc  
-chmod +x minio</code></pre></div>
-
-<h2 id="1-2-部署模式"><a href="#1-2-部署模式" class="headerlink" title="1.2. 部署模式"></a>1.2. 部署模式</h2><p>这里主要介绍实战部署：参考官方文档，进行部署搭建。</p>
-<h3 id="1-2-1-单机部署"><a href="#1-2-1-单机部署" class="headerlink" title="1.2.1. 单机部署"></a>1.2.1. 单机部署</h3><p>单机部署主要包括两种模式：单机单租户、单机多租户。</p>
-<h4 id="1-2-1-1-单机单租户"><a href="#1-2-1-1-单机单租户" class="headerlink" title="1.2.1.1. 单机单租户"></a>1.2.1.1. 单机单租户</h4><p>单机部署非常简单</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">1. 启动服务：./minio server /data1 /data2 ...  
-2. 查看服务：http://host1:9000/</code></pre></div>
-<p>主要架构如下所示：<br><img src="one_ten_one_host.png" srcset="/img/loading.gif" alt="单租户非EC模式"></p>
-<h4 id="1-2-1-2-单机多租户"><a href="#1-2-1-2-单机多租户" class="headerlink" title="1.2.1.2. 单机多租户"></a>1.2.1.2. 单机多租户</h4><p>单机多租户，可以配置为多租户多次盘、多租户单磁盘等模式。</p>
-<p><img src="multi_ten_one_host.jpg" srcset="/img/loading.gif" alt="单机多租户"></p>
-<h3 id="1-2-2-分布式部署"><a href="#1-2-2-分布式部署" class="headerlink" title="1.2.2. 分布式部署"></a>1.2.2. 分布式部署</h3><p>分布式部署可以部署为单租户多机、多租户多机等情形，主要架构如下所示<br><img src="multi_ten_multi_host.jpg" srcset="/img/loading.gif" alt="分布式部署"></p>
-<p>部署测试</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## host1 ~ host4 : 配置启动  
-echo "" > nohup.out  
-export MINIO_ACCESS_KEY=minioadmin  
-export MINIO_SECRET_KEY=minioadmin  
-nohup /root/minio server --address :9002 http://host1/data5 http://host2/data5 http://host3/data5 http://host4/data5   &</code></pre></div>
-
-<p>使用s3-benchmark压测结果</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 压测命令  
-./s3-benchmark -a minioadmin -s minioadmin -b test -t 10 -u http://host1:9002 -l 5 -z "1MB"  
-
-## 压测结果  
-Parameters: url=http://host1:9002, bucket=test, duration=60, threads=10, loops=5, size=1MB
-Fri, 05 Jun 2020 20:01:13 GMT Loop 1: PUT time 61.6 secs, objects = 213, speed = 3.5MB/sec, 3.5 operations/sec.
-Fri, 05 Jun 2020 20:02:14 GMT Loop 1: GET time 61.0 secs, objects = 395, speed = 6.5MB/sec, 6.5 operations/sec.
-Fri, 05 Jun 2020 20:02:15 GMT Loop 1: DELETE time 0.9 secs, 225.1 operations/sec.
-Fri, 05 Jun 2020 20:03:16 GMT Loop 2: PUT time 61.7 secs, objects = 215, speed = 3.5MB/sec, 3.5 operations/sec.
-Fri, 05 Jun 2020 20:04:17 GMT Loop 2: GET time 60.8 secs, objects = 346, speed = 5.7MB/sec, 5.7 operations/sec.
-Fri, 05 Jun 2020 20:04:18 GMT Loop 2: DELETE time 0.8 secs, 277.0 operations/sec.
-Fri, 05 Jun 2020 20:05:20 GMT Loop 3: PUT time 61.6 secs, objects = 209, speed = 3.4MB/sec, 3.4 operations/sec.
-Fri, 05 Jun 2020 20:06:21 GMT Loop 3: GET time 60.8 secs, objects = 403, speed = 6.6MB/sec, 6.6 operations/sec.
-Fri, 05 Jun 2020 20:06:21 GMT Loop 3: DELETE time 0.8 secs, 270.2 operations/sec.
-Fri, 05 Jun 2020 20:07:24 GMT Loop 4: PUT time 62.6 secs, objects = 214, speed = 3.4MB/sec, 3.4 operations/sec.
-Fri, 05 Jun 2020 20:08:25 GMT Loop 4: GET time 60.8 secs, objects = 399, speed = 6.6MB/sec, 6.6 operations/sec.
-Fri, 05 Jun 2020 20:08:25 GMT Loop 4: DELETE time 0.8 secs, 277.8 operations/sec.
-Fri, 05 Jun 2020 20:09:27 GMT Loop 5: PUT time 61.6 secs, objects = 206, speed = 3.3MB/sec, 3.3 operations/sec.
-Fri, 05 Jun 2020 20:10:28 GMT Loop 5: GET time 60.9 secs, objects = 395, speed = 6.5MB/sec, 6.5 operations/sec.
-Fri, 05 Jun 2020 20:10:29 GMT Loop 5: DELETE time 0.8 secs, 260.4 operations/sec.
-Benchmark completed.</code></pre></div>
-
-<p><strong>注:</strong><br>如果使用本机多磁盘，意味着开启了Erase Code模式。在测试情境下，开启了EC模式，性能下降明显。</p>
-<h2 id="1-3-特性调研"><a href="#1-3-特性调研" class="headerlink" title="1.3. 特性调研"></a>1.3. 特性调研</h2><p>主要调研了Minio的擦除码、缓存、压缩等特性。以下特性调研，使用<strong>单机单租户单磁盘模式，且磁盘为HDD硬盘</strong>。</p>
-<h3 id="1-3-1-使用Erase-Code"><a href="#1-3-1-使用Erase-Code" class="headerlink" title="1.3.1. 使用Erase Code"></a>1.3.1. 使用Erase Code</h3><p>当前Minio在体验方面还不是非常友好，默认情况下的EC是Data跟parity是1:1分布的。如果需要修改配比，那么需要使用环境变量或使用MC进行设置。</p>
-<p>下面简单调研一下Minio如何配置EC，以及配置EC的效果。主要配置项为</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">export MINIO_STORAGE_CLASS_STANDARD&#x3D;EC:3  
-export MINIO_STORAGE_CLASS_RRS&#x3D;EC:2</code></pre></div>
-
-<p>通过命令操作单机实例</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 启动之前：随便设置(可以不设置)  
-export MINIO_STORAGE_CLASS_STANDARD=EC:3  
-export MINIO_STORAGE_CLASS_RRS=EC:2  
-
-## 通过命令查看配置  
-mc admin config get myminio storage_class  
-
-## 通过命令设置配置  
-mc admin config set myminio storage_class "standard=EC:2 rrs="     
-
-## 重启生效  
-mc admin service restart myminio</code></pre></div>
-
-<p>在配置了EC之后，查看目录文件夹中的数据，可以看到存在part.[num]块以及元数据描述信息</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">&#123;
-    <span class="hljs-attr">"version"</span>: <span class="hljs-string">"1.0.1"</span>,
-    <span class="hljs-attr">"format"</span>: <span class="hljs-string">"xl"</span>,
-    <span class="hljs-attr">"stat"</span>: &#123;
-        <span class="hljs-attr">"size"</span>: <span class="hljs-number">1048576</span>,
-        <span class="hljs-attr">"modTime"</span>: <span class="hljs-string">"2020-06-04T05:49:45.838591001Z"</span>
-    &#125;,
-    <span class="hljs-attr">"erasure"</span>: &#123;
-        <span class="hljs-attr">"algorithm"</span>: <span class="hljs-string">"klauspost/reedsolomon/vandermonde"</span>,
-        <span class="hljs-attr">"data"</span>: <span class="hljs-number">6</span>,
-        <span class="hljs-attr">"parity"</span>: <span class="hljs-number">3</span>,
-        <span class="hljs-attr">"blockSize"</span>: <span class="hljs-number">10485760</span>,
-        <span class="hljs-attr">"index"</span>: <span class="hljs-number">4</span>,
-        <span class="hljs-attr">"distribution"</span>: [
-            <span class="hljs-number">3</span>,
-            <span class="hljs-number">4</span>,
-            <span class="hljs-number">5</span>,
-            <span class="hljs-number">6</span>,
-            <span class="hljs-number">7</span>,
-            <span class="hljs-number">8</span>,
-            <span class="hljs-number">9</span>,
-            <span class="hljs-number">1</span>,
-            <span class="hljs-number">2</span>
-        ],
-        <span class="hljs-attr">"checksum"</span>: [
-            &#123;
-                <span class="hljs-attr">"name"</span>: <span class="hljs-string">"part.1"</span>,
-                <span class="hljs-attr">"algorithm"</span>: <span class="hljs-string">"highwayhash256S"</span>
-            &#125;
-        ]
-    &#125;,
-    <span class="hljs-attr">"minio"</span>: &#123;
-        <span class="hljs-attr">"release"</span>: <span class="hljs-string">"RELEASE.2020-06-01T17-28-03Z"</span>
-    &#125;,
-    <span class="hljs-attr">"meta"</span>: &#123;
-        <span class="hljs-attr">"content-type"</span>: <span class="hljs-string">"application/octet-stream"</span>,
-        <span class="hljs-attr">"etag"</span>: <span class="hljs-string">"7ede4e128789a6b6d51b834d77e00c92"</span>
-    &#125;,
-    <span class="hljs-attr">"parts"</span>: [
-        &#123;
-            <span class="hljs-attr">"number"</span>: <span class="hljs-number">1</span>,
-            <span class="hljs-attr">"size"</span>: <span class="hljs-number">1048576</span>,
-            <span class="hljs-attr">"actualSize"</span>: <span class="hljs-number">1048576</span>
-        &#125;
-    ]
-&#125;</code></pre></div>
-
-<p>配置EC为 <strong>Standard(storage_class standard=EC:2 rrs= )</strong> 之后，压测如下</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">Parameters: url=http://host1:9001, bucket=test, duration=60, threads=10, loops=5, size=1M
-Thu, 04 Jun 2020 13:48:12 GMT Loop 1: PUT time 62.5 secs, objects = 159, speed = 2.5MB/sec, 2.5 operations/sec.
-Thu, 04 Jun 2020 13:49:13 GMT Loop 1: GET time 61.0 secs, objects = 365, speed = 6MB/sec, 6.0 operations/sec.
-Thu, 04 Jun 2020 13:49:14 GMT Loop 1: DELETE time 0.6 secs, 277.4 operations/sec.
-Thu, 04 Jun 2020 13:50:15 GMT Loop 2: PUT time 61.5 secs, objects = 182, speed = 3MB/sec, 3.0 operations/sec.
-Thu, 04 Jun 2020 13:51:16 GMT Loop 2: GET time 60.8 secs, objects = 358, speed = 5.9MB/sec, 5.9 operations/sec.
-Thu, 04 Jun 2020 13:51:17 GMT Loop 2: DELETE time 0.6 secs, 288.5 operations/sec.
-Thu, 04 Jun 2020 13:52:19 GMT Loop 3: PUT time 62.2 secs, objects = 177, speed = 2.8MB/sec, 2.8 operations/sec.
-Thu, 04 Jun 2020 13:53:20 GMT Loop 3: GET time 61.0 secs, objects = 349, speed = 5.7MB/sec, 5.7 operations/sec.
-Thu, 04 Jun 2020 13:53:20 GMT Loop 3: DELETE time 0.7 secs, 263.1 operations/sec.
-Thu, 04 Jun 2020 13:54:22 GMT Loop 4: PUT time 61.5 secs, objects = 171, speed = 2.8MB/sec, 2.8 operations/sec.
-Thu, 04 Jun 2020 13:55:23 GMT Loop 4: GET time 61.1 secs, objects = 356, speed = 5.8MB/sec, 5.8 operations/sec.
-Thu, 04 Jun 2020 13:55:24 GMT Loop 4: DELETE time 0.6 secs, 302.4 operations/sec.
-Thu, 04 Jun 2020 13:56:27 GMT Loop 5: PUT time 62.8 secs, objects = 163, speed = 2.6MB/sec, 2.6 operations/sec.
-Thu, 04 Jun 2020 13:57:28 GMT Loop 5: GET time 61.1 secs, objects = 318, speed = 5.2MB/sec, 5.2 operations/sec.
-Thu, 04 Jun 2020 13:57:28 GMT Loop 5: DELETE time 0.7 secs, 246.7 operations/sec.</code></pre></div>
-
-<p>具体EC的说明可以参考：<a href="https://github.com/minio/minio/tree/master/docs/erasure/storage-class" target="_blank" rel="noopener" title="6">MinIO Storage Class Quickstart Guide</a>。</p>
-<h3 id="1-3-2-压缩-compression"><a href="#1-3-2-压缩-compression" class="headerlink" title="1.3.2. 压缩(compression)"></a>1.3.2. 压缩(compression)</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 查看压缩配置
-mc admin config get myminio compression
-
-## 默认压缩是不启用的，启用默认设置
-mc admin config set myminio compression
-
-## 设置压缩格式
-mc admin config set myminio compression extensions=".pdf" mime_types="application/pdf"</code></pre></div>
-
-<p>启用压缩之后，可以看到大小不一致</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">"parts": [
-    &#123;
-        <span class="hljs-attr">"number"</span>: <span class="hljs-number">1</span>,
-        <span class="hljs-attr">"size"</span>: <span class="hljs-number">5505321</span>,
-        <span class="hljs-attr">"actualSize"</span>: <span class="hljs-number">7464298</span>
-    &#125;
-]</code></pre></div>
-
-<p>启用压缩之后的压测结果</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">Parameters: url=http://host1:9001, bucket=test, duration=60, threads=10, loops=5, size=1M
-Thu, 04 Jun 2020 14:21:14 GMT Loop 1: PUT time 62.8 secs, objects = 157, speed = 2.5MB/sec, 2.5 operations/sec.
-Thu, 04 Jun 2020 14:22:16 GMT Loop 1: GET time 61.2 secs, objects = 334, speed = 5.5MB/sec, 5.5 operations/sec.
-Thu, 04 Jun 2020 14:22:16 GMT Loop 1: DELETE time 0.6 secs, 281.2 operations/sec.
-Thu, 04 Jun 2020 14:23:17 GMT Loop 2: PUT time 61.3 secs, objects = 162, speed = 2.6MB/sec, 2.6 operations/sec.
-Thu, 04 Jun 2020 14:24:19 GMT Loop 2: GET time 61.3 secs, objects = 312, speed = 5.1MB/sec, 5.1 operations/sec.
-Thu, 04 Jun 2020 14:24:19 GMT Loop 2: DELETE time 0.7 secs, 243.1 operations/sec.
-Thu, 04 Jun 2020 14:25:21 GMT Loop 3: PUT time 62.0 secs, objects = 180, speed = 2.9MB/sec, 2.9 operations/sec.
-Thu, 04 Jun 2020 14:26:23 GMT Loop 3: GET time 61.4 secs, objects = 335, speed = 5.5MB/sec, 5.5 operations/sec.
-Thu, 04 Jun 2020 14:26:24 GMT Loop 3: DELETE time 0.8 secs, 237.2 operations/sec.
-Thu, 04 Jun 2020 14:27:25 GMT Loop 4: PUT time 61.8 secs, objects = 185, speed = 3MB/sec, 3.0 operations/sec.
-Thu, 04 Jun 2020 14:28:26 GMT Loop 4: GET time 60.6 secs, objects = 300, speed = 4.9MB/sec, 4.9 operations/sec.
-Thu, 04 Jun 2020 14:28:27 GMT Loop 4: DELETE time 0.7 secs, 266.4 operations/sec.
-Thu, 04 Jun 2020 14:29:29 GMT Loop 5: PUT time 61.9 secs, objects = 180, speed = 2.9MB/sec, 2.9 operations/sec.
-Thu, 04 Jun 2020 14:30:30 GMT Loop 5: GET time 61.4 secs, objects = 275, speed = 4.5MB/sec, 4.5 operations/sec.
-Thu, 04 Jun 2020 14:30:31 GMT Loop 5: DELETE time 0.6 secs, 297.0 operations/sec.
-Benchmark completed.</code></pre></div>
-
-<p>具体Compression的说明可以参考：<a href="https://github.com/minio/minio/tree/master/docs/compression" target="_blank" rel="noopener" title="7">Compression Guide</a>。</p>
-<h3 id="1-3-3-缓存-cache"><a href="#1-3-3-缓存-cache" class="headerlink" title="1.3.3. 缓存(cache)"></a>1.3.3. 缓存(cache)</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 设置缓存
-mc admin config set myminio cache drives=/data4/cache,/data5/cache,/data6/cache,/data7/cache,/data8/cache
-
-## 开启atime
-### 异常报错
-Unable to initialize disk caching: Atime support required for disk caching
-
-### 问题根因
-如果需要开启缓存，那么需要磁盘截至启用atime。当前我司为了提升磁盘性能，全面禁止使用atime。主要是挂载磁盘的时候，添加的属性参数。</code></pre></div>
-<p>未单独配置，未进行测试。</p>
-<h2 id="1-4-界面功能"><a href="#1-4-界面功能" class="headerlink" title="1.4. 界面功能"></a>1.4. 界面功能</h2><p>界面可以实现的基本功能：</p>
-<ol>
-<li>创建Bucket：这里的bucket，对应到本地为文件夹的概念</li>
-<li>创建目录：映射到单机本地文件夹的概念：lazy加载。只有目录下面实际存在文件时，才会实际创建</li>
-<li>上传与下载文件：上传文件，直接上传到单机存储目录本地。</li>
-<li>删除目录与删除文件：删除文件，对应到删除本地文件。可以从界面上天删除，也可以直接删除本地文件</li>
-</ol>
-<h2 id="1-5-MC命令行操作"><a href="#1-5-MC命令行操作" class="headerlink" title="1.5. MC命令行操作"></a>1.5. MC命令行操作</h2><h3 id="1-5-1-配置与操作S3"><a href="#1-5-1-配置与操作S3" class="headerlink" title="1.5.1. 配置与操作S3"></a>1.5.1. 配置与操作S3</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 配置：会写入到本地配置文件
-mc config host add s3_bj s3.[region].amazonaws.com "[access key id]" "[ secret key id]"
-
-## 命令行操作(基本操作)
-mc ls s3_bj/test-bj/tmp
-mc stat s3_bj/test-bj/tmp
-mc du s3_bj/test-bj/tmp</code></pre></div>
-
-<h3 id="1-5-2-配置与操作Minio"><a href="#1-5-2-配置与操作Minio" class="headerlink" title="1.5.2. 配置与操作Minio"></a>1.5.2. 配置与操作Minio</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 添加配置
-mc config host add local_single_minio  http://host1:9001 minioadmin minioadmin</code></pre></div>
-
-<h2 id="1-6-压测"><a href="#1-6-压测" class="headerlink" title="1.6. 压测"></a>1.6. 压测</h2><h3 id="1-6-1-压测命令"><a href="#1-6-1-压测命令" class="headerlink" title="1.6.1. 压测命令"></a>1.6.1. 压测命令</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json"># 单机单磁盘
-## 压测命令
-./s3-benchmark -a minioadmin -s minioadmin -b test -t 10 -u http://host1:9001
-
-## 压测结果
-for threads in 10 20 30 40 50;
-  for size in "100K" "200K" "300K" "400K" "500K" "1M" "2M" "3M" "4M" "5M" ;
-    ./s3-benchmark -a minioadmin -s minioadmin -b test -t "$&#123;threads&#125;" -u http://host1:9001 -l 5 -z "$&#123;size&#125;" > logs_$&#123;threads&#125;_$&#123;size&#125;
-  done;
-done;</code></pre></div>
-
-<h3 id="1-6-2-压测结果"><a href="#1-6-2-压测结果" class="headerlink" title="1.6.2. 压测结果"></a>1.6.2. 压测结果</h3><p>(待整理：画图)</p>
-<h1 id="2-Minio架构"><a href="#2-Minio架构" class="headerlink" title="2. Minio架构"></a>2. Minio架构</h1><p>&emsp;&emsp;Minio的架构部署非常简单，主要可以分为两类：简单部署、Federation部署。简单部署如上所示，可以分为单机/多机、单磁盘/多次盘(EC)部署模式。Federation部署，这里主要是指DNS域名自动发现、存储桶存放在不同的Minio集群上面，依赖coredns、etcd等组件。本小结主要介绍与部署测试一下Federation模式的Minio集群。</p>
-<h2 id="2-1-部署"><a href="#2-1-部署" class="headerlink" title="2.1. 部署"></a>2.1. 部署</h2><p>&emsp;&emsp;首先需要准备一下基础条件：搭建安全的ETCD集群。可以参考：<a href="/2020/06/12/ETCD%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" title="ETCD集群部署">ETCD集群部署</a>。这里我们已经搭建部署了安全的ETCD集群(3个节点)。</p>
-<p>&emsp;&emsp;针对Minio而言的Federation集群，主要是指不同的Bucket可以存放在不同的Minio集群中，使用自动化的CoreDNS或其他方式，自动化调度访问路由。我们仅搭建一个集群，来演示配置使用ETCD管理相关配置。</p>
-<h3 id="2-1-1-准备配置文件"><a href="#2-1-1-准备配置文件" class="headerlink" title="2.1.1. 准备配置文件"></a>2.1.1. 准备配置文件</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### minio.service文件
-[Unit]
-Description=Minio service
-Documentation=https://docs.minio.io/
-
-[Service]
-WorkingDirectory=/usr/local/minio/
-ExecStart=/usr/local/minio/bin/run.sh
-Restart=on-failure
-RestartSec=
-
-[Install]
-WantedBy=multi-user.target
-
-### run.sh脚本
-&#123;%- set data_paths = [] -%&#125;
-&#123;%- set minio_ips = [] -%&#125;
-&#123;%- for host in groups['MINIO'] -%&#125;
- &#123;&#123; data_paths.append( 'https://' + host +':' + port|string + '/' + hostvars[host]['paths'] ) &#125;&#125;
-&#123;%- endfor -%&#125;
-&#123;%- for host in groups['MINIO'] -%&#125;
- &#123;&#123; minio_ips.append( hostvars[host]['ansible_host'] ) &#125;&#125;
-&#123;%- endfor -%&#125;
-#!/bin/bash
-export MINIO_ACCESS_KEY=&#123;&#123; minio_admin_name &#125;&#125;
-export MINIO_SECRET_KEY=&#123;&#123; minio_admin_pwd &#125;&#125;
-export MINIO_ETCD_ENDPOINTS=&#123;&#123; etcd_endpoints &#125;&#125;
-export MINIO_DOMAIN=&#123;&#123; minio_domain &#125;&#125;
-export MINIO_PUBLIC_IPS=&#123;&#123; minio_ips | sort | join(',') &#125;&#125;
-
-/opt/minio/bin/minio server \
-	--certs-dir /usr/local/minio/config/ \
-	--address :&#123;&#123; port &#125;&#125; \
-	&#123;&#123; data_paths | join(' ') &#125;&#125;</code></pre></div>
-
-<h3 id="2-1-2-部署集群"><a href="#2-1-2-部署集群" class="headerlink" title="2.1.2. 部署集群"></a>2.1.2. 部署集群</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### ansible主机文件：hosts
-[all:vars]
-port=9002
-minio_admin_name=minioadmin
-minio_admin_pwd=minioadmin
-etcd_endpoints=https://host1_ip:2379,https://host2_ip:2379,https://host2_ip:2379
-minio_domain=iqiyi.minio.com
-
-[MINIO]
-host1 paths="data&#123;7...12&#125;" ansible_host=host1_ip
-host2 paths="data&#123;7...12&#125;" ansible_host=host2_ip
-host3 paths="data&#123;7...12&#125;" ansible_host=host3_ip
-host4 paths="data&#123;7...12&#125;" ansible_host=host4_ip</code></pre></div>
-
-<h2 id="2-2-客户端配置"><a href="#2-2-客户端配置" class="headerlink" title="2.2. 客户端配置"></a>2.2. 客户端配置</h2><p>&emsp;&emsp;这里的客户端，主要是指mc工具(minio client)。在客户端侧，主要的配置文件目录如下所示</p>
-<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">.mc
-├── certs
-│   ├── CAs
-│   │   └── ca.pem
-│   ├── private.key
-│   └── public.crt
-├── config.json
-├── config.json.old
-├── session
-└── share
-    ├── downloads.json
-    └── uploads.json</code></pre></div>
-<ol>
-<li>使用客户端工具扩展配置时，主要是写入到：/config.json配置文件中</li>
-<li>如果存在HTTPS的相关配置，不止需要输入用户名\密码等信息，还要配置认证信息。即：/certs/private.key、/certs/public.crt、/certs/CAs/ca.pem。</li>
-</ol>
-<h2 id="2-3-测试"><a href="#2-3-测试" class="headerlink" title="2.3. 测试"></a>2.3. 测试</h2><p>(这里不再展示)</p>
-<h1 id="3-问题汇总"><a href="#3-问题汇总" class="headerlink" title="3. 问题汇总"></a>3. 问题汇总</h1><ol>
-<li>配置之后，容量不对：界面不显示总的磁盘容量，只显示使用量</li>
-<li>擦除码配置存在缺陷：一个文件只能保存到一台主机，当该主机异常下线时会丢失数据</li>
-</ol>
-<h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4. 参考文献"></a>4. 参考文献</h1><ol>
-<li><a href="https://github.com/minio/minio" target="_blank" rel="noopener">Github: Minio/minio</a></li>
-<li><a href="https://docs.min.io" target="_blank" rel="noopener">Minio QuickStart</a></li>
-<li><a href="https://github.com/minio/s3-benchmark" target="_blank" rel="noopener">S3-benchmark</a></li>
-<li><a href="https://blog.min.io/s3-benchmark-using-hdd/" target="_blank" rel="noopener">S3 Benchmark: MinIO on HDDs</a></li>
-<li><a href="https://docs.min.io/docs/multi-tenant-minio-deployment-guide.html" target="_blank" rel="noopener">MinIO Multi-Tenant Deployment Guide</a></li>
-<li><a href="https://github.com/minio/minio/tree/master/docs/erasure/storage-class" target="_blank" rel="noopener">MinIO Storage Class Quickstart Guide</a></li>
-<li><a href="https://github.com/minio/minio/tree/master/docs/compression" target="_blank" rel="noopener">Compression Guide</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>大数据</category>
-        <category>云原生</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>Minio</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Oracle JDBC为什么不能在Maven中直接配置？</title>
-    <url>/2018/09/12/ODBC%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在实际项目中，我们通常使用这样的方式：首先，下载ODBC的Jar到本地；然后，通过Maven安装在本地库中。这样在项目中就可以使用ODBC的Jar包了，而大部分的jar是可以通过Maven中直接引用的。这是为什么呢？</p>
-<h2 id="项目报错"><a href="#项目报错" class="headerlink" title="项目报错"></a>项目报错</h2><p>&emsp;&emsp;项目直接编译，报错如下</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Failed to execute goal on project sql2o-oracle: 
-Could not resolve dependencies for project org.sql2o.extensions: sql2o-oracle:jar:1.6.0-RC4-SNAPSHOT: 
-Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https:&#x2F;&#x2F;repo.maven.apache.org&#x2F;maven2)</code></pre></div>
-<p>很明显项目中的引用：com.oracle.jdbc:ojdbc8:jar:12.2.0.1，无法在公共仓库中找到。</p>
-<h2 id="常用做法"><a href="#常用做法" class="headerlink" title="常用做法"></a>常用做法</h2><p>&emsp;&emsp;一般的做法就是下载Jar包，然后存放在本地仓库中，这样就可以直接在项目中引用。但通常这样略显麻烦，也不具有通用性。之前这样做的原因主要是涉及到许可的原因，Oracle不开放ODBC的Jar不会开放到公共仓库中。<br>&emsp;&emsp;关于ODBC方面的讨论可以参考：<a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a> .</p>
-<h2 id="目前实现"><a href="#目前实现" class="headerlink" title="目前实现"></a>目前实现</h2><p>&emsp;&emsp;目前可以通过POM中的配置来直接使用Oracle仓库中的Jar，环境可以参考：<a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a> .</p>
-<p>&emsp;&emsp;博主主要分为三步实现本地Oracle库的配置：</p>
-<ol>
-<li>注册账号：<a href="https://www.oracle.com/webapps/maven/register/license.html" target="_blank" rel="noopener">https://www.oracle.com/webapps/maven/register/license.html</a> 。如果已经注册过OTN(Oracle Technology Network)的账号，所以直接跳过；</li>
-<li>配置本地Settings.xml<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><server>
-	<id>maven.oracle.com<&#x2F;id>
-	<username>[OTN username]<&#x2F;username>
-	<password>[OTN password]<&#x2F;password>
-	<configuration>
-		<basicAuthScope>
-			<host>ANY<&#x2F;host>
-			<port>ANY<&#x2F;port>
-			<realm>OAM 11g<&#x2F;realm>
-		<&#x2F;basicAuthScope>
-		<httpConfiguration>
-			<all>
-				<params>
-					<property>
-						<name>http.protocol.allow-circular-redirects<&#x2F;name>
-						<value>%b,true<&#x2F;value>
-					<&#x2F;property>
-				<&#x2F;params>
-			<&#x2F;all>
-		<&#x2F;httpConfiguration>
-	<&#x2F;configuration>
-<&#x2F;server></code></pre></div></li>
-<li>Maven中配置<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><repositories>
-	<repository>
-		<id>maven.oracle.com<&#x2F;id>
-		<releases>
-			<enabled>true<&#x2F;enabled>
-		<&#x2F;releases>
-		<snapshots>
-			<enabled>false<&#x2F;enabled>
-		<&#x2F;snapshots>
-		<url>https:&#x2F;&#x2F;maven.oracle.com<&#x2F;url>
-		<layout>default<&#x2F;layout>
-	<&#x2F;repository>
-<&#x2F;repositories>
-<pluginRepositories>
-	<pluginRepository>
-		<id>maven.oracle.com<&#x2F;id>
-		<url>https:&#x2F;&#x2F;maven.oracle.com<&#x2F;url>
-	<&#x2F;pluginRepository>
-<&#x2F;pluginRepositories></code></pre></div>
-
-</li>
-</ol>
-<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><ol>
-<li>虽然通过这种方式，可以直接获取相应的Jar。但实现需要知道Jar的相关信息，例如groupId、artifactId、version等。这些信息在哪里知道？</li>
-<li>通过权限访问这种方式，略显复杂。如果是公司的本地库，可以配置统一的Jar管理，例如artifactory软件等。</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides" target="_blank" rel="noopener">Get Oracle JDBC drivers and UCP from Oracle Maven Repository (without IDEs)</a></li>
-<li><a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository/27943380#27943380" target="_blank" rel="noopener">Find Oracle JDBC driver in Maven repository</a></li>
-<li><a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010" target="_blank" rel="noopener">6 Configuring the Oracle Maven Repository</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>问题</tag>
-        <tag>JDBC</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ozone调研</title>
-    <url>/2020/06/07/Ozone%E8%B0%83%E7%A0%94/</url>
-    <content><![CDATA[<p>主要研究目标：</p>
-<ol>
-<li>独立Ozone集群部署：特性、功能、安全</li>
-<li>Ozone with HDFS部署：特性、功能、安全</li>
-</ol>
-<!-- TOC -->
-
-<ul>
-<li><a href="#1-ozone架构">1. Ozone架构</a><ul>
-<li><a href="#11-架构图">1.1. 架构图</a><ul>
-<li><a href="#111-block管理角度">1.1.1. Block管理角度</a></li>
-<li><a href="#112-功能分级角度">1.1.2. 功能分级角度</a></li>
-<li><a href="#113-基本概念">1.1.3. 基本概念</a></li>
-</ul>
-</li>
-<li><a href="#12-亮点特性">1.2. 亮点特性</a><ul>
-<li><a href="#121-安全机制">1.2.1. 安全机制</a></li>
-<li><a href="#122-单独的">1.2.2. 单独的</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#2-部署测试">2. 部署测试</a><ul>
-<li><a href="#21-源码编译">2.1. 源码编译</a><ul>
-<li><a href="#211-下载源码">2.1.1. 下载源码</a></li>
-<li><a href="#212-编译问题">2.1.2. 编译问题</a></li>
-</ul>
-</li>
-<li><a href="#22-部署ozone独立集群">2.2. 部署Ozone独立集群</a></li>
-</ul>
-</li>
-<li><a href="#3-总结">3. 总结</a></li>
-<li><a href="#4-参考文献">4. 参考文献</a></li>
-</ul>
-<!-- /TOC -->
-
-<p>&emsp;&emsp;当前各种开源的对象存储组件，基本上是对标<strong>Amazon</strong>的<strong>S3</strong>。在特性、功能上面，基本上都支持<strong>S3服务</strong>的访问。毕竟当前<strong>Amazon</strong>的<strong>S3</strong>在对象存储领域，具有广泛的影响力。各类公司在上云时，也会基于<strong>S3</strong>进行基准测试，对比各家云厂商的对象存储服务能力，从而考虑上云的性价比。</p>
-<p>&emsp;&emsp;上云时需要考虑的一个点是本地机房与云商对象存储的一体化访问能力。而<strong>Apache Ozone</strong>具有原生优势</p>
-<ol>
-<li><strong>Hadoop</strong>项目中分离而来：为解决<strong>HDFS</strong>自身缺陷而生</li>
-<li>原生支持<strong>HDFS</strong>协议，以及安全机制(Kerberos+Token)</li>
-<li>支持<strong>S3</strong>协议。大部分对象存储服务都兼容<strong>S3</strong>协议</li>
-<li>原生支持云服务：<strong>Yarn</strong>、<strong>Kubernetes</strong></li>
-<li>可伸缩、可扩展、强一致性</li>
-</ol>
-<p>&emsp;&emsp;当前<strong>Apache Ozone</strong>具有的不足之处，可能有几点</p>
-<ol>
-<li>尚未完全成熟：虽然已从Apache毕业，成为顶级项目，但尚未发型稳定版。当前各种主流的版本，都处理alpha、beta版，且版本号基本上处于0.X版</li>
-<li>存在性能与稳定性瓶颈：当前<strong>Apache Ozone</strong>的已知版本中，在稳定性、性能访问还存在一定的瓶颈。特别是随着Ozone规模增长到一定程度之后，写入方面会存在较为严重的瓶颈。</li>
-</ol>
-<p>&emsp;&emsp;虽然<strong>Apache Ozone</strong>尚未经过大规模集群的验证，但这并不妨碍我们进行调研测试，毕竟未来云原生的对象存储可能会成为趋势。</p>
-<h1 id="1-Ozone架构"><a href="#1-Ozone架构" class="headerlink" title="1. Ozone架构"></a>1. Ozone架构</h1><p>&emsp;&emsp;本小结我们先引入Ozone的架构图，然后分别介绍各个组件的功能，以及Ozone的基本概念。</p>
-<h2 id="1-1-架构图"><a href="#1-1-架构图" class="headerlink" title="1.1. 架构图"></a>1.1. 架构图</h2><p>&emsp;&emsp;这里的架构图主要是引用hadoop-ozone官方文档介绍的结构图，主要有两个：Block管理角度、功能分层角度。</p>
-<h3 id="1-1-1-Block管理角度"><a href="#1-1-1-Block管理角度" class="headerlink" title="1.1.1. Block管理角度"></a>1.1.1. Block管理角度</h3><p><img src="ozoneBlockDiagram.png" srcset="/img/loading.gif" alt="Block管理角度"><br>Block角度主要包括几大组件</p>
-<ol>
-<li>Ozone Manager(OM)：om在hadoop-ozone中具有命名空间管理的职能。</li>
-<li>Storage Container Manager(SCM)：管理物理数据与数据层</li>
-<li>Recon：接口管理</li>
-</ol>
-<p>&emsp;&emsp;在Ozone的Road Map中介绍，当前已经实现了针对SCM的HA架构，后期版本中逐渐实现对OM的HA架构，从而实现整体的HA架构部署。</p>
-<h3 id="1-1-2-功能分级角度"><a href="#1-1-2-功能分级角度" class="headerlink" title="1.1.2. 功能分级角度"></a>1.1.2. 功能分级角度</h3><p><img src="FunctionalOzone.png" srcset="/img/loading.gif" alt="Ozone功能分层角度"><br>从功能上来看，hadoop-ozone主要分为</p>
-<ol>
-<li>Data Layer：数据存储层</li>
-<li>Metadata Layer：元数据管理层</li>
-<li>Repication Lay：数据复制与一致性管理</li>
-<li>Protocol Bus：数据扩展访问</li>
-<li>Recon Server：与Ozone的所有组件通信，提供统一的API</li>
-</ol>
-<h3 id="1-1-3-基本概念"><a href="#1-1-3-基本概念" class="headerlink" title="1.1.3. 基本概念"></a>1.1.3. 基本概念</h3><p>&emsp;&emsp;初识Apache Ozone的架构之后，我们需要了解涉及到的几个关键概念。主要涉及到对象存储相关的基本概念：卷、桶、Key。</p>
-<ol>
-<li>卷：Volume。卷的概念类似账户，只有管理员工可以创建删除</li>
-<li>桶：Bucket。桶的概念类似目录，桶可以包含任意数量的Key，但不能不含其它桶</li>
-<li>Key：Key类似与文件的概念。</li>
-</ol>
-<p>感觉官方文档的概念介绍，基本可以理解为：<img src="ozone_cengji.png" srcset="/img/loading.gif" alt="Hadoop-Ozone层级介绍"><br>其中粗粒度、细粒度可以理解为权限访问。且在对象存储模型中，没有目录的概念只有Key的概念，Key指向的就是具体的存储对象。</p>
-<h2 id="1-2-亮点特性"><a href="#1-2-亮点特性" class="headerlink" title="1.2. 亮点特性"></a>1.2. 亮点特性</h2><h3 id="1-2-1-安全机制"><a href="#1-2-1-安全机制" class="headerlink" title="1.2.1. 安全机制"></a>1.2.1. 安全机制</h3><p>认证体系</p>
-<h3 id="1-2-2-单独的"><a href="#1-2-2-单独的" class="headerlink" title="1.2.2. 单独的"></a>1.2.2. 单独的</h3><h1 id="2-部署测试"><a href="#2-部署测试" class="headerlink" title="2. 部署测试"></a>2. 部署测试</h1><h2 id="2-1-源码编译"><a href="#2-1-源码编译" class="headerlink" title="2.1. 源码编译"></a>2.1. 源码编译</h2><h3 id="2-1-1-下载源码"><a href="#2-1-1-下载源码" class="headerlink" title="2.1.1. 下载源码"></a>2.1.1. 下载源码</h3><h3 id="2-1-2-编译问题"><a href="#2-1-2-编译问题" class="headerlink" title="2.1.2. 编译问题"></a>2.1.2. 编译问题</h3><h2 id="2-2-部署Ozone独立集群"><a href="#2-2-部署Ozone独立集群" class="headerlink" title="2.2. 部署Ozone独立集群"></a>2.2. 部署Ozone独立集群</h2><h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4. 参考文献"></a>4. 参考文献</h1><ol>
-<li><a href="https://cwiki.apache.org/confluence/display/HADOOP/Ozone+Road+Map" target="_blank" rel="noopener">Ozone Road Map</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>大数据</category>
-        <category>云原生</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>Ozone</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Phantomjs服务模式：从性能并发方面谈起</title>
-    <url>/2018/06/29/Phantomjs%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E4%BB%8E%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E6%96%B9%E9%9D%A2%E8%B0%88%E8%B5%B7/</url>
-    <content><![CDATA[<p>&emsp;&emsp;作为比较好的动态网页爬虫手段，phantomjs在许多方面令人比较满意。调用Phantomjs的方式，一般有如下几种情况。</p>
-<a id="more"></a>
-
-<h2 id="1-命令行模式"><a href="#1-命令行模式" class="headerlink" title="1. 命令行模式"></a>1. 命令行模式</h2><p>&emsp;&emsp;在CMD或Shell中，直接输入phantomjs回车，进入命令行模式，能够完成各种操作。但一般情况是通过命令用调用phantomjs来完成爬虫或模拟工作，具体的代码放在JS中。如</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">..&#x2F;bin&#x2F;phantomjs --debug&#x3D;yes .&#x2F;server.js 8910
-..&#x2F;bin&#x2F;phantomjs --debug&#x3D;yes .&#x2F;hello.js</code></pre></div>
-<p>其中phantomjs参数直接放在phantomjs后面，脚本作为参数放在其次，最后添加脚本的参数列表。</p>
-<h2 id="2-selenium调用"><a href="#2-selenium调用" class="headerlink" title="2. selenium调用"></a>2. selenium调用</h2><p>&emsp;&emsp;selenium是一套完整的测试爬虫工具，能够调用IE、Chrome、Firefox等浏览器内核API完成相应的功能，也可以调用如Phantomjs、HtmlUnitDriver等模拟浏览器作为调用接口。</p>
-<p>&emsp;&emsp;调用浏览器内核与不调用浏览器内核的浏览器[这里指的是HtmlUnitDriver]，浏览器内核的API，可以完成截图功能及其他浏览器功能，但HtmlunitDriver采用的是JS模拟浏览器的策略，因此不具备截图等浏览器功能。</p>
-<h3 id="2-1-Java-selenium-Phantomjs调用"><a href="#2-1-Java-selenium-Phantomjs调用" class="headerlink" title="2.1. Java+selenium+Phantomjs调用"></a>2.1. Java+selenium+Phantomjs调用</h3><div class="hljs"><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> PhantomJSDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS,</span></span>
-<span class="hljs-function"><span class="hljs-params">		String userAgent, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> jsEnabled,</span></span>
-<span class="hljs-function"><span class="hljs-params">		String encoding,<span class="hljs-keyword">boolean</span> proxyEnabled,String... proxys)</span> </span>&#123;
-
-	System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);
-	DesiredCapabilities desiredCapabilities = DesiredCapabilities
-			.phantomjs();
-	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) &#123;
-		desiredCapabilities.setCapability(
-				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);
-		desiredCapabilities.setCapability(
-				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);
-	&#125;
-	desiredCapabilities.setJavascriptEnabled(jsEnabled);
-	PhantomJSDriver driver = <span class="hljs-keyword">null</span>;
-	List<String> cli = <span class="hljs-keyword">new</span> ArrayList<>();
-	cli.add(<span class="hljs-string">"--load-images="</span> + loadImages);
-	cli.add(<span class="hljs-string">"--output-encoding="</span> + encoding);
-	
-	<span class="hljs-keyword">if</span> (proxyEnabled) &#123;
-		String proxy_ip = proxys[<span class="hljs-number">0</span>];
-		String proxy_port = proxys[<span class="hljs-number">1</span>];
-		String proxy_user = proxys[<span class="hljs-number">2</span>];
-		String proxy_pass = proxys[<span class="hljs-number">3</span>];
-		cli.add(<span class="hljs-string">"--proxy="</span>+proxy_ip+<span class="hljs-string">":"</span>+ proxy_port));
-		cli.add(<span class="hljs-string">"--proxy-auth="</span> +proxy_user+<span class="hljs-string">":"</span> +proxy_pass);
-	&#125;
-	desiredCapabilities.setCapability(
-			PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cli);
-	driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);
-	driver.manage().timeouts()
-			.implicitlyWait(WAIT_TIME, TimeUnit.MILLISECONDS);
-	driver.manage().deleteAllCookies();
-
-	<span class="hljs-keyword">return</span> driver;
-&#125;</code></pre></div>
-
-<h3 id="2-2-Java-selenium-HtmlunitDriver调用"><a href="#2-2-Java-selenium-HtmlunitDriver调用" class="headerlink" title="2.2. Java+selenium+HtmlunitDriver调用"></a>2.2. Java+selenium+HtmlunitDriver调用</h3><div class="hljs"><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> HtmlUnitDriver <span class="hljs-title">getHtmlUnitDriver</span><span class="hljs-params">(String userAgent,</span></span>
-<span class="hljs-function"><span class="hljs-params">		<span class="hljs-keyword">boolean</span> jsEnabled, <span class="hljs-keyword">boolean</span> loadImages, <span class="hljs-keyword">boolean</span> proxyEnabled,</span></span>
-<span class="hljs-function"><span class="hljs-params">		String... proxys)</span> </span>&#123;
-
-	DesiredCapabilities desiredCapabilities = DesiredCapabilities
-			.htmlUnit();
-	desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.loadImages"</span>,
-			<span class="hljs-keyword">false</span>);
-	desiredCapabilities.setJavascriptEnabled(jsEnabled);
-	<span class="hljs-keyword">if</span> (userAgent != <span class="hljs-keyword">null</span>) &#123;
-		desiredCapabilities.setCapability(
-				<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>, userAgent);
-		desiredCapabilities.setCapability(
-				<span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, userAgent);
-	&#125;
-	desiredCapabilities.setCapability(
-			PhantomJSDriverService.PHANTOMJS_CLI_ARGS,
-			<span class="hljs-keyword">new</span> String[] &#123; <span class="hljs-string">"--load-images="</span> + loadImages &#125;);
-	HtmlUnitDriver driver = <span class="hljs-keyword">null</span>;
-	<span class="hljs-keyword">if</span> (proxyEnabled) &#123;
-
-		String proxy_ip = proxys[<span class="hljs-number">0</span>];
-		String proxy_port = proxys[<span class="hljs-number">1</span>];
-		String proxy_user = proxys[<span class="hljs-number">2</span>];
-		String proxy_pass = proxys[<span class="hljs-number">3</span>];
-
-		Proxy proxy = <span class="hljs-keyword">new</span> Proxy();
-		proxy.setHttpProxy(proxy_ip + <span class="hljs-string">":"</span> + proxy_port);
-		desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);
-		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities) &#123;
-			<span class="hljs-meta">@Override</span>
-			<span class="hljs-function"><span class="hljs-keyword">protected</span> WebClient <span class="hljs-title">modifyWebClient</span><span class="hljs-params">(WebClient client)</span> </span>&#123;
-				DefaultCredentialsProvider creds = <span class="hljs-keyword">new</span> DefaultCredentialsProvider();
-				creds.addCredentials(proxy_user, proxy_pass);
-				client.setCredentialsProvider(creds);
-				<span class="hljs-keyword">return</span> client;
-			&#125;
-		&#125;;
-	&#125; <span class="hljs-keyword">else</span>
-		driver = <span class="hljs-keyword">new</span> HtmlUnitDriver(desiredCapabilities);
-	driver.manage().timeouts()
-			.implicitlyWait(<span class="hljs-number">10</span> * <span class="hljs-number">1000</span>, TimeUnit.MILLISECONDS);
-	driver.manage().deleteAllCookies();
-
-	<span class="hljs-keyword">return</span> driver;
-&#125;</code></pre></div>
-
-<h2 id="3-服务器模式"><a href="#3-服务器模式" class="headerlink" title="3. 服务器模式"></a>3. 服务器模式</h2><p>&emsp;&emsp;phantomjs服务器模式，需要在服务端开启服务，然后在客户端发起Http请求然后返回想要的内容，就是一个C/S模式的服务。</p>
-<h3 id="3-1-服务端"><a href="#3-1-服务端" class="headerlink" title="3.1. 服务端"></a>3.1. 服务端</h3><p>server.js内容如下所示</p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">var webserver = require('webserver').create();
-var page = require('webpage').create();
-var system = require('system');
-var port = system.args[1];
-webserver.listen(system.args[1], function(request, response) &#123;
-    var url = request.headers.url;// conf target url in headers
-    page.open(url, function(status) &#123;
-        var title = page.evaluate(function() &#123;
-            return $(":root").html();// return pageSource
-        &#125;);
-        response.write(title);
-        response.close();
-    &#125;);
-&#125;);</code></pre></div>
-
-<p>命令行启动</p>
-<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">bin/phantomjs example/server.js 8910</code></pre></div>
-
-<h3 id="3-2-客户端"><a href="#3-2-客户端" class="headerlink" title="3.2. 客户端"></a>3.2. 客户端</h3><p>&emsp;&emsp;在客户端发起http请求，无论是get，还是post只要能够获取到Headers里面的目标URL，就可以返回pageSource。当然，这里最好使用异步加载网页内容。</p>
-<div class="hljs"><pre class=" language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword"><code class="language-hljs java">Map&lt;String, String&gt; params = <span class="hljs-keyword">new</span> HashMap<String, String>();
-params.put(<span class="hljs-string">"url"</span>, targetURL);
-
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title">HttpPost</span><span class="hljs-params">(String url, String postDataStr)</span></span>
-<span class="hljs-function">		<span class="hljs-keyword">throws</span> MalformedURLException, IOException </span>&#123;
-		
-	URLConnection conn = <span class="hljs-keyword">new</span> URL(url).openConnection();
-	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);
-	conn.addRequestProperty(<span class="hljs-string">"ContentType"</span>,
-			<span class="hljs-string">"application/x-www-form-urlencoded"</span>);
-	conn.addRequestProperty(<span class="hljs-string">"method"</span>, <span class="hljs-string">"post"</span>);
-	conn.addRequestProperty(<span class="hljs-string">"http.socket.timeout"</span>, <span class="hljs-string">"60000"</span>);
-	conn.setDoOutput(<span class="hljs-keyword">true</span>);
-	conn.getOutputStream().write(
-			URLEncoder.encode(postDataStr, <span class="hljs-string">"utf-8"</span>).getBytes());
-			
-	StringBuilder sb = <span class="hljs-keyword">new</span> StringBuilder();
-	BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> InputStreamReader(
-			conn.getInputStream()));
-	String line = <span class="hljs-keyword">null</span>;
-	<span class="hljs-keyword">while</span> ((line = br.readLine()) != <span class="hljs-keyword">null</span>)
-		sb.append(line);
-		
-	<span class="hljs-keyword">return</span> sb.toString();
-&#125;</code></pre></div>
-
-<h2 id="4-比较"><a href="#4-比较" class="headerlink" title="4. 比较"></a>4. 比较</h2><table>
-<thead>
-<tr>
-<th align="center">方式</th>
-<th align="left">优点</th>
-<th align="left">缺点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">命令行模式</td>
-<td align="left">1、调用简单</td>
-<td align="left">1、需要配合JS<br>2、无法大规模并发控制</td>
-</tr>
-<tr>
-<td align="center">服务器模式</td>
-<td align="left">1、减少内存<br>2、客户端方便</td>
-<td align="left">1、存在并发限制，最多10个线程<br>2、试验产品，可能存在安全隐患</td>
-</tr>
-<tr>
-<td align="center">selenium调用</td>
-<td align="left">1、客户端精准控制<br>2、调用比较方面，无需写JS<br>3、可大规模并发</td>
-<td align="left">1、“吃”内存：内存随线程数增加较快<br>2、需手动释放内存，确保phantomjs释放</td>
-</tr>
-</tbody></table>
-<h2 id="5-注"><a href="#5-注" class="headerlink" title="5. 注"></a>5. 注</h2><ol>
-<li>由于目前phantomjs已停止更新维护，所以可以选择其他带有webkit内核的模拟浏览器，如Headless Chrome等作为测试/爬虫的首选。</li>
-<li>phantomjs使用代理，最好使用无密码代理。</li>
-</ol>
-<h2 id="6-参考"><a href="#6-参考" class="headerlink" title="6. 参考"></a>6. 参考</h2><ol>
-<li><a href="https://pip.readthedocs.io/en/stable/installing/" target="_blank" rel="noopener">Phantomjs正确打开方式</a></li>
-<li><a href="http://www.cnblogs.com/kavmors/p/4731883.html" target="_blank" rel="noopener">Phantomjs 进程通信方式</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>爬虫</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>Phantomjs</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python2日期时间操作</title>
     <url>/2020/06/08/Python2%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C/</url>
     <content><![CDATA[<p>&emsp;&emsp;在日常工作中，经常遇到一下日期时间格式转化。例如时间比较、时间格式化、从字符串转化为日期等操作，本文将日常要的这些操作进行汇总备忘。</p>
@@ -7332,42 +7332,6 @@ datetime &#x3D; parser.parser('2020-03-25T20:46:24.511426+0800')</code></pre></d
       </tags>
   </entry>
   <entry>
-    <title>SAS中实用函数</title>
-    <url>/2018/06/29/SAS%E4%B8%AD%E5%AE%9E%E7%94%A8%E5%87%BD%E6%95%B0/</url>
-    <content><![CDATA[<p>&emsp;&emsp;SAS博大精深，版主初涉此领域，经常遇到一些问题，需要Baidu搜索，为了防止遗忘，记录下来。</p>
-<a id="more"></a>
-
-<h2 id="关于日期时间"><a href="#关于日期时间" class="headerlink" title="关于日期时间"></a>关于日期时间</h2><p>SAS中的时间日期格式非常多，重要的函数有如下几种：</p>
-<blockquote>
-<p>Day函数：得到日期的天，例如：day(‘2016-09-01’d)=1；<br>Month函数：得到日期的月份，例如：month(‘2016-09-01’d)=9；<br>Year函数：得到日期的年份，例如：year(‘2016-09-01’d)=2016；</p>
-<p>Hour函数：得到时间的小时，例如：hour(‘18:10:01’t)=18；<br>Minute函数：得到时间的分钟，例如：minute(‘18:10:01’t)=10；</p>
-<p>Datepart函数：获取日期时间类型中的日期部分；<br>Timepart函数：获取日期时间类型中的时间部分。</p>
-</blockquote>
-<p>关于SAS中日期时间格式的表示方式，我一般使用如下几种： </p>
-<blockquote>
-<p>yymmdd10.：这种格式可以将要日期表示为: yyyy-MM-dd的样式；<br>hhmmss.:这种格式可以将时间类型格式化为：HH:mm:ss的形式。</p>
-</blockquote>
-<p>关于时间类型的计算，一般用到如下几个函数：</p>
-<blockquote>
-<p>intck：根据间隔，计算两个日期之间的间隔数；<br>intnx：计算某个间隔数之后的一个日期。</p>
-</blockquote>
-<h2 id="关于编程"><a href="#关于编程" class="headerlink" title="关于编程"></a>关于编程</h2><ol>
-<li>感受最深的一个就是retain关键字。我们知道SAS是按行计算的，一般来讲程序只能处理当前行的内容，如何灵活操作呢？retain关键词帮我们实现这个功能。它能够定义一下变量，能够累计（累加、累乘等），这样我们可以分组计算，可以汇总等操作。</li>
-<li>第二个比较好用的就是output：可以自定义output的位置，这样就能控制输入。默认情况下，程序处理到一行的最后默认有一个output。</li>
-</ol>
-<h2 id="EG使用"><a href="#EG使用" class="headerlink" title="EG使用"></a>EG使用</h2><p>&emsp;&emsp;使用SAS ENTERPRISE GUIDER的一个好处就是，可以自动生成代码，虽然最后执行的还是SAS BASE，但对编程来说已经非常方便了。例如，数据的导入、到处，数据探索：画图、回归模型、时序模型等都能方便的操作。</p>
-<p> &emsp;&emsp;界面化的设计，使得初学者即可方便使用，只要配置参数、选择方法就能很好的完成任务。使得使用着能够将更多的时间投入到研究模型的设计、业务的理解/解释等方面，从复杂的编程中得到解脱。</p>
-<p>&emsp;&emsp;另外，SAS提供的数据挖掘工具EM可以方便的实现从数据探索、参数变换/选择、模型选择、模型评价等一系列的功能，更好地实现模型的自动化优化。</p>
-<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><p>&emsp;&emsp;SAS在金融行业应用非常广泛，有着巨大的用户群体，也有非常健全的帮助文档体系，这些对于初学者来说是非常有帮助的。感兴趣的朋友，可以到SAS官网山找到相关帮助文档。</p>
-]]></content>
-      <categories>
-        <category>SAS</category>
-      </categories>
-      <tags>
-        <tag>使用</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Spark-RDD/DataFrame-map保存数据的两种方式</title>
     <url>/2018/06/29/Spark-RDD-DataFrame-map%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
     <content><![CDATA[<p>&emsp;&emsp;使用Spark RDD或DataFrame，有时需要在foreachPartition或foreachWith里面保存数据到本地或HDFS。</p>
@@ -7449,6 +7413,42 @@ tarDF.write.parquet<span class="hljs-comment">// 写入Parquet数据源</span></
       </tags>
   </entry>
   <entry>
+    <title>SAS中实用函数</title>
+    <url>/2018/06/29/SAS%E4%B8%AD%E5%AE%9E%E7%94%A8%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[<p>&emsp;&emsp;SAS博大精深，版主初涉此领域，经常遇到一些问题，需要Baidu搜索，为了防止遗忘，记录下来。</p>
+<a id="more"></a>
+
+<h2 id="关于日期时间"><a href="#关于日期时间" class="headerlink" title="关于日期时间"></a>关于日期时间</h2><p>SAS中的时间日期格式非常多，重要的函数有如下几种：</p>
+<blockquote>
+<p>Day函数：得到日期的天，例如：day(‘2016-09-01’d)=1；<br>Month函数：得到日期的月份，例如：month(‘2016-09-01’d)=9；<br>Year函数：得到日期的年份，例如：year(‘2016-09-01’d)=2016；</p>
+<p>Hour函数：得到时间的小时，例如：hour(‘18:10:01’t)=18；<br>Minute函数：得到时间的分钟，例如：minute(‘18:10:01’t)=10；</p>
+<p>Datepart函数：获取日期时间类型中的日期部分；<br>Timepart函数：获取日期时间类型中的时间部分。</p>
+</blockquote>
+<p>关于SAS中日期时间格式的表示方式，我一般使用如下几种： </p>
+<blockquote>
+<p>yymmdd10.：这种格式可以将要日期表示为: yyyy-MM-dd的样式；<br>hhmmss.:这种格式可以将时间类型格式化为：HH:mm:ss的形式。</p>
+</blockquote>
+<p>关于时间类型的计算，一般用到如下几个函数：</p>
+<blockquote>
+<p>intck：根据间隔，计算两个日期之间的间隔数；<br>intnx：计算某个间隔数之后的一个日期。</p>
+</blockquote>
+<h2 id="关于编程"><a href="#关于编程" class="headerlink" title="关于编程"></a>关于编程</h2><ol>
+<li>感受最深的一个就是retain关键字。我们知道SAS是按行计算的，一般来讲程序只能处理当前行的内容，如何灵活操作呢？retain关键词帮我们实现这个功能。它能够定义一下变量，能够累计（累加、累乘等），这样我们可以分组计算，可以汇总等操作。</li>
+<li>第二个比较好用的就是output：可以自定义output的位置，这样就能控制输入。默认情况下，程序处理到一行的最后默认有一个output。</li>
+</ol>
+<h2 id="EG使用"><a href="#EG使用" class="headerlink" title="EG使用"></a>EG使用</h2><p>&emsp;&emsp;使用SAS ENTERPRISE GUIDER的一个好处就是，可以自动生成代码，虽然最后执行的还是SAS BASE，但对编程来说已经非常方便了。例如，数据的导入、到处，数据探索：画图、回归模型、时序模型等都能方便的操作。</p>
+<p> &emsp;&emsp;界面化的设计，使得初学者即可方便使用，只要配置参数、选择方法就能很好的完成任务。使得使用着能够将更多的时间投入到研究模型的设计、业务的理解/解释等方面，从复杂的编程中得到解脱。</p>
+<p>&emsp;&emsp;另外，SAS提供的数据挖掘工具EM可以方便的实现从数据探索、参数变换/选择、模型选择、模型评价等一系列的功能，更好地实现模型的自动化优化。</p>
+<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><p>&emsp;&emsp;SAS在金融行业应用非常广泛，有着巨大的用户群体，也有非常健全的帮助文档体系，这些对于初学者来说是非常有帮助的。感兴趣的朋友，可以到SAS官网山找到相关帮助文档。</p>
+]]></content>
+      <categories>
+        <category>SAS</category>
+      </categories>
+      <tags>
+        <tag>使用</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Spark集群配置</title>
     <url>/2018/06/29/Spark%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>&emsp;&emsp;相比Hadoop的配置，Spark配置起来相对简单。本文结合自身的配置经验，写下配置Spark的过程。</p>
@@ -7507,23 +7507,23 @@ scp -r ~/spark-1.6.0-bin-hadoop2.6/ slave3:~/</code></pre></div>
 </ul>
 <h2 id="报错二"><a href="#报错二" class="headerlink" title="报错二"></a>报错二</h2><ul>
 <li><em>错误信息</em>:<br>  Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name ‘httpPutFormContentFilter’ defined in class path resource [org/springframework/boot/autoconfigure/web/servlet/WebMvcAutoConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.boot.web.servlet.filter.OrderedHttpPutFormContentFilter]: Factory method ‘httpPutFormContentFilter’ threw exception; nested exception is java.lang.VerifyError: Cannot inherit from final class</li>
-<li><em>解决方案</em>：<br>  更换Spring-Parent的版本。  <div class="hljs"><pre class=" language-hljs java">   <span class="hljs-comment"><code class="language-hljs java">   <span class="hljs-comment">//更改之前</span>
-   <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-dependencies</artifactId>
-	<version>2.0.2.RELEASE</version>
-	<scope>import</scope>
-	<type>pom</type>
-   </dependency>
+<li><em>解决方案</em>：<br>  更换Spring-Parent的版本。  <div class="hljs"><pre class=" language-hljs xml"><code class="language-hljs xml">   //更改之前
+   <span class="hljs-tag"><<span class="hljs-name">dependency</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">groupId</span>></span>org.springframework.boot<span class="hljs-tag"></<span class="hljs-name">groupId</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">artifactId</span>></span>spring-boot-dependencies<span class="hljs-tag"></<span class="hljs-name">artifactId</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">version</span>></span>2.0.2.RELEASE<span class="hljs-tag"></<span class="hljs-name">version</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">scope</span>></span>import<span class="hljs-tag"></<span class="hljs-name">scope</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">type</span>></span>pom<span class="hljs-tag"></<span class="hljs-name">type</span>></span>
+   <span class="hljs-tag"></<span class="hljs-name">dependency</span>></span>
    
-   <span class="hljs-comment">// 更改之后</span>
-    <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-dependencies</artifactId>
-	<version>1.5.1.RELEASE</version>
-	<scope>import</scope>
-	<type>pom</type>
-</dependency></code></pre></div>
+   // 更改之后
+    <span class="hljs-tag"><<span class="hljs-name">dependency</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">groupId</span>></span>org.springframework.boot<span class="hljs-tag"></<span class="hljs-name">groupId</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">artifactId</span>></span>spring-boot-dependencies<span class="hljs-tag"></<span class="hljs-name">artifactId</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">version</span>></span>1.5.1.RELEASE<span class="hljs-tag"></<span class="hljs-name">version</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">scope</span>></span>import<span class="hljs-tag"></<span class="hljs-name">scope</span>></span>
+	<span class="hljs-tag"><<span class="hljs-name">type</span>></span>pom<span class="hljs-tag"></<span class="hljs-name">type</span>></span>
+<span class="hljs-tag"></<span class="hljs-name">dependency</span>></span></code></pre></div>
 
 </li>
 </ul>
@@ -7650,27 +7650,6 @@ canalDestinations:
       </tags>
   </entry>
   <entry>
-    <title>elasticsearch-vs-mongodb</title>
-    <url>/2018/06/29/elasticsearch-vs-mongodb/</url>
-    <content><![CDATA[<h2 id="原文翻译"><a href="#原文翻译" class="headerlink" title="原文翻译"></a>原文翻译</h2><p>&emsp;&emsp;选择Elasticsearch还是选择MongoDB，该问题我已经被许多初学者、朋友或需要作出技术架构决策的开发者问及好多次了。那么应该选择MongoDB，还是选择ElasticSearch呢？因此，这里我简短的介绍一下MongoDB与Elasticsearch的不同之处，且言明在什么场景下那个作为首要选项。我假设读者已经了解了关于MongoDB/Elasticsearch的基本概念。</p>
-<a id="more"></a>
-
-<p>&emsp;&emsp;假设两者都存储Key-Value数据对且允许查询数据对象中的内容。但两者来自不同的场景，且具有不同的目的。</p>
-<p>&emsp;&emsp;MongoDB是一个通用性数据库，Elasticsearch是一个Lucene支持的分布式文本检索引擎。针对大型数据集的索引与检索功能，Elasticsearch性能非常优越。当你有关于数据的附加属性且你能够知道具体需要查询的记录时，通常可以使用Elasticsearch。因为Elasticsearch针对这一功能进行特殊优化过的，所以它在其他方面的性能相对弱一些。例如相对其他No-SQL数据库而言，ELasticsearch在增加新数据时，速度相对较慢。在Elasticsearch索引中语法过程是在客户端中定义的，所以实际索引过程不能像实际存储一样得到优化。</p>
-<p>&emsp;&emsp;实践中，Elasticsearch通常与No-SQL或SQL数据库配合使用，其中数据库作为持久化存储组件，而Elasticsearch基于数据内容做更加复杂的搜索查询。例如我们在Mebelkart时，曾经使用Elasticsearch基于MySQL做全产品、零售商、产品浏览、类别目录等的索引，我们从Elasticsearch索引中做读取(复杂查询)、全文检索等操作。如果你需要建立一个带有复杂过滤或搜索操作的应用，Elasticsearch/Solr是目前唯一最佳的选择。</p>
-<p>&emsp;&emsp;当然可以把Elasticsearch作为首选项，但更好的方式是基于如No-SQL/MySQL的持久化数据库使用Elasticsearch。持久化存储能够提供约束限制、准确性保证、鲁棒性等条件，你只需要将数据添加/更新到Elasticsearch即可。</p>
-<h2 id="文章来源"><a href="#文章来源" class="headerlink" title="文章来源"></a>文章来源</h2><p>&emsp;&emsp;翻译文章来源：<a href="http://www.ranjeetvimal.com/elasticsearch-vs-mongodb/" target="_blank" rel="noopener">elasticsearch vs mongodb</a></p>
-]]></content>
-      <categories>
-        <category>读书笔记</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>ES</tag>
-        <tag>MongoDB</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>dl4j+fnlp关联度TopN</title>
     <url>/2018/06/29/dl4j-fnlp%E5%85%B3%E8%81%94%E5%BA%A6TopN/</url>
     <content><![CDATA[<p>&emsp;&emsp;最近在学习deeplearning4j，简称为dl4j。其中有许多示例，可以编译源码以后，运行runexample.sh来查看相关的结果。其中有分词的例子，所以想要学习一下分词，特别是中文分词的实例。</p>
@@ -7706,6 +7685,27 @@ canalDestinations:
       <tags>
         <tag>调研</tag>
         <tag>NLP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>elasticsearch-vs-mongodb</title>
+    <url>/2018/06/29/elasticsearch-vs-mongodb/</url>
+    <content><![CDATA[<h2 id="原文翻译"><a href="#原文翻译" class="headerlink" title="原文翻译"></a>原文翻译</h2><p>&emsp;&emsp;选择Elasticsearch还是选择MongoDB，该问题我已经被许多初学者、朋友或需要作出技术架构决策的开发者问及好多次了。那么应该选择MongoDB，还是选择ElasticSearch呢？因此，这里我简短的介绍一下MongoDB与Elasticsearch的不同之处，且言明在什么场景下那个作为首要选项。我假设读者已经了解了关于MongoDB/Elasticsearch的基本概念。</p>
+<a id="more"></a>
+
+<p>&emsp;&emsp;假设两者都存储Key-Value数据对且允许查询数据对象中的内容。但两者来自不同的场景，且具有不同的目的。</p>
+<p>&emsp;&emsp;MongoDB是一个通用性数据库，Elasticsearch是一个Lucene支持的分布式文本检索引擎。针对大型数据集的索引与检索功能，Elasticsearch性能非常优越。当你有关于数据的附加属性且你能够知道具体需要查询的记录时，通常可以使用Elasticsearch。因为Elasticsearch针对这一功能进行特殊优化过的，所以它在其他方面的性能相对弱一些。例如相对其他No-SQL数据库而言，ELasticsearch在增加新数据时，速度相对较慢。在Elasticsearch索引中语法过程是在客户端中定义的，所以实际索引过程不能像实际存储一样得到优化。</p>
+<p>&emsp;&emsp;实践中，Elasticsearch通常与No-SQL或SQL数据库配合使用，其中数据库作为持久化存储组件，而Elasticsearch基于数据内容做更加复杂的搜索查询。例如我们在Mebelkart时，曾经使用Elasticsearch基于MySQL做全产品、零售商、产品浏览、类别目录等的索引，我们从Elasticsearch索引中做读取(复杂查询)、全文检索等操作。如果你需要建立一个带有复杂过滤或搜索操作的应用，Elasticsearch/Solr是目前唯一最佳的选择。</p>
+<p>&emsp;&emsp;当然可以把Elasticsearch作为首选项，但更好的方式是基于如No-SQL/MySQL的持久化数据库使用Elasticsearch。持久化存储能够提供约束限制、准确性保证、鲁棒性等条件，你只需要将数据添加/更新到Elasticsearch即可。</p>
+<h2 id="文章来源"><a href="#文章来源" class="headerlink" title="文章来源"></a>文章来源</h2><p>&emsp;&emsp;翻译文章来源：<a href="http://www.ranjeetvimal.com/elasticsearch-vs-mongodb/" target="_blank" rel="noopener">elasticsearch vs mongodb</a></p>
+]]></content>
+      <categories>
+        <category>读书笔记</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>ES</tag>
+        <tag>MongoDB</tag>
       </tags>
   </entry>
   <entry>
@@ -8665,6 +8665,69 @@ yum install -y libgtk*</code></pre></div>
       </tags>
   </entry>
   <entry>
+    <title>爬虫＋模拟登录</title>
+    <url>/2018/06/29/%E7%88%AC%E8%99%AB%EF%BC%8B%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在一些爬虫中，需要用到账号登录进入，才能看到需要爬取的内容，因此实现程序自动模拟登录非常有必要。</p>
+<p>&emsp;&emsp;目前大部分网站的登录，都是使用表单提交的方法实现的，这一类网站的模拟登录，相信度娘已经给出来的许多实例。还有一类网站不是使用网页自带表单提交的方法，网站自己实现了js方法来登录，这就需要进行特别的模拟浏览器行为。</p>
+<a id="more"></a>
+
+<p>&emsp;&emsp;本文用到的主要技术手段包括Selenium+Phantomjs+Jsoup。</p>
+<h2 id="WebDriver"><a href="#WebDriver" class="headerlink" title="WebDriver"></a>WebDriver</h2><p>&emsp;&emsp;这里我们使用<em>Phantomjs</em>最为浏览器驱动，下面的方式是实现传入<em>Phantomjs</em>路径获取<em>WebDriver</em>的方法。其中随机产生UserAgent、打开JS运行开关，并设置了20S的默认超时时间。</p>
+<div class="hljs"><pre class=" language-hljs Java"><span class="hljs-comment"><code class="language-hljs Java"><span class="hljs-comment">/**</span>
+<span class="hljs-comment">* <span class="hljs-doctag">@DESC</span> 获取PhantomJSDriver</span>
+<span class="hljs-comment">* <span class="hljs-doctag">@param</span> phantomJS</span>
+<span class="hljs-comment">* <span class="hljs-doctag">@return</span> WebDriver</span>
+<span class="hljs-comment">*/</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> WebDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS)</span> </span>&#123;
+
+    System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);
+	
+    DesiredCapabilities desiredCapabilities = DesiredCapabilities
+        .phantomjs();
+    desiredCapabilities.setJavascriptEnabled(<span class="hljs-keyword">true</span>);
+    String headers = getHeaders();<span class="hljs-comment">// 生成随机User_Agent</span>
+    desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>,
+        headers);
+    desiredCapabilities.setCapability(
+        <span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, headers);
+		
+    PhantomJSDriver driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);
+    driver.manage().timeouts().implicitlyWait(<span class="hljs-number">20</span>, TimeUnit.SECONDS);
+
+    <span class="hljs-keyword">return</span> driver;
+&#125;</code></pre></div>
+
+<h2 id="模拟登录"><a href="#模拟登录" class="headerlink" title="模拟登录"></a>模拟登录</h2><p>&emsp;&emsp;这里主要是通过WebDriver访问网页，并在WebDriver上做一些实际的操作，例如查找网页元素、给网页元素赋值、运行相关的JS以及获取cookies等操作。</p>
+<div class="hljs"><pre class=" language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword"><code class="language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;
+
+    WebDriver wd = getPhantomJs(<span class="hljs-string">"Your Phantomjs Path"</span>);
+    wd.get(<span class="hljs-string">"Target Website"</span>);
+    wd.findElement(By.id(<span class="hljs-string">"txtUserName"</span>)).sendKeys(
+        <span class="hljs-string">"Your Account"</span>);
+    wd.findElement(By.id(<span class="hljs-string">"txtPassword"</span>)).sendKeys(<span class="hljs-string">"Your Passwd"</span>);
+    JavascriptExecutor js = (JavascriptExecutor) wd;
+    js.executeScript(<span class="hljs-string">"网站登录方法［一般会在JS中找到，或触发，或点击］"</span>);
+    <span class="hljs-keyword">try</span> &#123;<span class="hljs-comment">// 等待登录加载完成</span>
+    	Thread.sleep(PAUSE_TIME);
+    &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;
+    &#125;
+    Set<Cookie> coks = wd.manage().getCookies();
+    wd.quit();
+
+    <span class="hljs-comment">// 保存登录的Cookies</span>
+    Map<String, String> cookies = <span class="hljs-keyword">new</span> HashMap<String, String>();
+    <span class="hljs-keyword">for</span> (Cookie ck : coks)
+    	cookies.put(ck.getName(), ck.getValue());
+
+&#125;</code></pre></div>]]></content>
+      <categories>
+        <category>爬虫</category>
+      </categories>
+      <tags>
+        <tag>模拟登陆</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《模式识别：算法及其实现方法》读书笔记</title>
     <url>/2018/07/28/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB-%E7%AE%97%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<ol>
@@ -8757,66 +8820,131 @@ yum install -y libgtk*</code></pre></div>
       </tags>
   </entry>
   <entry>
-    <title>爬虫＋模拟登录</title>
-    <url>/2018/06/29/%E7%88%AC%E8%99%AB%EF%BC%8B%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在一些爬虫中，需要用到账号登录进入，才能看到需要爬取的内容，因此实现程序自动模拟登录非常有必要。</p>
-<p>&emsp;&emsp;目前大部分网站的登录，都是使用表单提交的方法实现的，这一类网站的模拟登录，相信度娘已经给出来的许多实例。还有一类网站不是使用网页自带表单提交的方法，网站自己实现了js方法来登录，这就需要进行特别的模拟浏览器行为。</p>
+    <title>简单Python爬取链接二手房信息</title>
+    <url>/2018/06/29/%E7%AE%80%E5%8D%95Python%E7%88%AC%E5%8F%96%E9%93%BE%E6%8E%A5%E4%BA%8C%E6%89%8B%E6%88%BF%E4%BF%A1%E6%81%AF/</url>
+    <content><![CDATA[<h2 id="Python爬虫"><a href="#Python爬虫" class="headerlink" title="Python爬虫"></a>Python爬虫</h2><p>&emsp;&emsp;博主目前学习Python爬虫，主要从简单的代码入手，然后逐步理解爬虫的精髓，逐渐学习复杂的爬虫技术等内容。</p>
 <a id="more"></a>
 
-<p>&emsp;&emsp;本文用到的主要技术手段包括Selenium+Phantomjs+Jsoup。</p>
-<h2 id="WebDriver"><a href="#WebDriver" class="headerlink" title="WebDriver"></a>WebDriver</h2><p>&emsp;&emsp;这里我们使用<em>Phantomjs</em>最为浏览器驱动，下面的方式是实现传入<em>Phantomjs</em>路径获取<em>WebDriver</em>的方法。其中随机产生UserAgent、打开JS运行开关，并设置了20S的默认超时时间。</p>
-<div class="hljs"><pre class=" language-hljs Java"><span class="hljs-comment"><code class="language-hljs Java"><span class="hljs-comment">/**</span>
-<span class="hljs-comment">* <span class="hljs-doctag">@DESC</span> 获取PhantomJSDriver</span>
-<span class="hljs-comment">* <span class="hljs-doctag">@param</span> phantomJS</span>
-<span class="hljs-comment">* <span class="hljs-doctag">@return</span> WebDriver</span>
-<span class="hljs-comment">*/</span>
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> WebDriver <span class="hljs-title">getPhantomJs</span><span class="hljs-params">(String phantomJS)</span> </span>&#123;
+<p>&emsp;&emsp;本文主要研究使用简单的线程、urllib、bs4.BeautifulSoup等爬取链家网站二手房信息。主要的原理在于链家网站具有比较简单的网页结构，同时也是静态网页；使用的手段，主要是通过网页之间的地址链接，不断获取房子详细页面的内容。</p>
+<h2 id="主要用到的包"><a href="#主要用到的包" class="headerlink" title="主要用到的包"></a>主要用到的包</h2><p>本文主要使用以下package:</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">import Queue
 
-    System.setProperty(<span class="hljs-string">"phantomjs.binary.path"</span>, phantomJS);
-	
-    DesiredCapabilities desiredCapabilities = DesiredCapabilities
-        .phantomjs();
-    desiredCapabilities.setJavascriptEnabled(<span class="hljs-keyword">true</span>);
-    String headers = getHeaders();<span class="hljs-comment">// 生成随机User_Agent</span>
-    desiredCapabilities.setCapability(<span class="hljs-string">"phantomjs.page.settings.userAgent"</span>,
-        headers);
-    desiredCapabilities.setCapability(
-        <span class="hljs-string">"phantomjs.page.customHeaders.User-Agent"</span>, headers);
-		
-    PhantomJSDriver driver = <span class="hljs-keyword">new</span> PhantomJSDriver(desiredCapabilities);
-    driver.manage().timeouts().implicitlyWait(<span class="hljs-number">20</span>, TimeUnit.SECONDS);
+import MysqlDB
+import parserURL
 
-    <span class="hljs-keyword">return</span> driver;
-&#125;</code></pre></div>
+import threading
+import time
+import urllib
 
-<h2 id="模拟登录"><a href="#模拟登录" class="headerlink" title="模拟登录"></a>模拟登录</h2><p>&emsp;&emsp;这里主要是通过WebDriver访问网页，并在WebDriver上做一些实际的操作，例如查找网页元素、给网页元素赋值、运行相关的JS以及获取cookies等操作。</p>
-<div class="hljs"><pre class=" language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword"><code class="language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;
+from bs4 import BeautifulSoup</code></pre></div>
+<p>使用的线程信息，但由于存在链家可能存在反扒措施，或对同一IP存在访问数限制，因此这里主要使用单一线程。</p>
+<h2 id="主要代码"><a href="#主要代码" class="headerlink" title="主要代码"></a>主要代码</h2><p>浏览页面网页解析：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 解析网页信息
+class parserURL(threading.Thread):
+    
+    counts &#x3D; 0
+    preurl &#x3D; ""
+    
+    def __init__(self, html_queue, two_html_queue):
+        threading.Thread.__init__(self)
+        self.html_queue &#x3D; html_queue
+        self.two_html_queue &#x3D; two_html_queue
 
-    WebDriver wd = getPhantomJs(<span class="hljs-string">"Your Phantomjs Path"</span>);
-    wd.get(<span class="hljs-string">"Target Website"</span>);
-    wd.findElement(By.id(<span class="hljs-string">"txtUserName"</span>)).sendKeys(
-        <span class="hljs-string">"Your Account"</span>);
-    wd.findElement(By.id(<span class="hljs-string">"txtPassword"</span>)).sendKeys(<span class="hljs-string">"Your Passwd"</span>);
-    JavascriptExecutor js = (JavascriptExecutor) wd;
-    js.executeScript(<span class="hljs-string">"网站登录方法［一般会在JS中找到，或触发，或点击］"</span>);
-    <span class="hljs-keyword">try</span> &#123;<span class="hljs-comment">// 等待登录加载完成</span>
-    	Thread.sleep(PAUSE_TIME);
-    &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;
-    &#125;
-    Set<Cookie> coks = wd.manage().getCookies();
-    wd.quit();
+    def run(self):
+        while True:
+            try:
+                self.detail_url_parser()
+                self.counts &#x3D; self.counts + 1
+                if self.counts % 100 &#x3D;&#x3D; 0:
+                    time.sleep(60)
+            except Exception:
+                self.html_queue.put(self.preurl)
+                print "parserURL: Hello, world"
+    
+    def detail_url_parser(self):
+        s &#x3D; self.html_queue.get()
+        print "parserURL: ", s
+        self.preurl &#x3D; s
+        s &#x3D; urllib.urlopen(s).read()
+        s &#x3D; BeautifulSoup(s, 'html.parser').find('ul', attrs&#x3D;&#123;'class':'house-lst'&#125;)
+        lis &#x3D; s.find_all('li')
+        
+        for li in lis:
+            detail &#x3D; li.find('h2').find('a')
+            detail_href &#x3D; detail['href']
+            self.two_html_queue.put("http:&#x2F;&#x2F;sh.lianjia.com" + detail_href)</code></pre></div>
+<p>解析房子详细页面信息，并将爬取内容写入数据库：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">sql &#x3D; "insert into house_infos(tag,type,total_price,house_type,house_area,house_avg_price,house_floor,house_year,house_desc,house_direction,first_pay,monthly_pay,district,district_address,city) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+## 解析二手房信息
+class parserErShouFang(threading.Thread):
+    
+    counts &#x3D; 0
+    preurl &#x3D; ""
+    
+    def __init__(self, db, tag, city, house_type, html_queue):
+        threading.Thread.__init__(self)
+        self.html_queue &#x3D; html_queue
+        self.db &#x3D; db
+        self.tag &#x3D; tag
+        self.city &#x3D; city
+        self.house_type &#x3D; house_type
+        
+    def run(self):
+        while True:
+            try:
+                self.ershoufang_html()
+                self.counts &#x3D; self.counts + 1
+                if self.counts % 500 &#x3D;&#x3D; 0:
+                    time.sleep(60)
+            except Exception:
+                print "parserErShowFang: Hello, world!"
+                self.html_queue.put(self.preurl)
+    
+    def ershoufang_html(self):
+        param &#x3D; []
 
-    <span class="hljs-comment">// 保存登录的Cookies</span>
-    Map<String, String> cookies = <span class="hljs-keyword">new</span> HashMap<String, String>();
-    <span class="hljs-keyword">for</span> (Cookie ck : coks)
-    	cookies.put(ck.getName(), ck.getValue());
+        h &#x3D; self.html_queue.get()
+        self.preurl &#x3D; h
+        print "sdf: ", h
+        s &#x3D; urllib.urlopen(h).read()
+        s &#x3D; BeautifulSoup(s, 'html.parser')
+        
+        param.append(self.tag)
+        param.append(self.house_type)
+        
+        # 价格信息
+        price &#x3D; s.find('div', attrs&#x3D;&#123;'class':'price'&#125;).find('div', attrs&#x3D;&#123;'class':'mainInfo bold'&#125;).text
+        param.append(price)
+        # 户型信息
+        huxing &#x3D; s.find('div', attrs&#x3D;&#123;'class':'room'&#125;).find('div', attrs&#x3D;&#123;'class':'mainInfo'&#125;).text.replace(' ', '')
+        param.append(huxing)
+        # 面积信息
+        area &#x3D; s.find('div', attrs&#x3D;&#123;'class':'area'&#125;).find('div', attrs&#x3D;&#123;'class':'mainInfo'&#125;).text.replace(' ', '')
+        param.append(area)
 
-&#125;</code></pre></div>]]></content>
+        lis &#x3D; s.find('table', attrs&#x3D;&#123;'class':'aroundInfo'&#125;).find_all('td')
+        for l in lis:
+            p &#x3D; l.text.replace('\t', '').replace('\r\n', '').replace(' ', '').replace('\n', '')
+            tmp &#x3D; p.split('\n')
+            for q in tmp:
+                pq &#x3D; q.split(u'\uff1a')
+                if pq[0].startswith(u'房源编号'):
+                    break;
+                if len(pq) > 1:
+                    param.append(pq[1])
+                    print pq[0], pq[1]
+        param.append(self.city)
+        
+        self.db.execute(sql, param)</code></pre></div>
+
+<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><p>&emsp;&emsp;博主采用的手段比较低级，主要通过网页中的标签来获取相应的数据，后期可能通过xpath、正则表达式等方式来获取相应的内容。</p>
+]]></content>
       <categories>
         <category>爬虫</category>
       </categories>
       <tags>
-        <tag>模拟登陆</tag>
+        <tag>调研</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -8975,134 +9103,6 @@ mvn clean install package -DskipTests   -Dmaven.javadoc.skip&#x3D;true  -X -rf :
         <tag>CDH</tag>
         <tag>编译</tag>
         <tag>部署</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>简单Python爬取链接二手房信息</title>
-    <url>/2018/06/29/%E7%AE%80%E5%8D%95Python%E7%88%AC%E5%8F%96%E9%93%BE%E6%8E%A5%E4%BA%8C%E6%89%8B%E6%88%BF%E4%BF%A1%E6%81%AF/</url>
-    <content><![CDATA[<h2 id="Python爬虫"><a href="#Python爬虫" class="headerlink" title="Python爬虫"></a>Python爬虫</h2><p>&emsp;&emsp;博主目前学习Python爬虫，主要从简单的代码入手，然后逐步理解爬虫的精髓，逐渐学习复杂的爬虫技术等内容。</p>
-<a id="more"></a>
-
-<p>&emsp;&emsp;本文主要研究使用简单的线程、urllib、bs4.BeautifulSoup等爬取链家网站二手房信息。主要的原理在于链家网站具有比较简单的网页结构，同时也是静态网页；使用的手段，主要是通过网页之间的地址链接，不断获取房子详细页面的内容。</p>
-<h2 id="主要用到的包"><a href="#主要用到的包" class="headerlink" title="主要用到的包"></a>主要用到的包</h2><p>本文主要使用以下package:</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">import Queue
-
-import MysqlDB
-import parserURL
-
-import threading
-import time
-import urllib
-
-from bs4 import BeautifulSoup</code></pre></div>
-<p>使用的线程信息，但由于存在链家可能存在反扒措施，或对同一IP存在访问数限制，因此这里主要使用单一线程。</p>
-<h2 id="主要代码"><a href="#主要代码" class="headerlink" title="主要代码"></a>主要代码</h2><p>浏览页面网页解析：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 解析网页信息
-class parserURL(threading.Thread):
-    
-    counts &#x3D; 0
-    preurl &#x3D; ""
-    
-    def __init__(self, html_queue, two_html_queue):
-        threading.Thread.__init__(self)
-        self.html_queue &#x3D; html_queue
-        self.two_html_queue &#x3D; two_html_queue
-
-    def run(self):
-        while True:
-            try:
-                self.detail_url_parser()
-                self.counts &#x3D; self.counts + 1
-                if self.counts % 100 &#x3D;&#x3D; 0:
-                    time.sleep(60)
-            except Exception:
-                self.html_queue.put(self.preurl)
-                print "parserURL: Hello, world"
-    
-    def detail_url_parser(self):
-        s &#x3D; self.html_queue.get()
-        print "parserURL: ", s
-        self.preurl &#x3D; s
-        s &#x3D; urllib.urlopen(s).read()
-        s &#x3D; BeautifulSoup(s, 'html.parser').find('ul', attrs&#x3D;&#123;'class':'house-lst'&#125;)
-        lis &#x3D; s.find_all('li')
-        
-        for li in lis:
-            detail &#x3D; li.find('h2').find('a')
-            detail_href &#x3D; detail['href']
-            self.two_html_queue.put("http:&#x2F;&#x2F;sh.lianjia.com" + detail_href)</code></pre></div>
-<p>解析房子详细页面信息，并将爬取内容写入数据库：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">sql &#x3D; "insert into house_infos(tag,type,total_price,house_type,house_area,house_avg_price,house_floor,house_year,house_desc,house_direction,first_pay,monthly_pay,district,district_address,city) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-## 解析二手房信息
-class parserErShouFang(threading.Thread):
-    
-    counts &#x3D; 0
-    preurl &#x3D; ""
-    
-    def __init__(self, db, tag, city, house_type, html_queue):
-        threading.Thread.__init__(self)
-        self.html_queue &#x3D; html_queue
-        self.db &#x3D; db
-        self.tag &#x3D; tag
-        self.city &#x3D; city
-        self.house_type &#x3D; house_type
-        
-    def run(self):
-        while True:
-            try:
-                self.ershoufang_html()
-                self.counts &#x3D; self.counts + 1
-                if self.counts % 500 &#x3D;&#x3D; 0:
-                    time.sleep(60)
-            except Exception:
-                print "parserErShowFang: Hello, world!"
-                self.html_queue.put(self.preurl)
-    
-    def ershoufang_html(self):
-        param &#x3D; []
-
-        h &#x3D; self.html_queue.get()
-        self.preurl &#x3D; h
-        print "sdf: ", h
-        s &#x3D; urllib.urlopen(h).read()
-        s &#x3D; BeautifulSoup(s, 'html.parser')
-        
-        param.append(self.tag)
-        param.append(self.house_type)
-        
-        # 价格信息
-        price &#x3D; s.find('div', attrs&#x3D;&#123;'class':'price'&#125;).find('div', attrs&#x3D;&#123;'class':'mainInfo bold'&#125;).text
-        param.append(price)
-        # 户型信息
-        huxing &#x3D; s.find('div', attrs&#x3D;&#123;'class':'room'&#125;).find('div', attrs&#x3D;&#123;'class':'mainInfo'&#125;).text.replace(' ', '')
-        param.append(huxing)
-        # 面积信息
-        area &#x3D; s.find('div', attrs&#x3D;&#123;'class':'area'&#125;).find('div', attrs&#x3D;&#123;'class':'mainInfo'&#125;).text.replace(' ', '')
-        param.append(area)
-
-        lis &#x3D; s.find('table', attrs&#x3D;&#123;'class':'aroundInfo'&#125;).find_all('td')
-        for l in lis:
-            p &#x3D; l.text.replace('\t', '').replace('\r\n', '').replace(' ', '').replace('\n', '')
-            tmp &#x3D; p.split('\n')
-            for q in tmp:
-                pq &#x3D; q.split(u'\uff1a')
-                if pq[0].startswith(u'房源编号'):
-                    break;
-                if len(pq) > 1:
-                    param.append(pq[1])
-                    print pq[0], pq[1]
-        param.append(self.city)
-        
-        self.db.execute(sql, param)</code></pre></div>
-
-<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><p>&emsp;&emsp;博主采用的手段比较低级，主要通过网页中的标签来获取相应的数据，后期可能通过xpath、正则表达式等方式来获取相应的内容。</p>
-]]></content>
-      <categories>
-        <category>爬虫</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>

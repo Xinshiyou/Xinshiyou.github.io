@@ -198,23 +198,23 @@
 </ul>
 <h2 id="报错二"><a href="#报错二" class="headerlink" title="报错二"></a>报错二</h2><ul>
 <li><em>错误信息</em>:<br>  Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name ‘httpPutFormContentFilter’ defined in class path resource [org/springframework/boot/autoconfigure/web/servlet/WebMvcAutoConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.boot.web.servlet.filter.OrderedHttpPutFormContentFilter]: Factory method ‘httpPutFormContentFilter’ threw exception; nested exception is java.lang.VerifyError: Cannot inherit from final class</li>
-<li><em>解决方案</em>：<br>  更换Spring-Parent的版本。  <div class="hljs"><pre class=" language-hljs java">   <span class="hljs-comment"><code class="language-hljs java">   <span class="hljs-comment">//更改之前</span>
-   <dependency>
-	<groupid>org.springframework.boot</groupid>
-	<artifactid>spring-boot-dependencies</artifactid>
-	<version>2.0.2.RELEASE</version>
-	<scope>import</scope>
-	<type>pom</type>
-   </dependency>
+<li><em>解决方案</em>：<br>  更换Spring-Parent的版本。  <div class="hljs"><pre class=" language-hljs xml"><code class="language-hljs xml">   //更改之前
+   <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag"><!--<span class="hljs-name"-->groupId</span>&gt;
+	<span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-dependencies<span class="hljs-tag"><!--<span class="hljs-name"-->artifactId</span>&gt;
+	<span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>2.0.2.RELEASE<span class="hljs-tag"><!--<span class="hljs-name"-->version</span>&gt;
+	<span class="hljs-tag">&lt;<span class="hljs-name">scope</span>&gt;</span>import<span class="hljs-tag"><!--<span class="hljs-name"-->scope</span>&gt;
+	<span class="hljs-tag">&lt;<span class="hljs-name">type</span>&gt;</span>pom<span class="hljs-tag"><!--<span class="hljs-name"-->type</span>&gt;
+   <span class="hljs-tag"><!--<span class="hljs-name"-->dependency</span>&gt;
    
-   <span class="hljs-comment">// 更改之后</span>
-    <dependency>
-	<groupid>org.springframework.boot</groupid>
-	<artifactid>spring-boot-dependencies</artifactid>
-	<version>1.5.1.RELEASE</version>
-	<scope>import</scope>
-	<type>pom</type>
-</dependency></code></span></pre></div>
+   // 更改之后
+    <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag"><!--<span class="hljs-name"-->groupId</span>&gt;
+	<span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-dependencies<span class="hljs-tag"><!--<span class="hljs-name"-->artifactId</span>&gt;
+	<span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.5.1.RELEASE<span class="hljs-tag"><!--<span class="hljs-name"-->version</span>&gt;
+	<span class="hljs-tag">&lt;<span class="hljs-name">scope</span>&gt;</span>import<span class="hljs-tag"><!--<span class="hljs-name"-->scope</span>&gt;
+	<span class="hljs-tag">&lt;<span class="hljs-name">type</span>&gt;</span>pom<span class="hljs-tag"><!--<span class="hljs-name"-->type</span>&gt;
+<span class="hljs-tag"><!--<span class="hljs-name"-->dependency</span>&gt;</code></pre></div>
 
 </li>
 </ul>
