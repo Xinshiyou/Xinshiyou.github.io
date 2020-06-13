@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      601 字
+      602 字
     </span>
   
 
@@ -194,6 +194,7 @@
             <article class="markdown-body">
               <p>  最近在学习deeplearning4j，简称为dl4j。其中有许多示例，可以编译源码以后，运行runexample.sh来查看相关的结果。其中有分词的例子，所以想要学习一下分词，特别是中文分词的实例。</p>
 <a id="more"></a>
+
 <p>  关于中文分词，比较好的一个例子就是<a href="http://blog.csdn.net/a398942089/article/details/51970691" target="_blank" rel="noopener">DeepLearning4J入门——让计算机阅读《天龙八部》</a>，版主也想要研究一下该例子，并通过学习加深对分词的理解。</p>
 <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>  版主使用的环境，基本上与原文作者使用的类似：</p>
 <ol>
@@ -207,7 +208,7 @@
 <ol>
 <li>直接下载【天龙八部】，用Eclipse直接打开，发现时乱码。将文本的格式设置为UTF-8无BOM以后，可以正常显示；</li>
 <li>使用MAVEN下载FNLP-CORE时，发现速度非常慢。可以直接到FNLP的百度云盘下载相关JAR包，或自行编译FNLP源码得到JAR包，然后再本地使用<strong>mvn install:install-fiile</strong>安装到本地库中；</li>
-<li>关于代码运行的顺序问题：首先运行<em>processFile</em>的代码，这样可以通过tlbb.txt生成分词文件tlbb<em>t.txt；然后通过<em>ZhWord2Vector</em>来获得结果。<br>为了后来学习者减少雷区，版主将Eclipse工程结构送上：<br><img src="003.png" srcset="/img/loading.gif" alt="pp"><br><img src="004.png" srcset="/img/loading.gif" alt="qq"><br>版主的结构与原文类似，但有一些差异，各种差异读者可自行体会\</em>^_。</li>
+<li>关于代码运行的顺序问题：首先运行<em>processFile</em>的代码，这样可以通过tlbb.txt生成分词文件tlbb_t.txt；然后通过<em>ZhWord2Vector</em>来获得结果。<br>为了后来学习者减少雷区，版主将Eclipse工程结构送上：<br><img src="003.png" srcset="/img/loading.gif" alt="pp"><br><img src="004.png" srcset="/img/loading.gif" alt="qq"><br>版主的结构与原文类似，但有一些差异，各种差异读者可自行体会_^_。</li>
 </ol>
 <p>分词的结果，与参考文中的结果也略有差异，如果有知晓原因的，请告诉版主：<br><img src="http://img.blog.csdn.net/20161128223852350" srcset="/img/loading.gif" alt="ll"></p>
 <p>版主使用的训练参数：</p>

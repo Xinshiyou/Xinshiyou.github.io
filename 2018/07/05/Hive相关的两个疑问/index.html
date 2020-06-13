@@ -198,13 +198,15 @@
 <li>我们知道JDBC是无法做缓存的，那么HUE是如何改善查询速度的？</li>
 </ol>
 <a id="more"></a>
+
 <p>  本部分研究第一个问题，即客户端的状态是否影响Yarn上正在运行的任务。</p>
 <p>  首先我们从现象谈起然后逐渐找到问题的答案，既是一个解疑的过程也是一个探究研究问题思路的过程，更是一个增长知识的过程。</p>
 <h2 id="1-现象描述"><a href="#1-现象描述" class="headerlink" title="1. 现象描述"></a>1. 现象描述</h2><p>  在Hadoop生态中执行Hive任务时，经常会出现各种各样的问题。今天发现了一个特别有意思的事情，执行调度的同学说他们执行的任务，在beeline调用端任务失败，但业务同学去数据库查看相应的数据记录，初步发现没有异常同步成功。这就引起了一个问题：当beeline异常断开时，当前运行的yarn的任务是否同步退出？还是继续执行完成？</p>
 <p>  根据这个问题，我首先做了现象的重现，结果发现：断开连接之后，执行在yarn上的任务会同步结束。分别通过HIVE CLI、Beeline、JDBC三种方式做得测试，结果都表明断开连接之后，任务无法接续运行。除了一种情况那就是HIVE CLI模式下，直接通过KILL命令杀死Hive进程，Hive客户端的JVM直接退出，但正在Yarn上运行的任务未退出继续运行，直到结束。</p>
 <h2 id="2-三种访问Hive的路径"><a href="#2-三种访问Hive的路径" class="headerlink" title="2. 三种访问Hive的路径"></a>2. 三种访问Hive的路径</h2><p><img src="001.png" srcset="/img/loading.gif" alt="Hive的三种访问方式"><br>其中Hive Beeline使用的也是Thrift API访问Hive，其基本原理与JDBC访问类似。</p>
 <h2 id="3-寻根问底"><a href="#3-寻根问底" class="headerlink" title="3. 寻根问底"></a>3. 寻根问底</h2><h3 id="3-1-Hive-CLI"><a href="#3-1-Hive-CLI" class="headerlink" title="3.1. Hive CLI"></a>3.1. Hive CLI</h3><ol>
-<li>主要类：<strong>org.apache.hadoop.hive.cli.CliDriver</strong></li>
+<li><p>主要类：<strong>org.apache.hadoop.hive.cli.CliDriver</strong></p>
+</li>
 <li><p>ctrl+c方式断开：<br>CliDriver注册了信号处理：</p>
 <div class="hljs"><pre class=" language-hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword"><code class="language-hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> interruptRequested;
 
@@ -258,7 +260,8 @@ shell_cmd = <span class="hljs-keyword">new</span> VariableSubstitution(<span cla
 </li>
 </ol>
 <h3 id="3-2-Beeline"><a href="#3-2-Beeline" class="headerlink" title="3.2. Beeline"></a>3.2. Beeline</h3><ol>
-<li>访问主类： <strong>org.apache.hive.beeline.BeeLine</strong></li>
+<li><p>访问主类： <strong>org.apache.hive.beeline.BeeLine</strong></p>
+</li>
 <li><p>通过ctrl+c方式断开：通过ctrl+c方式断开连接，Hive会捕捉到相应的信号，从而进行相关处理。信号处理的handler定义如下</p>
 <div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java">## Apache Hive： Beeline
   <span class="hljs-keyword">private</span> Statement stmt = <span class="hljs-keyword">null</span>;
@@ -304,7 +307,7 @@ SessionHandle sessionHandle = context.getSessionHandle();
     LOG.warn(<span class="hljs-string">"Failed to close session: "</span> + e, e);
   }
 }</code></pre></div>
-<p>此处cliService的关闭最终会导致 <strong>HiveSessionImpl</strong> 的关闭操作，其中关闭路径为：<strong>CLIService.closeSession—&gt;SessionManager.closeSession—&gt; HiveSession.close</strong></p>
+<p>此处cliService的关闭最终会导致 <strong>HiveSessionImpl</strong> 的关闭操作，其中关闭路径为：<strong>CLIService.closeSession–&gt;SessionManager.closeSession–&gt; HiveSession.close</strong></p>
 <div class="hljs"><pre class=" language-hljs java"><code class="language-hljs java">## HiveSessionImpl
   <span class="hljs-keyword">try</span> {
       acquire(<span class="hljs-keyword">true</span>, <span class="hljs-keyword">false</span>);

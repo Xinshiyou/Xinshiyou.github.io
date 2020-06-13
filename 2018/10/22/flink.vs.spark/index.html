@@ -197,7 +197,6 @@
 <p>  讨论到Flinke，与其竞争对手相比，其不仅是一些新兴技术，而且正在加速获得动力，并迅速向企业化推进。Flink支持流处理、批处理数据，同时集成对机器学习和图处理的支持。</p>
 <p>  <strong>但在当技术泛滥的当下，我们是否真的需要一项新的流处理技术?</strong> 目前，当下的Apache Spark已经提供了相似的特征与功能，并且最近几年已经成为一种非常流行的工具。Curt Monash对讨论的观点是：Flink基本上是德国的Spark，我认为是不必要的。因此，我们对比一下Flink与Spark的一些特点，来判断Flink是否与Spark竞争，或Flink仅仅是另一个大数据生态的泛滥工具？首先，我们比较了一下两种技术。</p>
 <h2 id="相同之处"><a href="#相同之处" class="headerlink" title="相同之处"></a>相同之处</h2><p>  它们都是Apache组织内的开源工具。每一个都是独立的解决方案，但他们通常集成到大数据环境中，例如Hadoop(YARN,HDFS,以及Kafka)。Spark和Flink都提供了相似的特征与API，例如支持SQL查询，图处理，以及批处理和流处理。</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -206,8 +205,7 @@
 <th>Apache Spark</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>SQL查询</td>
 <td>MRQL</td>
 <td>Spark SQL</td>
@@ -257,9 +255,7 @@
 <td>Kafka, Amazon S3, ES, Twitter, etc</td>
 <td>Kafka, Amazon S3, ES, Twitter, etc</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>  下面的代码说明了他们的相似性，但不尽相同。每段代码包含了固定的元素，以及计算最高分布频次的产品。一撇就可以看出每个技术方法的高度相似性，优劣与劣势也具有平衡性。只有深入挖掘不同框架的特征，才能够识别出不同姓。在这个特殊的案例中，可以看出在Flink中的maxBy函数在Spark中没有受到支持，并且Spark需要使用窗口函数，但这类API通常具有相同的数据处理构建方式。</p>
 <p><img src="./code_flink_spark.png" srcset="/img/loading.gif" alt="Flink vs. Spark编码对比: Java中的代码比较"></p>
 <h2 id="批处理-vs-水龙头"><a href="#批处理-vs-水龙头" class="headerlink" title="批处理 vs 水龙头"></a>批处理 vs 水龙头</h2><p>  Flink与Spark的最大不同之处在于不同框架的计算理念不同。Spark针对批处理和流处理使用“批”的概念，而Flink是基于单纯的流方式。想想一下收集与运输水的过程： Spark处理的方式为混合大小的桶，Flink是直接按照水龙头的方式直接处理。Flink与Spark的不同之处列列举如下<br>| Spark vs. Flink | Apache Spark | Apache Flink |<br>| - | - | - |<br>| Steaming | 微“批”流 | 基于事件的流 |<br>| Batch Processing | 内存处理，DAG组织算子 | 流悠闲方式：”批”是有限的流 |<br>| 语言 | Scala | Java |<br>| 优化|全阶段代码生成与优化，DataSet查询优化执行计划。手动内存调优非常重要 | 自动化优化：根据输入、输出、算子，主动选择合适方法。C++风格的内存管理 |<br>| 数据重用与迭代 | DAG执行计划：每一个迭代需要调度与运行相同的数据。内存缓存与重用 | 执行引擎中迭代处理，基于圆形数据流(一个迭代，一个计划)。另外，提供了Delta迭代来处理改变部分数据 |<br>| 延迟性 | 批处理导致高延迟，秒级别的延迟 | 微妙级别的低延迟 |<br>| 有序流 | 新版本中，提供了基于事件处理的基本方式 | 基于时间线，有序流可以被很好的处理 |<br>| 支持 | 支持所有的hadoop分布：Cloudera, Hortonworks, etc. Databricks提供了晕平台和支持包 | 使用邮件列表或论坛 |</p>
