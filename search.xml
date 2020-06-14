@@ -212,271 +212,6 @@ end;</code></pre></div>
       </tags>
   </entry>
   <entry>
-    <title>Chromeheadless安装与使用</title>
-    <url>/2018/07/01/Chromeheadless%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>&emsp;&emsp;如果是小规模爬虫或模拟效果要求不高的话，使用Selenium HtmlUniDriver基本可以满足需求。但HtmlUnitDriver是基于JS模拟浏览器原理，存在许多浏览器可以做，但它其实无法操作的功能，比如截图等高级功能。</p>
-<a id="more"></a>
-
-<p>&emsp;&emsp;之前爬虫使用Phantomjs，感觉效果还不错，而且使用方便。Phantomjs可以设置远程模式，方便本地调试；方便设置代理，但这里有一个坑，就是<em>代理地址不能是https协议</em>，不然会出问题。但Phantomjs已经目前已经停止更新与维护，而且Google Chrome推出了Headless版本，使用浏览器模式更加符合真是的环境。</p>
-<h2 id="安装采坑"><a href="#安装采坑" class="headerlink" title="安装采坑"></a>安装采坑</h2><p>&emsp;&emsp;Chrome Headless安装没有想象中的简单。刚开始直接通过安装包或添加Chrome源安装均失败，失败的原因是存在各种各样的依赖包。后来找到的Chrome安装的一个脚本，使用这个脚本能够不断地安装缺少的依赖包，从而能够安航成功。</p>
-<h3 id="安装系统"><a href="#安装系统" class="headerlink" title="安装系统"></a>安装系统</h3><p>Centos6.9Final</p>
-<h3 id="安装方式一-通过添加chrome源来安装chrome"><a href="#安装方式一-通过添加chrome源来安装chrome" class="headerlink" title="安装方式一:通过添加chrome源来安装chrome"></a>安装方式一:通过添加chrome源来安装chrome</h3><div class="hljs"><pre class=" language-hljs #"><code class="language-hljs #">## 添加Chrome源
-[google]
-name&#x3D;Google – i386
-baseurl&#x3D;http:&#x2F;&#x2F;dl.google.com&#x2F;linux&#x2F;rpm&#x2F;stable&#x2F;i386
-enabled&#x3D;1
-gpgcheck&#x3D;1
-gpgkey&#x3D;https:&#x2F;&#x2F;dl-ssl.google.com&#x2F;linux&#x2F;linux_signing_key.pub
-
-64位系统：
-[google64]
-name&#x3D;Google – x86_64
-baseurl&#x3D;http:&#x2F;&#x2F;dl.google.com&#x2F;linux&#x2F;rpm&#x2F;stable&#x2F;x86_64
-enabled&#x3D;1
-gpgcheck&#x3D;1
-gpgkey&#x3D;https:&#x2F;&#x2F;dl-ssl.google.com&#x2F;linux&#x2F;linux_signing_key.pub
-
-## 安装
-1.sudo yum install google-chrome-stable 来安装最新稳定版
-2.sudo yum install google-chrome-unstable 最新版chrome</code></pre></div>
-<p>这里有个问题，可能博主使用的Centos环境有问题。通过此方式安装之后存在各种依赖问题，导致无法安装成功。</p>
-<h3 id="安装方式二：下载安装"><a href="#安装方式二：下载安装" class="headerlink" title="安装方式二：下载安装"></a>安装方式二：下载安装</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## Ubuntu系统安装，此方通过修改URL路径，适用于Centos
-sudo apt-get install libxss1 libappindicator1 libindicator7
-wget https:&#x2F;&#x2F;dl.google.com&#x2F;linux&#x2F;direct&#x2F;google-chrome-stable_current_amd64.deb
-sudo dpkg -i google-chrome-stable_current_amd64.deb
-sudo apt-get install -f</code></pre></div>
-<p>跟上面一种方式一样， 存在各种依赖问题，导致无法安装成功。</p>
-<h3 id="使用脚本安装"><a href="#使用脚本安装" class="headerlink" title="使用脚本安装"></a>使用脚本安装</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl https:&#x2F;&#x2F;intoli.com&#x2F;install-google-chrome.sh | bash</code></pre></div>
-
-<p>&emsp;&emsp;通过上网查阅发现<a href="https://intoli.com这个网站是专门从事headless" target="_blank" rel="noopener">https://intoli.com这个网站是专门从事headless</a> browsers使用简化，提供云服务的一家公司。其中在该公司的博客中，可以看到许多关于Google Chrome的文章。</p>
-<p>&emsp;&emsp;该公司提供的这个脚本，能够自动查找相关依赖，并安装。这样我们就不必担心依赖问题，导致无法安装成功。</p>
-<h2 id="使用进阶"><a href="#使用进阶" class="headerlink" title="使用进阶"></a>使用进阶</h2><p>&emsp;&emsp;安装Chrome Headless之后，就可以直接使用了。不过这里有一个注意的点，那就是需要安装ChromeDriver这个东东。</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 下载
-wget https:&#x2F;&#x2F;chromedriver.storage.googleapis.com&#x2F;2.40&#x2F;chromedriver_linux64.zip
-
-## 解压
-tar xvf chromedriver_linux64.zip
-
-## 权限
-chmod 755 chromedriver</code></pre></div>
-
-
-<h3 id="初级使用"><a href="#初级使用" class="headerlink" title="初级使用"></a>初级使用</h3><p>&emsp;&emsp;初级使用的目标是可以运行起来，不报错，能够完成预期的目标。<br>代码如下：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   &#x2F;**
- * @desc main method
- * @param args
- * @throws IOException
- *&#x2F;
-public static void main(String[] args) throws IOException &#123;
-
-       String driverPath &#x3D; "&#x2F;root&#x2F;chrome&#x2F;chromedriver";
-       String targetURL &#x3D; "";
-
-	System.setProperty("webdriver.chrome.driver", driverPath);
-	ChromeDriver driver &#x3D; getDriver();
-
-       &#x2F;&#x2F; 对网页内容作处理
-       Document doc &#x3D; getDocument(targetURL);
-
-       &#x2F;&#x2F; 如果对网页做操作，直接使用Driver
-
-&#125;
-
-&#x2F;**
- * @desc get chrome driver
- *&#x2F;
-public static ChromeDriver getDriver() &#123;
-
-	String userAgent &#x3D; AppForum.getAgents();
-	ChromeOptions options &#x3D; new ChromeOptions();
-	options.setBinary("&#x2F;usr&#x2F;bin&#x2F;google-chrome-stable");
-	options.addArguments("--no-sandbox", "--test-type"，"--headless", "--disable-gpu");
-
-	DesiredCapabilities capabilities &#x3D; DesiredCapabilities.chrome();
-	capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-	capabilities.setJavascriptEnabled(true);
-
-	ChromeDriver driver &#x3D; new ChromeDriver(capabilities);
-	driver.manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
-
-	return driver;
-&#125;
-
-&#x2F;**
- * @desc crawler html content
- * @param url
- *&#x2F;
-public static Document getDocument(String url) &#123;
-
-	ChromeDriver driver &#x3D; getDriver();
-	Document doc &#x3D; null;
-	try &#123;
-		driver.get(url);
-		doc &#x3D; Jsoup.parse(driver.getPageSource());
-	&#125; catch (Exception e) &#123;
-	&#125; finally &#123;
-		try &#123;
-			driver.quit();
-		&#125; catch (Exception e) &#123;
-		&#125;
-	&#125;
-
-	return doc;
-&#125;</code></pre></div>
-
-
-<h3 id="中阶使用"><a href="#中阶使用" class="headerlink" title="中阶使用"></a>中阶使用</h3><p>中阶也即提高级，主要区别是开发研究一些重要的功能，比如时候网速、加载速度等内容</p>
-<ol>
-<li>禁止图片加载</li>
-<li>等待加载</li>
-<li>使用UserAgent代理</li>
-<li>禁止一些选项的加载</li>
-<li>使用Driver执行特定JS等</li>
-</ol>
-<p>代码如下：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   &#x2F;**
- * @desc main method
- * @param args
- * @throws IOException
- *&#x2F;
-public static void main(String[] args) throws IOException &#123;
-
-       String driverPath &#x3D; "&#x2F;root&#x2F;chrome&#x2F;chromedriver";
-       String targetURL &#x3D; "";
-
-	System.setProperty("webdriver.chrome.driver", driverPath);
-	ChromeDriver driver &#x3D; getDriver();
-
-       &#x2F;&#x2F; 对网页内容作处理
-       Document doc &#x3D; getDocument(targetURL);
-
-       &#x2F;&#x2F; 如果对网页做操作，直接使用Driver
-       &#x2F;&#x2F; 执行JS：滚动效果
-       driver.executeScript("scrollTo(0,10000)");
-
-       &#x2F;&#x2F; 等待加载示例
-       &#x2F;&#x2F; 1. 超时加载等待
-       driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-
-       &#x2F;&#x2F; 2. 等待加载组件
-       WebDriverWait wait &#x3D; new WebDriverWait(driver, 20);
-       wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".red_box")));
-
-&#125;
-
-&#x2F;**
- * @desc get chrome driver
- *&#x2F;
-public static ChromeDriver getDriver() &#123;
-
-	HashMap<String, Object> prefs &#x3D; new HashMap<String, Object>();
-	prefs.put("profile.default_content_settings", 2);
-	prefs.put("profile.default_content_setting_values", 2);
-	prefs.put("profile.managed_default_content_settings.images", 2);
-
-	String userAgent &#x3D; AppForum.getAgents();
-	ChromeOptions options &#x3D; new ChromeOptions();
-	options.setBinary("&#x2F;usr&#x2F;bin&#x2F;google-chrome-stable");
-	options.setExperimentalOption("prefs", prefs);
-	options.addArguments("--user-agent&#x3D;" + userAgent，"--no-sandbox", "--test-type");
-	options.addArguments("--disable-infobars", "--headless", "--disable-gpu"，"--enable-strict-powerful-feature-restrictions");
-	options.addArguments("--disable-plugins", "--disable-images", "--start-maximized");
-
-	DesiredCapabilities capabilities &#x3D; DesiredCapabilities.chrome();
-	capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-	capabilities.setJavascriptEnabled(true);
-
-	return new ChromeDriver(capabilities);
-&#125;
-
-&#x2F;**
- * @desc crawler html content
- * @param url
- *&#x2F;
-public static Document getDocument(String url) &#123;
-
-	ChromeDriver driver &#x3D; getDriver();
-	Document doc &#x3D; null;
-	try &#123;
-		driver.get(url);
-		doc &#x3D; Jsoup.parse(driver.getPageSource());
-	&#125; catch (Exception e) &#123;
-	&#125; finally &#123;
-		try &#123;
-			driver.quit();
-			driver.close();
-		&#125; catch (Exception e) &#123;
-		&#125;
-	&#125;
-
-	return doc;
-&#125;</code></pre></div>
-
-
-<h3 id="高级使用"><a href="#高级使用" class="headerlink" title="高级使用"></a>高级使用</h3><h4 id="设置代理服务器"><a href="#设置代理服务器" class="headerlink" title="设置代理服务器"></a>设置代理服务器</h4><p>&emsp;&emsp;代理服务器的设置，可以参考Google-chrome的帮助信息，在代码层面很容易实现。</p>
-<p><img src="001.png" srcset="/img/loading.gif" alt="Google-chrome帮助信息"></p>
-<h4 id="Driver生命周期"><a href="#Driver生命周期" class="headerlink" title="Driver生命周期"></a>Driver生命周期</h4><p>&emsp;&emsp;在我们的代码中“new ChromeDriver()”的时候，产生了多个外部进程，如下所示</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">root      8508  8499  1 04:26 ?        00:00:01 &#x2F;usr&#x2F;bin&#x2F;google-chrome-stable --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-gpu --disable-hang-monitor --disable-images --disable-infobars --disable-plugins --disable-popup-blocking --disable-prompt-on-repost --disable-sync --disable-web-resources --enable-automation --enable-logging --enable-strict-powerful-feature-restrictions --force-fieldtrials&#x3D;SiteIsolationExtensions&#x2F;Control --headless --ignore-certificate-errors --load-extension&#x3D;&#x2F;tmp&#x2F;.org.chromium.Chromium.7tAd3h&#x2F;internal --log-level&#x3D;0 --metrics-recording-only --no-first-run --no-sandbox --password-store&#x3D;basic --remote-debugging-port&#x3D;0 --start-maximized --test-type --use-mock-keychain --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --user-data-dir&#x3D;&#x2F;tmp&#x2F;.org.chromium.Chromium.4Sd7ob data:,
-root      8515  8508  0 04:26 ?        00:00:00 &#x2F;opt&#x2F;google&#x2F;chrome&#x2F;chrome --type&#x3D;zygote --no-sandbox --enable-logging --headless --log-level&#x3D;0 --headless --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter
-root      8539  8508  0 04:26 ?        00:00:00 &#x2F;opt&#x2F;google&#x2F;chrome&#x2F;chrome --type&#x3D;gpu-process --enable-logging --headless --log-level&#x3D;0 --no-sandbox --headless --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --gpu-preferences&#x3D;KAAAAAAAAACAAACAAQAAAAAAAAAAAGAAEAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA --use-gl&#x3D;swiftshader-webgl --override-use-software-gl-for-tests --headless --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --enable-logging --log-level&#x3D;0 --service-request-channel-token&#x3D;84633B7AB3844DE44C0ADE5922EAFCB4
-root      8551  8515  9 04:26 ?        00:00:12 &#x2F;opt&#x2F;google&#x2F;chrome&#x2F;chrome --type&#x3D;renderer --enable-automation --enable-logging --log-level&#x3D;0 --no-sandbox --test-type --use-gl&#x3D;swiftshader-webgl --disable-gpu-compositing --service-pipe-token&#x3D;0D2C2CC1CF67A5903FDFECE210FEB597 --lang&#x3D;en-US --headless --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --num-raster-threads&#x3D;1 --service-request-channel-token&#x3D;0D2C2CC1CF67A5903FDFECE210FEB597 --renderer-client-id&#x3D;4 --shared-files&#x3D;v8_context_snapshot_data:100,v8_natives_data:101</code></pre></div>
-<p>可以看出其中只有一个Google-chrome浏览器的进程，其余三个是对应ChromeDriver的进程。这些进程实际上是通过系统层面来管理，我们的程序无法直接去操作进程的状态，比如Kill/Shutdown等，因此需要格外主要这些进程的生命周期。</p>
-<p>&emsp;&emsp;如果我们的程序正常退出或意外推出了，这些进程有可能还存在于系统当中，占有一定资源，一般来说这些进程占有的资源从50MB-300MB之间，甚至更多。保留在系统中的这些进程，最终会成为”僵尸”进程，不退出也不释放资源。</p>
-<p>&emsp;&emsp;一种简单粗暴的做法是，在系统中启动一个crontab任务，定期清理超过一定时间的chrome进程：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 执行脚本：这里设置的阈值为5分钟
-#!&#x2F;bin&#x2F;bash
-## check PID's process time
-
-function show_elapsed_time()
-&#123;
- user_hz&#x3D;$(getconf CLK_TCK)
- pid&#x3D;$1
- jiffies&#x3D;$(cat &#x2F;proc&#x2F;$pid&#x2F;stat | cut -d" " -f22)
- sys_uptime&#x3D;$(cat &#x2F;proc&#x2F;uptime | cut -d" " -f1)
- last_time&#x3D;$(( $&#123;sys_uptime%.*&#125; - $jiffies&#x2F;$user_hz ))
- if [ $last_time -gt 600 ] ; then
-	echo "kill process : $pid"
-	kill -9 $pid
- fi
- echo "the process $pid lasts for $last_time seconds."
-&#125;
-
-echo ""
-echo &#96;date "+%Y-%m-%d %H:%M:%S"&#96;
-for item in &#96;ps -ef | grep "google-chrome" | grep -v grep | awk '&#123;print $2&#125;' &#96;;
-do	
-	echo "PID: $item"
-	show_elapsed_time $item
-done;
-
-## crontab命令
-*&#x2F;1 * * * * sh &#x2F;root&#x2F;chrome&#x2F;check.sh >> &#x2F;root&#x2F;chrome&#x2F;logs.txt</code></pre></div>
-
-<p>&emsp;&emsp;如果是正常退出，或者能够检测到ShutdownHook，可以在ShutdownHook里面全部Kill外部的Chrome进程：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Runtime.getRuntime.addShutdownHook(new Thread()&#123;
-    public void run()&#123;
-        &#x2F;&#x2F; 执行脚本，获取外部Chrome进程PID
-        &#x2F;&#x2F; 通过PID，KILL进程
-        &#x2F;&#x2F; 这里需要用到JNA：
-        &#x2F;&#x2F;<dependency>
-        &#x2F;&#x2F;	<groupId>net.java.dev.jna<&#x2F;groupId>
-        &#x2F;&#x2F;	<artifactId>jna<&#x2F;artifactId>
-        &#x2F;&#x2F;<&#x2F;dependency>
-
-    &#125;
-&#125;);</code></pre></div>
-
-<h4 id="Tab使用"><a href="#Tab使用" class="headerlink" title="Tab使用"></a>Tab使用</h4><p>&emsp;&emsp;这里还有一个优化的点就是，是不是考虑使用tab标签页来完成每个URL，不需要每次都产生一个Chrome对象，减少程序开支。</p>
-]]></content>
-      <categories>
-        <category>爬虫</category>
-      </categories>
-      <tags>
-        <tag>部署</tag>
-        <tag>Chrome</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Crontab整点运行问题</title>
     <url>/2018/06/29/Crontab%E6%95%B4%E7%82%B9%E8%BF%90%E8%A1%8C%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<p>&emsp;&emsp;无论是使用Linux自带crontab程序，还是使用cron-utils的crontab语法解析，都存在整点运行问题。</p>
@@ -627,10 +362,10 @@ public static DateTime nextFireTime(DateTime currentFireTime, long added) &#123;
 <h2 id="2-部署ETCD集群"><a href="#2-部署ETCD集群" class="headerlink" title=".2. 部署ETCD集群"></a>.2. 部署ETCD集群</h2><p>&emsp;&emsp;<strong>ETCD</strong>集群的部署，也较为简单。不安全的集群部署，这里不再讨论。这里的部署，主要是指自认证的<strong>ETCD</strong>集群。</p>
 <p>&emsp;&emsp;ETCD集群部署配置，可以参考：<a href="https://www.jianshu.com/p/85803026a9a1" target="_blank" rel="noopener">ETCD集群部署</a>、<a href="https://www.jianshu.com/p/33b5f47ababc" target="_blank" rel="noopener">etcd多台部署:启用https以及ca自签名</a>。参考上述两篇博文的配置、操作步骤，但配置过程中略微存在差异。</p>
 <h3 id="2-1-编译cfssl组件"><a href="#2-1-编译cfssl组件" class="headerlink" title=".2.1. 编译cfssl组件"></a>.2.1. 编译cfssl组件</h3><p>&emsp;&emsp;CFSSL主要是为了实现自认证配置，生成CA证书、公钥、私钥等内容。<br>最新版本cfssl已经不再提供通过官方网站下载，可以直接通过Github下载编译或直接安装</p>
-<div class="hljs"><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 直接下载某个版本</span></span>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">### 直接下载某个版本
 wget https://github.com/cloudflare/cfssl/archive/1.3.4.tar.gz
 
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 下载Master分支，切换为某个tag的代码</span></span>
+### 下载Master分支，切换为某个tag的代码
 1. Download：https://github.com/cloudflare/cfssl.git
 2. 安装依赖组件：
     go get -u github.com/cloudflare/cfssl/cli \
@@ -638,7 +373,7 @@ wget https://github.com/cloudflare/cfssl/archive/1.3.4.tar.gz
               github.com/lib/pq github.com/mattn/go-sqlite3 \
               github.com/cloudflare/go-metrics
 3. 编译安装：make ## 会在bin目录下面创建常用命令
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 切换分支命令：参考</span></span>
+### 切换分支命令：参考
 git checkout tags/v1.0 -b v1.0-branch</code></pre></div>
 
 <h3 id="2-2-创建CA证书"><a href="#2-2-创建CA证书" class="headerlink" title=".2.2. 创建CA证书"></a>.2.2. 创建CA证书</h3><p>&emsp;&emsp;创建CA证书，主要涉及到两个操作步骤。通过CFSSL来创建证书，一般只需要编辑JSON配置文件即可。</p>
@@ -1087,35 +822,6 @@ curl -k --cert /etc/etcd/ssl/cfssl/ssl/etcd.pem  --key /etc/etcd/ssl/cfssl/ssl/e
       </tags>
   </entry>
   <entry>
-    <title>FNLP编译安装</title>
-    <url>/2018/06/29/FNLP%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<p>&emsp;&emsp;最近在研究dl4j的学习，其中有使用FNLP作为分词的例子。版主尝试编译源码，经过不断的查找验证，得到可行的方式。</p>
-<a id="more"></a>
-
-<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>&emsp;&emsp;FNLP的源码已经在github上，地址为：(<a href="https://github.com/FudanNLP/fnlp),感兴趣的朋友可以下载编译学习。同时针对下载困难的Jar包，FNLP的作者利用国内百度云盘作为下载地址，可以下载相关Jar包和Model，地址为：(http://pan.baidu.com/s/1D7CVc)。根据Github上作者的提示，将Model文件通过百度云盘下载到相应路径下，就可以编译。" target="_blank" rel="noopener">https://github.com/FudanNLP/fnlp),感兴趣的朋友可以下载编译学习。同时针对下载困难的Jar包，FNLP的作者利用国内百度云盘作为下载地址，可以下载相关Jar包和Model，地址为：(http://pan.baidu.com/s/1D7CVc)。根据Github上作者的提示，将Model文件通过百度云盘下载到相应路径下，就可以编译。</a></p>
-<p>版主利用GIT来克隆源码到本地：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">git clone https:&#x2F;&#x2F;github.com&#x2F;FudanNLP&#x2F;fnlp.git</code></pre></div>
-
-<p>然后利用Maven3来编译源码：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">mvn clean install</code></pre></div>
-<p>但是在编译过程中遇到Plugin的错误：<br><img src="001.png" srcset="/img/loading.gif" alt="特殊他"><br>只有使用跳过测试的选项，才可以通过编译：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">mvn clean install -Dmaven.test.skip&#x3D;true</code></pre></div>
-<p><img src="002.png" srcset="/img/loading.gif" alt="test-success"></p>
-<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
-<li>Maven下载Jar包中，比较困难的是trove4j-3.0.3.jar，最好到百度云盘中直接下载，本地Maven安装，具体可以参考：<a href="http://blog.sina.com.cn/s/blog_4a1bfe2c0100x149.html" target="_blank" rel="noopener">Maven install:install-file </a>；</li>
-<li>相关模型需要自己动手下载到相关路径下，也就是~/git/fnlp/models/这个路径下面；</li>
-<li>其他相关NLP的工具，其中有Apache的OpenNLP、哈工大的NLP等。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>部署</tag>
-        <tag>NLP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>GPS经纬度转化为百度地图/Google坐标及互转方案</title>
     <url>/2018/06/29/GPS%E7%BB%8F%E7%BA%AC%E5%BA%A6%E8%BD%AC%E5%8C%96%E4%B8%BA%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BE-Google%E5%9D%90%E6%A0%87%E5%8F%8A%E4%BA%92%E8%BD%AC%E6%96%B9%E6%A1%88/</url>
     <content><![CDATA[<p>&emsp;&emsp;转载自：<a href="https://blog.csdn.net/ma969070578/article/details/41013547" target="_blank" rel="noopener">WGS84，GCJ02， BD09坐标转换</a></p>
@@ -1314,6 +1020,300 @@ public class PositionUtil &#123;
       </tags>
   </entry>
   <entry>
+    <title>FNLP编译安装</title>
+    <url>/2018/06/29/FNLP%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<p>&emsp;&emsp;最近在研究dl4j的学习，其中有使用FNLP作为分词的例子。版主尝试编译源码，经过不断的查找验证，得到可行的方式。</p>
+<a id="more"></a>
+
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>&emsp;&emsp;FNLP的源码已经在github上，地址为：(<a href="https://github.com/FudanNLP/fnlp),感兴趣的朋友可以下载编译学习。同时针对下载困难的Jar包，FNLP的作者利用国内百度云盘作为下载地址，可以下载相关Jar包和Model，地址为：(http://pan.baidu.com/s/1D7CVc)。根据Github上作者的提示，将Model文件通过百度云盘下载到相应路径下，就可以编译。" target="_blank" rel="noopener">https://github.com/FudanNLP/fnlp),感兴趣的朋友可以下载编译学习。同时针对下载困难的Jar包，FNLP的作者利用国内百度云盘作为下载地址，可以下载相关Jar包和Model，地址为：(http://pan.baidu.com/s/1D7CVc)。根据Github上作者的提示，将Model文件通过百度云盘下载到相应路径下，就可以编译。</a></p>
+<p>版主利用GIT来克隆源码到本地：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">git clone https:&#x2F;&#x2F;github.com&#x2F;FudanNLP&#x2F;fnlp.git</code></pre></div>
+
+<p>然后利用Maven3来编译源码：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">mvn clean install</code></pre></div>
+<p>但是在编译过程中遇到Plugin的错误：<br><img src="001.png" srcset="/img/loading.gif" alt="特殊他"><br>只有使用跳过测试的选项，才可以通过编译：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">mvn clean install -Dmaven.test.skip&#x3D;true</code></pre></div>
+<p><img src="002.png" srcset="/img/loading.gif" alt="test-success"></p>
+<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
+<li>Maven下载Jar包中，比较困难的是trove4j-3.0.3.jar，最好到百度云盘中直接下载，本地Maven安装，具体可以参考：<a href="http://blog.sina.com.cn/s/blog_4a1bfe2c0100x149.html" target="_blank" rel="noopener">Maven install:install-file </a>；</li>
+<li>相关模型需要自己动手下载到相关路径下，也就是~/git/fnlp/models/这个路径下面；</li>
+<li>其他相关NLP的工具，其中有Apache的OpenNLP、哈工大的NLP等。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>NLP</tag>
+        <tag>部署</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Chromeheadless安装与使用</title>
+    <url>/2018/07/01/Chromeheadless%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>&emsp;&emsp;如果是小规模爬虫或模拟效果要求不高的话，使用Selenium HtmlUniDriver基本可以满足需求。但HtmlUnitDriver是基于JS模拟浏览器原理，存在许多浏览器可以做，但它其实无法操作的功能，比如截图等高级功能。</p>
+<a id="more"></a>
+
+<p>&emsp;&emsp;之前爬虫使用Phantomjs，感觉效果还不错，而且使用方便。Phantomjs可以设置远程模式，方便本地调试；方便设置代理，但这里有一个坑，就是<em>代理地址不能是https协议</em>，不然会出问题。但Phantomjs已经目前已经停止更新与维护，而且Google Chrome推出了Headless版本，使用浏览器模式更加符合真是的环境。</p>
+<h2 id="安装采坑"><a href="#安装采坑" class="headerlink" title="安装采坑"></a>安装采坑</h2><p>&emsp;&emsp;Chrome Headless安装没有想象中的简单。刚开始直接通过安装包或添加Chrome源安装均失败，失败的原因是存在各种各样的依赖包。后来找到的Chrome安装的一个脚本，使用这个脚本能够不断地安装缺少的依赖包，从而能够安航成功。</p>
+<h3 id="安装系统"><a href="#安装系统" class="headerlink" title="安装系统"></a>安装系统</h3><p>Centos6.9Final</p>
+<h3 id="安装方式一-通过添加chrome源来安装chrome"><a href="#安装方式一-通过添加chrome源来安装chrome" class="headerlink" title="安装方式一:通过添加chrome源来安装chrome"></a>安装方式一:通过添加chrome源来安装chrome</h3><div class="hljs"><pre class=" language-hljs #"><code class="language-hljs #">## 添加Chrome源
+[google]
+name&#x3D;Google – i386
+baseurl&#x3D;http:&#x2F;&#x2F;dl.google.com&#x2F;linux&#x2F;rpm&#x2F;stable&#x2F;i386
+enabled&#x3D;1
+gpgcheck&#x3D;1
+gpgkey&#x3D;https:&#x2F;&#x2F;dl-ssl.google.com&#x2F;linux&#x2F;linux_signing_key.pub
+
+64位系统：
+[google64]
+name&#x3D;Google – x86_64
+baseurl&#x3D;http:&#x2F;&#x2F;dl.google.com&#x2F;linux&#x2F;rpm&#x2F;stable&#x2F;x86_64
+enabled&#x3D;1
+gpgcheck&#x3D;1
+gpgkey&#x3D;https:&#x2F;&#x2F;dl-ssl.google.com&#x2F;linux&#x2F;linux_signing_key.pub
+
+## 安装
+1.sudo yum install google-chrome-stable 来安装最新稳定版
+2.sudo yum install google-chrome-unstable 最新版chrome</code></pre></div>
+<p>这里有个问题，可能博主使用的Centos环境有问题。通过此方式安装之后存在各种依赖问题，导致无法安装成功。</p>
+<h3 id="安装方式二：下载安装"><a href="#安装方式二：下载安装" class="headerlink" title="安装方式二：下载安装"></a>安装方式二：下载安装</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## Ubuntu系统安装，此方通过修改URL路径，适用于Centos
+sudo apt-get install libxss1 libappindicator1 libindicator7
+wget https:&#x2F;&#x2F;dl.google.com&#x2F;linux&#x2F;direct&#x2F;google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt-get install -f</code></pre></div>
+<p>跟上面一种方式一样， 存在各种依赖问题，导致无法安装成功。</p>
+<h3 id="使用脚本安装"><a href="#使用脚本安装" class="headerlink" title="使用脚本安装"></a>使用脚本安装</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl https:&#x2F;&#x2F;intoli.com&#x2F;install-google-chrome.sh | bash</code></pre></div>
+
+<p>&emsp;&emsp;通过上网查阅发现<a href="https://intoli.com这个网站是专门从事headless" target="_blank" rel="noopener">https://intoli.com这个网站是专门从事headless</a> browsers使用简化，提供云服务的一家公司。其中在该公司的博客中，可以看到许多关于Google Chrome的文章。</p>
+<p>&emsp;&emsp;该公司提供的这个脚本，能够自动查找相关依赖，并安装。这样我们就不必担心依赖问题，导致无法安装成功。</p>
+<h2 id="使用进阶"><a href="#使用进阶" class="headerlink" title="使用进阶"></a>使用进阶</h2><p>&emsp;&emsp;安装Chrome Headless之后，就可以直接使用了。不过这里有一个注意的点，那就是需要安装ChromeDriver这个东东。</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 下载
+wget https:&#x2F;&#x2F;chromedriver.storage.googleapis.com&#x2F;2.40&#x2F;chromedriver_linux64.zip
+
+## 解压
+tar xvf chromedriver_linux64.zip
+
+## 权限
+chmod 755 chromedriver</code></pre></div>
+
+
+<h3 id="初级使用"><a href="#初级使用" class="headerlink" title="初级使用"></a>初级使用</h3><p>&emsp;&emsp;初级使用的目标是可以运行起来，不报错，能够完成预期的目标。<br>代码如下：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   &#x2F;**
+ * @desc main method
+ * @param args
+ * @throws IOException
+ *&#x2F;
+public static void main(String[] args) throws IOException &#123;
+
+       String driverPath &#x3D; "&#x2F;root&#x2F;chrome&#x2F;chromedriver";
+       String targetURL &#x3D; "";
+
+	System.setProperty("webdriver.chrome.driver", driverPath);
+	ChromeDriver driver &#x3D; getDriver();
+
+       &#x2F;&#x2F; 对网页内容作处理
+       Document doc &#x3D; getDocument(targetURL);
+
+       &#x2F;&#x2F; 如果对网页做操作，直接使用Driver
+
+&#125;
+
+&#x2F;**
+ * @desc get chrome driver
+ *&#x2F;
+public static ChromeDriver getDriver() &#123;
+
+	String userAgent &#x3D; AppForum.getAgents();
+	ChromeOptions options &#x3D; new ChromeOptions();
+	options.setBinary("&#x2F;usr&#x2F;bin&#x2F;google-chrome-stable");
+	options.addArguments("--no-sandbox", "--test-type"，"--headless", "--disable-gpu");
+
+	DesiredCapabilities capabilities &#x3D; DesiredCapabilities.chrome();
+	capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+	capabilities.setJavascriptEnabled(true);
+
+	ChromeDriver driver &#x3D; new ChromeDriver(capabilities);
+	driver.manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
+
+	return driver;
+&#125;
+
+&#x2F;**
+ * @desc crawler html content
+ * @param url
+ *&#x2F;
+public static Document getDocument(String url) &#123;
+
+	ChromeDriver driver &#x3D; getDriver();
+	Document doc &#x3D; null;
+	try &#123;
+		driver.get(url);
+		doc &#x3D; Jsoup.parse(driver.getPageSource());
+	&#125; catch (Exception e) &#123;
+	&#125; finally &#123;
+		try &#123;
+			driver.quit();
+		&#125; catch (Exception e) &#123;
+		&#125;
+	&#125;
+
+	return doc;
+&#125;</code></pre></div>
+
+
+<h3 id="中阶使用"><a href="#中阶使用" class="headerlink" title="中阶使用"></a>中阶使用</h3><p>中阶也即提高级，主要区别是开发研究一些重要的功能，比如时候网速、加载速度等内容</p>
+<ol>
+<li>禁止图片加载</li>
+<li>等待加载</li>
+<li>使用UserAgent代理</li>
+<li>禁止一些选项的加载</li>
+<li>使用Driver执行特定JS等</li>
+</ol>
+<p>代码如下：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">   &#x2F;**
+ * @desc main method
+ * @param args
+ * @throws IOException
+ *&#x2F;
+public static void main(String[] args) throws IOException &#123;
+
+       String driverPath &#x3D; "&#x2F;root&#x2F;chrome&#x2F;chromedriver";
+       String targetURL &#x3D; "";
+
+	System.setProperty("webdriver.chrome.driver", driverPath);
+	ChromeDriver driver &#x3D; getDriver();
+
+       &#x2F;&#x2F; 对网页内容作处理
+       Document doc &#x3D; getDocument(targetURL);
+
+       &#x2F;&#x2F; 如果对网页做操作，直接使用Driver
+       &#x2F;&#x2F; 执行JS：滚动效果
+       driver.executeScript("scrollTo(0,10000)");
+
+       &#x2F;&#x2F; 等待加载示例
+       &#x2F;&#x2F; 1. 超时加载等待
+       driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+
+       &#x2F;&#x2F; 2. 等待加载组件
+       WebDriverWait wait &#x3D; new WebDriverWait(driver, 20);
+       wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".red_box")));
+
+&#125;
+
+&#x2F;**
+ * @desc get chrome driver
+ *&#x2F;
+public static ChromeDriver getDriver() &#123;
+
+	HashMap<String, Object> prefs &#x3D; new HashMap<String, Object>();
+	prefs.put("profile.default_content_settings", 2);
+	prefs.put("profile.default_content_setting_values", 2);
+	prefs.put("profile.managed_default_content_settings.images", 2);
+
+	String userAgent &#x3D; AppForum.getAgents();
+	ChromeOptions options &#x3D; new ChromeOptions();
+	options.setBinary("&#x2F;usr&#x2F;bin&#x2F;google-chrome-stable");
+	options.setExperimentalOption("prefs", prefs);
+	options.addArguments("--user-agent&#x3D;" + userAgent，"--no-sandbox", "--test-type");
+	options.addArguments("--disable-infobars", "--headless", "--disable-gpu"，"--enable-strict-powerful-feature-restrictions");
+	options.addArguments("--disable-plugins", "--disable-images", "--start-maximized");
+
+	DesiredCapabilities capabilities &#x3D; DesiredCapabilities.chrome();
+	capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+	capabilities.setJavascriptEnabled(true);
+
+	return new ChromeDriver(capabilities);
+&#125;
+
+&#x2F;**
+ * @desc crawler html content
+ * @param url
+ *&#x2F;
+public static Document getDocument(String url) &#123;
+
+	ChromeDriver driver &#x3D; getDriver();
+	Document doc &#x3D; null;
+	try &#123;
+		driver.get(url);
+		doc &#x3D; Jsoup.parse(driver.getPageSource());
+	&#125; catch (Exception e) &#123;
+	&#125; finally &#123;
+		try &#123;
+			driver.quit();
+			driver.close();
+		&#125; catch (Exception e) &#123;
+		&#125;
+	&#125;
+
+	return doc;
+&#125;</code></pre></div>
+
+
+<h3 id="高级使用"><a href="#高级使用" class="headerlink" title="高级使用"></a>高级使用</h3><h4 id="设置代理服务器"><a href="#设置代理服务器" class="headerlink" title="设置代理服务器"></a>设置代理服务器</h4><p>&emsp;&emsp;代理服务器的设置，可以参考Google-chrome的帮助信息，在代码层面很容易实现。</p>
+<p><img src="001.png" srcset="/img/loading.gif" alt="Google-chrome帮助信息"></p>
+<h4 id="Driver生命周期"><a href="#Driver生命周期" class="headerlink" title="Driver生命周期"></a>Driver生命周期</h4><p>&emsp;&emsp;在我们的代码中“new ChromeDriver()”的时候，产生了多个外部进程，如下所示</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">root      8508  8499  1 04:26 ?        00:00:01 &#x2F;usr&#x2F;bin&#x2F;google-chrome-stable --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-gpu --disable-hang-monitor --disable-images --disable-infobars --disable-plugins --disable-popup-blocking --disable-prompt-on-repost --disable-sync --disable-web-resources --enable-automation --enable-logging --enable-strict-powerful-feature-restrictions --force-fieldtrials&#x3D;SiteIsolationExtensions&#x2F;Control --headless --ignore-certificate-errors --load-extension&#x3D;&#x2F;tmp&#x2F;.org.chromium.Chromium.7tAd3h&#x2F;internal --log-level&#x3D;0 --metrics-recording-only --no-first-run --no-sandbox --password-store&#x3D;basic --remote-debugging-port&#x3D;0 --start-maximized --test-type --use-mock-keychain --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --user-data-dir&#x3D;&#x2F;tmp&#x2F;.org.chromium.Chromium.4Sd7ob data:,
+root      8515  8508  0 04:26 ?        00:00:00 &#x2F;opt&#x2F;google&#x2F;chrome&#x2F;chrome --type&#x3D;zygote --no-sandbox --enable-logging --headless --log-level&#x3D;0 --headless --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter
+root      8539  8508  0 04:26 ?        00:00:00 &#x2F;opt&#x2F;google&#x2F;chrome&#x2F;chrome --type&#x3D;gpu-process --enable-logging --headless --log-level&#x3D;0 --no-sandbox --headless --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --gpu-preferences&#x3D;KAAAAAAAAACAAACAAQAAAAAAAAAAAGAAEAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA --use-gl&#x3D;swiftshader-webgl --override-use-software-gl-for-tests --headless --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --enable-logging --log-level&#x3D;0 --service-request-channel-token&#x3D;84633B7AB3844DE44C0ADE5922EAFCB4
+root      8551  8515  9 04:26 ?        00:00:12 &#x2F;opt&#x2F;google&#x2F;chrome&#x2F;chrome --type&#x3D;renderer --enable-automation --enable-logging --log-level&#x3D;0 --no-sandbox --test-type --use-gl&#x3D;swiftshader-webgl --disable-gpu-compositing --service-pipe-token&#x3D;0D2C2CC1CF67A5903FDFECE210FEB597 --lang&#x3D;en-US --headless --user-agent&#x3D;Mozilla&#x2F;4.0 (compatible;MSIE7.0;WindowsNT5.1;Trident&#x2F;4.0;SE2.XMetaSr1.0;SE2.XMetaSr1.0;.NETCLR2.0.50727;SE2.XMetaSr1.0) --enable-crash-reporter --num-raster-threads&#x3D;1 --service-request-channel-token&#x3D;0D2C2CC1CF67A5903FDFECE210FEB597 --renderer-client-id&#x3D;4 --shared-files&#x3D;v8_context_snapshot_data:100,v8_natives_data:101</code></pre></div>
+<p>可以看出其中只有一个Google-chrome浏览器的进程，其余三个是对应ChromeDriver的进程。这些进程实际上是通过系统层面来管理，我们的程序无法直接去操作进程的状态，比如Kill/Shutdown等，因此需要格外主要这些进程的生命周期。</p>
+<p>&emsp;&emsp;如果我们的程序正常退出或意外推出了，这些进程有可能还存在于系统当中，占有一定资源，一般来说这些进程占有的资源从50MB-300MB之间，甚至更多。保留在系统中的这些进程，最终会成为”僵尸”进程，不退出也不释放资源。</p>
+<p>&emsp;&emsp;一种简单粗暴的做法是，在系统中启动一个crontab任务，定期清理超过一定时间的chrome进程：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 执行脚本：这里设置的阈值为5分钟
+#!&#x2F;bin&#x2F;bash
+## check PID's process time
+
+function show_elapsed_time()
+&#123;
+ user_hz&#x3D;$(getconf CLK_TCK)
+ pid&#x3D;$1
+ jiffies&#x3D;$(cat &#x2F;proc&#x2F;$pid&#x2F;stat | cut -d" " -f22)
+ sys_uptime&#x3D;$(cat &#x2F;proc&#x2F;uptime | cut -d" " -f1)
+ last_time&#x3D;$(( $&#123;sys_uptime%.*&#125; - $jiffies&#x2F;$user_hz ))
+ if [ $last_time -gt 600 ] ; then
+	echo "kill process : $pid"
+	kill -9 $pid
+ fi
+ echo "the process $pid lasts for $last_time seconds."
+&#125;
+
+echo ""
+echo &#96;date "+%Y-%m-%d %H:%M:%S"&#96;
+for item in &#96;ps -ef | grep "google-chrome" | grep -v grep | awk '&#123;print $2&#125;' &#96;;
+do	
+	echo "PID: $item"
+	show_elapsed_time $item
+done;
+
+## crontab命令
+*&#x2F;1 * * * * sh &#x2F;root&#x2F;chrome&#x2F;check.sh >> &#x2F;root&#x2F;chrome&#x2F;logs.txt</code></pre></div>
+
+<p>&emsp;&emsp;如果是正常退出，或者能够检测到ShutdownHook，可以在ShutdownHook里面全部Kill外部的Chrome进程：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Runtime.getRuntime.addShutdownHook(new Thread()&#123;
+    public void run()&#123;
+        &#x2F;&#x2F; 执行脚本，获取外部Chrome进程PID
+        &#x2F;&#x2F; 通过PID，KILL进程
+        &#x2F;&#x2F; 这里需要用到JNA：
+        &#x2F;&#x2F;<dependency>
+        &#x2F;&#x2F;	<groupId>net.java.dev.jna<&#x2F;groupId>
+        &#x2F;&#x2F;	<artifactId>jna<&#x2F;artifactId>
+        &#x2F;&#x2F;<&#x2F;dependency>
+
+    &#125;
+&#125;);</code></pre></div>
+
+<h4 id="Tab使用"><a href="#Tab使用" class="headerlink" title="Tab使用"></a>Tab使用</h4><p>&emsp;&emsp;这里还有一个优化的点就是，是不是考虑使用tab标签页来完成每个URL，不需要每次都产生一个Chrome对象，减少程序开支。</p>
+]]></content>
+      <categories>
+        <category>爬虫</category>
+      </categories>
+      <tags>
+        <tag>部署</tag>
+        <tag>Chrome</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ganglia-Spark/Kafka编译与安装总结</title>
     <url>/2018/06/29/Ganglia-Spark-Kafka%E7%BC%96%E8%AF%91%E4%B8%8E%E5%AE%89%E8%A3%85%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<p>&emsp;&emsp;Ganglia是一款优秀的监控软件，能够监控节点级别以及组件级别的监控，并且与Nagios配合可以做到监控提示的发送通知功能。</p>
@@ -1505,74 +1505,6 @@ alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character se
       </tags>
   </entry>
   <entry>
-    <title>HTML全文转化为PDF技术选型研究与流行方法汇总</title>
-    <url>/2018/06/29/HTML%E5%85%A8%E6%96%87%E8%BD%AC%E5%8C%96%E4%B8%BAPDF%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%E7%A0%94%E7%A9%B6%E4%B8%8E%E6%B5%81%E8%A1%8C%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在实际也无需求中，需要用到网页快照功能，并能够查看历史网页快照功能，因此需要实现网页格式的固化保存，保存为图片或PDF文件的形式。</p>
-<a id="more"></a>
-
-<h2 id="1-技术研究"><a href="#1-技术研究" class="headerlink" title="1. 技术研究"></a>1. 技术研究</h2><p>&emsp;&emsp;做这样研究了网上许多技术，大都存在各种各样的缺陷。</p>
-<h3 id="1-1-html2canvas-amp-jsPDF"><a href="#1-1-html2canvas-amp-jsPDF" class="headerlink" title="1.1. html2canvas&amp;jsPDF"></a>1.1. html2canvas&amp;jsPDF</h3><p>&emsp;&emsp;感兴趣的读者，可以参考： <a href="https://github.com/linwalker/render-html-to-pdf" target="_blank" rel="noopener">https://github.com/linwalker/render-html-to-pdf</a><br>&emsp;&emsp;该种方法，主要是通过JS调用实现，无法通过脚本，或者Java API的方法调用来实现转化工作。</p>
-<h3 id="1-2-iTextRender-amp-pdfWriter"><a href="#1-2-iTextRender-amp-pdfWriter" class="headerlink" title="1.2. iTextRender&amp;pdfWriter"></a>1.2. iTextRender&amp;pdfWriter</h3><p>&emsp;&emsp;这种方式能够实现简单的Html2PDF功能，但存在以下缺点</p>
-<ol>
-<li>对网页格式要求较高；</li>
-<li>无法对图片等复杂元素进行处理。<br>主要参考博文：<br><a href="http://swordshadow.iteye.com/blog/1983935" target="_blank" rel="noopener">Itext的PDF生成方案</a><br><a href="http://skyfar666.iteye.com/blog/2001353" target="_blank" rel="noopener">freemarker+ITextRenderer 生成html转pdf</a><br><a href="http://www.cnblogs.com/reese-blogs/p/5546806.html" target="_blank" rel="noopener">iTextRenderer(Flying Saucer) HTML转PDF</a></li>
-</ol>
-<h3 id="1-3-pdf-kit"><a href="#1-3-pdf-kit" class="headerlink" title="1.3. pdf-kit"></a>1.3. pdf-kit</h3><p>&emsp;&emsp;pdf-kit主要通过JS生成PDF文件，在HTML截图方面比较欠缺，作者没有发现能够用于截图功能。<br><a href="http://pdfkit.org/" target="_blank" rel="noopener">PDF-KIT官网</a></p>
-<h3 id="1-4-cssbox"><a href="#1-4-cssbox" class="headerlink" title="1.4. cssbox"></a>1.4. cssbox</h3><p>&emsp;&emsp;cssbox主要用作前段css渲染功能，但没有提供输出为图片或PDF接口。<br><a href="http://cssbox.sourceforge.net/" target="_blank" rel="noopener">CSSBOX源码文件与说明</a></p>
-<h3 id="1-5-Phantomjs"><a href="#1-5-Phantomjs" class="headerlink" title="1.5. Phantomjs"></a>1.5. Phantomjs</h3><p>&emsp;&emsp;爬虫或自动化测试重量级程序，能够实现爬虫功能与自动化测试任务。并能够使用代理服务器，或输出HTML为图片或DPF文件的形式。能够输出单个网页控件的图片或DPF文件，实现精准输出。</p>
-<p>&emsp;&emsp;但Phantomjs存在如下问题：</p>
-<ol>
-<li>相应速度较慢；</li>
-<li>调用繁琐，需要自己写JS脚本。</li>
-</ol>
-<h3 id="1-6-Headless-Chrome-or-other-browser"><a href="#1-6-Headless-Chrome-or-other-browser" class="headerlink" title="1.6. Headless Chrome or other browser"></a>1.6. Headless Chrome or other browser</h3><p>&emsp;&emsp;使用无头浏览器，调用snapshot接口，能够实现截图功能。</p>
-<h3 id="1-7-HtmlUnitDriver调用浏览器API"><a href="#1-7-HtmlUnitDriver调用浏览器API" class="headerlink" title="1.7. HtmlUnitDriver调用浏览器API"></a>1.7. HtmlUnitDriver调用浏览器API</h3><p>使用HtmlUnitDriver调用浏览器API，如Chrome、Firefox、IE等主浏览器，均能实现截图功能。</p>
-<p>缺点：</p>
-<ol>
-<li>需要编写程序，调用API；</li>
-<li>无法直接调用脚本实现截图功能。</li>
-</ol>
-<h2 id="2-wkhtmltopdf"><a href="#2-wkhtmltopdf" class="headerlink" title="2. wkhtmltopdf"></a>2. wkhtmltopdf</h2><p>&emsp;&emsp;该程序能够实现将Html转化为图片，或PDF文件的功能，具体下载地址为：<a href="https://wkhtmltopdf.org/downloads.html" target="_blank" rel="noopener">wkhtmltopdf官网下载</a></p>
-<h3 id="2-1-安装流程"><a href="#2-1-安装流程" class="headerlink" title="2.1. 安装流程"></a>2.1. 安装流程</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## Download from Org website
-wget https:&#x2F;&#x2F;github.com&#x2F;wkhtmltopdf&#x2F;wkhtmltopdf&#x2F;releases&#x2F;download&#x2F;0.12.4&#x2F;wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-
-## uncompress
- tar xvJf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-
-## install font : chinese : 宋体
-## &#x2F;usr&#x2F;share&#x2F;fonts&#x2F;XXX</code></pre></div>
-<p>&emsp;&emsp;安装中文字体，主要是考虑到网页内容为中文会出现中文乱码问题。</p>
-<h3 id="2-2-调用"><a href="#2-2-调用" class="headerlink" title="2.2. 调用"></a>2.2. 调用</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## to pdf
-wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.pdf
-
-## to image
-wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.png</code></pre></div>
-<p>具体详情，可以参考wkhtml2pdf的帮助信息。</p>
-<h3 id="2-3-选择原因"><a href="#2-3-选择原因" class="headerlink" title="2.3. 选择原因"></a>2.3. 选择原因</h3><ol>
-<li>可以通过shell直接调用；</li>
-<li>支持多线程并发操作；</li>
-<li>调用简单、方便。</li>
-</ol>
-<h3 id="2-4-存在缺点"><a href="#2-4-存在缺点" class="headerlink" title="2.4. 存在缺点"></a>2.4. 存在缺点</h3><ol>
-<li>存在TimeoutError；</li>
-<li>偶尔存在加载阻塞，无法正常加载网页内容。这些网页通常是信息量较大、存在高清图片等问题。</li>
-</ol>
-<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h2><ol>
-<li>如果需要HTML全文转化，那么wkHtml2PDF可以作为首要选项；</li>
-<li>如果需要获取HTML中部分元素进行转化为图片、PDF，那么phtomjs是一个很好的选择。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>总结</tag>
-        <tag>Html</tag>
-        <tag>PDF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>工具知识总结</title>
     <url>/2020/06/13/Hadoop%E5%B7%A5%E5%85%B7%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<h1 id="HDFS-大数据"><a href="#HDFS-大数据" class="headerlink" title="HDFS(大数据)"></a>HDFS(大数据)</h1><p>&emsp;&emsp;在大数据生态圈中，针对HDFS服务的各种缺陷或适用场景，发展了许许多多的开源解决方案。我们在这里总结一下，方便后期针对应用场景筛选使用。</p>
@@ -1586,8 +1518,14 @@ wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.png</code></pre></div>
 <h2 id="HDFS文件分析"><a href="#HDFS文件分析" class="headerlink" title="HDFS文件分析"></a>HDFS文件分析</h2><ol>
 <li><a href="https://github.com/paypal/NNAnalytics" target="_blank" rel="noopener">NNAnalytics</a>: NameNodeAnalytics is a self-help utility for scouting and maintaining the namespace of an HDFS instance.</li>
 </ol>
-<h2 id="HDFS冷热管理"><a href="#HDFS冷热管理" class="headerlink" title="HDFS冷热管理"></a>HDFS冷热管理</h2><ol>
+<h2 id="HDFS文件辅助管理"><a href="#HDFS文件辅助管理" class="headerlink" title="HDFS文件辅助管理"></a>HDFS文件辅助管理</h2><ol>
 <li><a href="https://github.com/Intel-bigdata/SSM" target="_blank" rel="noopener">SSM</a>: Smart Storage Management for Big Data, a comprehensive hot/cold data optimized solution</li>
+</ol>
+<h2 id="HDFS-Benchmark测试"><a href="#HDFS-Benchmark测试" class="headerlink" title="HDFS Benchmark测试"></a>HDFS Benchmark测试</h2><ol>
+<li>Terasort：基准排序</li>
+<li>Pi：纯计算</li>
+<li>TPC-DS性能测试</li>
+<li>Hi-Bench性能测试</li>
 </ol>
 <h1 id="Java通用"><a href="#Java通用" class="headerlink" title="Java通用"></a>Java通用</h1><h2 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h2><ol>
 <li>JVM: Jstack：jstack通常用来定位Java进程的异常线程，或异常代码</li>
@@ -1827,27 +1765,6 @@ slave1: Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize&#
       </tags>
   </entry>
   <entry>
-    <title>Hive JDBC任务执行流程</title>
-    <url>/2018/08/04/Hive-JDBC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/</url>
-    <content><![CDATA[<p>&emsp;&emsp;Hive提供了多种访问方式，其中JDBC是一种。通常通过JDBC访问，可以规避用户对HDFS、Metastore的直接访问。本文研究研究一下HiveJDBC执行任务的流程。</p>
-<h2 id="JDBC执行流程"><a href="#JDBC执行流程" class="headerlink" title="JDBC执行流程"></a>JDBC执行流程</h2><p><img src="004.png" srcset="/img/loading.gif" alt="Hive客户端与服务端的交互"></p>
-<p>&emsp;&emsp;主要流程分为三条线：</p>
-<ol>
-<li>执行任务，无返回<br> 执行完成，获取执行结果[boolean/int]，直接结束</li>
-<li>执行任务，返回数据<br> 执行完成，通过接口获取数据，用户执行其他相关操作</li>
-<li>执行任务，查询日志<br> 执行任务的同时，可以获取执行日志。通过单独的接口，可以分别获取日志与数据。</li>
-</ol>
-<p>&emsp;&emsp;使用JDBC查询日志，存在锁竞争的问题，因而表现出来的现象就是通过JDBC获取日志比较慢。具体可以参考：<a href="https://www.cnblogs.com/oldtrafford/p/8818756.html" target="_blank" rel="noopener">hive-jdbc获取查询日志慢的问题发现与解决</a>。</p>
-]]></content>
-      <categories>
-        <category>大数据</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>Hive</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hive2.0.0安装配置</title>
     <url>/2018/06/29/Hive2-0-0%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<h2 id="环境依赖"><a href="#环境依赖" class="headerlink" title="环境依赖"></a>环境依赖</h2><p>&emsp;&emsp;Hive必须运行在Hadoop之上，则需要先安装Hadoop环境。关于Hadoop的安装可以参考我前文的<a href="http://blog.csdn.net/awdac/article/details/53333470" target="_blank" rel="noopener">博客</a>，也可以参考原文作者的<a href="http://my.oschina.net/u/204498/blog/519789" target="_blank" rel="noopener">链接</a>。</p>
@@ -1977,8 +1894,29 @@ Time taken: 0.388 seconds, Fetched: 3 row(s)</code></pre></div>
       </categories>
       <tags>
         <tag>部署</tag>
-        <tag>Hive</tag>
         <tag>安装</tag>
+        <tag>Hive</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hive JDBC任务执行流程</title>
+    <url>/2018/08/04/Hive-JDBC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[<p>&emsp;&emsp;Hive提供了多种访问方式，其中JDBC是一种。通常通过JDBC访问，可以规避用户对HDFS、Metastore的直接访问。本文研究研究一下HiveJDBC执行任务的流程。</p>
+<h2 id="JDBC执行流程"><a href="#JDBC执行流程" class="headerlink" title="JDBC执行流程"></a>JDBC执行流程</h2><p><img src="004.png" srcset="/img/loading.gif" alt="Hive客户端与服务端的交互"></p>
+<p>&emsp;&emsp;主要流程分为三条线：</p>
+<ol>
+<li>执行任务，无返回<br> 执行完成，获取执行结果[boolean/int]，直接结束</li>
+<li>执行任务，返回数据<br> 执行完成，通过接口获取数据，用户执行其他相关操作</li>
+<li>执行任务，查询日志<br> 执行任务的同时，可以获取执行日志。通过单独的接口，可以分别获取日志与数据。</li>
+</ol>
+<p>&emsp;&emsp;使用JDBC查询日志，存在锁竞争的问题，因而表现出来的现象就是通过JDBC获取日志比较慢。具体可以参考：<a href="https://www.cnblogs.com/oldtrafford/p/8818756.html" target="_blank" rel="noopener">hive-jdbc获取查询日志慢的问题发现与解决</a>。</p>
+]]></content>
+      <categories>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>Hive</tag>
       </tags>
   </entry>
   <entry>
@@ -2909,1014 +2847,6 @@ book.close();</code></pre></div>]]></content>
       <tags>
         <tag>总结</tag>
         <tag>读书</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JavaNLP-分词学习与研究：word分词</title>
-    <url>/2018/06/29/JavaNLP-%E5%88%86%E8%AF%8D%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%A0%94%E7%A9%B6%EF%BC%9Aword%E5%88%86%E8%AF%8D/</url>
-    <content><![CDATA[<p>转载自：<a href="https://github.com/ysc/word" target="_blank" rel="noopener">Java分布式中文分词组件 - word分词</a></p>
-<h3 id="Java分布式中文分词组件-word分词"><a href="#Java分布式中文分词组件-word分词" class="headerlink" title="Java分布式中文分词组件 - word分词"></a>Java分布式中文分词组件 - word分词</h3><a id="more"></a>
-
-<h4 id="word分词是一个Java实现的分布式的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。能通过自定义配置文件来改变组件行为，能自定义用户词库、自动检测词库变化、支持大规模分布式环境，能灵活指定多种分词算法，能使用refine功能灵活控制分词结果，还能使用词频统计、词性标注、同义标注、反义标注、拼音标注等功能。提供了10种分词算法，还提供了10种文本相似度算法，同时还无缝和Lucene、Solr、ElasticSearch、Luke集成。注意：word1-3需要JDK1-8"><a href="#word分词是一个Java实现的分布式的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。能通过自定义配置文件来改变组件行为，能自定义用户词库、自动检测词库变化、支持大规模分布式环境，能灵活指定多种分词算法，能使用refine功能灵活控制分词结果，还能使用词频统计、词性标注、同义标注、反义标注、拼音标注等功能。提供了10种分词算法，还提供了10种文本相似度算法，同时还无缝和Lucene、Solr、ElasticSearch、Luke集成。注意：word1-3需要JDK1-8" class="headerlink" title="word分词是一个Java实现的分布式的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。能通过自定义配置文件来改变组件行为，能自定义用户词库、自动检测词库变化、支持大规模分布式环境，能灵活指定多种分词算法，能使用refine功能灵活控制分词结果，还能使用词频统计、词性标注、同义标注、反义标注、拼音标注等功能。提供了10种分词算法，还提供了10种文本相似度算法，同时还无缝和Lucene、Solr、ElasticSearch、Luke集成。注意：word1.3需要JDK1.8"></a>word分词是一个Java实现的分布式的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。能通过自定义配置文件来改变组件行为，能自定义用户词库、自动检测词库变化、支持大规模分布式环境，能灵活指定多种分词算法，能使用refine功能灵活控制分词结果，还能使用词频统计、词性标注、同义标注、反义标注、拼音标注等功能。提供了10种分词算法，还提供了10种文本相似度算法，同时还无缝和Lucene、Solr、ElasticSearch、Luke集成。注意：word1.3需要JDK1.8</h4><h3 id="捐赠致谢"><a href="#捐赠致谢" class="headerlink" title="捐赠致谢"></a><a href="https://github.com/ysc/QuestionAnsweringSystem/wiki/donation" target="_blank" rel="noopener">捐赠致谢</a></h3><h3 id="API在线文档："><a href="#API在线文档：" class="headerlink" title="API在线文档："></a>API在线文档：</h3><p>   <a href="http://apdplat.org/word/apidocs/1.0/" target="_blank" rel="noopener">word 1.0 API</a></p>
-<p>   <a href="http://apdplat.org/word/apidocs/1.1/" target="_blank" rel="noopener">word 1.1 API</a></p>
-<p>   <a href="http://apdplat.org/word/apidocs/1.2/" target="_blank" rel="noopener">word 1.2 API</a></p>
-<p>   <a href="http://apdplat.org/word/apidocs/1.3/" target="_blank" rel="noopener">word 1.3 API</a></p>
-<h3 id="编译好的jar包下载"><a href="#编译好的jar包下载" class="headerlink" title="编译好的jar包下载"></a><a href="http://pan.baidu.com/s/1dDziDFz" target="_blank" rel="noopener">编译好的jar包下载</a></h3><h3 id="Maven依赖："><a href="#Maven依赖：" class="headerlink" title="Maven依赖："></a>Maven依赖：</h3><p>   在pom.xml中指定dependency，可用版本有1.0、1.1、1.2、1.3、1.3.1：</p>
-<div class="hljs"><pre><code>&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.apdplat&lt;/groupId&gt;
-        &lt;artifactId&gt;word&lt;/artifactId&gt;
-        &lt;version&gt;1.3&lt;/version&gt;
-    &lt;/dependency&gt;
-&lt;/dependencies&gt;</code></pre></div><p>word 1.3.1这个版本是从代码分支<a href="https://github.com/ysc/word/tree/ForElasticsearch1.7.2/" target="_blank" rel="noopener">ForElasticsearch1.7.2</a>中编译出来的，主要目的是支持<br>与lucene4.10.4、solr4.10.4和elasticsearch1.7.2兼容的版本。</p>
-<h3 id="分词使用方法："><a href="#分词使用方法：" class="headerlink" title="分词使用方法："></a>分词使用方法：</h3><h4 id="1、快速体验"><a href="#1、快速体验" class="headerlink" title="1、快速体验"></a>1、快速体验</h4><div class="hljs"><pre><code>运行项目根目录下的脚本demo-word.bat可以快速体验分词效果
-用法: command [text] [input] [output]
-命令command的可选值为：demo、text、file
-demo
-text 杨尚川是APDPlat应用级产品开发平台的作者
-file d:/text.txt d:/word.txt
-exit</code></pre></div><h4 id="2、对文本进行分词"><a href="#2、对文本进行分词" class="headerlink" title="2、对文本进行分词"></a>2、对文本进行分词</h4><div class="hljs"><pre><code>移除停用词：List&lt;Word&gt; words = WordSegmenter.seg(&quot;杨尚川是APDPlat应用级产品开发平台的作者&quot;);
-保留停用词：List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;杨尚川是APDPlat应用级产品开发平台的作者&quot;);
-            System.out.println(words);
-
-输出：
-移除停用词：[杨尚川, apdplat, 应用级, 产品, 开发平台, 作者]
-保留停用词：[杨尚川, 是, apdplat, 应用级, 产品, 开发平台, 的, 作者]</code></pre></div><h4 id="3、对文件进行分词"><a href="#3、对文件进行分词" class="headerlink" title="3、对文件进行分词"></a>3、对文件进行分词</h4><div class="hljs"><pre><code>String input = &quot;d:/text.txt&quot;;
-String output = &quot;d:/word.txt&quot;;
-移除停用词：WordSegmenter.seg(new File(input), new File(output));
-保留停用词：WordSegmenter.segWithStopWords(new File(input), new File(output));</code></pre></div><h4 id="4、自定义配置文件"><a href="#4、自定义配置文件" class="headerlink" title="4、自定义配置文件"></a>4、自定义配置文件</h4><div class="hljs"><pre><code>默认配置文件为类路径下的word.conf，打包在word-x.x.jar中
-自定义配置文件为类路径下的word.local.conf，需要用户自己提供
-如果自定义配置和默认配置相同，自定义配置会覆盖默认配置
-配置文件编码为UTF-8</code></pre></div><h4 id="5、自定义用户词库"><a href="#5、自定义用户词库" class="headerlink" title="5、自定义用户词库"></a>5、自定义用户词库</h4><div class="hljs"><pre><code>自定义用户词库为一个或多个文件夹或文件，可以使用绝对路径或相对路径
-用户词库由多个词典文件组成，文件编码为UTF-8
-词典文件的格式为文本文件，一行代表一个词
-可以通过系统属性或配置文件的方式来指定路径，多个路径之间用逗号分隔开
-类路径下的词典文件，需要在相对路径前加入前缀classpath:
-
-指定方式有三种：
-    指定方式一，编程指定（高优先级）：
-        WordConfTools.set(&quot;dic.path&quot;, &quot;classpath:dic.txt，d:/custom_dic&quot;);
-        DictionaryFactory.reload();//更改词典路径之后，重新加载词典
-    指定方式二，Java虚拟机启动参数（中优先级）：
-        java -Ddic.path=classpath:dic.txt，d:/custom_dic
-    指定方式三，配置文件指定（低优先级）：
-        使用类路径下的文件word.local.conf来指定配置信息
-        dic.path=classpath:dic.txt，d:/custom_dic
-
-如未指定，则默认使用类路径下的dic.txt词典文件</code></pre></div><h4 id="6、自定义停用词词库"><a href="#6、自定义停用词词库" class="headerlink" title="6、自定义停用词词库"></a>6、自定义停用词词库</h4><div class="hljs"><pre><code>使用方式和自定义用户词库类似，配置项为：
-stopwords.path=classpath:stopwords.txt，d:/custom_stopwords_dic</code></pre></div><h4 id="7、自动检测词库变化"><a href="#7、自动检测词库变化" class="headerlink" title="7、自动检测词库变化"></a>7、自动检测词库变化</h4><div class="hljs"><pre><code>可以自动检测自定义用户词库和自定义停用词词库的变化
-包含类路径下的文件和文件夹、非类路径下的绝对路径和相对路径
-如：
-classpath:dic.txt，classpath:custom_dic_dir,
-d:/dic_more.txt，d:/DIC_DIR，D:/DIC2_DIR，my_dic_dir，my_dic_file.txt
-
-classpath:stopwords.txt，classpath:custom_stopwords_dic_dir，
-d:/stopwords_more.txt，d:/STOPWORDS_DIR，d:/STOPWORDS2_DIR，stopwords_dir，remove.txt</code></pre></div><h4 id="8、显式指定分词算法"><a href="#8、显式指定分词算法" class="headerlink" title="8、显式指定分词算法"></a>8、显式指定分词算法</h4><div class="hljs"><pre><code>对文本进行分词时，可显式指定特定的分词算法，如：
-WordSegmenter.seg(&quot;APDPlat应用级产品开发平台&quot;, SegmentationAlgorithm.BidirectionalMaximumMatching);
-
-SegmentationAlgorithm的可选类型为：     
-正向最大匹配算法：MaximumMatching
-逆向最大匹配算法：ReverseMaximumMatching
-正向最小匹配算法：MinimumMatching
-逆向最小匹配算法：ReverseMinimumMatching
-双向最大匹配算法：BidirectionalMaximumMatching
-双向最小匹配算法：BidirectionalMinimumMatching
-双向最大最小匹配算法：BidirectionalMaximumMinimumMatching
-全切分算法：FullSegmentation
-最少词数算法：MinimalWordCount
-最大Ngram分值算法：MaxNgramScore</code></pre></div><h4 id="9、分词效果评估"><a href="#9、分词效果评估" class="headerlink" title="9、分词效果评估"></a>9、分词效果评估</h4><div class="hljs"><pre><code>运行项目根目录下的脚本evaluation.bat可以对分词效果进行评估
-评估采用的测试文本有253 3709行，共2837 4490个字符
-评估结果位于target/evaluation目录下：
-corpus-text.txt为分好词的人工标注文本，词之间以空格分隔
-test-text.txt为测试文本，是把corpus-text.txt以标点符号分隔为多行的结果
-standard-text.txt为测试文本对应的人工标注文本，作为分词是否正确的标准
-result-text-***.txt，***为各种分词算法名称，这是word分词结果
-perfect-result-***.txt，***为各种分词算法名称，这是分词结果和人工标注标准完全一致的文本
-wrong-result-***.txt，***为各种分词算法名称，这是分词结果和人工标注标准不一致的文本</code></pre></div><h4 id="10、分布式中文分词器"><a href="#10、分布式中文分词器" class="headerlink" title="10、分布式中文分词器"></a>10、分布式中文分词器</h4><div class="hljs"><pre><code>1、在自定义配置文件word.conf或word.local.conf中指定所有的配置项*.path使用HTTP资源，同时指定配置项redis.*
-2、配置并启动提供HTTP资源的web服务器，将项目：https://github.com/ysc/word_web部署到tomcat
-3、配置并启动redis服务器</code></pre></div><h4 id="11、词性标注"><a href="#11、词性标注" class="headerlink" title="11、词性标注"></a>11、词性标注</h4><div class="hljs"><pre><code>将分词结果作为输入参数，调用PartOfSpeechTagging类的process方法，词性保存在Word类的partOfSpeech字段中
-如下所示：
-List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;我爱中国&quot;);
-System.out.println(&quot;未标注词性：&quot;+words);
-//词性标注
-PartOfSpeechTagging.process(words);
-System.out.println(&quot;标注词性：&quot;+words);
-输出内容：
-未标注词性：[我, 爱, 中国]
-标注词性：[我/r, 爱/v, 中国/ns]</code></pre></div><h4 id="12、refine"><a href="#12、refine" class="headerlink" title="12、refine"></a>12、refine</h4><div class="hljs"><pre><code>我们看一个切分例子：
-List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;我国工人阶级和广大劳动群众要更加紧密地团结在党中央周围&quot;);
-System.out.println(words);
-结果如下：
-[我国, 工人阶级, 和, 广大, 劳动群众, 要, 更加, 紧密, 地, 团结, 在, 党中央, 周围]
-假如我们想要的切分结果是：
-[我国, 工人, 阶级, 和, 广大, 劳动, 群众, 要, 更加, 紧密, 地, 团结, 在, 党中央, 周围]
-也就是要把“工人阶级”细分为“工人 阶级”，把“劳动群众”细分为“劳动 群众”，那么我们该怎么办呢？
-我们可以通过在word.refine.path配置项指定的文件classpath:word_refine.txt中增加以下内容：
-工人阶级=工人 阶级
-劳动群众=劳动 群众
-然后，我们对分词结果进行refine：
-words = WordRefiner.refine(words);
-System.out.println(words);
-这样，就能达到我们想要的效果：
-[我国, 工人, 阶级, 和, 广大, 劳动, 群众, 要, 更加, 紧密, 地, 团结, 在, 党中央, 周围]
-
-我们再看一个切分例子：
-List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;在实现“两个一百年”奋斗目标的伟大征程上再创新的业绩&quot;);
-System.out.println(words);
-结果如下：
-[在, 实现, 两个, 一百年, 奋斗目标, 的, 伟大, 征程, 上, 再创, 新的, 业绩]
-假如我们想要的切分结果是：
-[在, 实现, 两个一百年, 奋斗目标, 的, 伟大征程, 上, 再创, 新的, 业绩]
-也就是要把“两个 一百年”合并为“两个一百年”，把“伟大, 征程”合并为“伟大征程”，那么我们该怎么办呢？
-我们可以通过在word.refine.path配置项指定的文件classpath:word_refine.txt中增加以下内容：
-两个 一百年=两个一百年
-伟大 征程=伟大征程
-然后，我们对分词结果进行refine：
-words = WordRefiner.refine(words);
-System.out.println(words);
-这样，就能达到我们想要的效果：
-[在, 实现, 两个一百年, 奋斗目标, 的, 伟大征程, 上, 再创, 新的, 业绩]</code></pre></div><h4 id="13、同义标注"><a href="#13、同义标注" class="headerlink" title="13、同义标注"></a>13、同义标注</h4><div class="hljs"><pre><code>List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;楚离陌千方百计为无情找回记忆&quot;);
-System.out.println(words);
-结果如下：
-[楚离陌, 千方百计, 为, 无情, 找回, 记忆]
-做同义标注：
-SynonymTagging.process(words);
-System.out.println(words);
-结果如下：
-[楚离陌, 千方百计[久有存心, 化尽心血, 想方设法, 费尽心机], 为, 无情, 找回, 记忆[影象]]
-如果启用间接同义词：
-SynonymTagging.process(words, false);
-System.out.println(words);
-结果如下：
-[楚离陌, 千方百计[久有存心, 化尽心血, 想方设法, 费尽心机], 为, 无情, 找回, 记忆[影像, 影象]]
-
-List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;手劲大的老人往往更长寿&quot;);
-System.out.println(words);
-结果如下：
-[手劲, 大, 的, 老人, 往往, 更, 长寿]
-做同义标注：
-SynonymTagging.process(words);
-System.out.println(words);
-结果如下：
-[手劲, 大, 的, 老人[白叟], 往往[常常, 每每, 经常], 更, 长寿[长命, 龟龄]]
-如果启用间接同义词：
-SynonymTagging.process(words, false);
-System.out.println(words);
-结果如下：
-[手劲, 大, 的, 老人[白叟], 往往[一样平常, 一般, 凡是, 寻常, 常常, 常日, 平凡, 平居, 平常, 平日, 平时, 往常, 日常, 日常平凡, 时常, 普通, 每每, 泛泛, 素日, 经常, 通俗, 通常], 更, 长寿[长命, 龟龄]]
-
-以词“千方百计”为例：
-可以通过Word的getSynonym()方法获取同义词如：
-System.out.println(word.getSynonym());
-结果如下：
-[久有存心, 化尽心血, 想方设法, 费尽心机]
-注意：如果没有同义词，则getSynonym()返回空集合：Collections.emptyList()
-
-间接同义词和直接同义词的区别如下：
-假设：
-A和B是同义词，A和C是同义词，B和D是同义词，C和E是同义词
-则：
-对于A来说，A B C是直接同义词
-对于B来说，A B D是直接同义词
-对于C来说，A C E是直接同义词
-对于A B C来说，A B C D E是间接同义词</code></pre></div><h4 id="14、反义标注"><a href="#14、反义标注" class="headerlink" title="14、反义标注"></a>14、反义标注</h4><div class="hljs"><pre><code>List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;5月初有哪些电影值得观看&quot;);
-System.out.println(words);
-结果如下：
-[5, 月初, 有, 哪些, 电影, 值得, 观看]
-做反义标注：
-AntonymTagging.process(words);
-System.out.println(words);
-结果如下：
-[5, 月初[月底, 月末, 月终], 有, 哪些, 电影, 值得, 观看]
-
-List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;由于工作不到位、服务不完善导致顾客在用餐时发生不愉快的事情,餐厅方面应该向顾客作出真诚的道歉,而不是敷衍了事。&quot;);
-System.out.println(words);
-结果如下：
-[由于, 工作, 不到位, 服务, 不完善, 导致, 顾客, 在, 用餐, 时, 发生, 不愉快, 的, 事情, 餐厅, 方面, 应该, 向, 顾客, 作出, 真诚, 的, 道歉, 而不是, 敷衍了事]
-做反义标注：
-AntonymTagging.process(words);
-System.out.println(words);
-结果如下：
-[由于, 工作, 不到位, 服务, 不完善, 导致, 顾客, 在, 用餐, 时, 发生, 不愉快, 的, 事情, 餐厅, 方面, 应该, 向, 顾客, 作出, 真诚[糊弄, 虚伪, 虚假, 险诈], 的, 道歉, 而不是, 敷衍了事[一丝不苟, 兢兢业业, 尽心竭力, 竭尽全力, 精益求精, 诚心诚意]]
-
-以词“月初”为例：
-可以通过Word的getAntonym()方法获取反义词如：
-System.out.println(word.getAntonym());
-结果如下：
-[月底, 月末, 月终]
-注意：如果没有反义词，getAntonym()返回空集合：Collections.emptyList()</code></pre></div><h4 id="15、拼音标注"><a href="#15、拼音标注" class="headerlink" title="15、拼音标注"></a>15、拼音标注</h4><div class="hljs"><pre><code>List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;《速度与激情7》的中国内地票房自4月12日上映以来，在短短两周内突破20亿人民币&quot;);
-System.out.println(words);
-结果如下：
-[速度, 与, 激情, 7, 的, 中国, 内地, 票房, 自, 4月, 12日, 上映, 以来, 在, 短短, 两周, 内, 突破, 20亿, 人民币]
-执行拼音标注：
-PinyinTagging.process(words);
-System.out.println(words);
-结果如下：
-[速度 sd sudu, 与 y yu, 激情 jq jiqing, 7, 的 d de, 中国 zg zhongguo, 内地 nd neidi, 票房 pf piaofang, 自 z zi, 4月, 12日, 上映 sy shangying, 以来 yl yilai, 在 z zai, 短短 dd duanduan, 两周 lz liangzhou, 内 n nei, 突破 tp tupo, 20亿, 人民币 rmb renminbi]
-
-以词“速度”为例：
-可以通过Word的getFullPinYin()方法获取完整拼音如：sudu
-可以通过Word的getAcronymPinYin()方法获取首字母缩略拼音如：sd</code></pre></div><h4 id="16、Lucene插件："><a href="#16、Lucene插件：" class="headerlink" title="16、Lucene插件："></a>16、Lucene插件：</h4><div class="hljs"><pre><code>1、构造一个word分析器ChineseWordAnalyzer
-Analyzer analyzer = new ChineseWordAnalyzer();
-如果需要使用特定的分词算法，可通过构造函数来指定：
-Analyzer analyzer = new ChineseWordAnalyzer(SegmentationAlgorithm.FullSegmentation);
-如不指定，默认使用双向最大匹配算法：SegmentationAlgorithm.BidirectionalMaximumMatching
-可用的分词算法参见枚举类：SegmentationAlgorithm
-
-2、利用word分析器切分文本
-TokenStream tokenStream = analyzer.tokenStream(&quot;text&quot;, &quot;杨尚川是APDPlat应用级产品开发平台的作者&quot;);
-//准备消费
-tokenStream.reset();
-//开始消费
-while(tokenStream.incrementToken()){
-    //词
-    CharTermAttribute charTermAttribute = tokenStream.getAttribute(CharTermAttribute.class);
-    //词在文本中的起始位置
-    OffsetAttribute offsetAttribute = tokenStream.getAttribute(OffsetAttribute.class);
-    //第几个词
-    PositionIncrementAttribute positionIncrementAttribute = tokenStream.getAttribute(PositionIncrementAttribute.class);
-
-    LOGGER.info(charTermAttribute.toString()+&quot; (&quot;+offsetAttribute.startOffset()+&quot; - &quot;+offsetAttribute.endOffset()+&quot;) &quot;+positionIncrementAttribute.getPositionIncrement());
-}
-//消费完毕
-tokenStream.close();
-
-3、利用word分析器建立Lucene索引
-Directory directory = new RAMDirectory();
-IndexWriterConfig config = new IndexWriterConfig(analyzer);
-IndexWriter indexWriter = new IndexWriter(directory, config);
-
-4、利用word分析器查询Lucene索引
-QueryParser queryParser = new QueryParser(&quot;text&quot;, analyzer);
-Query query = queryParser.parse(&quot;text:杨尚川&quot;);
-TopDocs docs = indexSearcher.search(query, Integer.MAX_VALUE);</code></pre></div><h4 id="17、Solr插件："><a href="#17、Solr插件：" class="headerlink" title="17、Solr插件："></a>17、Solr插件：</h4><div class="hljs"><pre><code>1、下载word-1.3.jar
-下载地址：http://search.maven.org/remotecontent?filepath=org/apdplat/word/1.3/word-1.3.jar
-
-2、创建目录solr-5.2.0/example/solr/lib，将word-1.3.jar复制到lib目录
-
-3、配置schema指定分词器
-将solr-5.2.0/example/solr/collection1/conf/schema.xml文件中所有的
-&lt;tokenizer class=&quot;solr.WhitespaceTokenizerFactory&quot;/&gt;和
-&lt;tokenizer class=&quot;solr.StandardTokenizerFactory&quot;/&gt;全部替换为
-&lt;tokenizer class=&quot;org.apdplat.word.solr.ChineseWordTokenizerFactory&quot;/&gt;
-并移除所有的filter标签
-
-4、如果需要使用特定的分词算法：
-&lt;tokenizer class=&quot;org.apdplat.word.solr.ChineseWordTokenizerFactory&quot; segAlgorithm=&quot;ReverseMinimumMatching&quot;/&gt;
-segAlgorithm可选值有：     
-正向最大匹配算法：MaximumMatching
-逆向最大匹配算法：ReverseMaximumMatching
-正向最小匹配算法：MinimumMatching
-逆向最小匹配算法：ReverseMinimumMatching
-双向最大匹配算法：BidirectionalMaximumMatching
-双向最小匹配算法：BidirectionalMinimumMatching
-双向最大最小匹配算法：BidirectionalMaximumMinimumMatching
-全切分算法：FullSegmentation
-最少词数算法：MinimalWordCount
-最大Ngram分值算法：MaxNgramScore
-如不指定，默认使用双向最大匹配算法：BidirectionalMaximumMatching
-
-5、如果需要指定特定的配置文件：
-&lt;tokenizer class=&quot;org.apdplat.word.solr.ChineseWordTokenizerFactory&quot; segAlgorithm=&quot;ReverseMinimumMatching&quot;
-        conf=&quot;solr-5.2.0/example/solr/nutch/conf/word.local.conf&quot;/&gt;
-word.local.conf文件中可配置的内容见 word-1.3.jar 中的word.conf文件
-如不指定，使用默认配置文件，位于 word-1.3.jar 中的word.conf文件</code></pre></div><h4 id="18、ElasticSearch插件："><a href="#18、ElasticSearch插件：" class="headerlink" title="18、ElasticSearch插件："></a>18、ElasticSearch插件：</h4><div class="hljs"><pre><code>1、打开命令行并切换到elasticsearch的bin目录
-cd elasticsearch-2.1.1/bin
-
-2、运行plugin脚本安装word分词插件：
-./plugin install http://apdplat.org/word/archive/v1.4.zip
-
-安装的时候注意：
-    如果提示：
-        ERROR: failed to download 
-    或者 
-        Failed to install word, reason: failed to download
-    或者 
-        ERROR: incorrect hash (SHA1)
-    则重新再次运行命令，如果还是不行，多试两次
-
-如果是elasticsearch1.x系列版本，则使用如下命令：
-./plugin -u http://apdplat.org/word/archive/v1.3.1.zip -i word
-
-3、修改文件elasticsearch-2.1.1/config/elasticsearch.yml，新增如下配置：    
-index.analysis.analyzer.default.type : &quot;word&quot;
-index.analysis.tokenizer.default.type : &quot;word&quot;
-
-4、启动ElasticSearch测试效果，在Chrome浏览器中访问：    
-http://localhost:9200/_analyze?analyzer=word&amp;text=杨尚川是APDPlat应用级产品开发平台的作者
-
-5、自定义配置
-修改配置文件elasticsearch-2.1.1/plugins/word/word.local.conf
-
-6、指定分词算法
-修改文件elasticsearch-2.1.1/config/elasticsearch.yml，新增如下配置：
-index.analysis.analyzer.default.segAlgorithm : &quot;ReverseMinimumMatching&quot;
-index.analysis.tokenizer.default.segAlgorithm : &quot;ReverseMinimumMatching&quot;
-
-这里segAlgorithm可指定的值有：
-正向最大匹配算法：MaximumMatching
-逆向最大匹配算法：ReverseMaximumMatching
-正向最小匹配算法：MinimumMatching
-逆向最小匹配算法：ReverseMinimumMatching
-双向最大匹配算法：BidirectionalMaximumMatching
-双向最小匹配算法：BidirectionalMinimumMatching
-双向最大最小匹配算法：BidirectionalMaximumMinimumMatching
-全切分算法：FullSegmentation
-最少词数算法：MinimalWordCount
-最大Ngram分值算法：MaxNgramScore
-如不指定，默认使用双向最大匹配算法：BidirectionalMaximumMatching</code></pre></div><h4 id="19、Luke插件："><a href="#19、Luke插件：" class="headerlink" title="19、Luke插件："></a>19、Luke插件：</h4><div class="hljs"><pre><code>1、下载http://luke.googlecode.com/files/lukeall-4.0.0-ALPHA.jar（国内不能访问）
-
-2、下载并解压Java中文分词组件word-1.0-bin.zip：http://pan.baidu.com/s/1dDziDFz
-
-3、将解压后的 Java中文分词组件word-1.0-bin/word-1.0 文件夹里面的4个jar包解压到当前文件夹
-用压缩解压工具如winrar打开lukeall-4.0.0-ALPHA.jar，将当前文件夹里面除了META-INF文件夹、.jar、
-.bat、.html、word.local.conf文件外的其他所有文件拖到lukeall-4.0.0-ALPHA.jar里面
-
-4、执行命令 java -jar lukeall-4.0.0-ALPHA.jar 启动luke，在Search选项卡的Analysis里面
-就可以选择 org.apdplat.word.lucene.ChineseWordAnalyzer 分词器了
-
- 5、在Plugins选项卡的Available analyzers found on the current classpath里面也可以选择 
-org.apdplat.word.lucene.ChineseWordAnalyzer 分词器
-
-注意：如果你要自己集成word分词器的其他版本，在项目根目录下运行mvn install编译项目，然后运行命令
-mvn dependency:copy-dependencies复制依赖的jar包，接着在target/dependency/目录下就会有所有
-的依赖jar包。其中target/dependency/slf4j-api-1.6.4.jar是word分词器使用的日志框架，
-target/dependency/logback-classic-0.9.28.jar和
-target/dependency/logback-core-0.9.28.jar是word分词器推荐使用的日志实现，日志实现的配置文件
-路径位于target/classes/logback.xml，target/word-1.3.jar是word分词器的主jar包，如果需要
-自定义词典，则需要修改分词器配置文件target/classes/word.conf</code></pre></div><p>   已经集成好的Luke插件下载（适用于lucene4.0.0） ：<a href="http://pan.baidu.com/s/1bn52ooR" target="_blank" rel="noopener">lukeall-4.0.0-ALPHA-with-word-1.0.jar</a></p>
-<p>   已经集成好的Luke插件下载（适用于lucene4.10.3）：<a href="http://pan.baidu.com/s/1mgFt7ZU" target="_blank" rel="noopener">lukeall-4.10.3-with-word-1.2.jar</a></p>
-<h4 id="20、通过计算词的语境来获得相关词："><a href="#20、通过计算词的语境来获得相关词：" class="headerlink" title="20、通过计算词的语境来获得相关词："></a>20、通过计算词的语境来获得相关词：</h4><p>我们如何通过计算词的语境来获得相关词呢？</p>
-<div class="hljs"><pre><code>语境的定义是：在一段文本中，任意一个词的语境由它的前N个词和后N个词组成。
-相关词的定义是：如果两个词的语境越相似，那么这两个词就越相似，也就越相关。</code></pre></div><p>算法由两个步骤组成：</p>
-<div class="hljs"><pre><code>1、从大规模语料库中计算每一个词的语境，并使用词向量来表示语境。
-2、把求两个词的相似度的问题转换为求这两个词的语境的相似度的问题。
-通过计算语境的相似度，就可得到词的相似度，越相似的词就越相关。</code></pre></div><p>使用方法如下：</p>
-<div class="hljs"><pre><code>1、使用word分词内置语料库：运行word分词项目根目录下的脚本 
-demo-word-vector-corpus.bat 或 demo-word-vector-corpus.sh
-2、使用自己的文本内容：运行word分词项目根目录下的脚本 
-demo-word-vector-file.bat 或 demo-word-vector-file.sh
-
-由于语料库很大，所以启动的时间会很长，请耐心等待，下面以例子来说明：
-比如我们想分析 兰州 这个词的相关词有哪些，我们运行脚本 
-demo-word-vector-corpus.sh ，启动成功之后命令行提示：
-
-开始初始化模型
-模型初始化完成
-可通过输入命令sa=cos来指定相似度算法，可用的算法有：
-   1、sa=cos，余弦相似度
-   2、sa=edi，编辑距离
-   3、sa=euc，欧几里得距离
-   4、sa=sim，简单共有词
-   5、sa=jac，Jaccard相似性系数
-   6、sa=man，曼哈顿距离
-   7、sa=shh，SimHash + 汉明距离
-   8、sa=ja，Jaro距离
-   9、sa=jaw，Jaro–Winkler距离
-   10、sa=sd，Sørensen–Dice系数
-可通过输入命令limit=15来指定显示结果条数
-可通过输入命令exit退出程序
-输入要查询的词或命令：
-
-我们输入 兰州 后回车，结果显示：
-
-兰州 的相关词（EditDistanceTextSimilarity）：
-----------------------------------------------------------
-    1、兰州 1.0
-    2、北京 0.21
-    3、福州 0.2
-    4、太原 0.19
-    5、成都 0.17
-    6、西安 0.17
-    7、哈尔滨 0.17
-    8、南宁 0.17
-    9、贵阳 0.16
-    10、庆阳 0.15
-    11、沈阳 0.14
-    12、合肥 0.14
-    13、大同 0.14
-    14、拉萨 0.13
-    15、西宁 0.13
-----------------------------------------------------------
-这里显示的结果就是 兰州 这个词的相关词，词后面跟的是相关度分值，
-兰州 和 兰州 是同一个词，相关度百分之百，自然是1分。
-
-从这个结果我们来分析，这些词凭什么相关呢？线索在哪里？
-
-首先这些词的词性都是名词；
-其次这些词都是地名而且是大城市名；
-从这里我们也可以看到一个有意思的现象，同一词性比如地名的用法往往保持一致。
-
-相关词是从语境推导得到的，语境中词后面跟的数字是权重，权重是1/N的累加值
-下面我们看看这些词的语境：
-
-兰州 : [军区 1.0, 甘肃 0.78205127, 新区 0.7692308, 大学 0.42307693, 甘肃兰州 0.41025642, 货车 0.3846154, 西安 0.32051283, 本报 0.2948718, 新华社 0.2820513, 兰州新区 0.26923078, 召开 0.23076923, 发往 0.21794872, 中国 0.20512821, 兰州 0.20512821, 火车站 0.20512821, 铁路 0.17948718, 参加 0.15384616, 西宁 0.15384616, 方向 0.15384616, 成都 0.14102565, 警察 0.14102565, 建设 0.12820514, 市委 0.12820514, 来到 0.12820514, 一家 0.12820514, 中心 0.115384616, 炼油厂 0.102564104, 进入 0.102564104, 来自 0.102564104, 举行 0.102564104]    
-北京 : [新华社 1.0, 本报 0.7119143, 举行 0.19384204, 上海 0.17831326, 时间 0.16385542, 铁路局 0.1394913, 西站 0.13226238, 青年报 0.12717536, 晨报 0.11700134, 市委 0.1145917, 地区 0.11218206, 召开 0.10200803, 城市 0.08299866, 目前 0.07951807, 来到 0.06961178, 军区 0.06827309, 国际 0.066398926, 中心 0.063453816, 北京时间 0.06184739, 人民 0.059973225, 工作 0.05863454, 地铁 0.057563588, 北京铁路局 0.056492638, 医院 0.055421688, 飞往 0.05381526, 首都 0.053547524, 中国 0.053547524, 其中 0.05274431, 今天 0.052208837, 卫视 0.05167336]
-福州 : [火车站 1.0, 新区 0.46666667, 福州火车站 0.45555556, 晚报 0.2962963, 记者 0.2777778, 打工 0.27407408, 来到 0.24814814, 市民 0.23333333, 本报 0.22222222, 大学 0.21851853, 市区 0.2074074, 市委 0.19259259, 举行 0.19259259, 鼓楼区 0.18518518, 网友 0.18148148, 到达 0.17037037, 开往 0.16296296, 目前 0.14074074, 分行 0.14074074, 一家 0.12962963, 全市 0.12962963, 东街口 0.12222222, 福州晚报 0.12222222, 新华社 0.11851852, 铁路 0.11851852, 召开 0.11481482, 前往 0.11481482, 发展 0.11481482, 推进 0.11111111, 福州 0.11111111]     
-太原 : [山西 1.0, 山西太原 0.6136364, 本报 0.39772728, 新华社 0.3409091, 火车站 0.26136363, 济南 0.25, 铁路 0.23863636, 北京 0.22727273, 推出 0.1590909, 国际 0.1590909, 返回 0.14772727, 刚玉 0.13636364, 来自 0.13636364, 发布 0.13636364, 打工 0.125, 中心 0.125, 市委 0.11363637, 银行 0.11363637, 铁路局 0.10227273, 西安 0.09090909, 集团 0.09090909, 公安 0.09090909, 开往 0.09090909, 比如 0.07954545, 金融 0.07954545, 火车票 0.07954545, 大同 0.06818182, 山西省 0.06818182, 军分区 0.06818182, 离开 0.06818182]
-成都 : [商报 1.0, 成都商报 0.4117647, 军区 0.1875, 铁路局 0.17830883, 北京 0.17463236, 本报 0.17095588, 重庆 0.15441176, 告诉 0.15441176, 交警 0.14338236, 方向 0.1360294, 记者 0.13419117, 平原 0.121323526, 四川 0.1194853, 长沙 0.11764706, 理工大学 0.0992647, 来自 0.09375, 新华社 0.09191176, 开往 0.090073526, 成都铁路局 0.08455882, 铁路 0.080882356, 召开 0.07904412, 市民 0.075367644, 市委 0.073529415, 公司 0.07169118, 广州 0.07169118, 西安 0.0680147, 郫县 0.060661763, 打工 0.060661763, 市区 0.05882353, 晚报 0.05882353]
-西安 : [火车站 1.0, 事变 0.75, 交通 0.7058824, 建设 0.5882353, 地铁 0.5882353, &gt;咸阳 0.5588235, 来到 0.5294118, 市民 0.50735295, 大学 0.5, 铁路 0.5, 代表团 0.5, 铁路局 0.49264705, 公司 0.4852941, 武汉 0.4632353, 曲江 0.44117647, 供电 0.42647058, 新华社 0.4117647, 西安火车站 0.4117647, 北京 0.3602941, 交大 0.3602941, 本报 0.34558824, 西安事变 0.3382353, 城市 0.31617647, 城区 0.31617647, 落户 0.30882353, 市委 0.29411766, 国际 0.2867647, 城东 0.2867647, 成都 0.2720588, 举行 0.25]    
-哈尔滨 : [理工大学 1.0, 火车站 0.41584158, 哈尔滨理工大学 0.36138615, 工业 0.25742576, 方向 0.23762377, 新华社 0.20792079, 开往 0.18811882, 哈尔滨火车站 0.18316832, 位于 0.17821783, 大学 0.17326732, 铁路局 0.15841584, 来自 0.15346535, 最低 0.14356436, 北京 0.12871288, 本报 0.12376238, 黑龙江省 0.12376238, 发布 0.11386139, 中国 0.10891089, 飞往 0.0990099, 黑龙&gt;江 0.08415841, 沈阳 0.07920792, 工程 0.07920792, 附近 0.074257426, 市委 0.06930693, 飞机 0.06930693, 上海 0.06930693, 考生 0.06930693, 进入 0.06930693, 停止 0.06930693, 经济 0.06435644]
-南宁 : [广西 1.0, 铁路局 0.8, 广西南宁 0.62222224, 本报 0.54444444, 新华社 0.36666667, 南宁铁路局 0.31111112, 市委 0.26666668, 柳州 0.18888889, 桂林 0.17777778, 铁路 0.15555556, 兴&gt;宁区 0.14444445, 来到 0.11111111, 开往 0.11111111, 前往 0.11111111, 公安 0.11111111, 工作 0.11111111, 运往 0.11111111, 城市 0.08888889, 美丽 0.08888889, 召开 0.08888889, 从事 0.08888889, 官塘 0.08888889, 楼市 0.08888889, 分局 0.07777778, 南宁市委 0.07777778, 动车 0.07777778, 发生 0.07777778, 举行 0.07777778, 西乡 0.06666667, 市长 0.06666667]
-贵阳 : [本报 1.0, 重庆 0.73333335, 新华社 0.46666667, 方向 0.43333334, 前往 0.4, 哥俩 0.4, 城区 0.4, 老家 0.33333334, 西安 0.26666668, 成都 0.26666668, 街头 0.26666668, 晚报 0.26666668, 无关 0.26666668, 杭州 0.23333333, 涉及 0.2, 以及 0.2, 市内 0.2, 网友 0.2, 郑州 0.16666667, 南宁 0.16666667, 长沙 0.16666667, 武汉 0.16666667, 摆摊 0.16666667, 市委 0.13333334, 昆明 0.13333334, 安顺 0.13333334, 来到 0.13333334, 争霸 0.13333334, 四强 0.13333334, 铁路 0.13333334]
-庆阳 : [甘肃 1.0, 甘肃庆阳 0.8, 甘肃省 0.4, 地区 0.4, 老区 0.3, 森林 0.2, 平凉 0.2, 镇远县 0.1, 革命 0.1, 韩凤廷 0.1, 交通处 0.1, 兰州森林大队 0.1, 大队 0.1, 兰州 0.1, 西峰 0.1, 发&gt;送 0.1, 一辆 0.1, 牌照 0.1, 来自 0.1]
-沈阳 : [军区 1.0, 晚报 0.5123967, 方向 0.3181818, 本报 0.27272728, 沈阳晚报 0.23553719, 新华社 0.20661157, 沈阳军区 0.18595041, 军区队 0.15289256, 海狮队 0.14876033, 自动化所 0.14049587, 此次 0.14049587, 经济区 0.1322314, 中国 0.12809917, &gt;大连 0.12809917, 大爷 0.12809917, 市委 0.12396694, 一家 0.11570248, 高速 0.11570248, 国际 0.11157025, 火车票 0.11157025, 法库 0.10743801, 大学 0.10330579, 长春 0.10330579, 直达 0.09917355, 深圳 0.09090909, 上海 0.08677686, 记者 0.08677686, 海狮 0.08264463, 大妈 0.08264463, 两位 0.08264463]    
-合肥 : [火车站 1.0, 市民 0.8181818, 市区 0.53333336, 楼市 0.4848485, 合肥火车站 0.4121212, 铁路 0.38787878, 安徽 0.36969697, 到达 0.36363637, 市场 0.34545454, 上周 0.3030303, 芜湖 0.2969697, 召开 0.28484848, 记者 0.27272728, 成为 0.27272728, 来到 0.26666668, 安徽合肥 0.24242425, 城市 0.24242425, 经济圈 0.24242425, 公交 0.24242425, 目前 0.23636363, 本报 0.21818182, 今年 0.21818182, 起飞 0.21818182, 汽车 0.21212122, 物质 0.2060606, 合肥楼市 0.2060606, 空港 0.2060606, 工业 0.19393939, 标题 0.18181819, 野生 0.16969697]
-大同 : [大学 1.0, 铁路 0.52380955, 山西 0.5, 证券 0.33333334, 大同大学 0.33333334, 山西省 0.23809524, 此次 0.23809524, 山西大同 0.1904762, 世界 0.1904762, 世界大同 0.1904762, 街道 0.16666667, 太原 0.14285715, 市委 0.14285715, 上海 0.14285715, 派出所 0.14285715, 公安处 0.14285715, 日方 0.14285715, 转发 0.14285715, 运城 0.11904762, 军分区 0.0952381, 矿务局 0.0952381, 小学 0.0952381, 参加 0.0952381, 项目 0.0952381, 中学 0.0952381, 水厂 0.0952381, 车辆段 0.0952381, 开往 0.0952381, 大同证券 0.0952381, 战役 0.071428575]
-拉萨 : [火车站 1.0, 新华社 0.91935486, 西藏 0.7580645, 市区 0.61290324, 本报 0.58064514, 召开 0.5645161, 海关 0.5483871, 城市 0.48387095, 拉萨火车站 0.4032258, 市委 0.38709676, 成都 0.37096775, 贡嘎 0.3548387, 开幕 0.32258064, 发布 0.30645162, 西藏拉萨 0.2580645, 会议 0.2580645, 机场 0.22580644, 闭幕 0.22580644, 隆重 0.22580644, 林芝 0.20967741, 举行 0.19354838, 开通 0.19354838, 营业部 0.19354838, 市民 0.17741935, 市场 0.17741935, 经济 0.17741935, 中心 0.17741935, 空气 0.17741935, 成为 0.17741935, 人民 0.16129032]
-西宁 : [新华社 1.0, 上海 0.8235294, 兰州 0.3529412, 辗转 0.3529412, 本报 0.29411766, 青海 0.29411766, 考察 0.23529412, 当街 0.23529412, 特钢 0.1764706, 方向 0.1764706, 分行 0.1764706, 索贿 0.1764706, 北京 0.14705883, 但是 0.14705883, 拉萨 0.11764706, 我们 0.11764706, 标题 0.11764706, 交警 0.11764706, 代表团 0.11764706, 处理 0.0882353, 银川 0.0882353, 车票 0.0882353, 筹建 0.0882353, 中转 0.0882353, 参加 0.0882353, 一月 0.05882353, 试验局 0.05882353, 二月 0.05882353, 地区 0.05882353, 严肃 0.05882353]    
-
-最后我们看一下分别使用7种相似度算法算出来的 兰州 的相关词：
-
-----------------------------------------------------------
-兰州 的相关词（CosineTextSimilarity）：
-    1、兰州 1.0
-    2、沈阳 0.5
-    3、北京军区 0.47
-    4、后勤部 0.46
-    5、沈阳军区 0.46
-    6、总医院 0.46
-    7、新疆军区 0.46
-    8、司令员 0.42
-    9、甘肃兰州 0.42
-    10、兰州新区 0.42
-    11、某师 0.39
-    12、郑蒲港 0.38
-    13、西咸 0.38
-    14、天水 0.37
-    15、郑东 0.37
-耗时：25秒,572毫秒
-----------------------------------------------------------
-兰州 的相关词（EditDistanceTextSimilarity）：
-    1、兰州 1.0
-    2、北京 0.21
-    3、福州 0.2
-    4、太原 0.19
-    5、成都 0.17
-    6、南宁 0.17
-    7、西安 0.17
-    8、哈尔滨 0.17
-    9、贵阳 0.16
-    10、庆阳 0.15
-    11、合肥 0.14
-    12、大同 0.14
-    13、沈阳 0.14
-    14、珀斯 0.13
-    15、拉萨 0.13
-耗时：44秒,253毫秒
-----------------------------------------------------------
-兰州 的相关词（EuclideanDistanceTextSimilarity）：
-    1、兰州 1.0
-    2、后勤部 0.37
-    3、北京军区 0.37
-    4、新疆军区 0.37
-    5、沈阳 0.37
-    6、沈阳军区 0.37
-    7、总医院 0.37
-    8、上海浦东新区 0.36
-    9、郑蒲港 0.36
-    10、浦东新区 0.36
-    11、甘肃兰州 0.36
-    12、西咸 0.36
-    13、西咸新区 0.36
-    14、正定新区 0.36
-    15、司令员 0.36
-耗时：24秒,710毫秒
-----------------------------------------------------------
-兰州 的相关词（SimpleTextSimilarity）：
-    1、兰州 1.0
-    2、福州 0.36
-    3、西安 0.33
-    4、李红旗 0.33
-    5、中国金融信息中心 0.33
-    6、南特 0.32
-    7、卡塔赫纳 0.32
-    8、哈尔滨 0.3
-    9、武汉 0.3
-    10、戴克瑞 0.3
-    11、楚雄州 0.29
-    12、朱梦魁 0.29
-    13、岳菲菲 0.29
-    14、长沙 0.28
-    15、吕国庆 0.28
-耗时：21秒,918毫秒
-----------------------------------------------------------
-兰州 的相关词（JaccardTextSimilarity）：
-    1、兰州 1.0
-    2、福州 0.22
-    3、西安 0.2
-    4、哈尔滨 0.18
-    5、北京 0.18
-    6、武汉 0.18
-    7、成都 0.18
-    8、长沙 0.15
-    9、太原 0.15
-    10、贵阳 0.15
-    11、沈阳 0.15
-    12、广州 0.15
-    13、拉萨 0.15
-    14、南昌 0.15
-    15、长春 0.13
-耗时：19秒,717毫秒
-----------------------------------------------------------
-兰州 的相关词（ManhattanDistanceTextSimilarity）：
-    1、兰州 1.0
-    2、上海浦东新区 0.11
-    3、陕西西咸新区 0.11
-    4、甘肃兰州 0.11
-    5、北京军区 0.11
-    6、新疆军区 0.11
-    7、西咸 0.11
-    8、正定新区 0.11
-    9、天府新区 0.11
-    10、沈阳军区 0.11
-    11、国家级新区 0.11
-    12、兰州新区 0.11
-    13、侠客 0.1
-    14、威胁论 0.1
-    15、一两个月 0.1
-耗时：23秒,857毫秒
-----------------------------------------------------------
-兰州 的相关词（SimHashPlusHammingDistanceTextSimilarity）：
-    1、兰州 1.0
-    2、鱼水 0.96
-    3、冯导 0.95
-    4、新闻稿 0.95
-    5、科学 0.95
-    6、物业公司 0.95
-    7、现役军人 0.95
-    8、何人 0.95
-    9、张轸 0.94
-    10、公告 0.94
-    11、信息发布 0.94
-    12、倡议 0.94
-    13、药液 0.94
-    14、考古发掘 0.94
-    15、公开发布 0.94
-耗时：5分钟,57秒,339毫秒
-----------------------------------------------------------
-兰州 的相关词（JaroDistanceTextSimilarity）：
-    1、兰州 1.0
-    2、长沙 0.49
-    3、哈尔滨 0.49
-    4、福州 0.48
-    5、太原 0.47
-    6、庆阳 0.46
-    7、济南 0.46
-    8、北京 0.45
-    9、成都 0.45
-    10、张家明 0.45
-    11、西安 0.45
-    12、孙勇 0.45
-    13、楚雄州 0.44
-    14、福州站 0.44
-    15、南宁 0.44
-耗时：12秒,718毫秒
-----------------------------------------------------------
-兰州 的相关词（JaroWinklerDistanceTextSimilarity）：
-    1、兰州 1.0
-    2、拉萨 0.56
-    3、南宁 0.55
-    4、朝廷 0.55
-    5、公判 0.54
-    6、萨蒙德 0.53
-    7、世界级 0.53
-    8、滨湖 0.53
-    9、大大小小 0.52
-    10、大选 0.52
-    11、七届 0.52
-    12、烘焙 0.51
-    13、武平县 0.51
-    14、莫斯科 0.51
-    15、复训 0.51
-耗时：16秒,723毫秒
-----------------------------------------------------------
-兰州 的相关词（SørensenDiceCoefficientTextSimilarity）：
-    1、兰州 1.0
-    2、福州 0.37
-    3、西安 0.33
-    4、哈尔滨 0.3
-    5、北京 0.3
-    6、武汉 0.3
-    7、成都 0.3
-    8、长沙 0.27
-    9、太原 0.27
-    10、贵阳 0.27
-    11、沈阳 0.27
-    12、广州 0.27
-    13、拉萨 0.27
-    14、南昌 0.27
-    15、长春 0.23
-耗时：19秒,852毫秒
-----------------------------------------------------------</code></pre></div><h4 id="21、词频统计："><a href="#21、词频统计：" class="headerlink" title="21、词频统计："></a>21、词频统计：</h4><p>org.apdplat.word.WordFrequencyStatistics 提供了词频统计的功能</p>
-<p>命令行脚本的调用方法如下：</p>
-<div class="hljs"><pre><code>将需要统计词频的文本写入文件：text.txt
-chmod +x wfs.sh &amp; wfs.sh -textFile=text.txt -statisticsResultFile=statistics-result.txt
-程序运行结束后打开文件statistics-result.txt查看词频统计结果</code></pre></div><p>在程序中的调用方法如下：</p>
-<div class="hljs"><pre><code>//词频统计设置
-WordFrequencyStatistics wordFrequencyStatistics = new WordFrequencyStatistics();
-wordFrequencyStatistics.setRemoveStopWord(false);
-wordFrequencyStatistics.setResultPath(&quot;word-frequency-statistics.txt&quot;);
-wordFrequencyStatistics.setSegmentationAlgorithm(SegmentationAlgorithm.MaxNgramScore);
-//开始分词
-wordFrequencyStatistics.seg(&quot;明天下雨，结合成分子，明天有关于分子和原子的课程，下雨了也要去听课&quot;);
-//输出词频统计结果
-wordFrequencyStatistics.dump();
-//准备文件
-Files.write(Paths.get(&quot;text-to-seg.txt&quot;), Arrays.asList(&quot;word分词是一个Java实现的分布式中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。&quot;));
-//清除之前的统计结果
-wordFrequencyStatistics.reset();
-//对文件进行分词
-wordFrequencyStatistics.seg(new File(&quot;text-to-seg.txt&quot;), new File(&quot;text-seg-result.txt&quot;));
-//输出词频统计结果
-wordFrequencyStatistics.dump(&quot;file-seg-statistics-result.txt&quot;);</code></pre></div><p>第一句话的词频统计结果：</p>
-<div class="hljs"><pre><code>1、下雨 2
-2、明天 2
-3、分子 2
-4、课程 1
-5、听课 1
-6、结合 1
-7、原子 1
-8、去 1
-9、成 1
-10、关于 1
-11、和 1
-12、也要 1
-13、有 1
-14、的 1
-15、了 1</code></pre></div><p>第二句话的词频统计结果：</p>
-<div class="hljs"><pre><code>1、分词 2
-2、的 2
-3、基于 1
-4、word 1
-5、组件 1
-6、词典 1
-7、ngram 1
-8、多种 1
-9、实现 1
-10、并 1
-11、利用 1
-12、消除歧义 1
-13、中文分词 1
-14、算法 1
-15、是 1
-16、分布式 1
-17、了 1
-18、提供 1
-19、模型 1
-20、来 1
-21、一个 1
-22、Java 1    </code></pre></div><h4 id="22、文本相似度："><a href="#22、文本相似度：" class="headerlink" title="22、文本相似度："></a>22、文本相似度：</h4><p>word分词提供了多种文本相似度计算方式：</p>
-<p>方式一：余弦相似度，通过计算两个向量的夹角余弦值来评估他们的相似度</p>
-<p>实现类：org.apdplat.word.analysis.CosineTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new CosineTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.67
-我爱购物 和 他是黑客 的相似度分值：0.0
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.0
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式二：简单共有词，通过计算两篇文档共有的词的总字符数除以最长文档字符数来评估他们的相似度</p>
-<p>实现类：org.apdplat.word.analysis.SimpleTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new SimpleTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.5
-我爱购物 和 他是黑客 的相似度分值：0.0
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.0
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式三：编辑距离，通过计算两个字串之间由一个转成另一个所需的最少编辑操作次数来评估他们的相似度</p>
-<p>实现类：org.apdplat.word.analysis.EditDistanceTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new EditDistanceTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.5
-我爱购物 和 他是黑客 的相似度分值：0.0
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.0
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式四：SimHash + 汉明距离，先使用SimHash把不同长度的文本映射为等长文本，然后再计算等长文本的汉明距离</p>
-<p>实现类：org.apdplat.word.analysis.SimHashPlusHammingDistanceTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new SimHashPlusHammingDistanceTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.95
-我爱购物 和 他是黑客 的相似度分值：0.83
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.86
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式五：Jaccard相似性系数（Jaccard similarity coefficient），通过计算两个集合交集的大小除以并集的大小来评估他们的相似度</p>
-<p>实现类：org.apdplat.word.analysis.JaccardTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new JaccardTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.5
-我爱购物 和 他是黑客 的相似度分值：0.0
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.0
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式六：欧几里得距离（Euclidean Distance），通过计算两点间的距离来评估他们的相似度</p>
-<p>实现类：org.apdplat.word.analysis.EuclideanDistanceTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new EuclideanDistanceTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.41
-我爱购物 和 他是黑客 的相似度分值：0.29
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.29
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式七：曼哈顿距离（Manhattan Distance），通过计算两个点在标准坐标系上的绝对轴距总和来评估他们的相似度</p>
-<p>实现类：org.apdplat.word.analysis.ManhattanDistanceTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new ManhattanDistanceTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.33
-我爱购物 和 他是黑客 的相似度分值：0.14
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.14
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式八：Jaro距离（Jaro Distance），编辑距离的一种类型</p>
-<p>实现类：org.apdplat.word.analysis.JaroDistanceTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new JaroDistanceTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.67
-我爱购物 和 他是黑客 的相似度分值：0.0
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.0
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式九：Jaro–Winkler距离（Jaro–Winkler Distance），Jaro的扩展</p>
-<p>实现类：org.apdplat.word.analysis.JaroWinklerDistanceTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new JaroWinklerDistanceTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.73
-我爱购物 和 他是黑客 的相似度分值：0.0
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.0
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式十：Sørensen–Dice系数（Sørensen–Dice coefficient），通过计算两个集合交集的大小的2倍除以两个集合的大小之和来评估他们的相似度</p>
-<p>实现类：org.apdplat.word.analysis.SørensenDiceCoefficientTextSimilarity</p>
-<p>用法如下：</p>
-<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
-String text2 = &quot;我爱读书&quot;;
-String text3 = &quot;他是黑客&quot;;
-TextSimilarity textSimilarity = new SørensenDiceCoefficientTextSimilarity();
-double score1pk1 = textSimilarity.similarScore(text1, text1);
-double score1pk2 = textSimilarity.similarScore(text1, text2);
-double score1pk3 = textSimilarity.similarScore(text1, text3);
-double score2pk2 = textSimilarity.similarScore(text2, text2);
-double score2pk3 = textSimilarity.similarScore(text2, text3);
-double score3pk3 = textSimilarity.similarScore(text3, text3);
-System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
-System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
-System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
-System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
-System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
-System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
-<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
-我爱购物 和 我爱读书 的相似度分值：0.67
-我爱购物 和 他是黑客 的相似度分值：0.0
-我爱读书 和 我爱读书 的相似度分值：1.0
-我爱读书 和 他是黑客 的相似度分值：0.0
-他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><h4 id="23、判定句子是有意义的人话的可能性："><a href="#23、判定句子是有意义的人话的可能性：" class="headerlink" title="23、判定句子是有意义的人话的可能性："></a>23、判定句子是有意义的人话的可能性：</h4><div class="hljs"><pre><code>通过如下命令:
-unix-like:
-    chmod +x sentence-identify.sh &amp; ./sentence-identify.sh
-windows:
-    ./sentence-identify.bat
-运行 org.apdplat.word.analysis.SentenceIdentify 类的结果如下所示:
-
-1. 句子: 我是一个男人你是一个女人, 概率: 0.71428573
-1. 句子: 我是一个人, 概率: 0.6666667
-2. 句子: 我爱读书, 概率: 0.5
-3. 句子: 我爱学习, 概率: 0.5
-4. 句子: 法蒂小室汝辈武学大师改个入门处, 概率: 0.2857143
-5. 句子: 显气孔率高压线塔总监督室波洛奈兹王毅陈刘玉荣, 概率: 0.2857143
-6. 句子: 王捷俊汇报演出干草加韦拉一杠地垄墙未尝不可, 概率: 0.25
-7. 句子: 八九点钟山光水色饱经世变普留申科淮河镇乐不极盘模拟飞行, 概率: 0.22222222
-8. 句子: 物位任务区亡灵书巴纳尔没脑子揪人心肺复习功课林友力避风塘, 概率: 0.2
-9.  句子: 参与方植物学报白善烨暗影狂奔骑白马痦子山城堡犹豫不定岳阳机场, 概率: 0.2
-
-接着可根据命令行提示输入句子并回车来获得句子的评分
-
-例如输入句子并回车:为中国崛起而努力奋斗
-程序返回结果如下:
-随机单词: [为, 中国, 崛起, 而, 努力, 奋斗]
-生成句子: 为中国崛起而努力奋斗
-句子概率: 1.0
-
-例如输入句子并回车:人脑的记忆是保存在生物电上还是在细胞里？
-程序返回结果如下:
-随机单词: [人脑, 的, 记忆, 是, 保存, 在, 生物, 电, 上, 还是, 在, 细胞, 里]
-生成句子: 人脑的记忆是保存在生物电上还是在细胞里？
-句子概率: 0.8333333</code></pre></div><h3 id="分词算法效果评估："><a href="#分词算法效果评估：" class="headerlink" title="分词算法效果评估："></a>分词算法效果评估：</h3><div class="hljs"><pre><code>1、word分词 最大Ngram分值算法：
-分词速度：370.9714 字符/毫秒
-行数完美率：66.55%  行数错误率：33.44%  总的行数：2533709  完美行数：1686210  错误行数：847499
-字数完美率：60.94% 字数错误率：39.05% 总的字数：28374490 完美字数：17293964 错误字数：11080526
-
-2、word分词 最少词数算法：
-分词速度：330.1586 字符/毫秒
-行数完美率：65.67%  行数错误率：34.32%  总的行数：2533709  完美行数：1663958  错误行数：869751
-字数完美率：60.12% 字数错误率：39.87% 总的字数：28374490 完美字数：17059641 错误字数：11314849
-
-3、word分词 全切分算法：
-分词速度：62.960262 字符/毫秒
-行数完美率：57.2%  行数错误率：42.79%  总的行数：2533709  完美行数：1449288  错误行数：1084421
-字数完美率：47.95% 字数错误率：52.04% 总的字数：28374490 完美字数：13605742 错误字数：14768748
-
-4、word分词 双向最大最小匹配算法：
-分词速度：462.87158 字符/毫秒
-行数完美率：53.06%  行数错误率：46.93%  总的行数：2533709  完美行数：1344624  错误行数：1189085
-字数完美率：43.07% 字数错误率：56.92% 总的字数：28374490 完美字数：12221610 错误字数：16152880
-
-5、word分词 双向最小匹配算法：
-分词速度：967.68604 字符/毫秒
-行数完美率：46.34%  行数错误率：53.65%  总的行数：2533709  完美行数：1174276  错误行数：1359433
-字数完美率：36.07% 字数错误率：63.92% 总的字数：28374490 完美字数：10236574 错误字数：18137916
-
-6、word分词 双向最大匹配算法：
-分词速度：661.148 字符/毫秒
-行数完美率：46.18%  行数错误率：53.81%  总的行数：2533709  完美行数：1170075  错误行数：1363634
-字数完美率：35.65% 字数错误率：64.34% 总的字数：28374490 完美字数：10117122 错误字数：18257368
-
-7、word分词 正向最大匹配算法：
-分词速度：1567.1318 字符/毫秒
-行数完美率：41.88%  行数错误率：58.11%  总的行数：2533709  完美行数：1061189  错误行数：1472520
-字数完美率：31.35% 字数错误率：68.64% 总的字数：28374490 完美字数：8896173 错误字数：19478317
-
-8、word分词 逆向最大匹配算法：
-分词速度：1232.6017 字符/毫秒
-行数完美率：41.69%  行数错误率：58.3%  总的行数：2533709  完美行数：1056515  错误行数：1477194
-字数完美率：30.98% 字数错误率：69.01% 总的字数：28374490 完美字数：8792532 错误字数：19581958
-
-9、word分词 逆向最小匹配算法：
-分词速度：1936.9575 字符/毫秒
-行数完美率：41.42%  行数错误率：58.57%  总的行数：2533709  完美行数：1049673  错误行数：1484036
-字数完美率：31.34% 字数错误率：68.65% 总的字数：28374490 完美字数：8893622 错误字数：19480868
-
-10、word分词 正向最小匹配算法：
-分词速度：2228.9465 字符/毫秒
-行数完美率：36.7%  行数错误率：63.29%  总的行数：2533709  完美行数：930069  错误行数：1603640
-字数完美率：26.72% 字数错误率：73.27% 总的字数：28374490 完美字数：7583741 错误字数：20790749</code></pre></div><h3 id="相关文章："><a href="#相关文章：" class="headerlink" title="相关文章："></a>相关文章：</h3><p>   <a href="http://yangshangchuan.iteye.com/blog/2031813" target="_blank" rel="noopener">1、中文分词算法 之 基于词典的正向最大匹配算法</a></p>
-<p>   <a href="http://yangshangchuan.iteye.com/blog/2033843" target="_blank" rel="noopener">2、中文分词算法 之 基于词典的逆向最大匹配算法</a></p>
-<p>   <a href="http://yangshangchuan.iteye.com/blog/2035007" target="_blank" rel="noopener">3、中文分词算法 之 词典机制性能优化与测试</a></p>
-<p>   <a href="http://yangshangchuan.iteye.com/blog/2040423" target="_blank" rel="noopener">4、中文分词算法 之 基于词典的正向最小匹配算法</a></p>
-<p>   <a href="http://yangshangchuan.iteye.com/blog/2040431" target="_blank" rel="noopener">5、中文分词算法 之 基于词典的逆向最小匹配算法</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/411112" target="_blank" rel="noopener">6、一种利用ngram模型来消除歧义的中文分词方法</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/411032" target="_blank" rel="noopener">7、一种基于词性序列的人名识别方法</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/412785" target="_blank" rel="noopener">8、中文分词算法 之 基于词典的全切分算法</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/412921" target="_blank" rel="noopener">9、9大Java开源中文分词器的使用方法和分词效果对比</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/408779" target="_blank" rel="noopener">10、中文分词之11946组同义词</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/411301" target="_blank" rel="noopener">11、中文分词之9271组反义词</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/414076" target="_blank" rel="noopener">12、如何利用多核提升分词速度</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/417047" target="_blank" rel="noopener">13、利用word分词来计算文本相似度</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/417641" target="_blank" rel="noopener">14、利用word分词来对文本进行词频统计</a></p>
-<p>   <a href="http://my.oschina.net/apdplat/blog/417922" target="_blank" rel="noopener">15、利用word分词通过计算词的语境来获得相关词</a></p>
-<h3 id="相关项目："><a href="#相关项目：" class="headerlink" title="相关项目："></a>相关项目：</h3><p><a href="https://github.com/ysc/cws_evaluation/" target="_blank" rel="noopener">Java开源项目cws_evaluation：中文分词器分词效果评估对比</a></p>
-<p><a href="https://github.com/ysc/QuestionAnsweringSystem/" target="_blank" rel="noopener">Java开源项目QuestionAnsweringSystem：人机问答系统</a></p>
-<p><a href="https://github.com/ysc/word_web/" target="_blank" rel="noopener">Java开源项目word_web：通过web服务器对word分词的资源进行集中统一管理</a></p>
-<h3 id="相关文献："><a href="#相关文献：" class="headerlink" title="相关文献："></a>相关文献：</h3><p><a href="http://linux.thai.net/~thep/datrie/datrie.html" target="_blank" rel="noopener">An Implementation of Double-Array Trie</a></p>
-<p><a href="http://technology.chtsai.org/mmseg/" target="_blank" rel="noopener">MMSEG: A Word Identification System for Mandarin Chinese Text Based on Two Variants of the Maximum Matching Algorithm</a></p>
-<p><a href="https://books.google.com/ngrams" target="_blank" rel="noopener">With Google’s new tool Ngram Viewer, you can visualise the rise and fall of concepts across 5 million books and 500 years!</a></p>
-<p><a href="https://code.google.com/p/word2vec/" target="_blank" rel="noopener">word2vec</a></p>
-<p><a href="http://open.163.com/special/cuvocw/meilihanyu.html" target="_blank" rel="noopener">魅力汉语</a></p>
-<p><a href="https://travis-ci.org/ysc/word" target="_blank" rel="noopener">https://travis-ci.org/ysc/word</a></p>
-]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>NLP</tag>
-        <tag>Java</tag>
-        <tag>分词</tag>
       </tags>
   </entry>
   <entry>
@@ -6960,6 +5890,7 @@ Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https:&#
 </ul>
 </li>
 <li><a href="#22-部署ozone独立集群">2.2. 部署Ozone独立集群</a></li>
+<li><a href="#23-性能测试">2.3. 性能测试</a></li>
 </ul>
 </li>
 <li><a href="#3-总结">3. 总结</a></li>
@@ -7005,9 +5936,9 @@ Could not find artifact com.oracle.jdbc:ojdbc8:jar:12.2.0.1 in central (https:&#
 <li>桶：Bucket。桶的概念类似目录，桶可以包含任意数量的Key，但不能不含其它桶</li>
 <li>Key：Key类似与文件的概念。</li>
 </ol>
-<p>感觉官方文档的概念介绍，基本可以理解为：<img src="ozone_cengji.png" srcset="/img/loading.gif" alt="Hadoop-Ozone层级介绍"><br>其中粗粒度、细粒度可以理解为权限访问。且在对象存储模型中，没有目录的概念只有Key的概念，Key指向的就是具体的存储对象。</p>
+<p>根据官方文档的概念介绍，基本可以理解为：<img src="ozone_cengji.png" srcset="/img/loading.gif" alt="Hadoop-Ozone层级介绍"><br>其中粗粒度、细粒度可以理解为权限访问。且在对象存储模型中，没有目录的概念只有Key的概念，Key指向的就是具体的存储对象。</p>
 <h2 id="1-2-亮点特性"><a href="#1-2-亮点特性" class="headerlink" title="1.2. 亮点特性"></a>1.2. 亮点特性</h2><h3 id="1-2-1-安全机制"><a href="#1-2-1-安全机制" class="headerlink" title="1.2.1. 安全机制"></a>1.2.1. 安全机制</h3><p>认证体系</p>
-<h3 id="1-2-2-单独的"><a href="#1-2-2-单独的" class="headerlink" title="1.2.2. 单独的"></a>1.2.2. 单独的</h3><h1 id="2-部署测试"><a href="#2-部署测试" class="headerlink" title="2. 部署测试"></a>2. 部署测试</h1><h2 id="2-1-源码编译"><a href="#2-1-源码编译" class="headerlink" title="2.1. 源码编译"></a>2.1. 源码编译</h2><h3 id="2-1-1-下载源码"><a href="#2-1-1-下载源码" class="headerlink" title="2.1.1. 下载源码"></a>2.1.1. 下载源码</h3><h3 id="2-1-2-编译问题"><a href="#2-1-2-编译问题" class="headerlink" title="2.1.2. 编译问题"></a>2.1.2. 编译问题</h3><h2 id="2-2-部署Ozone独立集群"><a href="#2-2-部署Ozone独立集群" class="headerlink" title="2.2. 部署Ozone独立集群"></a>2.2. 部署Ozone独立集群</h2><h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4. 参考文献"></a>4. 参考文献</h1><ol>
+<h3 id="1-2-2-单独的"><a href="#1-2-2-单独的" class="headerlink" title="1.2.2. 单独的"></a>1.2.2. 单独的</h3><h1 id="2-部署测试"><a href="#2-部署测试" class="headerlink" title="2. 部署测试"></a>2. 部署测试</h1><h2 id="2-1-源码编译"><a href="#2-1-源码编译" class="headerlink" title="2.1. 源码编译"></a>2.1. 源码编译</h2><h3 id="2-1-1-下载源码"><a href="#2-1-1-下载源码" class="headerlink" title="2.1.1. 下载源码"></a>2.1.1. 下载源码</h3><h3 id="2-1-2-编译问题"><a href="#2-1-2-编译问题" class="headerlink" title="2.1.2. 编译问题"></a>2.1.2. 编译问题</h3><h2 id="2-2-部署Ozone独立集群"><a href="#2-2-部署Ozone独立集群" class="headerlink" title="2.2. 部署Ozone独立集群"></a>2.2. 部署Ozone独立集群</h2><h2 id="2-3-性能测试"><a href="#2-3-性能测试" class="headerlink" title="2.3. 性能测试"></a>2.3. 性能测试</h2><h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4. 参考文献"></a>4. 参考文献</h1><ol>
 <li><a href="https://cwiki.apache.org/confluence/display/HADOOP/Ozone+Road+Map" target="_blank" rel="noopener">Ozone Road Map</a></li>
 </ol>
 ]]></content>
@@ -7368,6 +6299,1014 @@ datetime &#x3D; parser.parser('2020-03-25T20:46:24.511426+0800')</code></pre></d
       </tags>
   </entry>
   <entry>
+    <title>JavaNLP-分词学习与研究：word分词</title>
+    <url>/2018/06/29/JavaNLP-%E5%88%86%E8%AF%8D%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%A0%94%E7%A9%B6%EF%BC%9Aword%E5%88%86%E8%AF%8D/</url>
+    <content><![CDATA[<p>转载自：<a href="https://github.com/ysc/word" target="_blank" rel="noopener">Java分布式中文分词组件 - word分词</a></p>
+<h3 id="Java分布式中文分词组件-word分词"><a href="#Java分布式中文分词组件-word分词" class="headerlink" title="Java分布式中文分词组件 - word分词"></a>Java分布式中文分词组件 - word分词</h3><a id="more"></a>
+
+<h4 id="word分词是一个Java实现的分布式的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。能通过自定义配置文件来改变组件行为，能自定义用户词库、自动检测词库变化、支持大规模分布式环境，能灵活指定多种分词算法，能使用refine功能灵活控制分词结果，还能使用词频统计、词性标注、同义标注、反义标注、拼音标注等功能。提供了10种分词算法，还提供了10种文本相似度算法，同时还无缝和Lucene、Solr、ElasticSearch、Luke集成。注意：word1-3需要JDK1-8"><a href="#word分词是一个Java实现的分布式的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。能通过自定义配置文件来改变组件行为，能自定义用户词库、自动检测词库变化、支持大规模分布式环境，能灵活指定多种分词算法，能使用refine功能灵活控制分词结果，还能使用词频统计、词性标注、同义标注、反义标注、拼音标注等功能。提供了10种分词算法，还提供了10种文本相似度算法，同时还无缝和Lucene、Solr、ElasticSearch、Luke集成。注意：word1-3需要JDK1-8" class="headerlink" title="word分词是一个Java实现的分布式的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。能通过自定义配置文件来改变组件行为，能自定义用户词库、自动检测词库变化、支持大规模分布式环境，能灵活指定多种分词算法，能使用refine功能灵活控制分词结果，还能使用词频统计、词性标注、同义标注、反义标注、拼音标注等功能。提供了10种分词算法，还提供了10种文本相似度算法，同时还无缝和Lucene、Solr、ElasticSearch、Luke集成。注意：word1.3需要JDK1.8"></a>word分词是一个Java实现的分布式的中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。能准确识别英文、数字，以及日期、时间等数量词，能识别人名、地名、组织机构名等未登录词。能通过自定义配置文件来改变组件行为，能自定义用户词库、自动检测词库变化、支持大规模分布式环境，能灵活指定多种分词算法，能使用refine功能灵活控制分词结果，还能使用词频统计、词性标注、同义标注、反义标注、拼音标注等功能。提供了10种分词算法，还提供了10种文本相似度算法，同时还无缝和Lucene、Solr、ElasticSearch、Luke集成。注意：word1.3需要JDK1.8</h4><h3 id="捐赠致谢"><a href="#捐赠致谢" class="headerlink" title="捐赠致谢"></a><a href="https://github.com/ysc/QuestionAnsweringSystem/wiki/donation" target="_blank" rel="noopener">捐赠致谢</a></h3><h3 id="API在线文档："><a href="#API在线文档：" class="headerlink" title="API在线文档："></a>API在线文档：</h3><p>   <a href="http://apdplat.org/word/apidocs/1.0/" target="_blank" rel="noopener">word 1.0 API</a></p>
+<p>   <a href="http://apdplat.org/word/apidocs/1.1/" target="_blank" rel="noopener">word 1.1 API</a></p>
+<p>   <a href="http://apdplat.org/word/apidocs/1.2/" target="_blank" rel="noopener">word 1.2 API</a></p>
+<p>   <a href="http://apdplat.org/word/apidocs/1.3/" target="_blank" rel="noopener">word 1.3 API</a></p>
+<h3 id="编译好的jar包下载"><a href="#编译好的jar包下载" class="headerlink" title="编译好的jar包下载"></a><a href="http://pan.baidu.com/s/1dDziDFz" target="_blank" rel="noopener">编译好的jar包下载</a></h3><h3 id="Maven依赖："><a href="#Maven依赖：" class="headerlink" title="Maven依赖："></a>Maven依赖：</h3><p>   在pom.xml中指定dependency，可用版本有1.0、1.1、1.2、1.3、1.3.1：</p>
+<div class="hljs"><pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apdplat&lt;/groupId&gt;
+        &lt;artifactId&gt;word&lt;/artifactId&gt;
+        &lt;version&gt;1.3&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre></div><p>word 1.3.1这个版本是从代码分支<a href="https://github.com/ysc/word/tree/ForElasticsearch1.7.2/" target="_blank" rel="noopener">ForElasticsearch1.7.2</a>中编译出来的，主要目的是支持<br>与lucene4.10.4、solr4.10.4和elasticsearch1.7.2兼容的版本。</p>
+<h3 id="分词使用方法："><a href="#分词使用方法：" class="headerlink" title="分词使用方法："></a>分词使用方法：</h3><h4 id="1、快速体验"><a href="#1、快速体验" class="headerlink" title="1、快速体验"></a>1、快速体验</h4><div class="hljs"><pre><code>运行项目根目录下的脚本demo-word.bat可以快速体验分词效果
+用法: command [text] [input] [output]
+命令command的可选值为：demo、text、file
+demo
+text 杨尚川是APDPlat应用级产品开发平台的作者
+file d:/text.txt d:/word.txt
+exit</code></pre></div><h4 id="2、对文本进行分词"><a href="#2、对文本进行分词" class="headerlink" title="2、对文本进行分词"></a>2、对文本进行分词</h4><div class="hljs"><pre><code>移除停用词：List&lt;Word&gt; words = WordSegmenter.seg(&quot;杨尚川是APDPlat应用级产品开发平台的作者&quot;);
+保留停用词：List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;杨尚川是APDPlat应用级产品开发平台的作者&quot;);
+            System.out.println(words);
+
+输出：
+移除停用词：[杨尚川, apdplat, 应用级, 产品, 开发平台, 作者]
+保留停用词：[杨尚川, 是, apdplat, 应用级, 产品, 开发平台, 的, 作者]</code></pre></div><h4 id="3、对文件进行分词"><a href="#3、对文件进行分词" class="headerlink" title="3、对文件进行分词"></a>3、对文件进行分词</h4><div class="hljs"><pre><code>String input = &quot;d:/text.txt&quot;;
+String output = &quot;d:/word.txt&quot;;
+移除停用词：WordSegmenter.seg(new File(input), new File(output));
+保留停用词：WordSegmenter.segWithStopWords(new File(input), new File(output));</code></pre></div><h4 id="4、自定义配置文件"><a href="#4、自定义配置文件" class="headerlink" title="4、自定义配置文件"></a>4、自定义配置文件</h4><div class="hljs"><pre><code>默认配置文件为类路径下的word.conf，打包在word-x.x.jar中
+自定义配置文件为类路径下的word.local.conf，需要用户自己提供
+如果自定义配置和默认配置相同，自定义配置会覆盖默认配置
+配置文件编码为UTF-8</code></pre></div><h4 id="5、自定义用户词库"><a href="#5、自定义用户词库" class="headerlink" title="5、自定义用户词库"></a>5、自定义用户词库</h4><div class="hljs"><pre><code>自定义用户词库为一个或多个文件夹或文件，可以使用绝对路径或相对路径
+用户词库由多个词典文件组成，文件编码为UTF-8
+词典文件的格式为文本文件，一行代表一个词
+可以通过系统属性或配置文件的方式来指定路径，多个路径之间用逗号分隔开
+类路径下的词典文件，需要在相对路径前加入前缀classpath:
+
+指定方式有三种：
+    指定方式一，编程指定（高优先级）：
+        WordConfTools.set(&quot;dic.path&quot;, &quot;classpath:dic.txt，d:/custom_dic&quot;);
+        DictionaryFactory.reload();//更改词典路径之后，重新加载词典
+    指定方式二，Java虚拟机启动参数（中优先级）：
+        java -Ddic.path=classpath:dic.txt，d:/custom_dic
+    指定方式三，配置文件指定（低优先级）：
+        使用类路径下的文件word.local.conf来指定配置信息
+        dic.path=classpath:dic.txt，d:/custom_dic
+
+如未指定，则默认使用类路径下的dic.txt词典文件</code></pre></div><h4 id="6、自定义停用词词库"><a href="#6、自定义停用词词库" class="headerlink" title="6、自定义停用词词库"></a>6、自定义停用词词库</h4><div class="hljs"><pre><code>使用方式和自定义用户词库类似，配置项为：
+stopwords.path=classpath:stopwords.txt，d:/custom_stopwords_dic</code></pre></div><h4 id="7、自动检测词库变化"><a href="#7、自动检测词库变化" class="headerlink" title="7、自动检测词库变化"></a>7、自动检测词库变化</h4><div class="hljs"><pre><code>可以自动检测自定义用户词库和自定义停用词词库的变化
+包含类路径下的文件和文件夹、非类路径下的绝对路径和相对路径
+如：
+classpath:dic.txt，classpath:custom_dic_dir,
+d:/dic_more.txt，d:/DIC_DIR，D:/DIC2_DIR，my_dic_dir，my_dic_file.txt
+
+classpath:stopwords.txt，classpath:custom_stopwords_dic_dir，
+d:/stopwords_more.txt，d:/STOPWORDS_DIR，d:/STOPWORDS2_DIR，stopwords_dir，remove.txt</code></pre></div><h4 id="8、显式指定分词算法"><a href="#8、显式指定分词算法" class="headerlink" title="8、显式指定分词算法"></a>8、显式指定分词算法</h4><div class="hljs"><pre><code>对文本进行分词时，可显式指定特定的分词算法，如：
+WordSegmenter.seg(&quot;APDPlat应用级产品开发平台&quot;, SegmentationAlgorithm.BidirectionalMaximumMatching);
+
+SegmentationAlgorithm的可选类型为：     
+正向最大匹配算法：MaximumMatching
+逆向最大匹配算法：ReverseMaximumMatching
+正向最小匹配算法：MinimumMatching
+逆向最小匹配算法：ReverseMinimumMatching
+双向最大匹配算法：BidirectionalMaximumMatching
+双向最小匹配算法：BidirectionalMinimumMatching
+双向最大最小匹配算法：BidirectionalMaximumMinimumMatching
+全切分算法：FullSegmentation
+最少词数算法：MinimalWordCount
+最大Ngram分值算法：MaxNgramScore</code></pre></div><h4 id="9、分词效果评估"><a href="#9、分词效果评估" class="headerlink" title="9、分词效果评估"></a>9、分词效果评估</h4><div class="hljs"><pre><code>运行项目根目录下的脚本evaluation.bat可以对分词效果进行评估
+评估采用的测试文本有253 3709行，共2837 4490个字符
+评估结果位于target/evaluation目录下：
+corpus-text.txt为分好词的人工标注文本，词之间以空格分隔
+test-text.txt为测试文本，是把corpus-text.txt以标点符号分隔为多行的结果
+standard-text.txt为测试文本对应的人工标注文本，作为分词是否正确的标准
+result-text-***.txt，***为各种分词算法名称，这是word分词结果
+perfect-result-***.txt，***为各种分词算法名称，这是分词结果和人工标注标准完全一致的文本
+wrong-result-***.txt，***为各种分词算法名称，这是分词结果和人工标注标准不一致的文本</code></pre></div><h4 id="10、分布式中文分词器"><a href="#10、分布式中文分词器" class="headerlink" title="10、分布式中文分词器"></a>10、分布式中文分词器</h4><div class="hljs"><pre><code>1、在自定义配置文件word.conf或word.local.conf中指定所有的配置项*.path使用HTTP资源，同时指定配置项redis.*
+2、配置并启动提供HTTP资源的web服务器，将项目：https://github.com/ysc/word_web部署到tomcat
+3、配置并启动redis服务器</code></pre></div><h4 id="11、词性标注"><a href="#11、词性标注" class="headerlink" title="11、词性标注"></a>11、词性标注</h4><div class="hljs"><pre><code>将分词结果作为输入参数，调用PartOfSpeechTagging类的process方法，词性保存在Word类的partOfSpeech字段中
+如下所示：
+List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;我爱中国&quot;);
+System.out.println(&quot;未标注词性：&quot;+words);
+//词性标注
+PartOfSpeechTagging.process(words);
+System.out.println(&quot;标注词性：&quot;+words);
+输出内容：
+未标注词性：[我, 爱, 中国]
+标注词性：[我/r, 爱/v, 中国/ns]</code></pre></div><h4 id="12、refine"><a href="#12、refine" class="headerlink" title="12、refine"></a>12、refine</h4><div class="hljs"><pre><code>我们看一个切分例子：
+List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;我国工人阶级和广大劳动群众要更加紧密地团结在党中央周围&quot;);
+System.out.println(words);
+结果如下：
+[我国, 工人阶级, 和, 广大, 劳动群众, 要, 更加, 紧密, 地, 团结, 在, 党中央, 周围]
+假如我们想要的切分结果是：
+[我国, 工人, 阶级, 和, 广大, 劳动, 群众, 要, 更加, 紧密, 地, 团结, 在, 党中央, 周围]
+也就是要把“工人阶级”细分为“工人 阶级”，把“劳动群众”细分为“劳动 群众”，那么我们该怎么办呢？
+我们可以通过在word.refine.path配置项指定的文件classpath:word_refine.txt中增加以下内容：
+工人阶级=工人 阶级
+劳动群众=劳动 群众
+然后，我们对分词结果进行refine：
+words = WordRefiner.refine(words);
+System.out.println(words);
+这样，就能达到我们想要的效果：
+[我国, 工人, 阶级, 和, 广大, 劳动, 群众, 要, 更加, 紧密, 地, 团结, 在, 党中央, 周围]
+
+我们再看一个切分例子：
+List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;在实现“两个一百年”奋斗目标的伟大征程上再创新的业绩&quot;);
+System.out.println(words);
+结果如下：
+[在, 实现, 两个, 一百年, 奋斗目标, 的, 伟大, 征程, 上, 再创, 新的, 业绩]
+假如我们想要的切分结果是：
+[在, 实现, 两个一百年, 奋斗目标, 的, 伟大征程, 上, 再创, 新的, 业绩]
+也就是要把“两个 一百年”合并为“两个一百年”，把“伟大, 征程”合并为“伟大征程”，那么我们该怎么办呢？
+我们可以通过在word.refine.path配置项指定的文件classpath:word_refine.txt中增加以下内容：
+两个 一百年=两个一百年
+伟大 征程=伟大征程
+然后，我们对分词结果进行refine：
+words = WordRefiner.refine(words);
+System.out.println(words);
+这样，就能达到我们想要的效果：
+[在, 实现, 两个一百年, 奋斗目标, 的, 伟大征程, 上, 再创, 新的, 业绩]</code></pre></div><h4 id="13、同义标注"><a href="#13、同义标注" class="headerlink" title="13、同义标注"></a>13、同义标注</h4><div class="hljs"><pre><code>List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;楚离陌千方百计为无情找回记忆&quot;);
+System.out.println(words);
+结果如下：
+[楚离陌, 千方百计, 为, 无情, 找回, 记忆]
+做同义标注：
+SynonymTagging.process(words);
+System.out.println(words);
+结果如下：
+[楚离陌, 千方百计[久有存心, 化尽心血, 想方设法, 费尽心机], 为, 无情, 找回, 记忆[影象]]
+如果启用间接同义词：
+SynonymTagging.process(words, false);
+System.out.println(words);
+结果如下：
+[楚离陌, 千方百计[久有存心, 化尽心血, 想方设法, 费尽心机], 为, 无情, 找回, 记忆[影像, 影象]]
+
+List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;手劲大的老人往往更长寿&quot;);
+System.out.println(words);
+结果如下：
+[手劲, 大, 的, 老人, 往往, 更, 长寿]
+做同义标注：
+SynonymTagging.process(words);
+System.out.println(words);
+结果如下：
+[手劲, 大, 的, 老人[白叟], 往往[常常, 每每, 经常], 更, 长寿[长命, 龟龄]]
+如果启用间接同义词：
+SynonymTagging.process(words, false);
+System.out.println(words);
+结果如下：
+[手劲, 大, 的, 老人[白叟], 往往[一样平常, 一般, 凡是, 寻常, 常常, 常日, 平凡, 平居, 平常, 平日, 平时, 往常, 日常, 日常平凡, 时常, 普通, 每每, 泛泛, 素日, 经常, 通俗, 通常], 更, 长寿[长命, 龟龄]]
+
+以词“千方百计”为例：
+可以通过Word的getSynonym()方法获取同义词如：
+System.out.println(word.getSynonym());
+结果如下：
+[久有存心, 化尽心血, 想方设法, 费尽心机]
+注意：如果没有同义词，则getSynonym()返回空集合：Collections.emptyList()
+
+间接同义词和直接同义词的区别如下：
+假设：
+A和B是同义词，A和C是同义词，B和D是同义词，C和E是同义词
+则：
+对于A来说，A B C是直接同义词
+对于B来说，A B D是直接同义词
+对于C来说，A C E是直接同义词
+对于A B C来说，A B C D E是间接同义词</code></pre></div><h4 id="14、反义标注"><a href="#14、反义标注" class="headerlink" title="14、反义标注"></a>14、反义标注</h4><div class="hljs"><pre><code>List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;5月初有哪些电影值得观看&quot;);
+System.out.println(words);
+结果如下：
+[5, 月初, 有, 哪些, 电影, 值得, 观看]
+做反义标注：
+AntonymTagging.process(words);
+System.out.println(words);
+结果如下：
+[5, 月初[月底, 月末, 月终], 有, 哪些, 电影, 值得, 观看]
+
+List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;由于工作不到位、服务不完善导致顾客在用餐时发生不愉快的事情,餐厅方面应该向顾客作出真诚的道歉,而不是敷衍了事。&quot;);
+System.out.println(words);
+结果如下：
+[由于, 工作, 不到位, 服务, 不完善, 导致, 顾客, 在, 用餐, 时, 发生, 不愉快, 的, 事情, 餐厅, 方面, 应该, 向, 顾客, 作出, 真诚, 的, 道歉, 而不是, 敷衍了事]
+做反义标注：
+AntonymTagging.process(words);
+System.out.println(words);
+结果如下：
+[由于, 工作, 不到位, 服务, 不完善, 导致, 顾客, 在, 用餐, 时, 发生, 不愉快, 的, 事情, 餐厅, 方面, 应该, 向, 顾客, 作出, 真诚[糊弄, 虚伪, 虚假, 险诈], 的, 道歉, 而不是, 敷衍了事[一丝不苟, 兢兢业业, 尽心竭力, 竭尽全力, 精益求精, 诚心诚意]]
+
+以词“月初”为例：
+可以通过Word的getAntonym()方法获取反义词如：
+System.out.println(word.getAntonym());
+结果如下：
+[月底, 月末, 月终]
+注意：如果没有反义词，getAntonym()返回空集合：Collections.emptyList()</code></pre></div><h4 id="15、拼音标注"><a href="#15、拼音标注" class="headerlink" title="15、拼音标注"></a>15、拼音标注</h4><div class="hljs"><pre><code>List&lt;Word&gt; words = WordSegmenter.segWithStopWords(&quot;《速度与激情7》的中国内地票房自4月12日上映以来，在短短两周内突破20亿人民币&quot;);
+System.out.println(words);
+结果如下：
+[速度, 与, 激情, 7, 的, 中国, 内地, 票房, 自, 4月, 12日, 上映, 以来, 在, 短短, 两周, 内, 突破, 20亿, 人民币]
+执行拼音标注：
+PinyinTagging.process(words);
+System.out.println(words);
+结果如下：
+[速度 sd sudu, 与 y yu, 激情 jq jiqing, 7, 的 d de, 中国 zg zhongguo, 内地 nd neidi, 票房 pf piaofang, 自 z zi, 4月, 12日, 上映 sy shangying, 以来 yl yilai, 在 z zai, 短短 dd duanduan, 两周 lz liangzhou, 内 n nei, 突破 tp tupo, 20亿, 人民币 rmb renminbi]
+
+以词“速度”为例：
+可以通过Word的getFullPinYin()方法获取完整拼音如：sudu
+可以通过Word的getAcronymPinYin()方法获取首字母缩略拼音如：sd</code></pre></div><h4 id="16、Lucene插件："><a href="#16、Lucene插件：" class="headerlink" title="16、Lucene插件："></a>16、Lucene插件：</h4><div class="hljs"><pre><code>1、构造一个word分析器ChineseWordAnalyzer
+Analyzer analyzer = new ChineseWordAnalyzer();
+如果需要使用特定的分词算法，可通过构造函数来指定：
+Analyzer analyzer = new ChineseWordAnalyzer(SegmentationAlgorithm.FullSegmentation);
+如不指定，默认使用双向最大匹配算法：SegmentationAlgorithm.BidirectionalMaximumMatching
+可用的分词算法参见枚举类：SegmentationAlgorithm
+
+2、利用word分析器切分文本
+TokenStream tokenStream = analyzer.tokenStream(&quot;text&quot;, &quot;杨尚川是APDPlat应用级产品开发平台的作者&quot;);
+//准备消费
+tokenStream.reset();
+//开始消费
+while(tokenStream.incrementToken()){
+    //词
+    CharTermAttribute charTermAttribute = tokenStream.getAttribute(CharTermAttribute.class);
+    //词在文本中的起始位置
+    OffsetAttribute offsetAttribute = tokenStream.getAttribute(OffsetAttribute.class);
+    //第几个词
+    PositionIncrementAttribute positionIncrementAttribute = tokenStream.getAttribute(PositionIncrementAttribute.class);
+
+    LOGGER.info(charTermAttribute.toString()+&quot; (&quot;+offsetAttribute.startOffset()+&quot; - &quot;+offsetAttribute.endOffset()+&quot;) &quot;+positionIncrementAttribute.getPositionIncrement());
+}
+//消费完毕
+tokenStream.close();
+
+3、利用word分析器建立Lucene索引
+Directory directory = new RAMDirectory();
+IndexWriterConfig config = new IndexWriterConfig(analyzer);
+IndexWriter indexWriter = new IndexWriter(directory, config);
+
+4、利用word分析器查询Lucene索引
+QueryParser queryParser = new QueryParser(&quot;text&quot;, analyzer);
+Query query = queryParser.parse(&quot;text:杨尚川&quot;);
+TopDocs docs = indexSearcher.search(query, Integer.MAX_VALUE);</code></pre></div><h4 id="17、Solr插件："><a href="#17、Solr插件：" class="headerlink" title="17、Solr插件："></a>17、Solr插件：</h4><div class="hljs"><pre><code>1、下载word-1.3.jar
+下载地址：http://search.maven.org/remotecontent?filepath=org/apdplat/word/1.3/word-1.3.jar
+
+2、创建目录solr-5.2.0/example/solr/lib，将word-1.3.jar复制到lib目录
+
+3、配置schema指定分词器
+将solr-5.2.0/example/solr/collection1/conf/schema.xml文件中所有的
+&lt;tokenizer class=&quot;solr.WhitespaceTokenizerFactory&quot;/&gt;和
+&lt;tokenizer class=&quot;solr.StandardTokenizerFactory&quot;/&gt;全部替换为
+&lt;tokenizer class=&quot;org.apdplat.word.solr.ChineseWordTokenizerFactory&quot;/&gt;
+并移除所有的filter标签
+
+4、如果需要使用特定的分词算法：
+&lt;tokenizer class=&quot;org.apdplat.word.solr.ChineseWordTokenizerFactory&quot; segAlgorithm=&quot;ReverseMinimumMatching&quot;/&gt;
+segAlgorithm可选值有：     
+正向最大匹配算法：MaximumMatching
+逆向最大匹配算法：ReverseMaximumMatching
+正向最小匹配算法：MinimumMatching
+逆向最小匹配算法：ReverseMinimumMatching
+双向最大匹配算法：BidirectionalMaximumMatching
+双向最小匹配算法：BidirectionalMinimumMatching
+双向最大最小匹配算法：BidirectionalMaximumMinimumMatching
+全切分算法：FullSegmentation
+最少词数算法：MinimalWordCount
+最大Ngram分值算法：MaxNgramScore
+如不指定，默认使用双向最大匹配算法：BidirectionalMaximumMatching
+
+5、如果需要指定特定的配置文件：
+&lt;tokenizer class=&quot;org.apdplat.word.solr.ChineseWordTokenizerFactory&quot; segAlgorithm=&quot;ReverseMinimumMatching&quot;
+        conf=&quot;solr-5.2.0/example/solr/nutch/conf/word.local.conf&quot;/&gt;
+word.local.conf文件中可配置的内容见 word-1.3.jar 中的word.conf文件
+如不指定，使用默认配置文件，位于 word-1.3.jar 中的word.conf文件</code></pre></div><h4 id="18、ElasticSearch插件："><a href="#18、ElasticSearch插件：" class="headerlink" title="18、ElasticSearch插件："></a>18、ElasticSearch插件：</h4><div class="hljs"><pre><code>1、打开命令行并切换到elasticsearch的bin目录
+cd elasticsearch-2.1.1/bin
+
+2、运行plugin脚本安装word分词插件：
+./plugin install http://apdplat.org/word/archive/v1.4.zip
+
+安装的时候注意：
+    如果提示：
+        ERROR: failed to download 
+    或者 
+        Failed to install word, reason: failed to download
+    或者 
+        ERROR: incorrect hash (SHA1)
+    则重新再次运行命令，如果还是不行，多试两次
+
+如果是elasticsearch1.x系列版本，则使用如下命令：
+./plugin -u http://apdplat.org/word/archive/v1.3.1.zip -i word
+
+3、修改文件elasticsearch-2.1.1/config/elasticsearch.yml，新增如下配置：    
+index.analysis.analyzer.default.type : &quot;word&quot;
+index.analysis.tokenizer.default.type : &quot;word&quot;
+
+4、启动ElasticSearch测试效果，在Chrome浏览器中访问：    
+http://localhost:9200/_analyze?analyzer=word&amp;text=杨尚川是APDPlat应用级产品开发平台的作者
+
+5、自定义配置
+修改配置文件elasticsearch-2.1.1/plugins/word/word.local.conf
+
+6、指定分词算法
+修改文件elasticsearch-2.1.1/config/elasticsearch.yml，新增如下配置：
+index.analysis.analyzer.default.segAlgorithm : &quot;ReverseMinimumMatching&quot;
+index.analysis.tokenizer.default.segAlgorithm : &quot;ReverseMinimumMatching&quot;
+
+这里segAlgorithm可指定的值有：
+正向最大匹配算法：MaximumMatching
+逆向最大匹配算法：ReverseMaximumMatching
+正向最小匹配算法：MinimumMatching
+逆向最小匹配算法：ReverseMinimumMatching
+双向最大匹配算法：BidirectionalMaximumMatching
+双向最小匹配算法：BidirectionalMinimumMatching
+双向最大最小匹配算法：BidirectionalMaximumMinimumMatching
+全切分算法：FullSegmentation
+最少词数算法：MinimalWordCount
+最大Ngram分值算法：MaxNgramScore
+如不指定，默认使用双向最大匹配算法：BidirectionalMaximumMatching</code></pre></div><h4 id="19、Luke插件："><a href="#19、Luke插件：" class="headerlink" title="19、Luke插件："></a>19、Luke插件：</h4><div class="hljs"><pre><code>1、下载http://luke.googlecode.com/files/lukeall-4.0.0-ALPHA.jar（国内不能访问）
+
+2、下载并解压Java中文分词组件word-1.0-bin.zip：http://pan.baidu.com/s/1dDziDFz
+
+3、将解压后的 Java中文分词组件word-1.0-bin/word-1.0 文件夹里面的4个jar包解压到当前文件夹
+用压缩解压工具如winrar打开lukeall-4.0.0-ALPHA.jar，将当前文件夹里面除了META-INF文件夹、.jar、
+.bat、.html、word.local.conf文件外的其他所有文件拖到lukeall-4.0.0-ALPHA.jar里面
+
+4、执行命令 java -jar lukeall-4.0.0-ALPHA.jar 启动luke，在Search选项卡的Analysis里面
+就可以选择 org.apdplat.word.lucene.ChineseWordAnalyzer 分词器了
+
+ 5、在Plugins选项卡的Available analyzers found on the current classpath里面也可以选择 
+org.apdplat.word.lucene.ChineseWordAnalyzer 分词器
+
+注意：如果你要自己集成word分词器的其他版本，在项目根目录下运行mvn install编译项目，然后运行命令
+mvn dependency:copy-dependencies复制依赖的jar包，接着在target/dependency/目录下就会有所有
+的依赖jar包。其中target/dependency/slf4j-api-1.6.4.jar是word分词器使用的日志框架，
+target/dependency/logback-classic-0.9.28.jar和
+target/dependency/logback-core-0.9.28.jar是word分词器推荐使用的日志实现，日志实现的配置文件
+路径位于target/classes/logback.xml，target/word-1.3.jar是word分词器的主jar包，如果需要
+自定义词典，则需要修改分词器配置文件target/classes/word.conf</code></pre></div><p>   已经集成好的Luke插件下载（适用于lucene4.0.0） ：<a href="http://pan.baidu.com/s/1bn52ooR" target="_blank" rel="noopener">lukeall-4.0.0-ALPHA-with-word-1.0.jar</a></p>
+<p>   已经集成好的Luke插件下载（适用于lucene4.10.3）：<a href="http://pan.baidu.com/s/1mgFt7ZU" target="_blank" rel="noopener">lukeall-4.10.3-with-word-1.2.jar</a></p>
+<h4 id="20、通过计算词的语境来获得相关词："><a href="#20、通过计算词的语境来获得相关词：" class="headerlink" title="20、通过计算词的语境来获得相关词："></a>20、通过计算词的语境来获得相关词：</h4><p>我们如何通过计算词的语境来获得相关词呢？</p>
+<div class="hljs"><pre><code>语境的定义是：在一段文本中，任意一个词的语境由它的前N个词和后N个词组成。
+相关词的定义是：如果两个词的语境越相似，那么这两个词就越相似，也就越相关。</code></pre></div><p>算法由两个步骤组成：</p>
+<div class="hljs"><pre><code>1、从大规模语料库中计算每一个词的语境，并使用词向量来表示语境。
+2、把求两个词的相似度的问题转换为求这两个词的语境的相似度的问题。
+通过计算语境的相似度，就可得到词的相似度，越相似的词就越相关。</code></pre></div><p>使用方法如下：</p>
+<div class="hljs"><pre><code>1、使用word分词内置语料库：运行word分词项目根目录下的脚本 
+demo-word-vector-corpus.bat 或 demo-word-vector-corpus.sh
+2、使用自己的文本内容：运行word分词项目根目录下的脚本 
+demo-word-vector-file.bat 或 demo-word-vector-file.sh
+
+由于语料库很大，所以启动的时间会很长，请耐心等待，下面以例子来说明：
+比如我们想分析 兰州 这个词的相关词有哪些，我们运行脚本 
+demo-word-vector-corpus.sh ，启动成功之后命令行提示：
+
+开始初始化模型
+模型初始化完成
+可通过输入命令sa=cos来指定相似度算法，可用的算法有：
+   1、sa=cos，余弦相似度
+   2、sa=edi，编辑距离
+   3、sa=euc，欧几里得距离
+   4、sa=sim，简单共有词
+   5、sa=jac，Jaccard相似性系数
+   6、sa=man，曼哈顿距离
+   7、sa=shh，SimHash + 汉明距离
+   8、sa=ja，Jaro距离
+   9、sa=jaw，Jaro–Winkler距离
+   10、sa=sd，Sørensen–Dice系数
+可通过输入命令limit=15来指定显示结果条数
+可通过输入命令exit退出程序
+输入要查询的词或命令：
+
+我们输入 兰州 后回车，结果显示：
+
+兰州 的相关词（EditDistanceTextSimilarity）：
+----------------------------------------------------------
+    1、兰州 1.0
+    2、北京 0.21
+    3、福州 0.2
+    4、太原 0.19
+    5、成都 0.17
+    6、西安 0.17
+    7、哈尔滨 0.17
+    8、南宁 0.17
+    9、贵阳 0.16
+    10、庆阳 0.15
+    11、沈阳 0.14
+    12、合肥 0.14
+    13、大同 0.14
+    14、拉萨 0.13
+    15、西宁 0.13
+----------------------------------------------------------
+这里显示的结果就是 兰州 这个词的相关词，词后面跟的是相关度分值，
+兰州 和 兰州 是同一个词，相关度百分之百，自然是1分。
+
+从这个结果我们来分析，这些词凭什么相关呢？线索在哪里？
+
+首先这些词的词性都是名词；
+其次这些词都是地名而且是大城市名；
+从这里我们也可以看到一个有意思的现象，同一词性比如地名的用法往往保持一致。
+
+相关词是从语境推导得到的，语境中词后面跟的数字是权重，权重是1/N的累加值
+下面我们看看这些词的语境：
+
+兰州 : [军区 1.0, 甘肃 0.78205127, 新区 0.7692308, 大学 0.42307693, 甘肃兰州 0.41025642, 货车 0.3846154, 西安 0.32051283, 本报 0.2948718, 新华社 0.2820513, 兰州新区 0.26923078, 召开 0.23076923, 发往 0.21794872, 中国 0.20512821, 兰州 0.20512821, 火车站 0.20512821, 铁路 0.17948718, 参加 0.15384616, 西宁 0.15384616, 方向 0.15384616, 成都 0.14102565, 警察 0.14102565, 建设 0.12820514, 市委 0.12820514, 来到 0.12820514, 一家 0.12820514, 中心 0.115384616, 炼油厂 0.102564104, 进入 0.102564104, 来自 0.102564104, 举行 0.102564104]    
+北京 : [新华社 1.0, 本报 0.7119143, 举行 0.19384204, 上海 0.17831326, 时间 0.16385542, 铁路局 0.1394913, 西站 0.13226238, 青年报 0.12717536, 晨报 0.11700134, 市委 0.1145917, 地区 0.11218206, 召开 0.10200803, 城市 0.08299866, 目前 0.07951807, 来到 0.06961178, 军区 0.06827309, 国际 0.066398926, 中心 0.063453816, 北京时间 0.06184739, 人民 0.059973225, 工作 0.05863454, 地铁 0.057563588, 北京铁路局 0.056492638, 医院 0.055421688, 飞往 0.05381526, 首都 0.053547524, 中国 0.053547524, 其中 0.05274431, 今天 0.052208837, 卫视 0.05167336]
+福州 : [火车站 1.0, 新区 0.46666667, 福州火车站 0.45555556, 晚报 0.2962963, 记者 0.2777778, 打工 0.27407408, 来到 0.24814814, 市民 0.23333333, 本报 0.22222222, 大学 0.21851853, 市区 0.2074074, 市委 0.19259259, 举行 0.19259259, 鼓楼区 0.18518518, 网友 0.18148148, 到达 0.17037037, 开往 0.16296296, 目前 0.14074074, 分行 0.14074074, 一家 0.12962963, 全市 0.12962963, 东街口 0.12222222, 福州晚报 0.12222222, 新华社 0.11851852, 铁路 0.11851852, 召开 0.11481482, 前往 0.11481482, 发展 0.11481482, 推进 0.11111111, 福州 0.11111111]     
+太原 : [山西 1.0, 山西太原 0.6136364, 本报 0.39772728, 新华社 0.3409091, 火车站 0.26136363, 济南 0.25, 铁路 0.23863636, 北京 0.22727273, 推出 0.1590909, 国际 0.1590909, 返回 0.14772727, 刚玉 0.13636364, 来自 0.13636364, 发布 0.13636364, 打工 0.125, 中心 0.125, 市委 0.11363637, 银行 0.11363637, 铁路局 0.10227273, 西安 0.09090909, 集团 0.09090909, 公安 0.09090909, 开往 0.09090909, 比如 0.07954545, 金融 0.07954545, 火车票 0.07954545, 大同 0.06818182, 山西省 0.06818182, 军分区 0.06818182, 离开 0.06818182]
+成都 : [商报 1.0, 成都商报 0.4117647, 军区 0.1875, 铁路局 0.17830883, 北京 0.17463236, 本报 0.17095588, 重庆 0.15441176, 告诉 0.15441176, 交警 0.14338236, 方向 0.1360294, 记者 0.13419117, 平原 0.121323526, 四川 0.1194853, 长沙 0.11764706, 理工大学 0.0992647, 来自 0.09375, 新华社 0.09191176, 开往 0.090073526, 成都铁路局 0.08455882, 铁路 0.080882356, 召开 0.07904412, 市民 0.075367644, 市委 0.073529415, 公司 0.07169118, 广州 0.07169118, 西安 0.0680147, 郫县 0.060661763, 打工 0.060661763, 市区 0.05882353, 晚报 0.05882353]
+西安 : [火车站 1.0, 事变 0.75, 交通 0.7058824, 建设 0.5882353, 地铁 0.5882353, &gt;咸阳 0.5588235, 来到 0.5294118, 市民 0.50735295, 大学 0.5, 铁路 0.5, 代表团 0.5, 铁路局 0.49264705, 公司 0.4852941, 武汉 0.4632353, 曲江 0.44117647, 供电 0.42647058, 新华社 0.4117647, 西安火车站 0.4117647, 北京 0.3602941, 交大 0.3602941, 本报 0.34558824, 西安事变 0.3382353, 城市 0.31617647, 城区 0.31617647, 落户 0.30882353, 市委 0.29411766, 国际 0.2867647, 城东 0.2867647, 成都 0.2720588, 举行 0.25]    
+哈尔滨 : [理工大学 1.0, 火车站 0.41584158, 哈尔滨理工大学 0.36138615, 工业 0.25742576, 方向 0.23762377, 新华社 0.20792079, 开往 0.18811882, 哈尔滨火车站 0.18316832, 位于 0.17821783, 大学 0.17326732, 铁路局 0.15841584, 来自 0.15346535, 最低 0.14356436, 北京 0.12871288, 本报 0.12376238, 黑龙江省 0.12376238, 发布 0.11386139, 中国 0.10891089, 飞往 0.0990099, 黑龙&gt;江 0.08415841, 沈阳 0.07920792, 工程 0.07920792, 附近 0.074257426, 市委 0.06930693, 飞机 0.06930693, 上海 0.06930693, 考生 0.06930693, 进入 0.06930693, 停止 0.06930693, 经济 0.06435644]
+南宁 : [广西 1.0, 铁路局 0.8, 广西南宁 0.62222224, 本报 0.54444444, 新华社 0.36666667, 南宁铁路局 0.31111112, 市委 0.26666668, 柳州 0.18888889, 桂林 0.17777778, 铁路 0.15555556, 兴&gt;宁区 0.14444445, 来到 0.11111111, 开往 0.11111111, 前往 0.11111111, 公安 0.11111111, 工作 0.11111111, 运往 0.11111111, 城市 0.08888889, 美丽 0.08888889, 召开 0.08888889, 从事 0.08888889, 官塘 0.08888889, 楼市 0.08888889, 分局 0.07777778, 南宁市委 0.07777778, 动车 0.07777778, 发生 0.07777778, 举行 0.07777778, 西乡 0.06666667, 市长 0.06666667]
+贵阳 : [本报 1.0, 重庆 0.73333335, 新华社 0.46666667, 方向 0.43333334, 前往 0.4, 哥俩 0.4, 城区 0.4, 老家 0.33333334, 西安 0.26666668, 成都 0.26666668, 街头 0.26666668, 晚报 0.26666668, 无关 0.26666668, 杭州 0.23333333, 涉及 0.2, 以及 0.2, 市内 0.2, 网友 0.2, 郑州 0.16666667, 南宁 0.16666667, 长沙 0.16666667, 武汉 0.16666667, 摆摊 0.16666667, 市委 0.13333334, 昆明 0.13333334, 安顺 0.13333334, 来到 0.13333334, 争霸 0.13333334, 四强 0.13333334, 铁路 0.13333334]
+庆阳 : [甘肃 1.0, 甘肃庆阳 0.8, 甘肃省 0.4, 地区 0.4, 老区 0.3, 森林 0.2, 平凉 0.2, 镇远县 0.1, 革命 0.1, 韩凤廷 0.1, 交通处 0.1, 兰州森林大队 0.1, 大队 0.1, 兰州 0.1, 西峰 0.1, 发&gt;送 0.1, 一辆 0.1, 牌照 0.1, 来自 0.1]
+沈阳 : [军区 1.0, 晚报 0.5123967, 方向 0.3181818, 本报 0.27272728, 沈阳晚报 0.23553719, 新华社 0.20661157, 沈阳军区 0.18595041, 军区队 0.15289256, 海狮队 0.14876033, 自动化所 0.14049587, 此次 0.14049587, 经济区 0.1322314, 中国 0.12809917, &gt;大连 0.12809917, 大爷 0.12809917, 市委 0.12396694, 一家 0.11570248, 高速 0.11570248, 国际 0.11157025, 火车票 0.11157025, 法库 0.10743801, 大学 0.10330579, 长春 0.10330579, 直达 0.09917355, 深圳 0.09090909, 上海 0.08677686, 记者 0.08677686, 海狮 0.08264463, 大妈 0.08264463, 两位 0.08264463]    
+合肥 : [火车站 1.0, 市民 0.8181818, 市区 0.53333336, 楼市 0.4848485, 合肥火车站 0.4121212, 铁路 0.38787878, 安徽 0.36969697, 到达 0.36363637, 市场 0.34545454, 上周 0.3030303, 芜湖 0.2969697, 召开 0.28484848, 记者 0.27272728, 成为 0.27272728, 来到 0.26666668, 安徽合肥 0.24242425, 城市 0.24242425, 经济圈 0.24242425, 公交 0.24242425, 目前 0.23636363, 本报 0.21818182, 今年 0.21818182, 起飞 0.21818182, 汽车 0.21212122, 物质 0.2060606, 合肥楼市 0.2060606, 空港 0.2060606, 工业 0.19393939, 标题 0.18181819, 野生 0.16969697]
+大同 : [大学 1.0, 铁路 0.52380955, 山西 0.5, 证券 0.33333334, 大同大学 0.33333334, 山西省 0.23809524, 此次 0.23809524, 山西大同 0.1904762, 世界 0.1904762, 世界大同 0.1904762, 街道 0.16666667, 太原 0.14285715, 市委 0.14285715, 上海 0.14285715, 派出所 0.14285715, 公安处 0.14285715, 日方 0.14285715, 转发 0.14285715, 运城 0.11904762, 军分区 0.0952381, 矿务局 0.0952381, 小学 0.0952381, 参加 0.0952381, 项目 0.0952381, 中学 0.0952381, 水厂 0.0952381, 车辆段 0.0952381, 开往 0.0952381, 大同证券 0.0952381, 战役 0.071428575]
+拉萨 : [火车站 1.0, 新华社 0.91935486, 西藏 0.7580645, 市区 0.61290324, 本报 0.58064514, 召开 0.5645161, 海关 0.5483871, 城市 0.48387095, 拉萨火车站 0.4032258, 市委 0.38709676, 成都 0.37096775, 贡嘎 0.3548387, 开幕 0.32258064, 发布 0.30645162, 西藏拉萨 0.2580645, 会议 0.2580645, 机场 0.22580644, 闭幕 0.22580644, 隆重 0.22580644, 林芝 0.20967741, 举行 0.19354838, 开通 0.19354838, 营业部 0.19354838, 市民 0.17741935, 市场 0.17741935, 经济 0.17741935, 中心 0.17741935, 空气 0.17741935, 成为 0.17741935, 人民 0.16129032]
+西宁 : [新华社 1.0, 上海 0.8235294, 兰州 0.3529412, 辗转 0.3529412, 本报 0.29411766, 青海 0.29411766, 考察 0.23529412, 当街 0.23529412, 特钢 0.1764706, 方向 0.1764706, 分行 0.1764706, 索贿 0.1764706, 北京 0.14705883, 但是 0.14705883, 拉萨 0.11764706, 我们 0.11764706, 标题 0.11764706, 交警 0.11764706, 代表团 0.11764706, 处理 0.0882353, 银川 0.0882353, 车票 0.0882353, 筹建 0.0882353, 中转 0.0882353, 参加 0.0882353, 一月 0.05882353, 试验局 0.05882353, 二月 0.05882353, 地区 0.05882353, 严肃 0.05882353]    
+
+最后我们看一下分别使用7种相似度算法算出来的 兰州 的相关词：
+
+----------------------------------------------------------
+兰州 的相关词（CosineTextSimilarity）：
+    1、兰州 1.0
+    2、沈阳 0.5
+    3、北京军区 0.47
+    4、后勤部 0.46
+    5、沈阳军区 0.46
+    6、总医院 0.46
+    7、新疆军区 0.46
+    8、司令员 0.42
+    9、甘肃兰州 0.42
+    10、兰州新区 0.42
+    11、某师 0.39
+    12、郑蒲港 0.38
+    13、西咸 0.38
+    14、天水 0.37
+    15、郑东 0.37
+耗时：25秒,572毫秒
+----------------------------------------------------------
+兰州 的相关词（EditDistanceTextSimilarity）：
+    1、兰州 1.0
+    2、北京 0.21
+    3、福州 0.2
+    4、太原 0.19
+    5、成都 0.17
+    6、南宁 0.17
+    7、西安 0.17
+    8、哈尔滨 0.17
+    9、贵阳 0.16
+    10、庆阳 0.15
+    11、合肥 0.14
+    12、大同 0.14
+    13、沈阳 0.14
+    14、珀斯 0.13
+    15、拉萨 0.13
+耗时：44秒,253毫秒
+----------------------------------------------------------
+兰州 的相关词（EuclideanDistanceTextSimilarity）：
+    1、兰州 1.0
+    2、后勤部 0.37
+    3、北京军区 0.37
+    4、新疆军区 0.37
+    5、沈阳 0.37
+    6、沈阳军区 0.37
+    7、总医院 0.37
+    8、上海浦东新区 0.36
+    9、郑蒲港 0.36
+    10、浦东新区 0.36
+    11、甘肃兰州 0.36
+    12、西咸 0.36
+    13、西咸新区 0.36
+    14、正定新区 0.36
+    15、司令员 0.36
+耗时：24秒,710毫秒
+----------------------------------------------------------
+兰州 的相关词（SimpleTextSimilarity）：
+    1、兰州 1.0
+    2、福州 0.36
+    3、西安 0.33
+    4、李红旗 0.33
+    5、中国金融信息中心 0.33
+    6、南特 0.32
+    7、卡塔赫纳 0.32
+    8、哈尔滨 0.3
+    9、武汉 0.3
+    10、戴克瑞 0.3
+    11、楚雄州 0.29
+    12、朱梦魁 0.29
+    13、岳菲菲 0.29
+    14、长沙 0.28
+    15、吕国庆 0.28
+耗时：21秒,918毫秒
+----------------------------------------------------------
+兰州 的相关词（JaccardTextSimilarity）：
+    1、兰州 1.0
+    2、福州 0.22
+    3、西安 0.2
+    4、哈尔滨 0.18
+    5、北京 0.18
+    6、武汉 0.18
+    7、成都 0.18
+    8、长沙 0.15
+    9、太原 0.15
+    10、贵阳 0.15
+    11、沈阳 0.15
+    12、广州 0.15
+    13、拉萨 0.15
+    14、南昌 0.15
+    15、长春 0.13
+耗时：19秒,717毫秒
+----------------------------------------------------------
+兰州 的相关词（ManhattanDistanceTextSimilarity）：
+    1、兰州 1.0
+    2、上海浦东新区 0.11
+    3、陕西西咸新区 0.11
+    4、甘肃兰州 0.11
+    5、北京军区 0.11
+    6、新疆军区 0.11
+    7、西咸 0.11
+    8、正定新区 0.11
+    9、天府新区 0.11
+    10、沈阳军区 0.11
+    11、国家级新区 0.11
+    12、兰州新区 0.11
+    13、侠客 0.1
+    14、威胁论 0.1
+    15、一两个月 0.1
+耗时：23秒,857毫秒
+----------------------------------------------------------
+兰州 的相关词（SimHashPlusHammingDistanceTextSimilarity）：
+    1、兰州 1.0
+    2、鱼水 0.96
+    3、冯导 0.95
+    4、新闻稿 0.95
+    5、科学 0.95
+    6、物业公司 0.95
+    7、现役军人 0.95
+    8、何人 0.95
+    9、张轸 0.94
+    10、公告 0.94
+    11、信息发布 0.94
+    12、倡议 0.94
+    13、药液 0.94
+    14、考古发掘 0.94
+    15、公开发布 0.94
+耗时：5分钟,57秒,339毫秒
+----------------------------------------------------------
+兰州 的相关词（JaroDistanceTextSimilarity）：
+    1、兰州 1.0
+    2、长沙 0.49
+    3、哈尔滨 0.49
+    4、福州 0.48
+    5、太原 0.47
+    6、庆阳 0.46
+    7、济南 0.46
+    8、北京 0.45
+    9、成都 0.45
+    10、张家明 0.45
+    11、西安 0.45
+    12、孙勇 0.45
+    13、楚雄州 0.44
+    14、福州站 0.44
+    15、南宁 0.44
+耗时：12秒,718毫秒
+----------------------------------------------------------
+兰州 的相关词（JaroWinklerDistanceTextSimilarity）：
+    1、兰州 1.0
+    2、拉萨 0.56
+    3、南宁 0.55
+    4、朝廷 0.55
+    5、公判 0.54
+    6、萨蒙德 0.53
+    7、世界级 0.53
+    8、滨湖 0.53
+    9、大大小小 0.52
+    10、大选 0.52
+    11、七届 0.52
+    12、烘焙 0.51
+    13、武平县 0.51
+    14、莫斯科 0.51
+    15、复训 0.51
+耗时：16秒,723毫秒
+----------------------------------------------------------
+兰州 的相关词（SørensenDiceCoefficientTextSimilarity）：
+    1、兰州 1.0
+    2、福州 0.37
+    3、西安 0.33
+    4、哈尔滨 0.3
+    5、北京 0.3
+    6、武汉 0.3
+    7、成都 0.3
+    8、长沙 0.27
+    9、太原 0.27
+    10、贵阳 0.27
+    11、沈阳 0.27
+    12、广州 0.27
+    13、拉萨 0.27
+    14、南昌 0.27
+    15、长春 0.23
+耗时：19秒,852毫秒
+----------------------------------------------------------</code></pre></div><h4 id="21、词频统计："><a href="#21、词频统计：" class="headerlink" title="21、词频统计："></a>21、词频统计：</h4><p>org.apdplat.word.WordFrequencyStatistics 提供了词频统计的功能</p>
+<p>命令行脚本的调用方法如下：</p>
+<div class="hljs"><pre><code>将需要统计词频的文本写入文件：text.txt
+chmod +x wfs.sh &amp; wfs.sh -textFile=text.txt -statisticsResultFile=statistics-result.txt
+程序运行结束后打开文件statistics-result.txt查看词频统计结果</code></pre></div><p>在程序中的调用方法如下：</p>
+<div class="hljs"><pre><code>//词频统计设置
+WordFrequencyStatistics wordFrequencyStatistics = new WordFrequencyStatistics();
+wordFrequencyStatistics.setRemoveStopWord(false);
+wordFrequencyStatistics.setResultPath(&quot;word-frequency-statistics.txt&quot;);
+wordFrequencyStatistics.setSegmentationAlgorithm(SegmentationAlgorithm.MaxNgramScore);
+//开始分词
+wordFrequencyStatistics.seg(&quot;明天下雨，结合成分子，明天有关于分子和原子的课程，下雨了也要去听课&quot;);
+//输出词频统计结果
+wordFrequencyStatistics.dump();
+//准备文件
+Files.write(Paths.get(&quot;text-to-seg.txt&quot;), Arrays.asList(&quot;word分词是一个Java实现的分布式中文分词组件，提供了多种基于词典的分词算法，并利用ngram模型来消除歧义。&quot;));
+//清除之前的统计结果
+wordFrequencyStatistics.reset();
+//对文件进行分词
+wordFrequencyStatistics.seg(new File(&quot;text-to-seg.txt&quot;), new File(&quot;text-seg-result.txt&quot;));
+//输出词频统计结果
+wordFrequencyStatistics.dump(&quot;file-seg-statistics-result.txt&quot;);</code></pre></div><p>第一句话的词频统计结果：</p>
+<div class="hljs"><pre><code>1、下雨 2
+2、明天 2
+3、分子 2
+4、课程 1
+5、听课 1
+6、结合 1
+7、原子 1
+8、去 1
+9、成 1
+10、关于 1
+11、和 1
+12、也要 1
+13、有 1
+14、的 1
+15、了 1</code></pre></div><p>第二句话的词频统计结果：</p>
+<div class="hljs"><pre><code>1、分词 2
+2、的 2
+3、基于 1
+4、word 1
+5、组件 1
+6、词典 1
+7、ngram 1
+8、多种 1
+9、实现 1
+10、并 1
+11、利用 1
+12、消除歧义 1
+13、中文分词 1
+14、算法 1
+15、是 1
+16、分布式 1
+17、了 1
+18、提供 1
+19、模型 1
+20、来 1
+21、一个 1
+22、Java 1    </code></pre></div><h4 id="22、文本相似度："><a href="#22、文本相似度：" class="headerlink" title="22、文本相似度："></a>22、文本相似度：</h4><p>word分词提供了多种文本相似度计算方式：</p>
+<p>方式一：余弦相似度，通过计算两个向量的夹角余弦值来评估他们的相似度</p>
+<p>实现类：org.apdplat.word.analysis.CosineTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new CosineTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.67
+我爱购物 和 他是黑客 的相似度分值：0.0
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.0
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式二：简单共有词，通过计算两篇文档共有的词的总字符数除以最长文档字符数来评估他们的相似度</p>
+<p>实现类：org.apdplat.word.analysis.SimpleTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new SimpleTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.5
+我爱购物 和 他是黑客 的相似度分值：0.0
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.0
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式三：编辑距离，通过计算两个字串之间由一个转成另一个所需的最少编辑操作次数来评估他们的相似度</p>
+<p>实现类：org.apdplat.word.analysis.EditDistanceTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new EditDistanceTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.5
+我爱购物 和 他是黑客 的相似度分值：0.0
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.0
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式四：SimHash + 汉明距离，先使用SimHash把不同长度的文本映射为等长文本，然后再计算等长文本的汉明距离</p>
+<p>实现类：org.apdplat.word.analysis.SimHashPlusHammingDistanceTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new SimHashPlusHammingDistanceTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.95
+我爱购物 和 他是黑客 的相似度分值：0.83
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.86
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式五：Jaccard相似性系数（Jaccard similarity coefficient），通过计算两个集合交集的大小除以并集的大小来评估他们的相似度</p>
+<p>实现类：org.apdplat.word.analysis.JaccardTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new JaccardTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.5
+我爱购物 和 他是黑客 的相似度分值：0.0
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.0
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式六：欧几里得距离（Euclidean Distance），通过计算两点间的距离来评估他们的相似度</p>
+<p>实现类：org.apdplat.word.analysis.EuclideanDistanceTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new EuclideanDistanceTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.41
+我爱购物 和 他是黑客 的相似度分值：0.29
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.29
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式七：曼哈顿距离（Manhattan Distance），通过计算两个点在标准坐标系上的绝对轴距总和来评估他们的相似度</p>
+<p>实现类：org.apdplat.word.analysis.ManhattanDistanceTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new ManhattanDistanceTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.33
+我爱购物 和 他是黑客 的相似度分值：0.14
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.14
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式八：Jaro距离（Jaro Distance），编辑距离的一种类型</p>
+<p>实现类：org.apdplat.word.analysis.JaroDistanceTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new JaroDistanceTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.67
+我爱购物 和 他是黑客 的相似度分值：0.0
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.0
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式九：Jaro–Winkler距离（Jaro–Winkler Distance），Jaro的扩展</p>
+<p>实现类：org.apdplat.word.analysis.JaroWinklerDistanceTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new JaroWinklerDistanceTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.73
+我爱购物 和 他是黑客 的相似度分值：0.0
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.0
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><p>方式十：Sørensen–Dice系数（Sørensen–Dice coefficient），通过计算两个集合交集的大小的2倍除以两个集合的大小之和来评估他们的相似度</p>
+<p>实现类：org.apdplat.word.analysis.SørensenDiceCoefficientTextSimilarity</p>
+<p>用法如下：</p>
+<div class="hljs"><pre><code>String text1 = &quot;我爱购物&quot;;
+String text2 = &quot;我爱读书&quot;;
+String text3 = &quot;他是黑客&quot;;
+TextSimilarity textSimilarity = new SørensenDiceCoefficientTextSimilarity();
+double score1pk1 = textSimilarity.similarScore(text1, text1);
+double score1pk2 = textSimilarity.similarScore(text1, text2);
+double score1pk3 = textSimilarity.similarScore(text1, text3);
+double score2pk2 = textSimilarity.similarScore(text2, text2);
+double score2pk3 = textSimilarity.similarScore(text2, text3);
+double score3pk3 = textSimilarity.similarScore(text3, text3);
+System.out.println(text1+&quot; 和 &quot;+text1+&quot; 的相似度分值：&quot;+score1pk1);
+System.out.println(text1+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score1pk2);
+System.out.println(text1+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score1pk3);
+System.out.println(text2+&quot; 和 &quot;+text2+&quot; 的相似度分值：&quot;+score2pk2);
+System.out.println(text2+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score2pk3);
+System.out.println(text3+&quot; 和 &quot;+text3+&quot; 的相似度分值：&quot;+score3pk3);</code></pre></div><p>运行结果如下：</p>
+<div class="hljs"><pre><code>我爱购物 和 我爱购物 的相似度分值：1.0
+我爱购物 和 我爱读书 的相似度分值：0.67
+我爱购物 和 他是黑客 的相似度分值：0.0
+我爱读书 和 我爱读书 的相似度分值：1.0
+我爱读书 和 他是黑客 的相似度分值：0.0
+他是黑客 和 他是黑客 的相似度分值：1.0</code></pre></div><h4 id="23、判定句子是有意义的人话的可能性："><a href="#23、判定句子是有意义的人话的可能性：" class="headerlink" title="23、判定句子是有意义的人话的可能性："></a>23、判定句子是有意义的人话的可能性：</h4><div class="hljs"><pre><code>通过如下命令:
+unix-like:
+    chmod +x sentence-identify.sh &amp; ./sentence-identify.sh
+windows:
+    ./sentence-identify.bat
+运行 org.apdplat.word.analysis.SentenceIdentify 类的结果如下所示:
+
+1. 句子: 我是一个男人你是一个女人, 概率: 0.71428573
+1. 句子: 我是一个人, 概率: 0.6666667
+2. 句子: 我爱读书, 概率: 0.5
+3. 句子: 我爱学习, 概率: 0.5
+4. 句子: 法蒂小室汝辈武学大师改个入门处, 概率: 0.2857143
+5. 句子: 显气孔率高压线塔总监督室波洛奈兹王毅陈刘玉荣, 概率: 0.2857143
+6. 句子: 王捷俊汇报演出干草加韦拉一杠地垄墙未尝不可, 概率: 0.25
+7. 句子: 八九点钟山光水色饱经世变普留申科淮河镇乐不极盘模拟飞行, 概率: 0.22222222
+8. 句子: 物位任务区亡灵书巴纳尔没脑子揪人心肺复习功课林友力避风塘, 概率: 0.2
+9.  句子: 参与方植物学报白善烨暗影狂奔骑白马痦子山城堡犹豫不定岳阳机场, 概率: 0.2
+
+接着可根据命令行提示输入句子并回车来获得句子的评分
+
+例如输入句子并回车:为中国崛起而努力奋斗
+程序返回结果如下:
+随机单词: [为, 中国, 崛起, 而, 努力, 奋斗]
+生成句子: 为中国崛起而努力奋斗
+句子概率: 1.0
+
+例如输入句子并回车:人脑的记忆是保存在生物电上还是在细胞里？
+程序返回结果如下:
+随机单词: [人脑, 的, 记忆, 是, 保存, 在, 生物, 电, 上, 还是, 在, 细胞, 里]
+生成句子: 人脑的记忆是保存在生物电上还是在细胞里？
+句子概率: 0.8333333</code></pre></div><h3 id="分词算法效果评估："><a href="#分词算法效果评估：" class="headerlink" title="分词算法效果评估："></a>分词算法效果评估：</h3><div class="hljs"><pre><code>1、word分词 最大Ngram分值算法：
+分词速度：370.9714 字符/毫秒
+行数完美率：66.55%  行数错误率：33.44%  总的行数：2533709  完美行数：1686210  错误行数：847499
+字数完美率：60.94% 字数错误率：39.05% 总的字数：28374490 完美字数：17293964 错误字数：11080526
+
+2、word分词 最少词数算法：
+分词速度：330.1586 字符/毫秒
+行数完美率：65.67%  行数错误率：34.32%  总的行数：2533709  完美行数：1663958  错误行数：869751
+字数完美率：60.12% 字数错误率：39.87% 总的字数：28374490 完美字数：17059641 错误字数：11314849
+
+3、word分词 全切分算法：
+分词速度：62.960262 字符/毫秒
+行数完美率：57.2%  行数错误率：42.79%  总的行数：2533709  完美行数：1449288  错误行数：1084421
+字数完美率：47.95% 字数错误率：52.04% 总的字数：28374490 完美字数：13605742 错误字数：14768748
+
+4、word分词 双向最大最小匹配算法：
+分词速度：462.87158 字符/毫秒
+行数完美率：53.06%  行数错误率：46.93%  总的行数：2533709  完美行数：1344624  错误行数：1189085
+字数完美率：43.07% 字数错误率：56.92% 总的字数：28374490 完美字数：12221610 错误字数：16152880
+
+5、word分词 双向最小匹配算法：
+分词速度：967.68604 字符/毫秒
+行数完美率：46.34%  行数错误率：53.65%  总的行数：2533709  完美行数：1174276  错误行数：1359433
+字数完美率：36.07% 字数错误率：63.92% 总的字数：28374490 完美字数：10236574 错误字数：18137916
+
+6、word分词 双向最大匹配算法：
+分词速度：661.148 字符/毫秒
+行数完美率：46.18%  行数错误率：53.81%  总的行数：2533709  完美行数：1170075  错误行数：1363634
+字数完美率：35.65% 字数错误率：64.34% 总的字数：28374490 完美字数：10117122 错误字数：18257368
+
+7、word分词 正向最大匹配算法：
+分词速度：1567.1318 字符/毫秒
+行数完美率：41.88%  行数错误率：58.11%  总的行数：2533709  完美行数：1061189  错误行数：1472520
+字数完美率：31.35% 字数错误率：68.64% 总的字数：28374490 完美字数：8896173 错误字数：19478317
+
+8、word分词 逆向最大匹配算法：
+分词速度：1232.6017 字符/毫秒
+行数完美率：41.69%  行数错误率：58.3%  总的行数：2533709  完美行数：1056515  错误行数：1477194
+字数完美率：30.98% 字数错误率：69.01% 总的字数：28374490 完美字数：8792532 错误字数：19581958
+
+9、word分词 逆向最小匹配算法：
+分词速度：1936.9575 字符/毫秒
+行数完美率：41.42%  行数错误率：58.57%  总的行数：2533709  完美行数：1049673  错误行数：1484036
+字数完美率：31.34% 字数错误率：68.65% 总的字数：28374490 完美字数：8893622 错误字数：19480868
+
+10、word分词 正向最小匹配算法：
+分词速度：2228.9465 字符/毫秒
+行数完美率：36.7%  行数错误率：63.29%  总的行数：2533709  完美行数：930069  错误行数：1603640
+字数完美率：26.72% 字数错误率：73.27% 总的字数：28374490 完美字数：7583741 错误字数：20790749</code></pre></div><h3 id="相关文章："><a href="#相关文章：" class="headerlink" title="相关文章："></a>相关文章：</h3><p>   <a href="http://yangshangchuan.iteye.com/blog/2031813" target="_blank" rel="noopener">1、中文分词算法 之 基于词典的正向最大匹配算法</a></p>
+<p>   <a href="http://yangshangchuan.iteye.com/blog/2033843" target="_blank" rel="noopener">2、中文分词算法 之 基于词典的逆向最大匹配算法</a></p>
+<p>   <a href="http://yangshangchuan.iteye.com/blog/2035007" target="_blank" rel="noopener">3、中文分词算法 之 词典机制性能优化与测试</a></p>
+<p>   <a href="http://yangshangchuan.iteye.com/blog/2040423" target="_blank" rel="noopener">4、中文分词算法 之 基于词典的正向最小匹配算法</a></p>
+<p>   <a href="http://yangshangchuan.iteye.com/blog/2040431" target="_blank" rel="noopener">5、中文分词算法 之 基于词典的逆向最小匹配算法</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/411112" target="_blank" rel="noopener">6、一种利用ngram模型来消除歧义的中文分词方法</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/411032" target="_blank" rel="noopener">7、一种基于词性序列的人名识别方法</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/412785" target="_blank" rel="noopener">8、中文分词算法 之 基于词典的全切分算法</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/412921" target="_blank" rel="noopener">9、9大Java开源中文分词器的使用方法和分词效果对比</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/408779" target="_blank" rel="noopener">10、中文分词之11946组同义词</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/411301" target="_blank" rel="noopener">11、中文分词之9271组反义词</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/414076" target="_blank" rel="noopener">12、如何利用多核提升分词速度</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/417047" target="_blank" rel="noopener">13、利用word分词来计算文本相似度</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/417641" target="_blank" rel="noopener">14、利用word分词来对文本进行词频统计</a></p>
+<p>   <a href="http://my.oschina.net/apdplat/blog/417922" target="_blank" rel="noopener">15、利用word分词通过计算词的语境来获得相关词</a></p>
+<h3 id="相关项目："><a href="#相关项目：" class="headerlink" title="相关项目："></a>相关项目：</h3><p><a href="https://github.com/ysc/cws_evaluation/" target="_blank" rel="noopener">Java开源项目cws_evaluation：中文分词器分词效果评估对比</a></p>
+<p><a href="https://github.com/ysc/QuestionAnsweringSystem/" target="_blank" rel="noopener">Java开源项目QuestionAnsweringSystem：人机问答系统</a></p>
+<p><a href="https://github.com/ysc/word_web/" target="_blank" rel="noopener">Java开源项目word_web：通过web服务器对word分词的资源进行集中统一管理</a></p>
+<h3 id="相关文献："><a href="#相关文献：" class="headerlink" title="相关文献："></a>相关文献：</h3><p><a href="http://linux.thai.net/~thep/datrie/datrie.html" target="_blank" rel="noopener">An Implementation of Double-Array Trie</a></p>
+<p><a href="http://technology.chtsai.org/mmseg/" target="_blank" rel="noopener">MMSEG: A Word Identification System for Mandarin Chinese Text Based on Two Variants of the Maximum Matching Algorithm</a></p>
+<p><a href="https://books.google.com/ngrams" target="_blank" rel="noopener">With Google’s new tool Ngram Viewer, you can visualise the rise and fall of concepts across 5 million books and 500 years!</a></p>
+<p><a href="https://code.google.com/p/word2vec/" target="_blank" rel="noopener">word2vec</a></p>
+<p><a href="http://open.163.com/special/cuvocw/meilihanyu.html" target="_blank" rel="noopener">魅力汉语</a></p>
+<p><a href="https://travis-ci.org/ysc/word" target="_blank" rel="noopener">https://travis-ci.org/ysc/word</a></p>
+]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>NLP</tag>
+        <tag>Java</tag>
+        <tag>分词</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Spark-RDD/DataFrame-map保存数据的两种方式</title>
     <url>/2018/06/29/Spark-RDD-DataFrame-map%E4%BF%9D%E5%AD%98%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
     <content><![CDATA[<p>&emsp;&emsp;使用Spark RDD或DataFrame，有时需要在foreachPartition或foreachWith里面保存数据到本地或HDFS。</p>
@@ -7573,65 +7512,65 @@ FLUSH PRIVILEGES;</code></pre></div>
 <h3 id="1-4-Zookeeper"><a href="#1-4-Zookeeper" class="headerlink" title="1.4. Zookeeper"></a>1.4. Zookeeper</h3><p>如果启用高可用，或将元数据保存在Zookeeper上，那么需要保证目标主机与ZK集群之间<strong>2181</strong>端口的连通性。</p>
 <h2 id="2-配置工作"><a href="#2-配置工作" class="headerlink" title="2. 配置工作"></a>2. 配置工作</h2><p>&emsp;&emsp;配置Canal是一个不断摸索的过程，根据Git上面的文档，以及项目源码，如果有问题出现，基本上可以定位到问题出处。虽然Git上面有比较详尽的说明，但在测试时，还是会遇到各种各样的问题。这就需要充分理解相关配置参数的含义，以及参数之间的搭配，才能更好地使用这个工具。</p>
 <h3 id="2-1-canal说明"><a href="#2-1-canal说明" class="headerlink" title="2.1. canal说明"></a>2.1. canal说明</h3><p>需要特别注意以下几个配置内容</p>
-<div class="hljs"><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 配置ZK地址：如果需要启用高可用，目前高可用仅支持同时一个节点工作</span></span>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 配置ZK地址：如果需要启用高可用，目前高可用仅支持同时一个节点工作
 canal.zkServers=
 
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 配置sink方式：目前支持以下三种</span></span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## tcp, kafka, RocketMQ</span></span>
+## 配置sink方式：目前支持以下三种
+### tcp, kafka, RocketMQ
 canal.serverMode=
 
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 并发配置：这里是二选一</span></span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 1. 单线程处理</span></span>
+## 并发配置：这里是二选一
+### 1. 单线程处理
 canal.instance.parser.parallel = false
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">## 2. 处理过程如下[源代码]</span></span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">##  * 1. 网络接收 (单线程)</span></span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">##  * 2. 事件基本解析 (单线程，事件类型、DDL解析构造TableMeta、维护位点信息)</span></span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">##  * 3. 事件深度解析 (多线程, DML事件数据的完整解析)</span></span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">##  * 4. 投递到store (单线程)</span></span>
+### 2. 处理过程如下[源代码]
+###  * 1. 网络接收 (单线程)
+###  * 2. 事件基本解析 (单线程，事件类型、DDL解析构造TableMeta、维护位点信息)
+###  * 3. 事件深度解析 (多线程, DML事件数据的完整解析)
+###  * 4. 投递到store (单线程)
 canal.instance.parser.parallel = true
 canal.instance.parser.parallelThreadSize = 6
 canal.instance.parser.parallelBufferSize = 4096
 
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># MQ配置：配置Kafka的服务器: “IP1:9092,IP2:9092,,,”</span></span>
+## MQ配置：配置Kafka的服务器: “IP1:9092,IP2:9092,,,”
 canal.mq.servers=
 
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># MQ配置：设置消息序列化方式，true--json, false--protobuf</span></span>
+## MQ配置：设置消息序列化方式，true--json, false--protobuf
 canal.mq.flatMessage=true
 
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># MQ设置</span></span>
+## MQ设置
 canal.mq.acks=
 canal.mq.lingerMs=</code></pre></div>
 
 <h3 id="2-2-instance说明"><a href="#2-2-instance说明" class="headerlink" title="2.2. instance说明"></a>2.2. instance说明</h3><p>Instance中需要注意的配置项目如下</p>
-<div class="hljs"><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># GTID设置：如果配置为true，那么需要给出：canal.instance.master.gtid=</span></span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 一般设置为false，小的项目就够了：自动寻找，以及记忆Binlog位置</span></span>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## GTID设置：如果配置为true，那么需要给出：canal.instance.master.gtid=
+## 一般设置为false，小的项目就够了：自动寻找，以及记忆Binlog位置
 canal.instance.gtidon=false
 
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 设置源数据库：用户名、密码、默认数据库</span></span>
+## 设置源数据库：用户名、密码、默认数据库
 canal.instance.dbUsername=
 canal.instance.dbPassword=
 canal.instance.defaultDatabaseName = 
 
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># Kafka设置</span></span>
+## Kafka设置
 canal.mq.topic=
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 二选一</span></span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 1. 配置partition数量，并配合映射规则：实际代码中，优先判断该种情况</span></span>
+## 二选一
+## 1. 配置partition数量，并配合映射规则：实际代码中，优先判断该种情况
 canal.mq.partitionsNum=3
 canal.mq.partitionHash=mytest.person:id,mytest.role:id
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 2. 配置为0，或不配置</span></span>
+## 2. 配置为0，或不配置
 canal.mq.partition=</code></pre></div>
 
 <h2 id="3-注意事项"><a href="#3-注意事项" class="headerlink" title="3. 注意事项"></a>3. 注意事项</h2><h3 id="3-1-默认数据库"><a href="#3-1-默认数据库" class="headerlink" title="3.1. 默认数据库"></a>3.1. 默认数据库</h3><p>在实际测试中，这个默认数据库的设置不知道起到了什么作用</p>
 <div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">canal.instance.defaultDatabaseName =</code></pre></div>
 <p>在获取MySQL Binlog时，这个MySQL实例的Binlog都获取到了，并传输到了Kafka中。</p>
 <h3 id="3-2-配置错误"><a href="#3-2-配置错误" class="headerlink" title="3.2. 配置错误"></a>3.2. 配置错误</h3><p>在配置mq.yml文件时，遇到了一个基本常识错误</p>
-<div class="hljs"><pre class=" language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"><code class="language-hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 错误配置</span></span>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 错误配置
 canalDestinations:
   - canalDestination: example
     topic:example
     partition:0
 
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 正确配置</span></span>
+## 正确配置
 canalDestinations:
   - canalDestination: example
     topic: example
@@ -7706,92 +7645,6 @@ canalDestinations:
         <tag>调研</tag>
         <tag>ES</tag>
         <tag>MongoDB</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Apache Spark vs. Apache Flink</title>
-    <url>/2018/10/22/flink.vs.spark/</url>
-    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>&emsp;&emsp;Apache Flink，这个高性能大数据流处理框架，走到了成熟的一个阶段。通过与Apache Spark的测试比较，我们发现他们是竞对的技术，且是被推荐的实时分析框架。</p>
-<p>&emsp;&emsp;从之前的Hadoop MR框架，大数据流处理框架在逐渐演进。在某种意义上，Spark不经大规模提升了计算性能，更重要的是允许快速、简单的构建数据分析框架，从而推广了Hadoop。</p>
-<p>&emsp;&emsp;讨论到Flinke，与其竞争对手相比，其不仅是一些新兴技术，而且正在加速获得动力，并迅速向企业化推进。Flink支持流处理、批处理数据，同时集成对机器学习和图处理的支持。</p>
-<p>&emsp;&emsp;<strong>但在当技术泛滥的当下，我们是否真的需要一项新的流处理技术?</strong> 目前，当下的Apache Spark已经提供了相似的特征与功能，并且最近几年已经成为一种非常流行的工具。Curt Monash对讨论的观点是：Flink基本上是德国的Spark，我认为是不必要的。因此，我们对比一下Flink与Spark的一些特点，来判断Flink是否与Spark竞争，或Flink仅仅是另一个大数据生态的泛滥工具？首先，我们比较了一下两种技术。</p>
-<h2 id="相同之处"><a href="#相同之处" class="headerlink" title="相同之处"></a>相同之处</h2><p>&emsp;&emsp;它们都是Apache组织内的开源工具。每一个都是独立的解决方案，但他们通常集成到大数据环境中，例如Hadoop(YARN,HDFS,以及Kafka)。Spark和Flink都提供了相似的特征与API，例如支持SQL查询，图处理，以及批处理和流处理。</p>
-<table>
-<thead>
-<tr>
-<th>Spark vs. Flink</th>
-<th>Apache Flink</th>
-<th>Apache Spark</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>SQL查询</td>
-<td>MRQL</td>
-<td>Spark SQL</td>
-</tr>
-<tr>
-<td>图处理</td>
-<td>Spargel(base)，Gelly(library)</td>
-<td>GraphX</td>
-</tr>
-<tr>
-<td>流处理</td>
-<td>Flink Streaming</td>
-<td>Spark Streaming</td>
-</tr>
-<tr>
-<td>APIs</td>
-<td>Scala,Java,Python</td>
-<td>Scala,Java,Python,R</td>
-</tr>
-<tr>
-<td>机器学习</td>
-<td>Flink ML</td>
-<td>MLib, ML</td>
-</tr>
-<tr>
-<td>Stable Version</td>
-<td>1.3.2</td>
-<td>2.2.0</td>
-</tr>
-<tr>
-<td>吞吐量</td>
-<td>高</td>
-<td>高</td>
-</tr>
-<tr>
-<td>容错性</td>
-<td>Exactly-once</td>
-<td>Exactly-once</td>
-</tr>
-<tr>
-<td>部署</td>
-<td>Standalone,Mesos,EC2,YARN</td>
-<td>Standalone,Mesos,EC2,YARN</td>
-</tr>
-<tr>
-<td>数据源</td>
-<td>Kafka, Amazon S3, ES, Twitter, etc</td>
-<td>Kafka, Amazon S3, ES, Twitter, etc</td>
-</tr>
-</tbody></table>
-<p>&emsp;&emsp;下面的代码说明了他们的相似性，但不尽相同。每段代码包含了固定的元素，以及计算最高分布频次的产品。一撇就可以看出每个技术方法的高度相似性，优劣与劣势也具有平衡性。只有深入挖掘不同框架的特征，才能够识别出不同姓。在这个特殊的案例中，可以看出在Flink中的maxBy函数在Spark中没有受到支持，并且Spark需要使用窗口函数，但这类API通常具有相同的数据处理构建方式。</p>
-<p><img src="./code_flink_spark.png" srcset="/img/loading.gif" alt="Flink vs. Spark编码对比: Java中的代码比较"></p>
-<h2 id="批处理-vs-水龙头"><a href="#批处理-vs-水龙头" class="headerlink" title="批处理 vs 水龙头"></a>批处理 vs 水龙头</h2><p>&emsp;&emsp;Flink与Spark的最大不同之处在于不同框架的计算理念不同。Spark针对批处理和流处理使用“批”的概念，而Flink是基于单纯的流方式。想想一下收集与运输水的过程： Spark处理的方式为混合大小的桶，Flink是直接按照水龙头的方式直接处理。Flink与Spark的不同之处列列举如下<br>| Spark vs. Flink | Apache Spark | Apache Flink |<br>| - | - | - |<br>| Steaming | 微“批”流 | 基于事件的流 |<br>| Batch Processing | 内存处理，DAG组织算子 | 流悠闲方式：”批”是有限的流 |<br>| 语言 | Scala | Java |<br>| 优化|全阶段代码生成与优化，DataSet查询优化执行计划。手动内存调优非常重要 | 自动化优化：根据输入、输出、算子，主动选择合适方法。C++风格的内存管理 |<br>| 数据重用与迭代 | DAG执行计划：每一个迭代需要调度与运行相同的数据。内存缓存与重用 | 执行引擎中迭代处理，基于圆形数据流(一个迭代，一个计划)。另外，提供了Delta迭代来处理改变部分数据 |<br>| 延迟性 | 批处理导致高延迟，秒级别的延迟 | 微妙级别的低延迟 |<br>| 有序流 | 新版本中，提供了基于事件处理的基本方式 | 基于时间线，有序流可以被很好的处理 |<br>| 支持 | 支持所有的hadoop分布：Cloudera, Hortonworks, etc. Databricks提供了晕平台和支持包 | 使用邮件列表或论坛 |</p>
-<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>&emsp;&emsp;批处理的表现性能，依赖于不同的负载。有些Benchmark的测试，显示Flink0.9.1快于Spark1.5.1。关于机器学习库这一方面，Spark的测试显示其性能更优(Flink 1.0.3 vs. Spark1.6.0)。在2016年9月份，Flink和Spark分析了一些批处理和迭代处理的测试，这些测试表明Spark在图处理方面1.7倍快于Flink,而Flink在批处理和小规模图负载方面1.5倍快于SPark，且使用更少的资源。这表明，工具直接的性能与功能大同小异。</p>
-<p>&emsp;&emsp;从这些性能比较中可以得出的结论是，要选择更快的框架，必须对特定的工作负载进行基准测试。针对这些主题，几乎没有最近版本的比较(Spark 2.2 vs. Flink1.3)。这很麻烦，因为这两个平台甚至在过去一年里都取得了令人印象深刻的性能提升。在我们博客的第2部分中，我们将提供我们自己的详细性能比较，请继续关注!</p>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>&emsp;&emsp;大数据作为不断增加的容量、对质量的高要求以及对更快的业务洞察力的需求的三重挑战，继续要求技术在任何规模的延迟和吞吐量方面保持高性能，同时允许快速开发和高质量的代码。</p>
-<p>&emsp;&emsp;如果高吞吐量、低延迟和良好的容错性的数据流处理需求是开发的驱动因素，那么Flink提供了一个优秀的应用程序框架[1]。如果应用程序应该嵌入到Hadoop发行版中，比如Hortonworks或Cloudera，那么Spark将是一个更好的选择，因为它已经很好地集成到各自的平台中，并得到了供应商的支持。Flink和Spark都在不断改进，以提供更简单、更快和更智能的数据处理特性。</p>
-<p>&emsp;&emsp;最终，最佳框架的决定取决于这样一个问题:“哪一个更适合我的需求?”即使是开发团队最喜欢的编程语言也可能是一个关键因素——Spark的Java API源自Scala API:这有时会导致不吸引人的Java代码。数据工程师通常更喜欢Python或Scala, Spark支持更成熟、功能更完备、速度更快的api。Spark与R的紧密集成——“数据科学的黄金之子”——在R中提供了Spark，从而很好地集成到现有的数据科学工具箱中。</p>
-<p>&emsp;&emsp;引发最推崇的特性之一是速度可以，运行程序比Hadoop MapReduce快100倍在内存中,或磁盘上的快10倍。Flink在批处理方面提供了强大的竞争优势，通常具有相似的性能，并且显著降低了流处理的延迟。尽管Spark社区的“炒作”似乎转移到了Flink，但只有未来才能说明这对实际市场份额有多大影响。</p>
-]]></content>
-      <categories>
-        <category>读书笔记</category>
-      </categories>
-      <tags>
-        <tag>调研</tag>
-        <tag>Spark</tag>
-        <tag>Flink</tag>
       </tags>
   </entry>
   <entry>
@@ -8209,6 +8062,141 @@ IKAnalyzer分词器 的分词结果：
       <tags>
         <tag>NLP</tag>
         <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Apache Spark vs. Apache Flink</title>
+    <url>/2018/10/22/flink.vs.spark/</url>
+    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>&emsp;&emsp;Apache Flink，这个高性能大数据流处理框架，走到了成熟的一个阶段。通过与Apache Spark的测试比较，我们发现他们是竞对的技术，且是被推荐的实时分析框架。</p>
+<p>&emsp;&emsp;从之前的Hadoop MR框架，大数据流处理框架在逐渐演进。在某种意义上，Spark不经大规模提升了计算性能，更重要的是允许快速、简单的构建数据分析框架，从而推广了Hadoop。</p>
+<p>&emsp;&emsp;讨论到Flinke，与其竞争对手相比，其不仅是一些新兴技术，而且正在加速获得动力，并迅速向企业化推进。Flink支持流处理、批处理数据，同时集成对机器学习和图处理的支持。</p>
+<p>&emsp;&emsp;<strong>但在当技术泛滥的当下，我们是否真的需要一项新的流处理技术?</strong> 目前，当下的Apache Spark已经提供了相似的特征与功能，并且最近几年已经成为一种非常流行的工具。Curt Monash对讨论的观点是：Flink基本上是德国的Spark，我认为是不必要的。因此，我们对比一下Flink与Spark的一些特点，来判断Flink是否与Spark竞争，或Flink仅仅是另一个大数据生态的泛滥工具？首先，我们比较了一下两种技术。</p>
+<h2 id="相同之处"><a href="#相同之处" class="headerlink" title="相同之处"></a>相同之处</h2><p>&emsp;&emsp;它们都是Apache组织内的开源工具。每一个都是独立的解决方案，但他们通常集成到大数据环境中，例如Hadoop(YARN,HDFS,以及Kafka)。Spark和Flink都提供了相似的特征与API，例如支持SQL查询，图处理，以及批处理和流处理。</p>
+<table>
+<thead>
+<tr>
+<th>Spark vs. Flink</th>
+<th>Apache Flink</th>
+<th>Apache Spark</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SQL查询</td>
+<td>MRQL</td>
+<td>Spark SQL</td>
+</tr>
+<tr>
+<td>图处理</td>
+<td>Spargel(base)，Gelly(library)</td>
+<td>GraphX</td>
+</tr>
+<tr>
+<td>流处理</td>
+<td>Flink Streaming</td>
+<td>Spark Streaming</td>
+</tr>
+<tr>
+<td>APIs</td>
+<td>Scala,Java,Python</td>
+<td>Scala,Java,Python,R</td>
+</tr>
+<tr>
+<td>机器学习</td>
+<td>Flink ML</td>
+<td>MLib, ML</td>
+</tr>
+<tr>
+<td>Stable Version</td>
+<td>1.3.2</td>
+<td>2.2.0</td>
+</tr>
+<tr>
+<td>吞吐量</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>容错性</td>
+<td>Exactly-once</td>
+<td>Exactly-once</td>
+</tr>
+<tr>
+<td>部署</td>
+<td>Standalone,Mesos,EC2,YARN</td>
+<td>Standalone,Mesos,EC2,YARN</td>
+</tr>
+<tr>
+<td>数据源</td>
+<td>Kafka, Amazon S3, ES, Twitter, etc</td>
+<td>Kafka, Amazon S3, ES, Twitter, etc</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;下面的代码说明了他们的相似性，但不尽相同。每段代码包含了固定的元素，以及计算最高分布频次的产品。一撇就可以看出每个技术方法的高度相似性，优劣与劣势也具有平衡性。只有深入挖掘不同框架的特征，才能够识别出不同姓。在这个特殊的案例中，可以看出在Flink中的maxBy函数在Spark中没有受到支持，并且Spark需要使用窗口函数，但这类API通常具有相同的数据处理构建方式。</p>
+<p><img src="./code_flink_spark.png" srcset="/img/loading.gif" alt="Flink vs. Spark编码对比: Java中的代码比较"></p>
+<h2 id="批处理-vs-水龙头"><a href="#批处理-vs-水龙头" class="headerlink" title="批处理 vs 水龙头"></a>批处理 vs 水龙头</h2><p>&emsp;&emsp;Flink与Spark的最大不同之处在于不同框架的计算理念不同。Spark针对批处理和流处理使用“批”的概念，而Flink是基于单纯的流方式。想想一下收集与运输水的过程： Spark处理的方式为混合大小的桶，Flink是直接按照水龙头的方式直接处理。Flink与Spark的不同之处列列举如下</p>
+<table>
+<thead>
+<tr>
+<th align="left"><center>Spark vs. Flink</center></th>
+<th align="left"><center>Apache Spark</center></th>
+<th align="left"><center>Apache Flink</center></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Steaming</td>
+<td align="left">微“批”流</td>
+<td align="left">基于事件的流</td>
+</tr>
+<tr>
+<td align="left">Batch Processing</td>
+<td align="left">内存处理，DAG组织算子</td>
+<td align="left">流悠闲方式：”批”是有限的流</td>
+</tr>
+<tr>
+<td align="left">语言</td>
+<td align="left">Scala</td>
+<td align="left">Java</td>
+</tr>
+<tr>
+<td align="left">优化</td>
+<td align="left">全阶段代码生成与优化，DataSet查询优化执行计划。手动内存调优非常重要</td>
+<td align="left">自动化优化：根据输入、输出、算子，主动选择合适方法。C++风格的内存管理</td>
+</tr>
+<tr>
+<td align="left">数据重用与迭代</td>
+<td align="left">DAG执行计划：每一个迭代需要调度与运行相同的数据。内存缓存与重用</td>
+<td align="left">执行引擎中迭代处理，基于圆形数据流(一个迭代，一个计划)。另外，提供了Delta迭代来处理改变部分数据</td>
+</tr>
+<tr>
+<td align="left">延迟性</td>
+<td align="left">批处理导致高延迟，秒级别的延迟</td>
+<td align="left">微妙级别的低延迟</td>
+</tr>
+<tr>
+<td align="left">有序流</td>
+<td align="left">新版本中，提供了基于事件处理的基本方式</td>
+<td align="left">基于时间线，有序流可以被很好的处理</td>
+</tr>
+<tr>
+<td align="left">支持</td>
+<td align="left">支持所有的hadoop分布：Cloudera, Hortonworks, etc. Databricks提供了晕平台和支持包</td>
+<td align="left">使用邮件列表或论坛</td>
+</tr>
+</tbody></table>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>&emsp;&emsp;批处理的表现性能，依赖于不同的负载。有些Benchmark的测试，显示Flink0.9.1快于Spark1.5.1。关于机器学习库这一方面，Spark的测试显示其性能更优(Flink 1.0.3 vs. Spark1.6.0)。在2016年9月份，Flink和Spark分析了一些批处理和迭代处理的测试，这些测试表明Spark在图处理方面1.7倍快于Flink,而Flink在批处理和小规模图负载方面1.5倍快于SPark，且使用更少的资源。这表明，工具直接的性能与功能大同小异。</p>
+<p>&emsp;&emsp;从这些性能比较中可以得出的结论是，要选择更快的框架，必须对特定的工作负载进行基准测试。针对这些主题，几乎没有最近版本的比较(Spark 2.2 vs. Flink1.3)。这很麻烦，因为这两个平台甚至在过去一年里都取得了令人印象深刻的性能提升。在我们博客的第2部分中，我们将提供我们自己的详细性能比较，请继续关注!</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>&emsp;&emsp;大数据作为不断增加的容量、对质量的高要求以及对更快的业务洞察力的需求的三重挑战，继续要求技术在任何规模的延迟和吞吐量方面保持高性能，同时允许快速开发和高质量的代码。</p>
+<p>&emsp;&emsp;如果高吞吐量、低延迟和良好的容错性的数据流处理需求是开发的驱动因素，那么Flink提供了一个优秀的应用程序框架[1]。如果应用程序应该嵌入到Hadoop发行版中，比如Hortonworks或Cloudera，那么Spark将是一个更好的选择，因为它已经很好地集成到各自的平台中，并得到了供应商的支持。Flink和Spark都在不断改进，以提供更简单、更快和更智能的数据处理特性。</p>
+<p>&emsp;&emsp;最终，最佳框架的决定取决于这样一个问题:“哪一个更适合我的需求?”即使是开发团队最喜欢的编程语言也可能是一个关键因素——Spark的Java API源自Scala API:这有时会导致不吸引人的Java代码。数据工程师通常更喜欢Python或Scala, Spark支持更成熟、功能更完备、速度更快的api。Spark与R的紧密集成——“数据科学的黄金之子”——在R中提供了Spark，从而很好地集成到现有的数据科学工具箱中。</p>
+<p>&emsp;&emsp;引发最推崇的特性之一是速度可以，运行程序比Hadoop MapReduce快100倍在内存中,或磁盘上的快10倍。Flink在批处理方面提供了强大的竞争优势，通常具有相似的性能，并且显著降低了流处理的延迟。尽管Spark社区的“炒作”似乎转移到了Flink，但只有未来才能说明这对实际市场份额有多大影响。</p>
+]]></content>
+      <categories>
+        <category>读书笔记</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>Spark</tag>
+        <tag>Flink</tag>
       </tags>
   </entry>
   <entry>
@@ -8998,20 +8986,17 @@ Caused by: org.apache.maven.plugin.MojoExecutionException: Some Enforcer rules h
     at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:415)
     at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:356)</code></pre></div>
 
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><!-- https:&#x2F;&#x2F;mvnrepository.com&#x2F;artifact&#x2F;org.glassfish&#x2F;javax.el -->
-<dependency>
-    <groupId>org.glassfish<&#x2F;groupId>
-    <artifactId>javax.el<&#x2F;artifactId>
-    <version>3.0.0<&#x2F;version>
-<&#x2F;dependency></code></pre></div>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">groupId: org.glassfish
+artifactId: javax.el
+version: 3.0.0</code></pre></div>
 
-<h2 id="hive-webhcat"><a href="#hive-webhcat" class="headerlink" title="hive-webhcat"></a>hive-webhcat</h2><h3 id="报错信息-1"><a href="#报错信息-1" class="headerlink" title="报错信息"></a>报错信息</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">[ERROR] Failed to execute goal org.apache.maven.plugins:maven-javadoc-plugin:2.4:javadoc (resourcesdoc.xml) on project hive-webhcat: An error has occurred in JavaDocs report generation:Exit code: 1 - 错误: 读取&#x2F;Users&#x2F;xinshiyou&#x2F;.m2&#x2F;repository&#x2F;javax&#x2F;servlet&#x2F;jsp&#x2F;javax.servlet.jsp-api&#x2F;2.3.1&#x2F;javax.servlet.jsp-api-2.3.1.jar时出错; error in opening zip file
+<h2 id="hive-webhcat"><a href="#hive-webhcat" class="headerlink" title="hive-webhcat"></a>hive-webhcat</h2><h3 id="报错信息-1"><a href="#报错信息-1" class="headerlink" title="报错信息"></a>报错信息</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">[ERROR] Failed to execute goal org.apache.maven.plugins:maven-javadoc-plugin:2.4:javadoc (resourcesdoc.xml) on project hive-webhcat: An error has occurred in JavaDocs report generation:Exit code: 1 - 错误: 读取/Users/xinshiyou/.m2/repository/javax/servlet/jsp/javax.servlet.jsp-api/2.3.1/javax.servlet.jsp-api-2.3.1.jar时出错; error in opening zip file
 [ERROR] 
-[ERROR] Command line was:"cd &#x2F;Users&#x2F;xinshiyou&#x2F;git&#x2F;hive_cdh&#x2F;hive&#x2F;hcatalog&#x2F;webhcat&#x2F;svr&#x2F;target&#x2F;site&#x2F;apidocs && &#x2F;Library&#x2F;Java&#x2F;JavaVirtualMachines&#x2F;jdk1.8.0_151.jdk&#x2F;Contents&#x2F;Home&#x2F;bin&#x2F;javadoc" @options @packages
+[ERROR] Command line was:"cd /Users/xinshiyou/git/hive_cdh/hive/hcatalog/webhcat/svr/target/site/apidocs && /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/bin/javadoc" @options @packages
 [ERROR] -> [Help 1]
-org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.maven.plugins:maven-javadoc-plugin:2.4:javadoc (resourcesdoc.xml) on project hive-webhcat: An error has occurred in JavaDocs report generation:Exit code: 1 - 错误: 读取&#x2F;Users&#x2F;xinshiyou&#x2F;.m2&#x2F;repository&#x2F;javax&#x2F;servlet&#x2F;jsp&#x2F;javax.servlet.jsp-api&#x2F;2.3.1&#x2F;javax.servlet.jsp-api-2.3.1.jar时出错; error in opening zip file
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.maven.plugins:maven-javadoc-plugin:2.4:javadoc (resourcesdoc.xml) on project hive-webhcat: An error has occurred in JavaDocs report generation:Exit code: 1 - 错误: 读取/Users/xinshiyou/.m2/repository/javax/servlet/jsp/javax.servlet.jsp-api/2.3.1/javax.servlet.jsp-api-2.3.1.jar时出错; error in opening zip file
 
-Command line was:"cd &#x2F;Users&#x2F;xinshiyou&#x2F;git&#x2F;hive_cdh&#x2F;hive&#x2F;hcatalog&#x2F;webhcat&#x2F;svr&#x2F;target&#x2F;site&#x2F;apidocs && &#x2F;Library&#x2F;Java&#x2F;JavaVirtualMachines&#x2F;jdk1.8.0_151.jdk&#x2F;Contents&#x2F;Home&#x2F;bin&#x2F;javadoc" @options @packages
+Command line was:"cd /Users/xinshiyou/git/hive_cdh/hive/hcatalog/webhcat/svr/target/site/apidocs && /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/bin/javadoc" @options @packages
     at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:213)
     at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:154)
     at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:146)
@@ -9033,9 +9018,9 @@ Command line was:"cd &#x2F;Users&#x2F;xinshiyou&#x2F;git&#x2F;hive_cdh&#x2F;hive
     at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:229)
     at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:415)
     at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:356)
-Caused by: org.apache.maven.plugin.MojoExecutionException: An error has occurred in JavaDocs report generation:Exit code: 1 - 错误: 读取&#x2F;Users&#x2F;xinshiyou&#x2F;.m2&#x2F;repository&#x2F;javax&#x2F;servlet&#x2F;jsp&#x2F;javax.servlet.jsp-api&#x2F;2.3.1&#x2F;javax.servlet.jsp-api-2.3.1.jar时出错; error in opening zip file
+Caused by: org.apache.maven.plugin.MojoExecutionException: An error has occurred in JavaDocs report generation:Exit code: 1 - 错误: 读取/Users/xinshiyou/.m2/repository/javax/servlet/jsp/javax.servlet.jsp-api/2.3.1/javax.servlet.jsp-api-2.3.1.jar时出错; error in opening zip file
 
-Command line was:"cd &#x2F;Users&#x2F;xinshiyou&#x2F;git&#x2F;hive_cdh&#x2F;hive&#x2F;hcatalog&#x2F;webhcat&#x2F;svr&#x2F;target&#x2F;site&#x2F;apidocs && &#x2F;Library&#x2F;Java&#x2F;JavaVirtualMachines&#x2F;jdk1.8.0_151.jdk&#x2F;Contents&#x2F;Home&#x2F;bin&#x2F;javadoc" @options @packages
+Command line was:"cd /Users/xinshiyou/git/hive_cdh/hive/hcatalog/webhcat/svr/target/site/apidocs && /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/bin/javadoc" @options @packages
     at org.apache.maven.plugin.javadoc.JavadocReport.execute (JavadocReport.java:238)
     at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo (DefaultBuildPluginManager.java:134)
     at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:208)
@@ -9059,9 +9044,9 @@ Command line was:"cd &#x2F;Users&#x2F;xinshiyou&#x2F;git&#x2F;hive_cdh&#x2F;hive
     at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:229)
     at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:415)
     at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:356)
-Caused by: org.apache.maven.reporting.MavenReportException: Exit code: 1 - 错误: 读取&#x2F;Users&#x2F;xinshiyou&#x2F;.m2&#x2F;repository&#x2F;javax&#x2F;servlet&#x2F;jsp&#x2F;javax.servlet.jsp-api&#x2F;2.3.1&#x2F;javax.servlet.jsp-api-2.3.1.jar时出错; error in opening zip file
+Caused by: org.apache.maven.reporting.MavenReportException: Exit code: 1 - 错误: 读取/Users/xinshiyou/.m2/repository/javax/servlet/jsp/javax.servlet.jsp-api/2.3.1/javax.servlet.jsp-api-2.3.1.jar时出错; error in opening zip file
 
-Command line was:"cd &#x2F;Users&#x2F;xinshiyou&#x2F;git&#x2F;hive_cdh&#x2F;hive&#x2F;hcatalog&#x2F;webhcat&#x2F;svr&#x2F;target&#x2F;site&#x2F;apidocs && &#x2F;Library&#x2F;Java&#x2F;JavaVirtualMachines&#x2F;jdk1.8.0_151.jdk&#x2F;Contents&#x2F;Home&#x2F;bin&#x2F;javadoc" @options @packages
+Command line was:"cd /Users/xinshiyou/git/hive_cdh/hive/hcatalog/webhcat/svr/target/site/apidocs && /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/bin/javadoc" @options @packages
     at org.apache.maven.plugin.javadoc.AbstractJavadocMojo.executeReport (AbstractJavadocMojo.java:1580)
     at org.apache.maven.plugin.javadoc.JavadocReport.generate (JavadocReport.java:136)
     at org.apache.maven.plugin.javadoc.JavadocReport.execute (JavadocReport.java:224)
@@ -9088,11 +9073,11 @@ Command line was:"cd &#x2F;Users&#x2F;xinshiyou&#x2F;git&#x2F;hive_cdh&#x2F;hive
     at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:415)
     at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:356)</code></pre></div>
 
-<h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 一
+<h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 一
 删除无法打开的文件，maven重新下载
 
 ## 二
-mvn clean install package -DskipTests   -Dmaven.javadoc.skip&#x3D;true  -X -rf :hive-webhcat</code></pre></div>
+mvn clean install package -DskipTests   -Dmaven.javadoc.skip=true  -X -rf :hive-webhcat</code></pre></div>
 
 
 ]]></content>
@@ -9325,23 +9310,23 @@ Caused by: sbt.compiler.CompileFailed
 </ul>
 <!-- /TOC -->
 
-<h2 id="1-下载组件"><a href="#1-下载组件" class="headerlink" title=".1. 下载组件"></a>.1. 下载组件</h2><div class="hljs"><pre class=" language-hljs bash"><span class="hljs-comment"><code class="language-hljs bash"><span class="hljs-comment">## 必须下载</span>
-<span class="hljs-comment">### Cloudera Manager</span>
+<h2 id="1-下载组件"><a href="#1-下载组件" class="headerlink" title=".1. 下载组件"></a>.1. 下载组件</h2><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 必须下载
+### Cloudera Manager
 cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
 cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm
 cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm
 
-<span class="hljs-comment">### CDH</span>
+### CDH
 manifest.json
 CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel
 CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha
 CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha256
 
-<span class="hljs-comment">## 按需下载</span>
+## 按需下载
 oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm
 
-<span class="hljs-comment">## 部署MySQL需要</span>
+## 部署MySQL需要
 mysql57-community-release-el7-7.noarch.rpm
 mysql-connector-java.jar</code></pre></div>
 
@@ -9757,6 +9742,74 @@ com.cloudera.cmf.db.setupType&#x3D;EXTERNAL ## external with mysql</code></pre><
       </categories>
       <tags>
         <tag>CDH</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HTML全文转化为PDF技术选型研究与流行方法汇总</title>
+    <url>/2018/06/29/HTML%E5%85%A8%E6%96%87%E8%BD%AC%E5%8C%96%E4%B8%BAPDF%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%E7%A0%94%E7%A9%B6%E4%B8%8E%E6%B5%81%E8%A1%8C%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在实际也无需求中，需要用到网页快照功能，并能够查看历史网页快照功能，因此需要实现网页格式的固化保存，保存为图片或PDF文件的形式。</p>
+<a id="more"></a>
+
+<h2 id="1-技术研究"><a href="#1-技术研究" class="headerlink" title="1. 技术研究"></a>1. 技术研究</h2><p>&emsp;&emsp;做这样研究了网上许多技术，大都存在各种各样的缺陷。</p>
+<h3 id="1-1-html2canvas-amp-jsPDF"><a href="#1-1-html2canvas-amp-jsPDF" class="headerlink" title="1.1. html2canvas&amp;jsPDF"></a>1.1. html2canvas&amp;jsPDF</h3><p>&emsp;&emsp;感兴趣的读者，可以参考： <a href="https://github.com/linwalker/render-html-to-pdf" target="_blank" rel="noopener">https://github.com/linwalker/render-html-to-pdf</a><br>&emsp;&emsp;该种方法，主要是通过JS调用实现，无法通过脚本，或者Java API的方法调用来实现转化工作。</p>
+<h3 id="1-2-iTextRender-amp-pdfWriter"><a href="#1-2-iTextRender-amp-pdfWriter" class="headerlink" title="1.2. iTextRender&amp;pdfWriter"></a>1.2. iTextRender&amp;pdfWriter</h3><p>&emsp;&emsp;这种方式能够实现简单的Html2PDF功能，但存在以下缺点</p>
+<ol>
+<li>对网页格式要求较高；</li>
+<li>无法对图片等复杂元素进行处理。<br>主要参考博文：<br><a href="http://swordshadow.iteye.com/blog/1983935" target="_blank" rel="noopener">Itext的PDF生成方案</a><br><a href="http://skyfar666.iteye.com/blog/2001353" target="_blank" rel="noopener">freemarker+ITextRenderer 生成html转pdf</a><br><a href="http://www.cnblogs.com/reese-blogs/p/5546806.html" target="_blank" rel="noopener">iTextRenderer(Flying Saucer) HTML转PDF</a></li>
+</ol>
+<h3 id="1-3-pdf-kit"><a href="#1-3-pdf-kit" class="headerlink" title="1.3. pdf-kit"></a>1.3. pdf-kit</h3><p>&emsp;&emsp;pdf-kit主要通过JS生成PDF文件，在HTML截图方面比较欠缺，作者没有发现能够用于截图功能。<br><a href="http://pdfkit.org/" target="_blank" rel="noopener">PDF-KIT官网</a></p>
+<h3 id="1-4-cssbox"><a href="#1-4-cssbox" class="headerlink" title="1.4. cssbox"></a>1.4. cssbox</h3><p>&emsp;&emsp;cssbox主要用作前段css渲染功能，但没有提供输出为图片或PDF接口。<br><a href="http://cssbox.sourceforge.net/" target="_blank" rel="noopener">CSSBOX源码文件与说明</a></p>
+<h3 id="1-5-Phantomjs"><a href="#1-5-Phantomjs" class="headerlink" title="1.5. Phantomjs"></a>1.5. Phantomjs</h3><p>&emsp;&emsp;爬虫或自动化测试重量级程序，能够实现爬虫功能与自动化测试任务。并能够使用代理服务器，或输出HTML为图片或DPF文件的形式。能够输出单个网页控件的图片或DPF文件，实现精准输出。</p>
+<p>&emsp;&emsp;但Phantomjs存在如下问题：</p>
+<ol>
+<li>相应速度较慢；</li>
+<li>调用繁琐，需要自己写JS脚本。</li>
+</ol>
+<h3 id="1-6-Headless-Chrome-or-other-browser"><a href="#1-6-Headless-Chrome-or-other-browser" class="headerlink" title="1.6. Headless Chrome or other browser"></a>1.6. Headless Chrome or other browser</h3><p>&emsp;&emsp;使用无头浏览器，调用snapshot接口，能够实现截图功能。</p>
+<h3 id="1-7-HtmlUnitDriver调用浏览器API"><a href="#1-7-HtmlUnitDriver调用浏览器API" class="headerlink" title="1.7. HtmlUnitDriver调用浏览器API"></a>1.7. HtmlUnitDriver调用浏览器API</h3><p>使用HtmlUnitDriver调用浏览器API，如Chrome、Firefox、IE等主浏览器，均能实现截图功能。</p>
+<p>缺点：</p>
+<ol>
+<li>需要编写程序，调用API；</li>
+<li>无法直接调用脚本实现截图功能。</li>
+</ol>
+<h2 id="2-wkhtmltopdf"><a href="#2-wkhtmltopdf" class="headerlink" title="2. wkhtmltopdf"></a>2. wkhtmltopdf</h2><p>&emsp;&emsp;该程序能够实现将Html转化为图片，或PDF文件的功能，具体下载地址为：<a href="https://wkhtmltopdf.org/downloads.html" target="_blank" rel="noopener">wkhtmltopdf官网下载</a></p>
+<h3 id="2-1-安装流程"><a href="#2-1-安装流程" class="headerlink" title="2.1. 安装流程"></a>2.1. 安装流程</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## Download from Org website
+wget https:&#x2F;&#x2F;github.com&#x2F;wkhtmltopdf&#x2F;wkhtmltopdf&#x2F;releases&#x2F;download&#x2F;0.12.4&#x2F;wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+
+## uncompress
+ tar xvJf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+
+## install font : chinese : 宋体
+## &#x2F;usr&#x2F;share&#x2F;fonts&#x2F;XXX</code></pre></div>
+<p>&emsp;&emsp;安装中文字体，主要是考虑到网页内容为中文会出现中文乱码问题。</p>
+<h3 id="2-2-调用"><a href="#2-2-调用" class="headerlink" title="2.2. 调用"></a>2.2. 调用</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## to pdf
+wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.pdf
+
+## to image
+wkhtmltopdf http:&#x2F;&#x2F;www.baidu.com ~&#x2F;baidu.png</code></pre></div>
+<p>具体详情，可以参考wkhtml2pdf的帮助信息。</p>
+<h3 id="2-3-选择原因"><a href="#2-3-选择原因" class="headerlink" title="2.3. 选择原因"></a>2.3. 选择原因</h3><ol>
+<li>可以通过shell直接调用；</li>
+<li>支持多线程并发操作；</li>
+<li>调用简单、方便。</li>
+</ol>
+<h3 id="2-4-存在缺点"><a href="#2-4-存在缺点" class="headerlink" title="2.4. 存在缺点"></a>2.4. 存在缺点</h3><ol>
+<li>存在TimeoutError；</li>
+<li>偶尔存在加载阻塞，无法正常加载网页内容。这些网页通常是信息量较大、存在高清图片等问题。</li>
+</ol>
+<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h2><ol>
+<li>如果需要HTML全文转化，那么wkHtml2PDF可以作为首要选项；</li>
+<li>如果需要获取HTML中部分元素进行转化为图片、PDF，那么phtomjs是一个很好的选择。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>调研</tag>
+        <tag>总结</tag>
+        <tag>Html</tag>
+        <tag>PDF</tag>
       </tags>
   </entry>
 </search>

@@ -210,25 +210,25 @@
 </ul>
 <!-- /TOC -->
 
-<h2 id="1-下载组件"><a href="#1-下载组件" class="headerlink" title=".1. 下载组件"></a>.1. 下载组件</h2><div class="hljs"><pre class=" language-hljs bash"><span class="hljs-comment"><code class="language-hljs bash"><span class="hljs-comment">## 必须下载</span>
-<span class="hljs-comment">### Cloudera Manager</span>
+<h2 id="1-下载组件"><a href="#1-下载组件" class="headerlink" title=".1. 下载组件"></a>.1. 下载组件</h2><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 必须下载
+### Cloudera Manager
 cloudera-manager-agent-6.2.0-968826.el7.x86_64.rpm
 cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm
 cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm
 cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm
 
-<span class="hljs-comment">### CDH</span>
+### CDH
 manifest.json
 CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel
 CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha
 CDH-6.2.0-1.cdh6.2.0.p0.967373-el7.parcel.sha256
 
-<span class="hljs-comment">## 按需下载</span>
+## 按需下载
 oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm
 
-<span class="hljs-comment">## 部署MySQL需要</span>
+## 部署MySQL需要
 mysql57-community-release-el7-7.noarch.rpm
-mysql-connector-java.jar</code></span></pre></div>
+mysql-connector-java.jar</code></pre></div>
 
 <h2 id="2-部署安装"><a href="#2-部署安装" class="headerlink" title=".2. 部署安装"></a>.2. 部署安装</h2><h3 id="2-1-配置文件-–-config-ini-cloudera-scm-agent需要"><a href="#2-1-配置文件-–-config-ini-cloudera-scm-agent需要" class="headerlink" title=".2.1. 配置文件 – config.ini : cloudera-scm-agent需要"></a>.2.1. 配置文件 – config.ini : cloudera-scm-agent需要</h3><div class="hljs"><pre class=" language-hljs XML"><code class="language-hljs XML"># Configuration file for cloudera-scm-agent.
 # Please note that this file supports multi-line values.  Multi-line
