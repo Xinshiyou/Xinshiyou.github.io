@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      892 字
+      893 字
     </span>
   
 
@@ -192,17 +192,21 @@
           <div class="post-content mx-auto" id="post">
             
             <article class="markdown-body">
-              <h2 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h2><h3 id="1-1-MySQL账号"><a href="#1-1-MySQL账号" class="headerlink" title="1.1. MySQL账号"></a>1.1. MySQL账号</h3><p>根据Canal官方说明，需要申请一个MySQL数据库的账号，该账号具有如下权限<br></p><div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">CREATE USER canal IDENTIFIED BY 'canal';  
+              <h2 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h2><h3 id="1-1-MySQL账号"><a href="#1-1-MySQL账号" class="headerlink" title="1.1. MySQL账号"></a>1.1. MySQL账号</h3><p>根据Canal官方说明，需要申请一个MySQL数据库的账号，该账号具有如下权限</p>
+<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">CREATE USER canal IDENTIFIED BY 'canal';  
 -- 至少具有如下权限
 GRANT SELECT, SHOW VIEW, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'canal'@'%';
 -- GRANT ALL PRIVILEGES ON *.* TO 'canal'@'%' ; -- 需要具有SHOW VIEW 权限
-FLUSH PRIVILEGES;</code></pre></div><br>并保证目标主机与MySQL数据库之间<strong>3306</strong>端口的连通性。<p></p>
+FLUSH PRIVILEGES;</code></pre></div>
+<p>并保证目标主机与MySQL数据库之间<strong>3306</strong>端口的连通性。</p>
 <a id="more"></a>
+
 <h3 id="1-2-安装Java"><a href="#1-2-安装Java" class="headerlink" title="1.2. 安装Java"></a>1.2. 安装Java</h3><p>由于是一个Java程序，因此需要在目标机上事先安装JDK。</p>
 <h3 id="1-3-Kafka"><a href="#1-3-Kafka" class="headerlink" title="1.3. Kafka"></a>1.3. Kafka</h3><p>本项目目的是将Binlog数据发往Kafka，因此需要一个Kafka集群或单机节点，并保证<strong>9092</strong>端口的连通性。</p>
 <h3 id="1-4-Zookeeper"><a href="#1-4-Zookeeper" class="headerlink" title="1.4. Zookeeper"></a>1.4. Zookeeper</h3><p>如果启用高可用，或将元数据保存在Zookeeper上，那么需要保证目标主机与ZK集群之间<strong>2181</strong>端口的连通性。</p>
 <h2 id="2-配置工作"><a href="#2-配置工作" class="headerlink" title="2. 配置工作"></a>2. 配置工作</h2><p>  配置Canal是一个不断摸索的过程，根据Git上面的文档，以及项目源码，如果有问题出现，基本上可以定位到问题出处。虽然Git上面有比较详尽的说明，但在测试时，还是会遇到各种各样的问题。这就需要充分理解相关配置参数的含义，以及参数之间的搭配，才能更好地使用这个工具。</p>
-<h3 id="2-1-canal说明"><a href="#2-1-canal说明" class="headerlink" title="2.1. canal说明"></a>2.1. canal说明</h3><p>需要特别注意以下几个配置内容<br></p><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 配置ZK地址：如果需要启用高可用，目前高可用仅支持同时一个节点工作
+<h3 id="2-1-canal说明"><a href="#2-1-canal说明" class="headerlink" title="2.1. canal说明"></a>2.1. canal说明</h3><p>需要特别注意以下几个配置内容</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 配置ZK地址：如果需要启用高可用，目前高可用仅支持同时一个节点工作
 canal.zkServers=
 
 ## 配置sink方式：目前支持以下三种
@@ -229,8 +233,10 @@ canal.mq.flatMessage=true
 
 ## MQ设置
 canal.mq.acks=
-canal.mq.lingerMs=</code></pre></div><p></p>
-<h3 id="2-2-instance说明"><a href="#2-2-instance说明" class="headerlink" title="2.2. instance说明"></a>2.2. instance说明</h3><p>Instance中需要注意的配置项目如下<br></p><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## GTID设置：如果配置为true，那么需要给出：canal.instance.master.gtid=
+canal.mq.lingerMs=</code></pre></div>
+
+<h3 id="2-2-instance说明"><a href="#2-2-instance说明" class="headerlink" title="2.2. instance说明"></a>2.2. instance说明</h3><p>Instance中需要注意的配置项目如下</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## GTID设置：如果配置为true，那么需要给出：canal.instance.master.gtid=
 ## 一般设置为false，小的项目就够了：自动寻找，以及记忆Binlog位置
 canal.instance.gtidon=false
 
@@ -246,9 +252,13 @@ canal.mq.topic=
 canal.mq.partitionsNum=3
 canal.mq.partitionHash=mytest.person:id,mytest.role:id
 ## 2. 配置为0，或不配置
-canal.mq.partition=</code></pre></div><p></p>
-<h2 id="3-注意事项"><a href="#3-注意事项" class="headerlink" title="3. 注意事项"></a>3. 注意事项</h2><h3 id="3-1-默认数据库"><a href="#3-1-默认数据库" class="headerlink" title="3.1. 默认数据库"></a>3.1. 默认数据库</h3><p>在实际测试中，这个默认数据库的设置不知道起到了什么作用<br></p><div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">canal.instance.defaultDatabaseName =</code></pre></div><br>在获取MySQL Binlog时，这个MySQL实例的Binlog都获取到了，并传输到了Kafka中。<p></p>
-<h3 id="3-2-配置错误"><a href="#3-2-配置错误" class="headerlink" title="3.2. 配置错误"></a>3.2. 配置错误</h3><p>在配置mq.yml文件时，遇到了一个基本常识错误<br></p><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 错误配置
+canal.mq.partition=</code></pre></div>
+
+<h2 id="3-注意事项"><a href="#3-注意事项" class="headerlink" title="3. 注意事项"></a>3. 注意事项</h2><h3 id="3-1-默认数据库"><a href="#3-1-默认数据库" class="headerlink" title="3.1. 默认数据库"></a>3.1. 默认数据库</h3><p>在实际测试中，这个默认数据库的设置不知道起到了什么作用</p>
+<div class="hljs"><pre class=" language-hljs shell"><code class="language-hljs shell">canal.instance.defaultDatabaseName =</code></pre></div>
+<p>在获取MySQL Binlog时，这个MySQL实例的Binlog都获取到了，并传输到了Kafka中。</p>
+<h3 id="3-2-配置错误"><a href="#3-2-配置错误" class="headerlink" title="3.2. 配置错误"></a>3.2. 配置错误</h3><p>在配置mq.yml文件时，遇到了一个基本常识错误</p>
+<div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 错误配置
 canalDestinations:
   - canalDestination: example
     topic:example
@@ -258,7 +268,8 @@ canalDestinations:
 canalDestinations:
   - canalDestination: example
     topic: example
-    partition: 0</code></pre></div><br>即在YML配置中，基本上是这种模式的[Key: value]。<p></p>
+    partition: 0</code></pre></div>
+<p>即在YML配置中，基本上是这种模式的[Key: value]。</p>
 <p>  <strong>博主在使用的时候，场景比较简单，配置也较为简单，目标仅是让整个流程跑起来，对于其他的参数未做详细的了解以及探究，其中不免有错误之处，欢迎留言指正。</strong></p>
 
             </article>

@@ -194,6 +194,7 @@
             <article class="markdown-body">
               <p>  目前研究一下使用Java发送带有附件的邮件，从网上搜索了一下发现都存在各种各样的问题。在这里总结一下，展示一下基础代码，防止遗忘。</p>
 <a id="more"></a>
+
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><div class="hljs"><pre class=" language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMail</span><span class="hljs-params"><code class="language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMail</span><span class="hljs-params">(String subject, String toMail,</span></span>
 <span class="hljs-function"><span class="hljs-params">			String content, String... files)</span> </span>{
 		<span class="hljs-keyword">boolean</span> isFlag = <span class="hljs-keyword">false</span>;
@@ -265,6 +266,7 @@
 				<span class="hljs-string">"朋友好久不见"</span>, <span class="hljs-string">"附件路径"</span>);
 		System.out.println(<span class="hljs-string">"Resuylt: "</span> + res);
 	}</code></span></span></pre></div>
+
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
 <li>使用Java客户端配置QQ邮箱发送邮件，需要现在QQ邮箱网页上申请授权码，发送邮件时放在密码的位置；</li>
 <li>特别需要注意发送邮件的标题、正文内容的编码格式问题，不然容易造成乱码现象。</li>

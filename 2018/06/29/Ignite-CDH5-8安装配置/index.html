@@ -194,6 +194,8 @@
             <article class="markdown-body">
               <p>  最近在研究基于内存处理技术，其中就有比较出名的Apache Ignite的项目。应用场景是，通过Spark/Java等工具处理Parquet文件，但是直接通过Java API处理Parquet文件的性能较差，主要原因在于不能实现并行化处理。</p>
 <a id="more"></a>
+
+
 <h2 id="Ignite特性"><a href="#Ignite特性" class="headerlink" title="Ignite特性"></a>Ignite特性</h2><p>  Ignite的应用场景比较多，主要用在数据库缓存方便。当然，集合Ignite也可以结合Spark共享RDD用作缓存处理。</p>
 <p>  更多关于 Ignite的介绍，可以查看<a href="https://www.zybuluo.com/liyuj/note/481591" target="_blank" rel="noopener">官方文档V1.7</a>。如果对实际操作比较感兴趣，可以查看Ignite在Github上的<a href="https://github.com/apache/ignite/tree/master/examples" target="_blank" rel="noopener">实例代码</a>。</p>
 <h2 id="安装Ignite"><a href="#安装Ignite" class="headerlink" title="安装Ignite"></a>安装Ignite</h2><p>  版主使用四节点实现分布式Ignite的安装，由于 Ignite具有自动发现机制，因此即使不进行配置，在同一局域网中也可以实现多个Server的分布式配置。</p>
@@ -202,7 +204,8 @@
 <li>JDK1.8.0；</li>
 <li>Spark1.6。</li>
 </ol>
-<h3 id="配置代码"><a href="#配置代码" class="headerlink" title="配置代码"></a>配置代码</h3><p>  同一般Spark集群不同的地方在于，Ignite安装在Yarn节点上，且配置Yarn节点与Spark Geteway环境变量，在/XXX/conf.cloudera.spark_on_yarn2/spark-env.sh文件中添加：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Optionally set IGNITE_HOME here.
+<h3 id="配置代码"><a href="#配置代码" class="headerlink" title="配置代码"></a>配置代码</h3><p>  同一般Spark集群不同的地方在于，Ignite安装在Yarn节点上，且配置Yarn节点与Spark Geteway环境变量，在/XXX/conf.cloudera.spark_on_yarn2/spark-env.sh文件中添加：</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Optionally set IGNITE_HOME here.
 # IGNITE_HOME=/path/to/ignite
 IGNITE_LIBS="\${IGNITE_HOME}/libs/*"
 for file in \${IGNITE_HOME}/libs/*
@@ -211,8 +214,10 @@ if [ -d \${file} ] &amp;&amp; [ "\${file}"!="\${IGNITE_HOME}"/libs/optional ]; t
  IGNITE_LIBS=\${IGNITE_LIBS}:\${file}/*
 fi
 done
-export SPARK_DIST_CLASSPATH=$IGNITE_LIBS</code></pre></div><br>这里与官方文档中唯一的区别在于，官方文档中使用的CLASSPATH为<em>SPARK_CLASSPATH</em>，这里使用的CLASSPATH为<em>SPARK_DIST_CLASSPATH</em>。<p></p>
-<h2 id="测试Ignite"><a href="#测试Ignite" class="headerlink" title="测试Ignite"></a>测试Ignite</h2><p>使用简单测试代码(spark-shell)：<br></p><div class="hljs"><pre class=" language-hljs scala"><span class="hljs-keyword"><code class="language-hljs scala"><span class="hljs-keyword">import</span> org.apache.ignite.configuration._
+export SPARK_DIST_CLASSPATH=$IGNITE_LIBS</code></pre></div>
+<p>这里与官方文档中唯一的区别在于，官方文档中使用的CLASSPATH为<em>SPARK_CLASSPATH</em>，这里使用的CLASSPATH为<em>SPARK_DIST_CLASSPATH</em>。</p>
+<h2 id="测试Ignite"><a href="#测试Ignite" class="headerlink" title="测试Ignite"></a>测试Ignite</h2><p>使用简单测试代码(spark-shell)：</p>
+<div class="hljs"><pre class=" language-hljs scala"><span class="hljs-keyword"><code class="language-hljs scala"><span class="hljs-keyword">import</span> org.apache.ignite.configuration._
 <span class="hljs-keyword">import</span> org.apache.ignite.spark._
 
 <span class="hljs-comment">// 使用default-config下面的配置</span>
@@ -222,7 +227,8 @@ export SPARK_DIST_CLASSPATH=$IGNITE_LIBS</code></pre></div><br>这里与官方�
 println(<span class="hljs-string">"Name: "</span>+cache.cacheName+<span class="hljs-string">"\tCount: "</span>+cache.count())
     
 cache.savePairs(sc.parallelize(<span class="hljs-number">1</span> to <span class="hljs-number">10000</span>, <span class="hljs-number">10</span>).map( item =&gt; (item, item)))
-println(<span class="hljs-string">"Name: "</span>+cache.cacheName+<span class="hljs-string">"\tCount: "</span>+cache.count())</code></span></pre></div><p></p>
+println(<span class="hljs-string">"Name: "</span>+cache.cacheName+<span class="hljs-string">"\tCount: "</span>+cache.count())</code></span></pre></div>
+
 <p>报错信息：</p>
 <blockquote>
 <p>java.lang.NoClassDefFoundError: javax/cache/configuration/MutableConfiguration</p>

@@ -194,6 +194,7 @@
             <article class="markdown-body">
               <h2 id="下载地址"><a href="#下载地址" class="headerlink" title="下载地址"></a>下载地址</h2><p><a href="https://dl.lancdn.com/landian/software/chrome/m" target="_blank" rel="noopener">https://dl.lancdn.com/landian/software/chrome/m</a><br><a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" target="_blank" rel="noopener">https://sites.google.com/a/chromium.org/chromedriver/downloads</a></p>
 <a id="more"></a>
+
 <h2 id="缺少依赖"><a href="#缺少依赖" class="headerlink" title="缺少依赖"></a>缺少依赖</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">warning: 67.0.3396.79_x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 7fac5991: NOKEY
 error: Failed dependencies:
 	/usr/bin/lsb_release is needed by google-chrome-stable-67.0.3396.79-1.x86_64
@@ -228,11 +229,14 @@ error: Failed dependencies:
 	libstdc++.so.6(GLIBCXX_3.4.15)(64bit) is needed by google-chrome-stable-67.0.3396.79-1.x86_64
 	libxcb.so.1()(64bit) is needed by google-chrome-stable-67.0.3396.79-1.x86_64
 	xdg-utils is needed by google-chrome-stable-67.0.3396.79-1.x86_64</code></pre></div>
-<p>由于依赖组件太多，只能逐步排查：安装缺少的依赖<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum install -y redhat-lsb-core-4.0-7.el6.centos.x86_64 
+
+<p>由于依赖组件太多，只能逐步排查：安装缺少的依赖</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum install -y redhat-lsb-core-4.0-7.el6.centos.x86_64 
 yum install -y libX11-devel --nogpg  
 yum install -y cmake gcc gcc-c++ gtk+-devel gimp-devel gimp-devel-tools gimp-help-browser zlib-devel libtiff-devel libjpeg-devel libpng-devel gstreamer-devel libavc1394-devel libraw1394-devel libdc1394-devel jasper-devel jasper-utils swig python libtool nasm 
 yum install -y gtk2 gtk2-devel gtk2-devel-docs
-yum install -y libgtk*</code></pre></div><p></p>
+yum install -y libgtk*</code></pre></div>
+
 <p>  最终发现，这种安装方式存在缺陷且依赖的组件相对较多，任务介入安装比较麻烦。</p>
 
             </article>

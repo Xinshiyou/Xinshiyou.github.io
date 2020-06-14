@@ -239,9 +239,11 @@ Caused by: org.apache.maven.plugin.MojoExecutionException: Some Enforcer rules h
     at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:229)
     at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:415)
     at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:356)</code></pre></div>
+
 <h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">groupId: org.glassfish
 artifactId: javax.el
 version: 3.0.0</code></pre></div>
+
 <h2 id="hive-webhcat"><a href="#hive-webhcat" class="headerlink" title="hive-webhcat"></a>hive-webhcat</h2><h3 id="报错信息-1"><a href="#报错信息-1" class="headerlink" title="报错信息"></a>报错信息</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">[ERROR] Failed to execute goal org.apache.maven.plugins:maven-javadoc-plugin:2.4:javadoc (resourcesdoc.xml) on project hive-webhcat: An error has occurred in JavaDocs report generation:Exit code: 1 - 错误: 读取/Users/xinshiyou/.m2/repository/javax/servlet/jsp/javax.servlet.jsp-api/2.3.1/javax.servlet.jsp-api-2.3.1.jar时出错; error in opening zip file
 [ERROR] 
 [ERROR] Command line was:"cd /Users/xinshiyou/git/hive_cdh/hive/hcatalog/webhcat/svr/target/site/apidocs &amp;&amp; /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/bin/javadoc" @options @packages
@@ -324,11 +326,14 @@ Command line was:"cd /Users/xinshiyou/git/hive_cdh/hive/hcatalog/webhcat/svr/tar
     at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:229)
     at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:415)
     at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:356)</code></pre></div>
+
 <h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h3><div class="hljs"><pre class=" language-hljs json"><code class="language-hljs json">## 一
 删除无法打开的文件，maven重新下载
 
 ## 二
 mvn clean install package -DskipTests   -Dmaven.javadoc.skip=true  -X -rf :hive-webhcat</code></pre></div>
+
+
 
             </article>
             <hr>

@@ -194,44 +194,40 @@
             <article class="markdown-body">
               <p>转载自：<a href="https://github.com/ysc/cws_evaluation" target="_blank" rel="noopener">Java开源项目cws_evaluation：中文分词器分词效果评估对比</a></p>
 <h2 id="中文分词器分词效果评估对比"><a href="#中文分词器分词效果评估对比" class="headerlink" title="中文分词器分词效果评估对比"></a>中文分词器分词效果评估对比</h2><a id="more"></a>
+
 <h3 id="捐赠致谢"><a href="#捐赠致谢" class="headerlink" title="捐赠致谢"></a><a href="https://github.com/ysc/QuestionAnsweringSystem/wiki/donation" target="_blank" rel="noopener">捐赠致谢</a></h3><h3 id="使用说明："><a href="#使用说明：" class="headerlink" title="使用说明："></a>使用说明：</h3><p>   如何建立开发环境？</p>
 <div class="hljs"><pre><code>如果是使用Netbeans、IDEA，则直接打开项目
 如果是使用Eclipse、MyEclipse，则要执行导入操作
-推荐使用IDEA
-</code></pre></div><p>   评估采用的测试文本位于data目录下，253 3709行，共2837 4490个字符</p>
+推荐使用IDEA</code></pre></div><p>   评估采用的测试文本位于data目录下，253 3709行，共2837 4490个字符</p>
 <p>   test-test.txt为未分词的文件，一行一个句子或短语，格式如下：</p>
-<div class="hljs"><pre><code>   迈向充满希望的新世纪
-   一九九八年新年讲话
-   附图片1张
-   中共中央总书记
-   国家主席江泽民
-   一九九七年十二月三十一日
-   12月31日
-   总书记
-   国家主席江泽民发表1998年新年讲话
-   新华社记者兰红光摄
-</code></pre></div><p>   standard-text.txt为人工分好词的文件，用于判断参与评估的分词器的分词结果是否正确，词和词之间以空格分隔，格式如下：</p>
-<div class="hljs"><pre><code>   迈向 充满 希望 的 新 世纪
-   一九九八年 新年 讲话
-   附 图片 1 张
-   中共中央 总书记
-   国家 主席 江泽民
-   一九九七年 十二月 三十一日
-   12月 31日
-   总书记
-   国家 主席 江泽民 发表 1998年 新年 讲话
-   新华社 记者 兰红光 摄
-</code></pre></div><p>   speed-test-text.txt用于纯粹的速度对比</p>
+<div class="hljs"><pre><code>迈向充满希望的新世纪
+一九九八年新年讲话
+附图片1张
+中共中央总书记
+国家主席江泽民
+一九九七年十二月三十一日
+12月31日
+总书记
+国家主席江泽民发表1998年新年讲话
+新华社记者兰红光摄</code></pre></div><p>   standard-text.txt为人工分好词的文件，用于判断参与评估的分词器的分词结果是否正确，词和词之间以空格分隔，格式如下：</p>
+<div class="hljs"><pre><code>迈向 充满 希望 的 新 世纪
+一九九八年 新年 讲话
+附 图片 1 张
+中共中央 总书记
+国家 主席 江泽民
+一九九七年 十二月 三十一日
+12月 31日
+总书记
+国家 主席 江泽民 发表 1998年 新年 讲话
+新华社 记者 兰红光 摄</code></pre></div><p>   speed-test-text.txt用于纯粹的速度对比</p>
 <p>   注意：由于每个分词器的词典格式不一致，除了词典之外使用的其他模型的格式也不一致，所以我们评估对比时没有让所有分词器使用统一的词典和模型，测试的是各个分词器的默认行为</p>
 <p>   运行org.apdplat.evaluation.Evaluator类可获得评估结果</p>
 <p>   运行org.apdplat.evaluation.WordSegmenter类可对比不同分词器结果</p>
 <p>   windows:</p>
-<div class="hljs"><pre><code>   ./contrast.bat
-   ./evaluation.bat
-</code></pre></div><p>   linux:</p>
-<div class="hljs"><pre><code>   chmod +x contrast.sh &amp; ./contrast.sh
-   chmod +x evaluation.sh &amp; ./evaluation.sh
-</code></pre></div><p>   最终评估结果文件位于report目录下：分词效果评估报告.txt</p>
+<div class="hljs"><pre><code>./contrast.bat
+./evaluation.bat</code></pre></div><p>   linux:</p>
+<div class="hljs"><pre><code>chmod +x contrast.sh &amp; ./contrast.sh
+chmod +x evaluation.sh &amp; ./evaluation.sh</code></pre></div><p>   最终评估结果文件位于report目录下：分词效果评估报告.txt</p>
 <p>   注意：stanford分词器是吃内存的怪兽，运行的时候需要增加虚拟机参数 -Xms3000m -Xmx3000m</p>
 <h3 id="评估报告："><a href="#评估报告：" class="headerlink" title="评估报告："></a>评估报告：</h3><div class="hljs"><pre><code>1、word分词 最大Ngram分值算法：
 分词速度：370.9714 字符/毫秒
@@ -415,8 +411,7 @@ Paoding MAX_WORD_LENGTH_MODE：
 Paoding MOST_WORDS_MODE：
 分词速度：1338.9246 字符/毫秒
 行数完美率：11.6%  行数错误率：88.39%  总的行数：2533158  完美行数：294011  错误行数：2239147
-字数完美率：5.92% 字数错误率：94.07% 总的字数：28373102 完美字数：1680261 错误字数：26692841
-</code></pre></div><h3 id="效果对比："><a href="#效果对比：" class="headerlink" title="效果对比："></a>效果对比：</h3><h4 id="1、以-我爱楚离陌-为例子："><a href="#1、以-我爱楚离陌-为例子：" class="headerlink" title="1、以 我爱楚离陌 为例子："></a>1、以 我爱楚离陌 为例子：</h4><div class="hljs"><pre><code>word分词器 的分词结果：
+字数完美率：5.92% 字数错误率：94.07% 总的字数：28373102 完美字数：1680261 错误字数：26692841</code></pre></div><h3 id="效果对比："><a href="#效果对比：" class="headerlink" title="效果对比："></a>效果对比：</h3><h4 id="1、以-我爱楚离陌-为例子："><a href="#1、以-我爱楚离陌-为例子：" class="headerlink" title="1、以 我爱楚离陌 为例子："></a>1、以 我爱楚离陌 为例子：</h4><div class="hljs"><pre><code>word分词器 的分词结果：
     1 、【全切分算法】    我 爱 楚离陌 
     2 、【双向最大最小匹配算法】    我 爱 楚离陌 
     3 、【最大Ngram分值算法】    我 爱 楚离陌 
@@ -458,8 +453,7 @@ MMSeg4j分词器 的分词结果：
     3 、【MaxWordSeg】    我爱 楚 离 陌 
 IKAnalyzer分词器 的分词结果：
     1 、【智能切分】    我 爱 楚 离 陌 
-    2 、【细粒度切分】    我 爱 楚 离 陌 
-</code></pre></div><h4 id="2、以-结合成分子-为例子："><a href="#2、以-结合成分子-为例子：" class="headerlink" title="2、以 结合成分子 为例子："></a>2、以 结合成分子 为例子：</h4><div class="hljs"><pre><code>word分词器 的分词结果：
+    2 、【细粒度切分】    我 爱 楚 离 陌 </code></pre></div><h4 id="2、以-结合成分子-为例子："><a href="#2、以-结合成分子-为例子：" class="headerlink" title="2、以 结合成分子 为例子："></a>2、以 结合成分子 为例子：</h4><div class="hljs"><pre><code>word分词器 的分词结果：
     1 、【全切分算法】    结合 成 分子 
     2 、【双向最大最小匹配算法】    结 合成 分子 
     3 、【最大Ngram分值算法】    结合 成 分子 
@@ -501,8 +495,7 @@ MMSeg4j分词器 的分词结果：
     3 、【MaxWordSeg】    结合 成分 子 
 IKAnalyzer分词器 的分词结果：
     1 、【智能切分】    结合 成 分子 
-    2 、【细粒度切分】    结合 合成 成分 分子
-</code></pre></div><h3 id="速度对比："><a href="#速度对比：" class="headerlink" title="速度对比："></a>速度对比：</h3><div class="hljs"><pre><code>1、HanLP分词器 极速词典分词：
+    2 、【细粒度切分】    结合 合成 成分 分子</code></pre></div><h3 id="速度对比："><a href="#速度对比：" class="headerlink" title="速度对比："></a>速度对比：</h3><div class="hljs"><pre><code>1、HanLP分词器 极速词典分词：
 分词速度：5030.1978 字符/毫秒
 
 2、MMSeg4j MaxWordSeg：
@@ -593,8 +586,7 @@ IKAnalyzer分词器 的分词结果：
 分词速度：111.7975 字符/毫秒
 
 31、HanLP分词器 N-最短路径分词：
-分词速度：67.67644 字符/毫秒
-</code></pre></div><h3 id="支持的分词器有："><a href="#支持的分词器有：" class="headerlink" title="支持的分词器有："></a>支持的分词器有：</h3><p>   <a href="https://github.com/ysc/word" target="_blank" rel="noopener">1、word分词器</a></p>
+分词速度：67.67644 字符/毫秒</code></pre></div><h3 id="支持的分词器有："><a href="#支持的分词器有：" class="headerlink" title="支持的分词器有："></a>支持的分词器有：</h3><p>   <a href="https://github.com/ysc/word" target="_blank" rel="noopener">1、word分词器</a></p>
 <p>   <a href="https://github.com/ansjsun/ansj_seg" target="_blank" rel="noopener">2、ansj分词器</a></p>
 <p>   <a href="http://code.google.com/p/mmseg4j/" target="_blank" rel="noopener">3、mmseg4j分词器</a></p>
 <p>   <a href="http://code.google.com/p/ik-analyzer/" target="_blank" rel="noopener">4、ik-analyzer分词器</a></p>

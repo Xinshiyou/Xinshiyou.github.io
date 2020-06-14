@@ -194,32 +194,43 @@
             <article class="markdown-body">
               <p>  在使用Centos或Ubuntu时，遇到各种Linux的命令，用到的时候回去查一下语法、参数、使用等内容，但使用过后基本上就忘记了。后面再使用的话，还的继续查找相关文档。</p>
 <a id="more"></a>
+
 <h2 id="ls命令"><a href="#ls命令" class="headerlink" title="ls命令"></a>ls命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ls
 ls -l
 ls -ltr</code></pre></div>
+
 <h2 id="du-df命令"><a href="#du-df命令" class="headerlink" title="du/df命令"></a>du/df命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">du -h --max-depth=1 /
 df
 df -lh</code></pre></div>
+
 <h2 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">top
 top -U
 top -p PID</code></pre></div>
 <h2 id="find命令"><a href="#find命令" class="headerlink" title="find命令"></a>find命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">find / -name XXX
 find / -size [+/-]XXX</code></pre></div>
+
 <h2 id="grep命令"><a href="#grep命令" class="headerlink" title="grep命令"></a>grep命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">ps -ef | grep agent | grep -v grep | awk '{print $2}' | xargs kill -9 
 ps -ef | grep agent | grep -v grep | awk '{print \$2}' | xargs kill -9</code></pre></div>
+
 <h2 id="cp命令"><a href="#cp命令" class="headerlink" title="cp命令"></a>cp命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">## 保持权限状态
 cp -p XXX XXX</code></pre></div>
+
 <h2 id="netstat命令"><a href="#netstat命令" class="headerlink" title="netstat命令"></a>netstat命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">netstat -nltp</code></pre></div>
+
 <h2 id="trace命令"><a href="#trace命令" class="headerlink" title="trace命令"></a>trace命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">strace -p PID  -f -e trace=network -s 10000</code></pre></div>
+
 <h2 id="tcpdump命令"><a href="#tcpdump命令" class="headerlink" title="tcpdump命令"></a>tcpdump命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">tcpdump host 210.27.48.1 and \ (210.27.48.2 or 210.27.48.3 \) 
 tcpdump -i eth0 src host IPAddress</code></pre></div>
+
 <h2 id="Java命令"><a href="#Java命令" class="headerlink" title="Java命令"></a>Java命令</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jps
 java
 javac
 javah</code></pre></div>
+
 <h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap -heap [PID]
 jmap -histo [PID]
 jmap -dump:file=文件名.dump [pid]</code></pre></div>
+
 <h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">jmap [Dump File]</code></pre></div>
             </article>
             <hr>
@@ -237,9 +248,9 @@ jmap -dump:file=文件名.dump [pid]</code></pre></div>
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E5%A4%87%E5%BF%98/">备忘</a>
-                    
                       <a class="hover-with-bg" href="/tags/Linux/">Linux</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%A4%87%E5%BF%98/">备忘</a>
                     
                   </div>
                 

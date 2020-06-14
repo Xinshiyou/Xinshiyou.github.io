@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      574 字
+      577 字
     </span>
   
 
@@ -194,23 +194,29 @@
             <article class="markdown-body">
               <p>  使用Spark RDD或DataFrame，有时需要在foreachPartition或foreachWith里面保存数据到本地或HDFS。</p>
 <a id="more"></a>
-<h2 id="1-直接保存数据"><a href="#1-直接保存数据" class="headerlink" title="1. 直接保存数据"></a>1. 直接保存数据</h2><p>  当然如果不需要在map里面保存数据，那么针对RDD可以有如下方式<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">val rdd = // target rdd
-rdd.saveAsHadoopFile // add some parameters</code></pre></div><br>针对DataFrame可以有如下方式保存数据<br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">val df = // target dataframe
+
+<h2 id="1-直接保存数据"><a href="#1-直接保存数据" class="headerlink" title="1. 直接保存数据"></a>1. 直接保存数据</h2><p>  当然如果不需要在map里面保存数据，那么针对RDD可以有如下方式</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">val rdd = // target rdd
+rdd.saveAsHadoopFile // add some parameters</code></pre></div>
+<p>针对DataFrame可以有如下方式保存数据</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">val df = // target dataframe
 // 保存中间数据
 df.registerTempTable("temp table name")
 
 // 持久化数据
 df.save // 使用save函数，指定模式等参数
 df.saveAsParquetFile	// depressed
-df.saveAsTable	// depressed</code></pre></div><p></p>
+df.saveAsTable	// depressed</code></pre></div>
+
 <h2 id="2-foreach里面保存数据"><a href="#2-foreach里面保存数据" class="headerlink" title="2. foreach里面保存数据"></a>2. foreach里面保存数据</h2><p>  调用foreachXXX之后，里面的每条记录都是Iterator[YYY]形式的数据，是可迭代数据。</p>
-<h3 id="2-1-保存到文件"><a href="#2-1-保存到文件" class="headerlink" title="2.1. 保存到文件"></a>2.1. 保存到文件</h3><p>保存到文件相对简单，可以直接使用上面的save保存，例如<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">def save2HDFS(sc: SparkContext, input: Iterator[Row]): Unit = {
+<h3 id="2-1-保存到文件"><a href="#2-1-保存到文件" class="headerlink" title="2.1. 保存到文件"></a>2.1. 保存到文件</h3><p>保存到文件相对简单，可以直接使用上面的save保存，例如</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">def save2HDFS(sc: SparkContext, input: Iterator[Row]): Unit = {
 	val result = input.map(item =&gt; item.getString(0) + "," + item.getInt(1)).toSeq
     val tmpRDD = sc.parallelize(result)
     tmpRDD.saveAsObjectFile("//path") // 1
     tmpRDD.saveAsTextFile("//path") // 2
     tmpRDD.saveAsTextFile("",CompressClass) // 3 内容编码类，继承自org.apache.hadoop.io.compress.CompressionCodec
-  }</code></pre></div><p></p>
+  }</code></pre></div>
 <h3 id="2-2-保存到数据库"><a href="#2-2-保存到数据库" class="headerlink" title="2.2. 保存到数据库"></a>2.2. 保存到数据库</h3><p>  在foreachXXX里面，可以将数据保存到数据库，这里使用的方式为JDBC的方式。</p>
 <div class="hljs"><pre class=" language-hljs scala"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">save2DB</span></span>(input: <span class="hljs-type">Iterator</span>[<span class="hljs-type">Row</span>]): <span class="hljs-type"><code class="language-hljs scala"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">save2DB</span></span>(input: <span class="hljs-type">Iterator</span>[<span class="hljs-type">Row</span>]): <span class="hljs-type">Unit</span> = {
 
@@ -243,14 +249,17 @@ df.saveAsTable	// depressed</code></pre></div><p></p>
      }
    }
  }</code></span></pre></div>
+
 <h2 id="3-DataFrame读入写出操作"><a href="#3-DataFrame读入写出操作" class="headerlink" title="3. DataFrame读入写出操作"></a>3. DataFrame读入写出操作</h2><p>  DataFrame可以方便的将要各种数据源的数据，读入到内存中，也可以方便的将DF数据写为各种格式的数据。</p>
 <h3 id="3-1-读入操作"><a href="#3-1-读入操作" class="headerlink" title="3.1. 读入操作"></a>3.1. 读入操作</h3><div class="hljs"><pre class=" language-hljs scala">sqlContext.read.jdbc<span class="hljs-comment"><code class="language-hljs scala">sqlContext.read.jdbc<span class="hljs-comment">// JDBC数据源</span>
 sqlContext.read.json<span class="hljs-comment">// JSON数据源</span>
 sqlContext.read.parquet<span class="hljs-comment">// Parquet数据源</span></code></span></pre></div>
+
 <h3 id="3-2-写出操作"><a href="#3-2-写出操作" class="headerlink" title="3.2. 写出操作"></a>3.2. 写出操作</h3><div class="hljs"><pre class=" language-hljs scala"><span class="hljs-keyword">val</span> tarDF =  <span class="hljs-comment"><code class="language-hljs scala"><span class="hljs-keyword">val</span> tarDF =  <span class="hljs-comment">// target dataframe </span>
 tarDF.write.jdbc<span class="hljs-comment">// 写入JDBC数据库</span>
 tarDF.write.json<span class="hljs-comment">// 写入JSON数据源</span>
 tarDF.write.parquet<span class="hljs-comment">// 写入Parquet数据源</span></code></span></pre></div>
+
 <p>  以上几种数据源，是Spark自身带有驱动程序的。其他文件格式，需要相应的驱动程序，或相应的安装包支持。</p>
 
             </article>

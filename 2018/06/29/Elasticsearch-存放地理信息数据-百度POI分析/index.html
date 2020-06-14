@@ -194,6 +194,7 @@
             <article class="markdown-body">
               <p>  ES是一个全文搜索引擎，同时也是一个NoSQL数据库，其存放数据方便与检索数据性能优越，受到普遍欢迎。</p>
 <a id="more"></a>
+
 <h2 id="ES架构"><a href="#ES架构" class="headerlink" title="ES架构"></a>ES架构</h2><p>参考文章：<a href="http://www.cnblogs.com/tgzhu/p/6098339.html" target="_blank" rel="noopener">架构及原理</a></p>
 <h2 id="ES地理数据操作"><a href="#ES地理数据操作" class="headerlink" title="ES地理数据操作"></a>ES地理数据操作</h2><p>  参考文章：<a href="http://blog.csdn.net/u012332735/article/details/54971638" target="_blank" rel="noopener">Elasticsearch地理位置总结</a></p>
 <h2 id="ES实际操作"><a href="#ES实际操作" class="headerlink" title="ES实际操作"></a>ES实际操作</h2><h3 id="建立Index"><a href="#建立Index" class="headerlink" title="建立Index"></a>建立Index</h3><p>  一般有两种方式</p>
@@ -201,7 +202,8 @@
 <li>ES Head通过界面化操作，直接可以建立Index:<br><img src="001.png" srcset="/img/loading.gif" alt="create es idex"><br><img src="002.png" srcset="/img/loading.gif" alt="detail page"></li>
 <li>通过ES API可以创建Index。一般可以选择Java/Python的ES接口API，可以实现该功能。</li>
 </ol>
-<h3 id="建立Type"><a href="#建立Type" class="headerlink" title="建立Type"></a>建立Type</h3><p>  虽然ES允许事先不建立Index，就可以直接插入数据。但这种方式存在安全隐患，比如类型转换，类型设置等方面的隐患。最好的方式就是实现创建Index/Type，定义好需要插入数据的类型，方便后期检索。<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl -XPUT 'ES Server IP:9200/Test?pretty' -H 'Content-Type: application/json' -d'
+<h3 id="建立Type"><a href="#建立Type" class="headerlink" title="建立Type"></a>建立Type</h3><p>  虽然ES允许事先不建立Index，就可以直接插入数据。但这种方式存在安全隐患，比如类型转换，类型设置等方面的隐患。最好的方式就是实现创建Index/Type，定义好需要插入数据的类型，方便后期检索。</p>
+<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">curl -XPUT 'ES Server IP:9200/Test?pretty' -H 'Content-Type: application/json' -d'
 {
 	"settings": {
 		"index": {
@@ -233,7 +235,7 @@
 			}
 		}
 	}
-}</code></pre></div><p></p>
+}</code></pre></div>
 <h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><p>  这里使用Java API实现将数据插入ES的功能，关于ES Client的使用，可以参考文章：<a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html" target="_blank" rel="noopener">https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html</a></p>
 <h2 id="选择ES的目的"><a href="#选择ES的目的" class="headerlink" title="选择ES的目的"></a>选择ES的目的</h2><ol>
 <li>通过ES，可以实现去重的功能：因为不同位置爬去POI，可能重复；</li>
