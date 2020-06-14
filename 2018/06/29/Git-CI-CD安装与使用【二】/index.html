@@ -194,7 +194,6 @@
             <article class="markdown-body">
               <p>  在使用Gitlab的公司，使用Gitlab提供的各项功能，实现公司代码的管理、自动化编译同步等，具有非常明显的优势。通Jenkins相比，使用CI/CD可以个性化定制自己的编译内容，并触发执行，无需实现设置crontab配置。</p>
 <a id="more"></a>
-
 <p>  本小节主要是Git-CI/CD配置。</p>
 <h2 id="样例配置"><a href="#样例配置" class="headerlink" title="样例配置"></a>样例配置</h2><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">stages:
   - build
@@ -208,7 +207,6 @@ build_staging:
     - bin/build.sh
   only:
     - master</code></pre></div>
-
 <h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
 <li><a href="https://www.jianshu.com/p/c840632cef38" target="_blank" rel="noopener">https://www.jianshu.com/p/c840632cef38</a></li>
 <li><a href="https://docs.gitlab.com/ee/ci/README.html" target="_blank" rel="noopener">https://docs.gitlab.com/ee/ci/README.html</a></li>

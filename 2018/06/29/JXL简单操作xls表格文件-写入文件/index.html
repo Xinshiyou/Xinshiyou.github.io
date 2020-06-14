@@ -194,7 +194,6 @@
             <article class="markdown-body">
               <p>  工作时用到写入Excel的场景，发现有Apache POI提供的jar包与JXL的jar包。实际操作时，个人感觉poi比较高大上，基本上能够实现excel的大部分功能，包括字体设置、表格设置等内容，但相对门槛较高，操作复杂。相比POI，JXL操作简单，容易入门，相比而言得到的EXCEL文档也是比简单，不需要特殊的格式化。</p>
 <a id="more"></a>
-
 <div class="hljs"><pre class=" language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">write2xlsStr</span><span class="hljs-params"><code class="language-hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">write2xlsStr</span><span class="hljs-params">(WritableWorkbook book, String[] title,</span></span>
 <span class="hljs-function"><span class="hljs-params">		List<string[]> lst)</string[]></span> <span class="hljs-keyword">throws</span> RowsExceededException, WriteException,</span>
 <span class="hljs-function">		IOException </span>{
@@ -276,12 +275,11 @@
 	}
 	book.write();
 }</code></span></span></pre></div>
-
-<p>调用时，可参考如下方式：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">WritableWorkbook book = getWorkBook("Filepath");
+<p>调用时，可参考如下方式：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">WritableWorkbook book = getWorkBook("Filepath");
 // your data format: list for list<map> data
 write2xlsMap(book,...);
-book.close();</map></code></pre></div>
+book.close();</map></code></pre></div><p></p>
+
             </article>
             <hr>
             <div>

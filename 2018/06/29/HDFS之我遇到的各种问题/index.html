@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      436 字
+      494 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      8
+      9
        分钟
     </span>
   
@@ -206,35 +206,18 @@
     at javax.security.auth.Subject.doAs(Subject.java:422)
     at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1920)
     at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2275)</code></pre></div>
-
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>A. 在/etc/hosts中添加映射关系</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">IP	hostname
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>A. 在/etc/hosts中添加映射关系<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">IP	hostname
 IP	hostname
-...</code></pre></div>
-<p>B. 设置取消hostname检查</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">dfs.namenode.datanode.registratin.io-hostname-check: false</code></pre></div>
-
-<h2 id="安装问题"><a href="#安装问题" class="headerlink" title="安装问题"></a>安装问题</h2><h3 id="deltarpm"><a href="#deltarpm" class="headerlink" title="deltarpm"></a>deltarpm</h3><p>A. 问题描述</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Delta RPMs disabled because /usr/bin/applydeltarpm not installed</code></pre></div>
-<p>B. 解决方案</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum install deltarpm</code></pre></div>
-
-<h3 id="SASL"><a href="#SASL" class="headerlink" title="SASL"></a>SASL</h3><p>A. 问题描述</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found (code THRIFTTRANSPORT): TTransportException('Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found',)</code></pre></div>
-<p>B. 解决方案</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum -y install cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi</code></pre></div>
-
-<h3 id="libxslt-so"><a href="#libxslt-so" class="headerlink" title="libxslt.so"></a>libxslt.so</h3><p>A. 问题描述</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"> Couldn't import snappy. Support for snappy compression disabled.
+...</code></pre></div><br>B. 设置取消hostname检查<br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">dfs.namenode.datanode.registratin.io-hostname-check: false</code></pre></div><p></p>
+<h2 id="安装问题"><a href="#安装问题" class="headerlink" title="安装问题"></a>安装问题</h2><h3 id="deltarpm"><a href="#deltarpm" class="headerlink" title="deltarpm"></a>deltarpm</h3><p>A. 问题描述<br></p><div class="hljs"><pre class=" language-hljs plain">Delta RPMs disabled because /usr/bin/applydeltarpm not installed</pre></div><br>B. 解决方案<br><div class="hljs"><pre><code class="hljs plain"><code class="language-hljs plain">Delta RPMs disabled because /usr/bin/applydeltarpm not installed</code></code></pre></div><code class="hljs plain"><br>B. 解决方案<br><div class="hljs"><pre><code class="hljs plain">yum install deltarpm</code></pre></div><p></p>
+<h3 id="SASL"><a href="#SASL" class="headerlink" title="SASL"></a>SASL</h3><p>A. 问题描述<br></p></code><div class="hljs"><code class="hljs plain"></code><pre class=" language-hljs plain"><code class="hljs plain">Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found (code THRIFTTRANSPORT): TTransportException('Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found',)</code></pre></div><br>B. 解决方案<br><div class="hljs"><pre><code class="hljs plain"><code class="language-hljs plain">Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found (code THRIFTTRANSPORT): TTransportException('Could not start SASL: Error in sasl_client_start (-4) SASL(-4): no mechanism available: No worthy mechs found',)</code></code></pre></div><code class="hljs plain"><br>B. 解决方案<br><div class="hljs"><pre><code class="hljs plain">yum -y install cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi</code></pre></div><p></p>
+<h3 id="libxslt-so"><a href="#libxslt-so" class="headerlink" title="libxslt.so"></a>libxslt.so</h3><p>A. 问题描述<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"> Couldn't import snappy. Support for snappy compression disabled.
 File "/opt/cloudera/parcels/CDH-5.12.1-1.cdh5.12.1.p0.3/lib/hue/build/env/lib/python2.7/site-packages/lxml-3.3.6-py2.7-linux-x86_64.egg/lxml/html/__init__.py", line 42, in <module> from lxml import etree
-ImportError: libxslt.so.1: cannot open shared object file: No such file or directory</module></code></pre></div>
-<p>B. 解决方案</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum install httpd -y</code></pre></div>
-
+ImportError: libxslt.so.1: cannot open shared object file: No such file or directory</module></code></pre></div><br>B. 解决方案<br><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">yum install httpd -y</code></pre></div><p></p>
 <h2 id="Hive"><a href="#Hive" class="headerlink" title="Hive"></a>Hive</h2><h3 id="注释中文乱码问题"><a href="#注释中文乱码问题" class="headerlink" title="注释中文乱码问题"></a>注释中文乱码问题</h3><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">alter table COLUMNS_V2 modify column COMMENT varchar(256) character set utf8; 
 alter table TABLE_PARAMS modify column PARAM_VALUE varchar(4000) character set utf8; 
 alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character set utf8; （分区表）</code></pre></div>
-            </article>
+            </code></article><code class="hljs plain">
             <hr>
             <div>
               <div class="post-metas mb-3">
@@ -287,10 +270,10 @@ alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character se
             </div>
 
             
-          </div>
-        </div>
-      </div>
-    </div>
+          </code></div><code class="hljs plain">
+        </code></div><code class="hljs plain">
+      </code></div><code class="hljs plain">
+    </code></div><code class="hljs plain">
     
       <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
         <div id="toc">
@@ -300,14 +283,14 @@ alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character se
 
       </div>
     
-  </div>
-</div>
+  </code></div><code class="hljs plain">
+</code></div><code class="hljs plain">
 
 <!-- Custom -->
 
 
     
-  </main>
+  </code></main><code class="hljs plain">
 
   
     <a id="scroll-top-button" href="#" role="button">
@@ -424,7 +407,7 @@ alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character se
 
 
 
-<script src="/bundle.js"></script><script>
+</code><script src="/bundle.js"></script><script>
     $(document).ready(function () {
       var boardCtn = $('#board-ctn');
       var boardTop = boardCtn.offset().top;

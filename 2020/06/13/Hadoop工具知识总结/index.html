@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      327 字
+      457 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      5
+      6
        分钟
     </span>
   
@@ -212,10 +212,14 @@
 <li>TPC-DS性能测试</li>
 <li>Hi-Bench性能测试</li>
 </ol>
+<h2 id="Hadoop安全机制"><a href="#Hadoop安全机制" class="headerlink" title="Hadoop安全机制"></a>Hadoop安全机制</h2><ol>
+<li>Kerberos：Kerberos是一种协议框架，MIT Kerberos是基于Kerbeos协议实现的软件，通常所述的Kerberos一般就是指MIT Kerberos。在实际使用中，中大规模的大数据生态使用的是Kerberos+LDAP方案方便管理用户。可以参考<strong>freeIPA</strong>：<a href="https://www.freeipa.org/page/Main_Page" target="_blank" rel="noopener">FreeIPA官网</a>、<a href="https://cloud.tencent.com/developer/article/1173622" target="_blank" rel="noopener">使用FreeIPA对Linux用户权限统一管理</a>、<a href="https://www.cnblogs.com/yinzhengjie/p/10100098.html" target="_blank" rel="noopener">Hadoop生态圈-使用FreeIPA安装Kerberos和LDAP</a></li>
+<li>Token：通过Kerberos验证之后，大数据生态的组件之间可以通过Token机制进行通讯与验证</li>
+</ol>
 <h1 id="Java通用"><a href="#Java通用" class="headerlink" title="Java通用"></a>Java通用</h1><h2 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h2><ol>
 <li>JVM: Jstack：jstack通常用来定位Java进程的异常线程，或异常代码</li>
 <li>CPU: 火焰图: perf 命令。关于火焰图解读，可以参考文献：<a href="https://www.ruanyifeng.com/blog/2017/09/flame-graph.html" target="_blank" rel="noopener">如何读懂火焰图？</a></li>
-<li>磁盘问题排查：<img src="%E7%9F%A5%E8%AF%86%E6%A0%88.png" srcset="/img/loading.gif" alt="磁盘问题排查"></li>
+<li>磁盘问题排查：<img src="知识栈.png" srcset="/img/loading.gif" alt="磁盘问题排查"></li>
 </ol>
 
             </article>

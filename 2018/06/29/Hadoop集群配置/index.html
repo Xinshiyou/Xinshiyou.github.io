@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      573 字
+      571 字
     </span>
   
 
@@ -194,7 +194,6 @@
             <article class="markdown-body">
               <p>  自己动手搭建一个Hadoop集群，对于Hadoop的学习、理解非常有帮助，从中能够学习到Hadoop常用的端口、配置文件、配置信息等内容。</p>
 <a id="more"></a>
-
 <h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><h3 id="预先准备"><a href="#预先准备" class="headerlink" title="预先准备"></a>预先准备</h3><ol>
 <li>四台机器：master、slave1、slave2、slave3；</li>
 <li>在master上开通外网访问权限，slave1\slave2\slave3无需外网访问权限；</li>
@@ -205,7 +204,6 @@
 172.198.0.13 SLAVE1
 172.198.0.14 SLAVE2
 172.198.0.15 SLAVE3</code></pre></div>
-
 </li>
 </ol>
 <h3 id="安装JDK"><a href="#安装JDK" class="headerlink" title="安装JDK"></a>安装JDK</h3><ol>
@@ -216,8 +214,7 @@
 <p>如果想要配置立刻生效，可以使用source /etc/profile命令。</p>
 <h3 id="配置Hadoop"><a href="#配置Hadoop" class="headerlink" title="配置Hadoop"></a>配置Hadoop</h3><p>安装思路：首先在MASTER节点中配置完成，然后复制到SLAVE节点中。</p>
 <p><em>配置文件</em></p>
-<p>core-site.xml:</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><property>
+<p>core-site.xml:<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><property>
         <name>hadoop.tmp.dir&lt;/name&gt;
         <value>/home/appuser/hadoop/tmp&lt;/value&gt;
 &lt;/property&gt;
@@ -225,10 +222,8 @@
         <name>fs.default.name&lt;/name&gt;
         <value>hdfs://master:9000&lt;/value&gt;
 &lt;/property&gt;
-&lt;/configuration&gt;</value></name></property></value></name></property></code></pre></div>
-
-<p>hdfs-site.xml:</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><configuration>
+&lt;/configuration&gt;</value></name></property></value></name></property></code></pre></div><p></p>
+<p>hdfs-site.xml:<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><configuration>
 <property>
         <name>dfs.name.dir&lt;/name&gt;
         <value>/home/appuser/hadoop/tmp/namedir&lt;/value&gt;
@@ -253,10 +248,8 @@
         <name>dfs.webhdfs.enabled&lt;/name&gt;
         <value>true&lt;/value&gt;
 &lt;/property&gt;
-&lt;/configuration&gt;</value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></configuration></code></pre></div>
-
-<p>mapred-site.xml:</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><configuration>
+&lt;/configuration&gt;</value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></configuration></code></pre></div><p></p>
+<p>mapred-site.xml:<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"><configuration>
 <property>
         <name>mapred.job.tracker&lt;/name&gt;
         <value>master:9001&lt;/value&gt;
@@ -281,28 +274,18 @@
         <name>mapreduce.jobhistory.webapp.address&lt;/name&gt;
         <value>master:19888&lt;/value&gt;
 &lt;/property&gt;
-&lt;/configuration&gt;</value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></configuration></code></pre></div>
-
-<p>hadoop-env.sh:</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">export JAVA_HOME=/home/appuser/jdk1.8.0_111</code></pre></div>
-
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p><em>分发到SLAVE节点</em></p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Copy Hadoop File
+&lt;/configuration&gt;</value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></value></name></property></configuration></code></pre></div><p></p>
+<p>hadoop-env.sh:<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">export JAVA_HOME=/home/appuser/jdk1.8.0_111</code></pre></div><p></p>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p><em>分发到SLAVE节点</em><br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain"># Copy Hadoop File
 scp -r ~/hadoop-2.6.0/ slave1:~/
 scp -r ~/hadoop-2.6.0/ slave2:~/
 scp -r ~/hadoop-2.6.0/ slave3:~/
 # Copy Jdk File
 scp -r ~/jdk1.8.0_111/ slave1:~/
 scp -r ~/jdk1.8.0_111/ slave2:~/
-scp -r ~/jdk1.8.0_111/ slave3:~/</code></pre></div>
-
-<p><em>格式化NamdeNode</em></p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">bin/hadoop namenode -format</code></pre></div>
-<p>如果在Log中出现：<em>successfully …</em>，说明格式化成功。</p>
-<p><em>启动Hadoop集群</em></p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">~/hadoop-2.6.0/sbin/start-all.sh</code></pre></div>
-
-
+scp -r ~/jdk1.8.0_111/ slave3:~/</code></pre></div><p></p>
+<p><em>格式化NamdeNode</em><br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">bin/hadoop namenode -format</code></pre></div><br>如果在Log中出现：<em>successfully …</em>，说明格式化成功。<p></p>
+<p><em>启动Hadoop集群</em><br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">~/hadoop-2.6.0/sbin/start-all.sh</code></pre></div><p></p>
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
 <li>有时候DataNode启动不成功，这时候需要查看对应机器的logs，一般能够找到原因。大部分的原因在于Master与Slave的通讯出现问题，特别是Clone的虚拟机；</li>
 <li>NameNode一般会启动成功，如果不能启动成功，可以查看相应的logs，或查看配置是否出现问题。</li>

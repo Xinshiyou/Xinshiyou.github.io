@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      332 字
+      365 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      3
+      4
        分钟
     </span>
   
@@ -194,23 +194,16 @@
             <article class="markdown-body">
               <p>  最近在研究dl4j的学习，其中有使用FNLP作为分词的例子。版主尝试编译源码，经过不断的查找验证，得到可行的方式。</p>
 <a id="more"></a>
-
 <h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>  FNLP的源码已经在github上，地址为：(<a href="https://github.com/FudanNLP/fnlp),感兴趣的朋友可以下载编译学习。同时针对下载困难的Jar包，FNLP的作者利用国内百度云盘作为下载地址，可以下载相关Jar包和Model，地址为：(http://pan.baidu.com/s/1D7CVc)。根据Github上作者的提示，将Model文件通过百度云盘下载到相应路径下，就可以编译。" target="_blank" rel="noopener">https://github.com/FudanNLP/fnlp),感兴趣的朋友可以下载编译学习。同时针对下载困难的Jar包，FNLP的作者利用国内百度云盘作为下载地址，可以下载相关Jar包和Model，地址为：(http://pan.baidu.com/s/1D7CVc)。根据Github上作者的提示，将Model文件通过百度云盘下载到相应路径下，就可以编译。</a></p>
-<p>版主利用GIT来克隆源码到本地：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">git clone https://github.com/FudanNLP/fnlp.git</code></pre></div>
-
-<p>然后利用Maven3来编译源码：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">mvn clean install</code></pre></div>
-<p>但是在编译过程中遇到Plugin的错误：<br><img src="001.png" srcset="/img/loading.gif" alt="特殊他"><br>只有使用跳过测试的选项，才可以通过编译：</p>
-<div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">mvn clean install -Dmaven.test.skip=true</code></pre></div>
-<p><img src="002.png" srcset="/img/loading.gif" alt="test-success"></p>
+<p>版主利用GIT来克隆源码到本地：<br></p><div class="hljs"><pre class=" language-hljs plain"><code class="language-hljs plain">git clone https://github.com/FudanNLP/fnlp.git</code></pre></div><p></p>
+<p>然后利用Maven3来编译源码：<br></p><div class="hljs"><pre class=" language-hljs plain">mvn clean install</pre></div><br>但是在编译过程中遇到Plugin的错误：<br><img src="001.png" srcset="/img/loading.gif" alt="特殊他"><br>只有使用跳过测试的选项，才可以通过编译：<br><div class="hljs"><pre><code class="hljs plain"><code class="language-hljs plain">mvn clean install</code></code></pre></div><code class="hljs plain"><br>但是在编译过程中遇到Plugin的错误：<br><img src="001.png" srcset="/img/loading.gif" alt="特殊他"><br>只有使用跳过测试的选项，才可以通过编译：<br><div class="hljs"><pre><code class="hljs plain">mvn clean install -Dmaven.test.skip=true</code></pre></div><br><img src="002.png" srcset="/img/loading.gif" alt="test-success"><p></p>
 <h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><ol>
 <li>Maven下载Jar包中，比较困难的是trove4j-3.0.3.jar，最好到百度云盘中直接下载，本地Maven安装，具体可以参考：<a href="http://blog.sina.com.cn/s/blog_4a1bfe2c0100x149.html" target="_blank" rel="noopener">Maven install:install-file </a>；</li>
 <li>相关模型需要自己动手下载到相关路径下，也就是~/git/fnlp/models/这个路径下面；</li>
 <li>其他相关NLP的工具，其中有Apache的OpenNLP、哈工大的NLP等。</li>
 </ol>
 
-            </article>
+            </code></article><code class="hljs plain">
             <hr>
             <div>
               <div class="post-metas mb-3">
@@ -226,9 +219,9 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/NLP/">NLP</a>
-                    
                       <a class="hover-with-bg" href="/tags/%E9%83%A8%E7%BD%B2/">部署</a>
+                    
+                      <a class="hover-with-bg" href="/tags/NLP/">NLP</a>
                     
                   </div>
                 
@@ -263,10 +256,10 @@
             </div>
 
             
-          </div>
-        </div>
-      </div>
-    </div>
+          </code></div><code class="hljs plain">
+        </code></div><code class="hljs plain">
+      </code></div><code class="hljs plain">
+    </code></div><code class="hljs plain">
     
       <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
         <div id="toc">
@@ -276,14 +269,14 @@
 
       </div>
     
-  </div>
-</div>
+  </code></div><code class="hljs plain">
+</code></div><code class="hljs plain">
 
 <!-- Custom -->
 
 
     
-  </main>
+  </code></main><code class="hljs plain">
 
   
     <a id="scroll-top-button" href="#" role="button">
@@ -400,7 +393,7 @@
 
 
 
-<script src="/bundle.js"></script><script>
+</code><script src="/bundle.js"></script><script>
     $(document).ready(function () {
       var boardCtn = $('#board-ctn');
       var boardTop = boardCtn.offset().top;

@@ -195,7 +195,6 @@
               <p>  在一些爬虫中，需要用到账号登录进入，才能看到需要爬取的内容，因此实现程序自动模拟登录非常有必要。</p>
 <p>  目前大部分网站的登录，都是使用表单提交的方法实现的，这一类网站的模拟登录，相信度娘已经给出来的许多实例。还有一类网站不是使用网页自带表单提交的方法，网站自己实现了js方法来登录，这就需要进行特别的模拟浏览器行为。</p>
 <a id="more"></a>
-
 <p>  本文用到的主要技术手段包括Selenium+Phantomjs+Jsoup。</p>
 <h2 id="WebDriver"><a href="#WebDriver" class="headerlink" title="WebDriver"></a>WebDriver</h2><p>  这里我们使用<em>Phantomjs</em>最为浏览器驱动，下面的方式是实现传入<em>Phantomjs</em>路径获取<em>WebDriver</em>的方法。其中随机产生UserAgent、打开JS运行开关，并设置了20S的默认超时时间。</p>
 <div class="hljs"><pre class=" language-hljs Java"><span class="hljs-comment"><code class="language-hljs Java"><span class="hljs-comment">/**</span>
@@ -221,7 +220,6 @@
 
     <span class="hljs-keyword">return</span> driver;
 }</code></span></pre></div>
-
 <h2 id="模拟登录"><a href="#模拟登录" class="headerlink" title="模拟登录"></a>模拟登录</h2><p>  这里主要是通过WebDriver访问网页，并在WebDriver上做一些实际的操作，例如查找网页元素、给网页元素赋值、运行相关的JS以及获取cookies等操作。</p>
 <div class="hljs"><pre class=" language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword"><code class="language-hljs Java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException </span>{
 
