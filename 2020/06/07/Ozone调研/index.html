@@ -151,7 +151,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1.1k 字
+      1.3k 字
     </span>
   
 
@@ -161,7 +161,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      12
+      15
        分钟
     </span>
   
@@ -204,7 +204,11 @@
 <li><a href="#11-架构图">1.1. 架构图</a><ul>
 <li><a href="#111-block管理角度">1.1.1. Block管理角度</a></li>
 <li><a href="#112-功能分级角度">1.1.2. 功能分级角度</a></li>
-<li><a href="#113-基本概念">1.1.3. 基本概念</a></li>
+<li><a href="#113-基本概念">1.1.3. 基本概念</a><ul>
+<li><a href="#1131-基本概念">1.1.3.1. 基本概念</a></li>
+<li><a href="#1132-组件功能">1.1.3.2. 组件功能</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#12-亮点特性">1.2. 亮点特性</a><ul>
@@ -262,12 +266,21 @@
 <li>Recon Server：与Ozone的所有组件通信，提供统一的API</li>
 </ol>
 <h3 id="1-1-3-基本概念"><a href="#1-1-3-基本概念" class="headerlink" title="1.1.3. 基本概念"></a>1.1.3. 基本概念</h3><p>  初识Apache Ozone的架构之后，我们需要了解涉及到的几个关键概念。主要涉及到对象存储相关的基本概念：卷、桶、Key。</p>
-<ol>
+<h4 id="1-1-3-1-基本概念"><a href="#1-1-3-1-基本概念" class="headerlink" title="1.1.3.1. 基本概念"></a>1.1.3.1. 基本概念</h4><ol>
 <li>卷：Volume。卷的概念类似账户，只有管理员工可以创建删除</li>
 <li>桶：Bucket。桶的概念类似目录，桶可以包含任意数量的Key，但不能不含其它桶</li>
 <li>Key：Key类似与文件的概念。</li>
 </ol>
 <p>根据官方文档的概念介绍，基本可以理解为：<img src="ozone_cengji.png" srcset="/img/loading.gif" alt="Hadoop-Ozone层级介绍"><br>其中粗粒度、细粒度可以理解为权限访问。且在对象存储模型中，没有目录的概念只有Key的概念，Key指向的就是具体的存储对象。</p>
+<h4 id="1-1-3-2-组件功能"><a href="#1-1-3-2-组件功能" class="headerlink" title="1.1.3.2. 组件功能"></a>1.1.3.2. 组件功能</h4><ol>
+<li>Blocks<br>在Ozone中，Blocks是最基础的存储单元。一组Blocks组成了一个存储容器，用来存放客户端上传的数据，大小一般为256MB</li>
+<li>Storage Containers<br>存储容器存放一组不相关的Blocks，作为一个单独的存储实例存在。存储容器存在于一个DataNode上，是复制的基本单位，一般大小为2GB ~ 16GB</li>
+<li>Ozone Manager(OM)<br>OM主要管理：用户、Bucket、Key。另外，OM也处理来自客户端的元数据访问请求。</li>
+<li>Storage Container Manager(HDDS)<br>SCM目前是HA实现机制，Block复制存储层被称为Hadoop Distributed Data Store (HDDS)。SCM就是用来管理HDDS：用来管理DataNode、分配存储容器、处理数据流Pipeline。</li>
+<li>Recon Server<br>Recon是Ozone的管理接口，为Ozone提供了统一的管理API</li>
+<li>Pipelines<br>Pipeline用来复制客户端写入的数据</li>
+<li>DataNodes<br>DataNode由存储容器组成。SCM通过心跳来管理DataNode。</li>
+</ol>
 <h2 id="1-2-亮点特性"><a href="#1-2-亮点特性" class="headerlink" title="1.2. 亮点特性"></a>1.2. 亮点特性</h2><h3 id="1-2-1-安全机制"><a href="#1-2-1-安全机制" class="headerlink" title="1.2.1. 安全机制"></a>1.2.1. 安全机制</h3><p>认证体系</p>
 <h3 id="1-2-2-单独的"><a href="#1-2-2-单独的" class="headerlink" title="1.2.2. 单独的"></a>1.2.2. 单独的</h3><h1 id="2-部署测试"><a href="#2-部署测试" class="headerlink" title="2. 部署测试"></a>2. 部署测试</h1><h2 id="2-1-源码编译"><a href="#2-1-源码编译" class="headerlink" title="2.1. 源码编译"></a>2.1. 源码编译</h2><h3 id="2-1-1-下载源码"><a href="#2-1-1-下载源码" class="headerlink" title="2.1.1. 下载源码"></a>2.1.1. 下载源码</h3><h3 id="2-1-2-编译问题"><a href="#2-1-2-编译问题" class="headerlink" title="2.1.2. 编译问题"></a>2.1.2. 编译问题</h3><h2 id="2-2-部署Ozone独立集群"><a href="#2-2-部署Ozone独立集群" class="headerlink" title="2.2. 部署Ozone独立集群"></a>2.2. 部署Ozone独立集群</h2><h2 id="2-3-性能测试"><a href="#2-3-性能测试" class="headerlink" title="2.3. 性能测试"></a>2.3. 性能测试</h2><h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4. 参考文献"></a>4. 参考文献</h1><ol>
 <li><a href="https://cwiki.apache.org/confluence/display/HADOOP/Ozone+Road+Map" target="_blank" rel="noopener">Ozone Road Map</a></li>
